@@ -32,12 +32,10 @@ gen/
 *.tar
 *.zip
 
-# Logs and databases #
+# Logs #
 ######################
 log/
 *.log
-*.sql
-*.sqlite
 
 # OS generated files #
 ######################
