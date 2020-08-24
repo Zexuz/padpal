@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
+
+	_ "github.com/golang-migrate/migrate/source/file" // Registers the file path migrations in its "init" func
 )
 
 const migrationsTableName = "migrations"
