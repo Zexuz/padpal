@@ -4,7 +4,7 @@ using Padel.Proto.User;
 
 namespace Padel.Login
 {
-    public class UserService: User.UserBase
+    public class UserService: Proto.User.UserService.UserServiceBase
     {
         public override Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
         {
