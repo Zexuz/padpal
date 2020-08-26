@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Proto", "Padel.Proto\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Runner", "Padel.Runner\Padel.Runner.csproj", "{CE275CC1-81A2-4467-BB83-35704F647957}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Login.Test", "Padel.Login.Test\Padel.Login.Test.csproj", "{ABB6C984-EA8D-4571-B74D-51D19D98AA91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{CE275CC1-81A2-4467-BB83-35704F647957}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE275CC1-81A2-4467-BB83-35704F647957}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE275CC1-81A2-4467-BB83-35704F647957}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB6C984-EA8D-4571-B74D-51D19D98AA91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB6C984-EA8D-4571-B74D-51D19D98AA91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABB6C984-EA8D-4571-B74D-51D19D98AA91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABB6C984-EA8D-4571-B74D-51D19D98AA91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,14 +1,31 @@
-﻿using System.Threading.Tasks;
-using Grpc.Core;
-using Padel.Proto.User;
+using System.Threading.Tasks;
 
-namespace Padel.Login
+namespace Padel.Login.Test
 {
-    public class UserService: Proto.User.UserService.UserServiceBase
+    public class UserService
     {
-        public override Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
+        private readonly IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository)
         {
-            return Task.FromResult(new RegisterResponse());
+            _userRepository = userRepository;
+        }
+
+        public async Task RegisterNewUser(User user)
+        {
+            var resultByEmail = await _userRepository.FindByEmail("robin.edbom@gmail.com")!;
+            if (resultByEmail != null)
+            {
+                throw new EmailIsAlreadyTakenException("robin.edbom@gmail.com");
+            }
+
+            var resultByUsername = await _userRepository.FindByUsername("zexuz")!;
+            if (resultByUsername != null)
+            {
+                throw new UsernameIsAlreadyTakenException("zexuz");
+            }
+
+            _userRepository.Insert(user);
         }
     }
 }

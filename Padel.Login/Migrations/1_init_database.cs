@@ -7,40 +7,40 @@ namespace Padel.Login.Migrations
     {
         public override void Up()
         {
-            Create.Table("user")
-                .WithColumn("id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
-                .WithColumn("username").AsString(50).NotNullable().Unique()
-                .WithColumn("password_hash").AsString(75).NotNullable()
-                .WithColumn("first_name").AsString(100).NotNullable()
-                .WithColumn("last_name").AsString(100).NotNullable()
-                .WithColumn("date_of_birth").AsDate().NotNullable()
-                .WithColumn("email").AsString(300).NotNullable().Unique()
-                .WithColumn("is_email_verified").AsBoolean().WithDefaultValue(false).NotNullable()
-                .WithColumn("created").AsCustom("TIMESTAMP").NotNullable();
+            Create.Table("User")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
+                .WithColumn("Username").AsString(50).NotNullable().Unique()
+                .WithColumn("PasswordHash").AsString(75).NotNullable()
+                .WithColumn("FirstName").AsString(100).NotNullable()
+                .WithColumn("LastName").AsString(100).NotNullable()
+                .WithColumn("DateOfBirth").AsDate().NotNullable()
+                .WithColumn("Email").AsString(300).NotNullable().Unique()
+                .WithColumn("IsEmailVerified").AsBoolean().WithDefaultValue(false).NotNullable()
+                .WithColumn("Created").AsCustom("TIMESTAMP").NotNullable();
 
-            Create.Table("user_agent")
-                .WithColumn("id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
-                .WithColumn("name").AsString(300).NotNullable().Unique();
+            Create.Table("UserAgent")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
+                .WithColumn("Name").AsString(300).NotNullable().Unique();
 
-            Create.Table("refresh_token")
-                .WithColumn("id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
-                .WithColumn("user_id").AsInt32().ForeignKey("user", "id").NotNullable()
-                .WithColumn("user_agent").AsInt32().ForeignKey("user_agent", "id").NotNullable()
-                .WithColumn("token").AsString(100).NotNullable()
-                .WithColumn("valid_to").AsCustom("TIMESTAMP").NotNullable()
-                .WithColumn("created").AsCustom("TIMESTAMP").NotNullable()
-                .WithColumn("last_used").AsCustom("TIMESTAMP").NotNullable()
-                .WithColumn("id_disabled").AsBoolean().WithDefaultValue(false).NotNullable()
-                .WithColumn("disabled_when").AsCustom("TIMESTAMP").Nullable()
-                .WithColumn("issued_from_ip").AsString(17).NotNullable()
-                .WithColumn("last_used_from_ip").AsString(17).NotNullable();
+            Create.Table("RefreshToken")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
+                .WithColumn("UserId").AsInt32().ForeignKey("user", "id").NotNullable()
+                .WithColumn("UserAgent").AsInt32().ForeignKey("useragent", "id").NotNullable()
+                .WithColumn("Token").AsString(100).NotNullable()
+                .WithColumn("ValidTo").AsCustom("TIMESTAMP").NotNullable()
+                .WithColumn("Created").AsCustom("TIMESTAMP").NotNullable()
+                .WithColumn("LastUsed").AsCustom("TIMESTAMP").NotNullable()
+                .WithColumn("IdDisabled").AsBoolean().WithDefaultValue(false).NotNullable()
+                .WithColumn("DisabledWhen").AsCustom("TIMESTAMP").Nullable()
+                .WithColumn("IssuedFromIp").AsString(17).NotNullable()
+                .WithColumn("LastUsedFromIp").AsString(17).NotNullable();
         }
 
         public override void Down()
         {
-            Delete.Table("refresh_token");
-            Delete.Table("user_agent");
-            Delete.Table("user");
+            Delete.Table("RefreshToken");
+            Delete.Table("UserAgent");
+            Delete.Table("User");
         }
     }
 }
