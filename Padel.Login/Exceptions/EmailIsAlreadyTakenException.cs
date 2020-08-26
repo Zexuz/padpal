@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Login.Test
+namespace Padel.Login.Exceptions
 {
     public class EmailIsAlreadyTakenException : Exception
     {

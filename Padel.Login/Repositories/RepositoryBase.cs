@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
 
-namespace Padel.Login.Test
+namespace Padel.Login.Repositories
 {
     public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
@@ -24,9 +24,10 @@ namespace Padel.Login.Test
             throw new System.NotImplementedException();
         }
 
-        public int Insert(T obj)
+        public async Task<int> Insert(T obj)
         {
-            throw new System.NotImplementedException();
+            await using var conn = await ConnectionFactory.GetNewOpenConnection();
+            return await conn.InsertAsync(obj);
         }
 
         public int Insert(IEnumerable<T> list)

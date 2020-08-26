@@ -1,6 +1,10 @@
+using System;
 using System.Threading.Tasks;
+using Padel.Login.Exceptions;
+using Padel.Login.Repositories.User;
+using User = Padel.Proto.User.User;
 
-namespace Padel.Login.Test
+namespace Padel.Login.Services
 {
     public class UserService
     {
@@ -25,7 +29,19 @@ namespace Padel.Login.Test
                 throw new UsernameIsAlreadyTakenException("zexuz");
             }
 
-            _userRepository.Insert(user);
+            // TODO change to MsSql since MySql only gives us trubles. 
+            
+            // TODO USE BCRYPT OR OTHER PACKAGE TO SALT AND HASH PASSWORD
+            await _userRepository.Insert(new Repositories.User.User
+            {
+                Username = user.Username,
+                Email = user.Email,
+                PasswordHash = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                DateOfBirth = DateTime.Parse($"{user.DateOfBirth.Year}-{user.DateOfBirth.Month}-{user.DateOfBirth.Day}"),
+                Created = DateTimeOffset.UtcNow
+            });
         }
     }
 }

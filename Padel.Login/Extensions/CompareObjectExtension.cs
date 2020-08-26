@@ -1,4 +1,4 @@
-namespace Padel.Login.Test
+namespace Padel.Login.Extensions
 {
     public static class CompareObjectExtension
     {

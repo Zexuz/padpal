@@ -6,7 +6,7 @@ service UserService {
     }
 }
 
-message RegisterRequest {
+message User {
     string username = 1;
     string password = 2;
     string firstName = 3;
@@ -19,6 +19,10 @@ message RegisterRequest {
         int32 month = 2;
         int32 day = 3;
     }
+}
+
+message RegisterRequest {
+    User user = 1;
 }
 
 message RegisterResponse {

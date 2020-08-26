@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Padel.Login.Test
+namespace Padel.Login.Repositories.User
 {
     public interface IUserRepository : IRepositoryBase<User>
     {

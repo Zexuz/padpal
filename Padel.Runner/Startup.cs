@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Padel.Login;
+using Padel.Login.GrpcControllers;
+using Padel.Login.Repositories;
+using Padel.Login.Repositories.User;
+using Padel.Login.Services;
 
 namespace Padel.Runner
 {
@@ -13,6 +17,9 @@ namespace Padel.Runner
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<UserService>();
+            services.AddScoped<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -29,7 +36,7 @@ namespace Padel.Runner
             {
                 // Communication with gRPC endpoints must be made through a gRPC client.
                 // To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909
-                endpoints.MapGrpcService<GrpcUserService>();
+                endpoints.MapGrpcService<UserController>();
             });
 
             Login.Main.Migrate();

@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace Padel.Login.Test
+namespace Padel.Login.Repositories
 {
     public interface IDatabaseConnectionFactory
     {

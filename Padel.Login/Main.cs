@@ -22,7 +22,7 @@ namespace Padel.Login
                 .AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
                     .AddMySql5()
-                    .WithGlobalConnectionString("Server=localhost;Port=3306;Database=padel_test;Uid=root;Pwd=password;")
+                    .WithGlobalConnectionString("Server=localhost;Port=3306;Database=padel;Uid=root;Pwd=password;")
                     // Define the assembly containing the migrations
                     .ScanIn(typeof(InitTables).Assembly).For.Migrations())
                 // Enable logging to console in the FluentMigrator way
