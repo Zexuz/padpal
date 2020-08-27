@@ -1,10 +1,9 @@
 using System;
 using Dapper.Contrib.Extensions;
-using Padel.Proto.User;
 
 namespace Padel.Login.Repositories.User
 {
-    [Table("user")]
+    [Table("[User]")]
     public class User
     {
         public int Id { get; set; }
