@@ -51,14 +51,14 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult<User>(null!));
             A.CallTo(() => _fakePasswordService.GenerateHashFromPlanText(A<string>._)).Returns(hashedPassword);
 
-            var user = new Proto.User.User
+            var user = new Padel.Proto.User.V1.User
             {
                 Username = username,
                 Password = plainPassword,
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                DateOfBirth = new Proto.User.User.Types.Date
+                DateOfBirth = new Proto.User.V1.User.Types.Date
                 {
                     Day = int.Parse(day),
                     Month = int.Parse(month),
@@ -89,7 +89,7 @@ namespace Padel.Login.Test
         {
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User()));
 
-            var user = new Proto.User.User
+            var user = new Padel.Proto.User.V1.User
             {
                 Email = email
             };
@@ -110,7 +110,7 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
             A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult(new User()));
 
-            var user = new Proto.User.User
+            var user = new Padel.Proto.User.V1.User
             {
                 Username = username,
                 Email = "myemail"

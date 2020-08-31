@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Grpc.Core;
-using Padel.Proto.User;
+using Padel.Proto.User.V1;
 
 namespace Padel.Login.GrpcControllers
 {
-    public class UserController :UserService.UserServiceBase
+    public class UserControllerV1 : UserService.UserServiceBase
     {
         private readonly Services.IUserService _userService;
 
-        public UserController(Services.IUserService userService)
+        public UserControllerV1(Services.IUserService userService)
         {
             _userService = userService;
         }

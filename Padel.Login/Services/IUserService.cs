@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Padel.Proto.User;
+using Padel.Proto.User.V1;
 
 namespace Padel.Login.Services
 {

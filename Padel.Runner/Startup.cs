@@ -52,7 +52,7 @@ namespace Padel.Runner
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<UserController>();
+                endpoints.MapGrpcService<UserControllerV1>();
             });
 
             new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();

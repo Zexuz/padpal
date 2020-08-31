@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
 using Padel.Login.Repositories.User;
-using User = Padel.Proto.User.User;
 
 namespace Padel.Login.Services
 {
@@ -20,7 +19,7 @@ namespace Padel.Login.Services
             _logger = logger;
         }
 
-        public async Task RegisterNewUser(User user)
+        public async Task RegisterNewUser(Padel.Proto.User.V1.User user)
         {
             var resultByEmail = await _userRepository.FindByEmail(user.Email)!;
             if (resultByEmail != null)
@@ -39,7 +38,7 @@ namespace Padel.Login.Services
             var hashedPassword = _passwordService.GenerateHashFromPlanText(user.Password);
             var dateOfBirth = DateTime.Parse($"{user.DateOfBirth.Year}-{user.DateOfBirth.Month}-{user.DateOfBirth.Day}");
 
-            var userId = await _userRepository.Insert(new Repositories.User.User
+            var userId = await _userRepository.Insert(new User
             {
                 Username = user.Username,
                 Email = user.Email,
