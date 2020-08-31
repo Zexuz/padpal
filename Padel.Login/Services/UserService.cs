@@ -6,7 +6,7 @@ using User = Padel.Proto.User.User;
 
 namespace Padel.Login.Services
 {
-    public class UserService
+    internal class UserService : IUserService
     {
         private readonly IUserRepository  _userRepository;
         private readonly IPasswordService _passwordService;

@@ -10,7 +10,7 @@ namespace Padel.Login.Migrations
             Create.Table("User")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
                 .WithColumn("Username").AsString(50).NotNullable().Unique()
-                .WithColumn("PasswordHash").AsString(75).NotNullable()
+                .WithColumn("PasswordHash").AsString(200).NotNullable()
                 .WithColumn("FirstName").AsString(100).NotNullable()
                 .WithColumn("LastName").AsString(100).NotNullable()
                 .WithColumn("DateOfBirth").AsDate().NotNullable()

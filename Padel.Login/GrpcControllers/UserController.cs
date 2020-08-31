@@ -6,9 +6,9 @@ namespace Padel.Login.GrpcControllers
 {
     public class UserController :UserService.UserServiceBase
     {
-        private readonly Padel.Login.Services.UserService _userService;
+        private readonly Services.IUserService _userService;
 
-        public UserController(Padel.Login.Services.UserService userService)
+        public UserController(Services.IUserService userService)
         {
             _userService = userService;
         }
