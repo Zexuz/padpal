@@ -1,3 +1,4 @@
+using System;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,7 +55,7 @@ namespace Padel.Runner
                 endpoints.MapGrpcService<UserController>();
             });
 
-            Login.Main.Migrate();
+            new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();
         }
     }
 }
