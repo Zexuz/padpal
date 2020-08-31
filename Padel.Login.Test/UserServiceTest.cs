@@ -1,14 +1,31 @@
 using System.Threading.Tasks;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Xunit;
+using User = Padel.Login.Repositories.User.User;
 
 namespace Padel.Login.Test
 {
     public class UserServiceTest
     {
+        private readonly ILogger<UserService> _fakeLogger;
+        private readonly IUserRepository      _fakeUserRepo;
+        private readonly IPasswordService     _fakePasswordService;
+
+        private readonly UserService _sut;
+
+        public UserServiceTest()
+        {
+            _fakeLogger = A.Fake<ILogger<UserService>>();
+            _fakeUserRepo = A.Fake<IUserRepository>();
+            _fakePasswordService = A.Fake<IPasswordService>();
+
+            _sut = new UserService(_fakeUserRepo, _fakePasswordService, _fakeLogger);
+        }
+
         // TODO
         // [X] Creat a user service, that the GRPC registerUser calls.
         // [X] In that, verifies that the users email and username dos not already exist
@@ -30,12 +47,9 @@ namespace Padel.Login.Test
             string hashedPassword
         )
         {
-            var fakeUserRepo = A.Fake<IUserRepository>();
-            var fakePasswordService = A.Fake<IPasswordService>();
-
-            A.CallTo(() => fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
-            A.CallTo(() => fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult<User>(null!));
-            A.CallTo(() => fakePasswordService.GenerateHashFromPlanText(A<string>._)).Returns(hashedPassword);
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
+            A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult<User>(null!));
+            A.CallTo(() => _fakePasswordService.GenerateHashFromPlanText(A<string>._)).Returns(hashedPassword);
 
             var user = new Proto.User.User
             {
@@ -51,13 +65,12 @@ namespace Padel.Login.Test
                     Year = int.Parse(year)
                 }
             };
-            var service = new UserService(fakeUserRepo, fakePasswordService);
 
-            await service.RegisterNewUser(user);
+            await _sut.RegisterNewUser(user);
 
-            A.CallTo(() => fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s    == email))).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUserRepo.FindByUsername(A<string>.That.Matches(s => s == username))).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUserRepo.Insert(A<User>.That.Matches(u =>
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s    == email))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>.That.Matches(s => s == username))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.Insert(A<User>.That.Matches(u =>
                 u.Email                  == email            &&
                 u.Username               == username         &&
                 u.FirstName              == firstName        &&
@@ -74,24 +87,19 @@ namespace Padel.Login.Test
         [InlineData("sonme-other-email@mkdir.se")]
         public async Task Should_Throw_EmailAlreadyInUseException(string email)
         {
-            var fakeUserRepo = A.Fake<IUserRepository>();
-            var fakePasswordService = A.Fake<IPasswordService>();
-
-
-            A.CallTo(() => fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User()));
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User()));
 
             var user = new Proto.User.User
             {
                 Email = email
             };
-            var service = new UserService(fakeUserRepo, fakePasswordService);
 
-            var ex = await Assert.ThrowsAsync<EmailIsAlreadyTakenException>(() => service.RegisterNewUser(user));
+            var ex = await Assert.ThrowsAsync<EmailIsAlreadyTakenException>(() => _sut.RegisterNewUser(user));
+
             Assert.Equal(email, ex.Email);
-
-            A.CallTo(() => fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s.Equals(email)))).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUserRepo.FindByUsername(A<string>._)).MustNotHaveHappened();
-            A.CallTo(() => fakeUserRepo.Insert(A<User>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s.Equals(email)))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakeUserRepo.Insert(A<User>._)).MustNotHaveHappened();
         }
 
         [Theory]
@@ -99,25 +107,21 @@ namespace Padel.Login.Test
         [InlineData("userName23123")]
         public async Task Should_Throw_UsernameAlreadyInUseException(string username)
         {
-            var fakeUserRepo = A.Fake<IUserRepository>();
-            var fakePasswordService = A.Fake<IPasswordService>();
-
-            A.CallTo(() => fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
-            A.CallTo(() => fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult(new User()));
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
+            A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult(new User()));
 
             var user = new Proto.User.User
             {
                 Username = username,
                 Email = "myemail"
             };
-            var service = new UserService(fakeUserRepo, fakePasswordService);
 
-            var ex = await Assert.ThrowsAsync<UsernameIsAlreadyTakenException>(() => service.RegisterNewUser(user));
+            var ex = await Assert.ThrowsAsync<UsernameIsAlreadyTakenException>(() => _sut.RegisterNewUser(user));
+
             Assert.Equal(username, ex.Username);
-
-            A.CallTo(() => fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s.Equals(user.Email)))).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUserRepo.FindByUsername(A<string>.That.Matches(s => s.Equals(username)))).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUserRepo.Insert(A<User>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s.Equals(user.Email)))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>.That.Matches(s => s.Equals(username)))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.Insert(A<User>._)).MustNotHaveHappened();
         }
     }
 }

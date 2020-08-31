@@ -20,4 +20,8 @@
       <ProjectReference Include="..\Padel.Proto\Padel.Proto.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Extensions" />
+    </ItemGroup>
+
 </Project>
