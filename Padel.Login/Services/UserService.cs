@@ -8,38 +8,40 @@ namespace Padel.Login.Services
 {
     public class UserService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository  _userRepository;
+        private readonly IPasswordService _passwordService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IPasswordService passwordService)
         {
             _userRepository = userRepository;
+            _passwordService = passwordService;
         }
 
         public async Task RegisterNewUser(User user)
         {
-            var resultByEmail = await _userRepository.FindByEmail("robin.edbom@gmail.com")!;
+            var resultByEmail = await _userRepository.FindByEmail(user.Email)!;
             if (resultByEmail != null)
             {
-                throw new EmailIsAlreadyTakenException("robin.edbom@gmail.com");
+                throw new EmailIsAlreadyTakenException(user.Email);
             }
 
-            var resultByUsername = await _userRepository.FindByUsername("zexuz")!;
+            var resultByUsername = await _userRepository.FindByUsername(user.Username)!;
             if (resultByUsername != null)
             {
-                throw new UsernameIsAlreadyTakenException("zexuz");
+                throw new UsernameIsAlreadyTakenException(user.Username);
             }
 
-            // TODO change to MsSql since MySql only gives us trubles. 
-            
-            // TODO USE BCRYPT OR OTHER PACKAGE TO SALT AND HASH PASSWORD
+            var hashedPassword = _passwordService.GenerateHashFromPlanText(user.Password);
+            var dateOfBirth = DateTime.Parse($"{user.DateOfBirth.Year}-{user.DateOfBirth.Month}-{user.DateOfBirth.Day}");
+
             await _userRepository.Insert(new Repositories.User.User
             {
                 Username = user.Username,
                 Email = user.Email,
-                PasswordHash = user.Password,
+                PasswordHash = hashedPassword,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                DateOfBirth = DateTime.Parse($"{user.DateOfBirth.Year}-{user.DateOfBirth.Month}-{user.DateOfBirth.Day}"),
+                DateOfBirth = dateOfBirth,
                 Created = DateTimeOffset.UtcNow
             });
         }
