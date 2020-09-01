@@ -1,4 +1,4 @@
-using System.Data.Common;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -13,13 +13,14 @@ namespace Padel.Login.Repositories
         {
             _configuration = configuration;
         }
-        
-        public async Task<DbConnection> GetNewOpenConnection()
+
+        public async Task<IDbConnection> GetNewOpenConnection()
         {
             // TODO Move the connection string to a model/option instead.
-            var connection = new SqlConnection(_configuration.GetSection("Connections:Sql:padel").Value); 
+            var connection = new SqlConnection(_configuration.GetSection("Connections:Sql:padel").Value);
             await connection.OpenAsync();
             return connection;
         }
+
     }
 }

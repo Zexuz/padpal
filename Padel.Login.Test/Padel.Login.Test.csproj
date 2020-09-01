@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <LangVersion>8.0</LangVersion>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
@@ -17,6 +17,7 @@
         <PackageReference Include="Dapper" Version="2.0.35" />
         <PackageReference Include="Dapper.Contrib" Version="2.0.35" />
         <PackageReference Include="FakeItEasy" Version="6.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.7" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.7" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
@@ -30,6 +31,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Padel.Login\Padel.Login.csproj" />
+      <ProjectReference Include="..\Padel.Runner\Padel.Runner.csproj" />
     </ItemGroup>
 
 </Project>

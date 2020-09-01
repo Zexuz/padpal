@@ -15,7 +15,7 @@ namespace Padel.Login.Repositories
 
         public async Task<T> Get(int id)
         {
-            await using var conn = await ConnectionFactory.GetNewOpenConnection();
+            using var conn = await ConnectionFactory.GetNewOpenConnection();
             return await conn.GetAsync<T>(id);
         }
 
@@ -26,7 +26,7 @@ namespace Padel.Login.Repositories
 
         public async Task<int> Insert(T obj)
         {
-            await using var conn = await ConnectionFactory.GetNewOpenConnection();
+            using var conn = await ConnectionFactory.GetNewOpenConnection();
             return await conn.InsertAsync(obj);
         }
 
