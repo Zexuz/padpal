@@ -50,7 +50,7 @@ namespace Padel.Login.Services
                 DateOfBirth = dateOfBirth,
                 Created = DateTimeOffset.UtcNow
             });
-            _logger.LogDebug($"Created new hashedPassword: {hashedPassword}, for userId: {userId}");
+            _logger.LogDebug($"Created new user, UserId: {userId}");
         }
 
         public async Task Login(LoginRequest request)
