@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
