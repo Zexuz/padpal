@@ -1,11 +1,23 @@
 syntax = "proto3";
 option csharp_namespace = "Padel.Proto.User.V1";
 
-package user.v1; 
+package user.v1;
 
 service UserService {
     rpc Register (RegisterRequest) returns (RegisterResponse) {
     }
+    rpc Login (LoginRequest) returns (LoginResponse) {
+    }
+
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    bool success = 1;
 }
 
 message User {

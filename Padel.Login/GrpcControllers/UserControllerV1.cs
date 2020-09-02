@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Login.Exceptions;
 using Padel.Proto.User.V1;
@@ -14,13 +15,36 @@ namespace Padel.Login.GrpcControllers
             _userService = userService;
         }
 
+        public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
+        {
+            try
+            {
+                await _userService.Login(request);
+                return new LoginResponse {Success = true};
+            }
+            catch (EmailDoesNotExistsException)
+            {
+                return new LoginResponse{Success = false};
+            }
+            catch (PasswordDoesNotMatchException)
+            {
+                return new LoginResponse{Success = false};
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+         
+        }
+
         public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
         {
             try
             {
                 await _userService.RegisterNewUser(request.User);
             }
-            catch (EmailIsAlreadyTakenException e)
+            catch (EmailIsAlreadyTakenException)
             {
                 var entry = new Metadata.Entry(nameof(request.User.Email), "the value is already taken");
                 var metadata = new Metadata();
@@ -28,7 +52,7 @@ namespace Padel.Login.GrpcControllers
                 metadata.Add("x-custom-error", "email-already-taken");
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Already taken email"), metadata);
             }
-            catch (UsernameIsAlreadyTakenException e)
+            catch (UsernameIsAlreadyTakenException)
             {
                 var entry = new Metadata.Entry(nameof(request.User.Username), "the value is already taken");
                 var metadata = new Metadata();

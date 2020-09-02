@@ -40,7 +40,86 @@ namespace Padel.Login.Test
 
             await userServiceClient.RegisterAsync(payload);
         }
-        
+
+        [Fact]
+        public async Task LoginsAfterSigningUpSuccessful()
+        {
+            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
+
+            var payload = new RegisterRequest
+            {
+                User = new User
+                {
+                    Username = "login1",
+                    Email = "login1",
+                    Password = "loggin1_password",
+                    FirstName = "log",
+                    LastName = "in",
+                    DateOfBirth = new User.Types.Date
+                    {
+                        Year = 10,
+                        Month = 10,
+                        Day = 10
+                    }
+                }
+            };
+
+            await userServiceClient.RegisterAsync(payload);
+
+            var res = await userServiceClient.LoginAsync(new LoginRequest
+            {
+                Email = payload.User.Email,
+                Password = payload.User.Password
+            });
+            Assert.True(res.Success);
+        }
+
+        [Fact]
+        public async Task LoginsFailsWithBadCredentialsAfterSigningUpSuccessful()
+        {
+            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
+
+            var payload = new RegisterRequest
+            {
+                User = new User
+                {
+                    Username = "login2",
+                    Email = "login2",
+                    Password = "loggin1_password",
+                    FirstName = "log",
+                    LastName = "in",
+                    DateOfBirth = new User.Types.Date
+                    {
+                        Year = 10,
+                        Month = 10,
+                        Day = 10
+                    }
+                }
+            };
+
+            await userServiceClient.RegisterAsync(payload);
+
+            var res = await userServiceClient.LoginAsync(new LoginRequest
+            {
+                Email = payload.User.Email,
+                Password = "some other password"
+            });
+            Assert.False(res.Success);
+        }
+
+        [Fact]
+        public async Task LoginsFailsWithBadCredentials()
+        {
+            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
+
+            var res = await userServiceClient.LoginAsync(new LoginRequest
+            {
+                Email = "email_does_not_exists",
+                Password = "some other password"
+            });
+            Assert.False(res.Success);
+        }
+
         [Fact]
         public async Task ThrowsErrorWhenUsernameIsTaken()
         {
@@ -71,7 +150,7 @@ namespace Padel.Login.Test
             var ex = await Assert.ThrowsAsync<RpcException>(async () => await userServiceClient.RegisterAsync(payload));
             Assert.Equal("username-already-taken", ex.Trailers.GetValue("x-custom-error"));
         }
-        
+
         [Fact]
         public async Task ThrowsErrorWhenEmailIsTaken()
         {

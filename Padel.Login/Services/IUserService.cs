@@ -6,5 +6,6 @@ namespace Padel.Login.Services
     public interface IUserService
     {
         Task RegisterNewUser(User user);
+        Task Login(LoginRequest request);
     }
 }

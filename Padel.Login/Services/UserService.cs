@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
 using Padel.Login.Repositories.User;
+using Padel.Proto.User.V1;
+using User = Padel.Login.Repositories.User.User;
 
 namespace Padel.Login.Services
 {
@@ -49,6 +51,24 @@ namespace Padel.Login.Services
                 Created = DateTimeOffset.UtcNow
             });
             _logger.LogDebug($"Created new hashedPassword: {hashedPassword}, for userId: {userId}");
+        }
+
+        public async Task Login(LoginRequest request)
+        {
+            var user = await _userRepository.FindByEmail(request.Email)!;
+            if (user == null)
+            {
+                _logger.LogError($"User with email {request.Email} does not exists");
+                throw new EmailDoesNotExistsException(request.Email);
+            }
+
+            if (!_passwordService.IsPasswordOfHash(user.PasswordHash, request.Password))
+            {
+                _logger.LogError($"Password does not match with email: {request.Email}");
+                throw new PasswordDoesNotMatchException(request.Email);
+            }
+
+            // TODO RETURN JWT CREDENTIALS
         }
     }
 }

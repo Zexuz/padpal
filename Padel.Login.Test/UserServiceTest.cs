@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,65 @@ namespace Padel.Login.Test
             _fakePasswordService = A.Fake<IPasswordService>();
 
             _sut = new UserService(_fakeUserRepo, _fakePasswordService, _fakeLogger);
+        }
+
+        [Fact]
+        public async Task Should_throw_exception_when_email_does_not_exists()
+        {
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
+
+            var loginRequest = new Proto.User.V1.LoginRequest
+            {
+                Email = "someEmail",
+                Password = "plainPassword"
+            };
+            var ex = await Assert.ThrowsAsync<EmailDoesNotExistsException>(async () => await _sut.Login(loginRequest));
+            Assert.Equal("someEmail", ex.Email);
+
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task Should_throw_exception_when_password_does_not_match()
+        {
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User {PasswordHash = "somePasswordHash"}));
+            A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(false);
+
+            var loginRequest = new Proto.User.V1.LoginRequest
+            {
+                Email = "someEmail",
+                Password = "plainPassword"
+            };
+            var ex = await Assert.ThrowsAsync<PasswordDoesNotMatchException>(async () => await _sut.Login(loginRequest));
+            Assert.Equal("someEmail", ex.Email);
+
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakePasswordService.IsPasswordOfHash(
+                A<string>.That.Matches(s => s == "somePasswordHash"),
+                A<string>.That.Matches(s => s == "plainPassword")
+            )).MustHaveHappenedOnceExactly();
+        }
+
+        // TODO Expand this test to return JWT credentials
+        [Fact]
+        public async Task Should_do_nothing_if_successful()
+        {
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User {PasswordHash = "somePasswordHash"}));
+            A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(true);
+
+            var loginRequest = new Proto.User.V1.LoginRequest
+            {
+                Email = "someEmail",
+                Password = "plainPassword"
+            };
+
+            await _sut.Login(loginRequest);
+
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakePasswordService.IsPasswordOfHash(
+                A<string>.That.Matches(s => s == "somePasswordHash"),
+                A<string>.That.Matches(s => s == "plainPassword")
+            )).MustHaveHappenedOnceExactly();
         }
 
         // TODO
