@@ -1,0 +1,34 @@
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using FakeItEasy;
+using Xunit;
+
+namespace Padel.Login.Test
+{
+    public class JsonWebTokenTest
+    {
+        [Fact]
+        public async Task Should_create_valid_tokens()
+        {
+            var rsaGenerator = RSA.Create(2048);
+            
+            var fakeKeyLoader = A.Fake<IKeyLoader>();
+            
+            A.CallTo(() => fakeKeyLoader.Load()).Returns((rsaGenerator, rsaGenerator));
+
+            var claims = new Dictionary<string, string>
+            {
+                {"name", "robin"},
+            };
+
+            var jwt = new JsonWebToken(fakeKeyLoader);
+
+            var token = await jwt.Create(claims);
+
+            var decodeToken = await jwt.DecodeToken<Dictionary<string, string>>(token);
+            Assert.Equal("robin", decodeToken["name"]);
+            
+        }
+    }
+}

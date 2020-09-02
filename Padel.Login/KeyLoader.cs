@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Padel.Login
 {
-    public class KeyLoader
+    public class KeyLoader : IKeyLoader
     {
         private readonly IFileService _fileService;
 
@@ -14,21 +14,30 @@ namespace Padel.Login
             _fileService = fileService;
         }
 
-        public async Task<(string PublicKey, string PrivateKey)> Load()
+
+        public async Task<(RSA PublicKey, RSA PrivateKey)> Load()
         {
             var basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "padel");
             var publicKeyPath = Path.Combine(basePath, "public.txt");
             var privateKeyPath = Path.Combine(basePath, "private.txt");
 
-            if (!_fileService.DoesFileExist(publicKeyPath) || !_fileService.DoesFileExist(privateKeyPath))
+            if (!Directory.Exists(basePath))
             {
-                var rsa = RSA.Create(2048);
-                await _fileService.WriteAllBytesAsync(publicKeyPath, rsa.ExportSubjectPublicKeyInfo());
-                await _fileService.WriteAllBytesAsync(privateKeyPath, rsa.ExportRSAPrivateKey());
+                Directory.CreateDirectory(basePath);
             }
 
-            var pubKey = await _fileService.ReadAllLines(publicKeyPath);
-            var priKey = await _fileService.ReadAllLines(privateKeyPath);
+            if (!_fileService.DoesFileExist(publicKeyPath) || !_fileService.DoesFileExist(privateKeyPath))
+            {
+                var rsaGenerator = RSA.Create(2048);
+                await _fileService.WriteAllText(publicKeyPath, Convert.ToBase64String(rsaGenerator.ExportSubjectPublicKeyInfo()));
+                await _fileService.WriteAllText(privateKeyPath, Convert.ToBase64String(rsaGenerator.ExportRSAPrivateKey()));
+            }
+
+            var pubKey = RSA.Create();
+            pubKey.ImportSubjectPublicKeyInfo(Convert.FromBase64String(await _fileService.ReadAllText(publicKeyPath)), out _);
+
+            var priKey = RSA.Create();
+            priKey.ImportRSAPrivateKey(Convert.FromBase64String(await _fileService.ReadAllText(privateKeyPath)), out _);
             return (pubKey, priKey);
         }
     }

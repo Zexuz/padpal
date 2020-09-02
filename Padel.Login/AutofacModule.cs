@@ -22,6 +22,8 @@ namespace Padel.Login
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<PasswordService>().As<IPasswordService>();
             builder.RegisterType<DatabaseConnectionFactory>().As<IDatabaseConnectionFactory>();
+            builder.RegisterType<KeyLoader>().As<IKeyLoader>();
+            builder.RegisterType<FileService>().As<IFileService>();
             
 //             #region Services
 //

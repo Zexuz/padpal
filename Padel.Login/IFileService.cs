@@ -4,8 +4,8 @@ namespace Padel.Login
 {
     public interface IFileService
     {
-        Task<string> ReadAllLines(string path);
+        Task<string> ReadAllText(string path);
         bool DoesFileExist(string path);
-        Task WriteAllBytesAsync(string path, byte[] content);
+        Task WriteAllText(string path, string content);
     }
 }
