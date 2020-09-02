@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace Padel.Login
+namespace Padel.Login.Services
 {
     public class KeyLoader : IKeyLoader
     {

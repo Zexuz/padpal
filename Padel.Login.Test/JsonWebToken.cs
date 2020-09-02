@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using JWT.Algorithms;
 using JWT.Builder;
+using Padel.Login.Services;
 
 namespace Padel.Login.Test
 {

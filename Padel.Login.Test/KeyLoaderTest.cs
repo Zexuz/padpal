@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using FakeItEasy;
+using Padel.Login.Services;
 using Xunit;
 
 namespace Padel.Login.Test
