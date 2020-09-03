@@ -5,8 +5,10 @@ using Padel.Login.Exceptions;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Padel.Login.Services.JsonWebToken;
+using Padel.Proto.User.V1;
 using Xunit;
 using User = Padel.Login.Repositories.User.User;
+using UserService = Padel.Login.Services.UserService;
 
 namespace Padel.Login.Test
 {
@@ -118,14 +120,14 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult<User>(null!));
             A.CallTo(() => _fakePasswordService.GenerateHashFromPlanText(A<string>._)).Returns(hashedPassword);
 
-            var user = new Padel.Proto.User.V1.User
+            var user = new NewUser
             {
                 Username = username,
                 Password = plainPassword,
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                DateOfBirth = new Proto.User.V1.User.Types.Date
+                DateOfBirth = new NewUser.Types.Date
                 {
                     Day = int.Parse(day),
                     Month = int.Parse(month),
@@ -156,7 +158,7 @@ namespace Padel.Login.Test
         {
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User()));
 
-            var user = new Padel.Proto.User.V1.User
+            var user = new NewUser
             {
                 Email = email
             };
@@ -177,7 +179,7 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
             A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult(new User()));
 
-            var user = new Padel.Proto.User.V1.User
+            var user = new NewUser
             {
                 Username = username,
                 Email = "myemail"

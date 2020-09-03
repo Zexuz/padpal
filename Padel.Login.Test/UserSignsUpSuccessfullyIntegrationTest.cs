@@ -23,14 +23,14 @@ namespace Padel.Login.Test
 
             var payload = new RegisterRequest
             {
-                User = new User
+                User = new NewUser
                 {
                     Username = "robin123",
                     Email = "robin123",
                     Password = "Hello4",
                     FirstName = "Hello4",
                     LastName = "Hello4",
-                    DateOfBirth = new User.Types.Date
+                    DateOfBirth = new NewUser.Types.Date
                     {
                         Year = 10,
                         Month = 10,
@@ -50,14 +50,14 @@ namespace Padel.Login.Test
             var expectedTokenLength = TimeSpan.FromMinutes(30);
             var payload = new RegisterRequest
             {
-                User = new User
+                User = new NewUser
                 {
                     Username = "login1",
                     Email = "login1",
                     Password = "loggin1_password",
                     FirstName = "log",
                     LastName = "in",
-                    DateOfBirth = new User.Types.Date
+                    DateOfBirth = new NewUser.Types.Date
                     {
                         Year = 10,
                         Month = 10,
@@ -90,14 +90,14 @@ namespace Padel.Login.Test
 
             var payload = new RegisterRequest
             {
-                User = new User
+                User = new NewUser
                 {
                     Username = "login2",
                     Email = "login2",
                     Password = "loggin1_password",
                     FirstName = "log",
                     LastName = "in",
-                    DateOfBirth = new User.Types.Date
+                    DateOfBirth = new NewUser.Types.Date
                     {
                         Year = 10,
                         Month = 10,
@@ -134,14 +134,14 @@ namespace Padel.Login.Test
 
             var payload = new RegisterRequest
             {
-                User = new User
+                User = new NewUser
                 {
                     Username = "username1",
                     Email = "username1",
                     Password = "password",
                     FirstName = "firstName",
                     LastName = "lastName",
-                    DateOfBirth = new User.Types.Date
+                    DateOfBirth = new NewUser.Types.Date
                     {
                         Year = 10,
                         Month = 10,
@@ -165,14 +165,14 @@ namespace Padel.Login.Test
 
             var payload = new RegisterRequest
             {
-                User = new User
+                User = new NewUser
                 {
                     Username = "username2",
                     Email = "username2",
                     Password = "password",
                     FirstName = "firstName",
                     LastName = "lastName",
-                    DateOfBirth = new User.Types.Date
+                    DateOfBirth = new NewUser.Types.Date
                     {
                         Year = 10,
                         Month = 10,

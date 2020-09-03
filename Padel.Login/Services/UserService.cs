@@ -30,7 +30,7 @@ namespace Padel.Login.Services
             _jsonWebTokenService = jsonWebTokenService;
         }
 
-        public async Task RegisterNewUser(Padel.Proto.User.V1.User user)
+        public async Task RegisterNewUser(NewUser user)
         {
             var resultByEmail = await _userRepository.FindByEmail(user.Email)!;
             if (resultByEmail != null)
