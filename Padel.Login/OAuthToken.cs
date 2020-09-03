@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Login.Test
+namespace Padel.Login
 {
     public class OAuthToken
     {
