@@ -94,7 +94,7 @@ namespace Padel.Login.Test
         [Theory]
         [InlineData("zexyz", "PlainTextPassword", "Robin", "Edbom", "myEmail@mkdir.se", "7", "11", "1996", "$10000.salt.hash")]
         [InlineData("username", "passWord", "Jane", "Doe", "jane@doe.org", "1", "1", "1900", "$10000.salt.someOtherhash")]
-        public async Task Should_Add_New_User_To_Table(
+        public async Task Should_add_new_user_to_table(
             string username,
             string plainPassword,
             string firstName,
@@ -144,7 +144,7 @@ namespace Padel.Login.Test
         [Theory]
         [InlineData("someemail@mkdir.se")]
         [InlineData("sonme-other-email@mkdir.se")]
-        public async Task Should_Throw_EmailAlreadyInUseException(string email)
+        public async Task Should_throw_emailAlreadyInUseException(string email)
         {
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User()));
 
@@ -164,7 +164,7 @@ namespace Padel.Login.Test
         [Theory]
         [InlineData("username1")]
         [InlineData("userName23123")]
-        public async Task Should_Throw_UsernameAlreadyInUseException(string username)
+        public async Task Should_throw_usernameAlreadyInUseException(string username)
         {
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
             A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>._)).Returns(Task.FromResult(new User()));
