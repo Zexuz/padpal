@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
+using Padel.Login.JsonWebToken;
 using Padel.Login.Repositories.User;
 using Padel.Proto.User.V1;
 using User = Padel.Login.Repositories.User.User;
@@ -13,12 +14,19 @@ namespace Padel.Login.Services
         private readonly IUserRepository      _userRepository;
         private readonly IPasswordService     _passwordService;
         private readonly ILogger<UserService> _logger;
+        private readonly IJsonWebTokenService _jsonWebTokenService;
 
-        public UserService(IUserRepository userRepository, IPasswordService passwordService, ILogger<UserService> logger)
+        public UserService(
+            IUserRepository userRepository,
+            IPasswordService passwordService,
+            ILogger<UserService> logger,
+            IJsonWebTokenService jsonWebTokenService
+        )
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
             _logger = logger;
+            _jsonWebTokenService = jsonWebTokenService;
         }
 
         public async Task RegisterNewUser(Padel.Proto.User.V1.User user)
@@ -53,7 +61,7 @@ namespace Padel.Login.Services
             _logger.LogDebug($"Created new user, UserId: {userId}");
         }
 
-        public async Task Login(LoginRequest request)
+        public async Task<OAuthToken> Login(LoginRequest request)
         {
             var user = await _userRepository.FindByEmail(request.Email)!;
             if (user == null)
@@ -68,7 +76,11 @@ namespace Padel.Login.Services
                 throw new PasswordDoesNotMatchException(request.Email);
             }
 
-            // TODO RETURN JWT CREDENTIALS
+            // TODO, use a OAuthTokenService of even a OAuthTokenFactory
+            return new OAuthToken
+            {
+                AccessToken = await _jsonWebTokenService.CreateNewAccessToken(user)
+            };
         }
     }
 }

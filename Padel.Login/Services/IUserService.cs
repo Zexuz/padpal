@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Padel.Login.JsonWebToken;
 using Padel.Proto.User.V1;
 
 namespace Padel.Login.Services
@@ -6,6 +7,6 @@ namespace Padel.Login.Services
     public interface IUserService
     {
         Task RegisterNewUser(User user);
-        Task Login(LoginRequest request);
+        Task<OAuthToken> Login(LoginRequest request);
     }
 }

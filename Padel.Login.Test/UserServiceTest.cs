@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
+using Padel.Login.JsonWebToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Xunit;
@@ -14,6 +15,8 @@ namespace Padel.Login.Test
         private readonly ILogger<UserService> _fakeLogger;
         private readonly IUserRepository      _fakeUserRepo;
         private readonly IPasswordService     _fakePasswordService;
+        private          IJsonWebTokenService _fakeJwtService;
+
 
         private readonly UserService _sut;
 
@@ -22,8 +25,9 @@ namespace Padel.Login.Test
             _fakeLogger = A.Fake<ILogger<UserService>>();
             _fakeUserRepo = A.Fake<IUserRepository>();
             _fakePasswordService = A.Fake<IPasswordService>();
+            _fakeJwtService = A.Fake<IJsonWebTokenService>();
 
-            _sut = new UserService(_fakeUserRepo, _fakePasswordService, _fakeLogger);
+            _sut = new UserService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeJwtService);
         }
 
         [Fact]
@@ -63,12 +67,13 @@ namespace Padel.Login.Test
             )).MustHaveHappenedOnceExactly();
         }
 
-        // TODO Expand this test to return JWT credentials
         [Fact]
-        public async Task Should_do_nothing_if_successful()
+        public async Task Should_return_OAuthToken_if_successful()
         {
-            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User {PasswordHash = "somePasswordHash"}));
+            var dbUser = new User {PasswordHash = "somePasswordHash", Id = 1, Email = "someEmail"};
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(dbUser));
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(true);
+            A.CallTo(() => _fakeJwtService.CreateNewAccessToken(A<User>._)).Returns("some.jwt.token");
 
             var loginRequest = new Proto.User.V1.LoginRequest
             {
@@ -76,9 +81,12 @@ namespace Padel.Login.Test
                 Password = "plainPassword"
             };
 
-            await _sut.Login(loginRequest);
+            var token = await _sut.Login(loginRequest);
 
-            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
+            Assert.Equal("some.jwt.token", token.AccessToken);
+
+            A.CallTo(() => _fakeJwtService.CreateNewAccessToken(A<User>.That.Matches(user => user.Id == 1))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s                   == "someEmail"))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(
                 A<string>.That.Matches(s => s == "somePasswordHash"),
                 A<string>.That.Matches(s => s == "plainPassword")

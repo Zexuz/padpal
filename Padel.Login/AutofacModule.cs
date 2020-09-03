@@ -1,3 +1,4 @@
+using System;
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Padel.Login.JsonWebToken;
@@ -26,7 +27,10 @@ namespace Padel.Login
             builder.RegisterType<KeyLoader>().As<IKeyLoader>();
             builder.RegisterType<FileService>().As<IFileService>();
             builder.RegisterType<JsonWebTokenBuilder>().As<IJsonWebTokenBuilder>();
-            
+            builder.RegisterType<JsonWebTokenService>().As<IJsonWebTokenService>();
+
+            builder.RegisterInstance(new JsonWebTokenServiceOptions {LifeSpan = TimeSpan.FromMinutes(30)}).AsSelf();
+
 //             #region Services
 //
 //             var gmailAppPassword = _configuration.GetSection("GoogleEmail:AppPassword").Value;
