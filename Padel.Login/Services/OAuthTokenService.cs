@@ -28,19 +28,20 @@ namespace Padel.Login.Services
 
         public async Task<OAuthToken> CreateNewRefreshToken(User user, ConnectionInfo connectionInfo)
         {
-            var accessToken = await _jsonWebTokenService.CreateNewAccessToken(user);
+            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(user);
             var refreshToken = GenerateRefreshToken(user, connectionInfo.Ip);
 
             await _refreshTokenRepository.Insert(refreshToken);
-            
+
             return new OAuthToken
             {
                 Type = OAuthToken.OAuthTokenType.Bearer,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken.Token,
+                Expires = expires
             };
         }
-        
+
         public Task<OAuthToken> CreateNewAccessToken(User user, string refreshToken)
         {
             throw new System.NotImplementedException();
@@ -59,7 +60,5 @@ namespace Padel.Login.Services
                 LastUsedFromIp = userIp,
             };
         }
-
-      
     }
 }

@@ -78,9 +78,9 @@ namespace Padel.Login.Test
             var timeRange = DateTimeOffset.FromUnixTimeSeconds(res.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
 
             // TODO Verify that these tokens work. One by getting a new access token, and another by doing something, like getting the current user info?
-            Assert.True(timeRange                     > TimeSpan.FromSeconds(10));
+            Assert.True(timeRange                     < TimeSpan.FromSeconds(10));
             Assert.True(res.Token.RefreshToken.Length > 60);
-            Assert.True(res.Token.AccessToken.Length > 60);
+            Assert.True(res.Token.AccessToken.Length  > 60);
         }
 
         [Fact]

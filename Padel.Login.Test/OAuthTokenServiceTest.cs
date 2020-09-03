@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Padel.Login.Repositories.RefreshToken;
@@ -35,14 +36,14 @@ namespace Padel.Login.Test
 
             A.CallTo(() => _fakeRandom.GenerateSecureString(A<int>._)).Returns("someRandomString");
             A.CallTo(() => _fakeRefreshTokenRepository.Insert(A<RefreshToken>._)).Returns(Task.FromResult(5));
-            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>._)).Returns("access-token");
+            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>._)).Returns(("access-token", DateTimeOffset.Parse("2020-09-03 20:07")));
 
             var authToken = await _sut.CreateNewRefreshToken(user, new ConnectionInfo{Ip = "192.168.1.0"});
 
             Assert.Equal(OAuthToken.OAuthTokenType.Bearer, authToken.Type);
             Assert.Equal("access-token", authToken.AccessToken);
             Assert.Equal("someRandomString", authToken.RefreshToken);
-            // Assert.Equal("refresh-token", authToken.Expires);
+            Assert.Equal(DateTimeOffset.Parse("2020-09-03 20:07"), authToken.Expires);
 
             A.CallTo(() => _fakeRefreshTokenRepository.Insert(A<RefreshToken>.That.Matches(token =>
                 token.UserId == 1374 &&

@@ -16,7 +16,7 @@ namespace Padel.Login.Services.JsonWebToken
             _options = options;
         }
 
-        public async Task<string> CreateNewAccessToken(User user)
+        public async Task<(string token, DateTimeOffset expires)> CreateNewAccessToken(User user)
         {
             var exp = DateTimeOffset.UtcNow.Add(_options.LifeSpan);
 
@@ -26,7 +26,7 @@ namespace Padel.Login.Services.JsonWebToken
                 {"sub", user.Id.ToString()},
             };
 
-            return await _builder.Create(claims);
+            return (await _builder.Create(claims), exp);
         }
     }
 }

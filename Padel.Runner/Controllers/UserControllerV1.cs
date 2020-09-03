@@ -20,7 +20,7 @@ namespace Padel.Runner.Controllers
         {
             try
             {
-                var res = await _userService.Login(request, new ConnectionInfo {Ip = context.Peer});
+                var res = await _userService.Login(request, new ConnectionInfo {Ip = context.GetIpV4FromPeer()});
                 return new LoginResponse
                 {
                     Token = new OAuthToken
