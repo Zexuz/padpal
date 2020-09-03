@@ -4,13 +4,13 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Padel.Login.Services;
 
-namespace Padel.Login.Test
+namespace Padel.Login
 {
-    public class JsonWebToken
+    public class JsonWebTokenBuilder
     {
         private readonly IKeyLoader _keyLoader;
 
-        public JsonWebToken(IKeyLoader keyLoader)
+        public JsonWebTokenBuilder(IKeyLoader keyLoader)
         {
             _keyLoader = keyLoader;
         }

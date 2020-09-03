@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Padel.Login.Test
 {
-    public class JsonWebTokenTest
+    public class JsonWebTokenBuilderTest
     {
         [Fact]
         public async Task Should_create_valid_tokens()
@@ -23,7 +23,7 @@ namespace Padel.Login.Test
                 {"name", "robin"},
             };
 
-            var jwt = new JsonWebToken(fakeKeyLoader);
+            var jwt = new JsonWebTokenBuilder(fakeKeyLoader);
 
             var token = await jwt.Create(claims);
 
@@ -46,7 +46,7 @@ namespace Padel.Login.Test
                 {"name", "robin"},
             };
 
-            var jwt = new JsonWebToken(fakeKeyLoader);
+            var jwt = new JsonWebTokenBuilder(fakeKeyLoader);
 
             var token = await jwt.Create(claims);
 
