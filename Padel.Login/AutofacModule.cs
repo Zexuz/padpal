@@ -30,6 +30,7 @@ namespace Padel.Login
             builder.RegisterType<JsonWebTokenBuilder>().As<IJsonWebTokenBuilder>();
             builder.RegisterType<JsonWebTokenService>().As<IJsonWebTokenService>();
             builder.RegisterType<OAuthTokenService>().As<IOAuthTokenService>();
+            builder.RegisterType<CustomRandom>().As<IRandom>();
 
             builder.RegisterInstance(new JsonWebTokenServiceOptions {LifeSpan = TimeSpan.FromMinutes(30)}).AsSelf();
 

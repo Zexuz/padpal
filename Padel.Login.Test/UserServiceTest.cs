@@ -7,6 +7,7 @@ using Padel.Login.Services;
 using Padel.Login.Services.JsonWebToken;
 using Padel.Proto.User.V1;
 using Xunit;
+using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
 using User = Padel.Login.Repositories.User.User;
 using UserService = Padel.Login.Services.UserService;
 
@@ -17,7 +18,7 @@ namespace Padel.Login.Test
         private readonly ILogger<UserService> _fakeLogger;
         private readonly IUserRepository      _fakeUserRepo;
         private readonly IPasswordService     _fakePasswordService;
-        private          IJsonWebTokenService _fakeJwtService;
+        private readonly IOAuthTokenService   _fakeAuthTokenService;
 
 
         private readonly UserService _sut;
@@ -27,9 +28,9 @@ namespace Padel.Login.Test
             _fakeLogger = A.Fake<ILogger<UserService>>();
             _fakeUserRepo = A.Fake<IUserRepository>();
             _fakePasswordService = A.Fake<IPasswordService>();
-            _fakeJwtService = A.Fake<IJsonWebTokenService>();
+            _fakeAuthTokenService = A.Fake<IOAuthTokenService>();
 
-            _sut = new UserService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeJwtService);
+            _sut = new UserService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService);
         }
 
         [Fact]
@@ -37,12 +38,12 @@ namespace Padel.Login.Test
         {
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult<User>(null!));
 
-            var loginRequest = new Proto.User.V1.LoginRequest
+            var loginRequest = new LoginRequest
             {
                 Email = "someEmail",
                 Password = "plainPassword"
             };
-            var ex = await Assert.ThrowsAsync<EmailDoesNotExistsException>(async () => await _sut.Login(loginRequest));
+            var ex = await Assert.ThrowsAsync<EmailDoesNotExistsException>(async () => await _sut.Login(loginRequest, new ConnectionInfo()));
             Assert.Equal("someEmail", ex.Email);
 
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
@@ -59,7 +60,7 @@ namespace Padel.Login.Test
                 Email = "someEmail",
                 Password = "plainPassword"
             };
-            var ex = await Assert.ThrowsAsync<PasswordDoesNotMatchException>(async () => await _sut.Login(loginRequest));
+            var ex = await Assert.ThrowsAsync<PasswordDoesNotMatchException>(async () => await _sut.Login(loginRequest, new ConnectionInfo()));
             Assert.Equal("someEmail", ex.Email);
 
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
@@ -73,22 +74,29 @@ namespace Padel.Login.Test
         public async Task Should_return_OAuthToken_if_successful()
         {
             var dbUser = new User {PasswordHash = "somePasswordHash", Id = 1, Email = "someEmail"};
+            var connectionInfo = new ConnectionInfo {Ip = "myIp"};
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(dbUser));
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(true);
-            A.CallTo(() => _fakeJwtService.CreateNewAccessToken(A<User>._)).Returns("some.jwt.token");
+            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<User>._, A<ConnectionInfo>._)).Returns(Task.FromResult(new OAuthToken
+            {
+                AccessToken = "some.jwt.token",
+            }));
 
-            var loginRequest = new Proto.User.V1.LoginRequest
+            var loginRequest = new LoginRequest
             {
                 Email = "someEmail",
                 Password = "plainPassword"
             };
 
-            var token = await _sut.Login(loginRequest);
+            var token = await _sut.Login(loginRequest, connectionInfo);
 
             Assert.Equal("some.jwt.token", token.AccessToken);
 
-            A.CallTo(() => _fakeJwtService.CreateNewAccessToken(A<User>.That.Matches(user => user.Id == 1))).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s                   == "someEmail"))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(
+                A<User>.That.Matches(user => user.Id           == 1),
+                A<ConnectionInfo>.That.Matches(info => info.Ip == "myIp")
+            )).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(
                 A<string>.That.Matches(s => s == "somePasswordHash"),
                 A<string>.That.Matches(s => s == "plainPassword")

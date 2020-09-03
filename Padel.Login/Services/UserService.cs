@@ -15,19 +15,19 @@ namespace Padel.Login.Services
         private readonly IUserRepository      _userRepository;
         private readonly IPasswordService     _passwordService;
         private readonly ILogger<UserService> _logger;
-        private readonly IJsonWebTokenService _jsonWebTokenService;
+        private readonly IOAuthTokenService   _oAuthTokenService;
 
         public UserService(
             IUserRepository userRepository,
             IPasswordService passwordService,
             ILogger<UserService> logger,
-            IJsonWebTokenService jsonWebTokenService
+            IOAuthTokenService oAuthTokenService
         )
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
             _logger = logger;
-            _jsonWebTokenService = jsonWebTokenService;
+            _oAuthTokenService = oAuthTokenService;
         }
 
         public async Task RegisterNewUser(NewUser user)
@@ -62,7 +62,7 @@ namespace Padel.Login.Services
             _logger.LogDebug($"Created new user, UserId: {userId}");
         }
 
-        public async Task<OAuthToken> Login(LoginRequest request)
+        public async Task<OAuthToken> Login(LoginRequest request, ConnectionInfo connectionInfo)
         {
             var user = await _userRepository.FindByEmail(request.Email)!;
             if (user == null)
@@ -76,12 +76,8 @@ namespace Padel.Login.Services
                 _logger.LogError($"Password does not match with email: {request.Email}");
                 throw new PasswordDoesNotMatchException(request.Email);
             }
- 
-            // TODO, use a OAuthTokenService of even a OAuthTokenFactory
-            return new OAuthToken
-            {
-                AccessToken = await _jsonWebTokenService.CreateNewAccessToken(user)
-            };
+
+            return await _oAuthTokenService.CreateNewRefreshToken(user, connectionInfo);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Padel.Login;
 using Padel.Login.Exceptions;
 using Padel.Proto.User.V1;
 
@@ -19,14 +20,17 @@ namespace Padel.Runner.Controllers
         {
             try
             {
-                var res = await _userService.Login(request);
-                return new LoginResponse {Token = new OAuthToken
+                var res = await _userService.Login(request, new ConnectionInfo {Ip = context.Peer});
+                return new LoginResponse
                 {
-                    Expires = res.Expires.ToUnixTimeSeconds(),
-                    Type = OAuthToken.Types.TokenType.Bearer,
-                    AccessToken = res.AccessToken,
-                    RefreshToken = res.RefreshToken
-                }};
+                    Token = new OAuthToken
+                    {
+                        Expires = res.Expires.ToUnixTimeSeconds(),
+                        Type = OAuthToken.Types.TokenType.Bearer,
+                        AccessToken = res.AccessToken,
+                        RefreshToken = res.RefreshToken
+                    }
+                };
             }
             catch (EmailDoesNotExistsException)
             {
@@ -41,7 +45,6 @@ namespace Padel.Runner.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-         
         }
 
         public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
