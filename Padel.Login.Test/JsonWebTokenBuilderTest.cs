@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FakeItEasy;
+using Padel.Login.JsonWebToken;
 using Padel.Login.Services;
 using Xunit;
 

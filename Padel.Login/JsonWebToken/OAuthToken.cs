@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Login
+namespace Padel.Login.JsonWebToken
 {
     public class OAuthToken
     {

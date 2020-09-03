@@ -1,5 +1,6 @@
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Padel.Login.JsonWebToken;
 using Padel.Login.Repositories;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
@@ -24,6 +25,7 @@ namespace Padel.Login
             builder.RegisterType<DatabaseConnectionFactory>().As<IDatabaseConnectionFactory>();
             builder.RegisterType<KeyLoader>().As<IKeyLoader>();
             builder.RegisterType<FileService>().As<IFileService>();
+            builder.RegisterType<JsonWebTokenBuilder>().As<IJsonWebTokenBuilder>();
             
 //             #region Services
 //
