@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
-using Padel.Login.JsonWebToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
+using Padel.Login.Services.JsonWebToken;
 using Xunit;
 using User = Padel.Login.Repositories.User.User;
 

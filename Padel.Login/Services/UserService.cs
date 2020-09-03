@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
-using Padel.Login.JsonWebToken;
 using Padel.Login.Repositories.User;
+using Padel.Login.Services.JsonWebToken;
 using Padel.Proto.User.V1;
 using User = Padel.Login.Repositories.User.User;
 
@@ -75,7 +75,7 @@ namespace Padel.Login.Services
                 _logger.LogError($"Password does not match with email: {request.Email}");
                 throw new PasswordDoesNotMatchException(request.Email);
             }
-
+ 
             // TODO, use a OAuthTokenService of even a OAuthTokenFactory
             return new OAuthToken
             {

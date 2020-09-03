@@ -71,6 +71,7 @@ namespace Padel.Login.Test
                 Email = payload.User.Email,
                 Password = payload.User.Password
             });
+            // TODO CHECK THAT WE RECEIVE A JWT TOKEN AND REFRESH TOKEN!
             Assert.True(res.Success);
         }
 

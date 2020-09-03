@@ -1,10 +1,11 @@
 using System;
 using Autofac;
 using Microsoft.Extensions.Configuration;
-using Padel.Login.JsonWebToken;
 using Padel.Login.Repositories;
+using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
+using Padel.Login.Services.JsonWebToken;
 
 namespace Padel.Login
 {
@@ -19,8 +20,8 @@ namespace Padel.Login
 
         protected override void Load(ContainerBuilder builder)
         {
-
             builder.RegisterType<UserRepository>().As<IUserRepository>();
+            builder.RegisterType<RefreshTokenRepository>().As<IRefreshTokenRepository>();
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<PasswordService>().As<IPasswordService>();
             builder.RegisterType<DatabaseConnectionFactory>().As<IDatabaseConnectionFactory>();
@@ -28,6 +29,7 @@ namespace Padel.Login
             builder.RegisterType<FileService>().As<IFileService>();
             builder.RegisterType<JsonWebTokenBuilder>().As<IJsonWebTokenBuilder>();
             builder.RegisterType<JsonWebTokenService>().As<IJsonWebTokenService>();
+            builder.RegisterType<OAuthTokenService>().As<IOAuthTokenService>();
 
             builder.RegisterInstance(new JsonWebTokenServiceOptions {LifeSpan = TimeSpan.FromMinutes(30)}).AsSelf();
 

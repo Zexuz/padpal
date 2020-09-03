@@ -30,7 +30,7 @@ namespace Padel.Login.Migrations
                 .WithColumn("ValidTo").AsDateTimeOffset().NotNullable()
                 .WithColumn("Created").AsDateTimeOffset().NotNullable()
                 .WithColumn("LastUsed").AsDateTimeOffset().NotNullable()
-                .WithColumn("IdDisabled").AsBoolean().WithDefaultValue(false).NotNullable()
+                .WithColumn("IsDisabled").AsBoolean().WithDefaultValue(false).NotNullable()
                 .WithColumn("DisabledWhen").AsDateTimeOffset().Nullable()
                 .WithColumn("IssuedFromIp").AsString(17).NotNullable()
                 .WithColumn("LastUsedFromIp").AsString(17).NotNullable();

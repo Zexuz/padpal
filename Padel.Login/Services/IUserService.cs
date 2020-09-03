@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Padel.Login.JsonWebToken;
+using Padel.Login.Services.JsonWebToken;
 using Padel.Proto.User.V1;
 
 namespace Padel.Login.Services

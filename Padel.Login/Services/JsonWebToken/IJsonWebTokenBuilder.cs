@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Padel.Login.JsonWebToken
+namespace Padel.Login.Services.JsonWebToken
 {
     public interface IJsonWebTokenBuilder
     {
