@@ -4,14 +4,13 @@ using Grpc.Core;
 using Padel.Login.Exceptions;
 using Padel.Proto.User.V1;
 
-namespace Padel.Login.GrpcControllers
+namespace Padel.Runner.Controllers
 {
-    // TODO MOVE ALL PROTOSTUFF TO THE RUNNER PROJECT!
     public class UserControllerV1 : UserService.UserServiceBase
     {
-        private readonly Services.IUserService _userService;
+        private readonly Login.Services.IUserService _userService;
 
-        public UserControllerV1(Services.IUserService userService)
+        public UserControllerV1(Login.Services.IUserService userService)
         {
             _userService = userService;
         }

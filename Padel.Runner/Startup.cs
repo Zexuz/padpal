@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Padel.Login;
-using Padel.Login.GrpcControllers;
+using Padel.Runner.Controllers;
 
 namespace Padel.Runner
 {
