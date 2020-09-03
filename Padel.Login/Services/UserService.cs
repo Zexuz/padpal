@@ -5,6 +5,7 @@ using Padel.Login.Exceptions;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services.JsonWebToken;
 using Padel.Proto.User.V1;
+using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
 using User = Padel.Login.Repositories.User.User;
 
 namespace Padel.Login.Services

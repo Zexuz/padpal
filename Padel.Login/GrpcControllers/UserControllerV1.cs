@@ -6,6 +6,7 @@ using Padel.Proto.User.V1;
 
 namespace Padel.Login.GrpcControllers
 {
+    // TODO MOVE ALL PROTOSTUFF TO THE RUNNER PROJECT!
     public class UserControllerV1 : UserService.UserServiceBase
     {
         private readonly Services.IUserService _userService;
@@ -19,16 +20,22 @@ namespace Padel.Login.GrpcControllers
         {
             try
             {
-                await _userService.Login(request);
-                return new LoginResponse {Success = true};
+                var res = await _userService.Login(request);
+                return new LoginResponse {Token = new OAuthToken
+                {
+                    Expires = res.Expires.ToUnixTimeSeconds(),
+                    Type = OAuthToken.Types.TokenType.Bearer,
+                    AccessToken = res.AccessToken,
+                    RefreshToken = res.RefreshToken
+                }};
             }
             catch (EmailDoesNotExistsException)
             {
-                return new LoginResponse{Success = false};
+                throw new RpcException(Status.DefaultCancelled);
             }
             catch (PasswordDoesNotMatchException)
             {
-                return new LoginResponse{Success = false};
+                throw new RpcException(Status.DefaultCancelled);
             }
             catch (Exception e)
             {

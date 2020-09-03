@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Padel.Login.Services.JsonWebToken;
 using Padel.Proto.User.V1;
+using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
 
 namespace Padel.Login.Services
 {

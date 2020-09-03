@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Proto.User.V1;
@@ -46,6 +47,7 @@ namespace Padel.Login.Test
         {
             var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
 
+            var expectedTokenLength = TimeSpan.FromMinutes(30);
             var payload = new RegisterRequest
             {
                 User = new User
@@ -64,15 +66,21 @@ namespace Padel.Login.Test
                 }
             };
 
-            await userServiceClient.RegisterAsync(payload);
-
-            var res = await userServiceClient.LoginAsync(new LoginRequest
+            var loginPayload = new LoginRequest
             {
                 Email = payload.User.Email,
                 Password = payload.User.Password
-            });
-            // TODO CHECK THAT WE RECEIVE A JWT TOKEN AND REFRESH TOKEN!
-            Assert.True(res.Success);
+            };
+
+            await userServiceClient.RegisterAsync(payload);
+            var res = await userServiceClient.LoginAsync(loginPayload);
+
+            var timeRange = DateTimeOffset.FromUnixTimeSeconds(res.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
+
+            // TODO Verify that these tokens work. One by getting a new access token, and another by doing something, like getting the current user info?
+            Assert.True(timeRange                     > TimeSpan.FromSeconds(10));
+            Assert.True(res.Token.RefreshToken.Length > 60);
+            Assert.True(res.Token.AccessToken.Length > 60);
         }
 
         [Fact]
@@ -100,12 +108,11 @@ namespace Padel.Login.Test
 
             await userServiceClient.RegisterAsync(payload);
 
-            var res = await userServiceClient.LoginAsync(new LoginRequest
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await userServiceClient.LoginAsync(new LoginRequest
             {
                 Email = payload.User.Email,
                 Password = "some other password"
-            });
-            Assert.False(res.Success);
+            }));
         }
 
         [Fact]
@@ -113,12 +120,11 @@ namespace Padel.Login.Test
         {
             var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
 
-            var res = await userServiceClient.LoginAsync(new LoginRequest
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await userServiceClient.LoginAsync(new LoginRequest
             {
                 Email = "email_does_not_exists",
                 Password = "some other password"
-            });
-            Assert.False(res.Success);
+            }));
         }
 
         [Fact]

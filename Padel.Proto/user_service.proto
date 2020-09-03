@@ -16,8 +16,20 @@ message LoginRequest {
     string password = 2;
 }
 
+message OAuthToken {
+    string accessToken = 1;
+    int64 expires = 2;
+    string refreshToken = 3;
+    TokenType type = 4;
+
+    enum TokenType {
+        Unknown = 0;
+        Bearer = 1;
+    }
+}
+
 message LoginResponse {
-    bool success = 1;
+    OAuthToken token = 1;
 }
 
 message User {
