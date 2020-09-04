@@ -11,14 +11,14 @@ namespace Padel.Login.Test.IntegrationTests
 {
     public class AuthServiceIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly AuthService.AuthServiceClient _authServiceClient;
-        private readonly UserService.UserServiceClient _userServiceClient;
+        private readonly AuthService.AuthServiceClient               _authServiceClient;
+        private readonly Proto.User.V1.UserService.UserServiceClient _userServiceClient;
 
         public AuthServiceIntegrationTest(CustomWebApplicationFactory<Startup> factory)
         {
             var channel = factory.CreateGrpcChannel();
             _authServiceClient = new AuthService.AuthServiceClient(channel);
-            _userServiceClient = new UserService.UserServiceClient(channel);
+            _userServiceClient = new Proto.User.V1.UserService.UserServiceClient(channel);
         }
 
         [Fact]

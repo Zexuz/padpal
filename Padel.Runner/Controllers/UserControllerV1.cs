@@ -1,35 +1,40 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Padel.Login.Repositories.User;
 using Padel.Proto.User.V1;
+using Padel.Runner.Extensions;
 
 namespace Padel.Runner.Controllers
 {
     // TODO Rename this conteoller to MeController, b/c this is where we fetch data about the current user?
+    // Lets combine Me and UserService untill we know how it will be implemented
     // THere will be another UserController where we can fetch data about other users
     [Authorize]
     public class UserControllerV1 : UserService.UserServiceBase
     {
-        [Authorize]
-        public override Task<MeResponse> Me(MeRequest request, ServerCallContext context)
+        private readonly IUserRepository _userRepository;
+
+        public UserControllerV1(IUserRepository userRepository)
         {
-            var httpContext = context.GetHttpContext();
-            var user = httpContext.User;
-            var claims = user.Claims.ToList();
-            Console.WriteLine(httpContext.User);
-            Console.WriteLine(context.AuthContext.PeerIdentityPropertyName);
-            return Task.FromResult(new MeResponse
+            _userRepository = userRepository;
+        }
+
+        [Authorize]
+        public override async Task<MeResponse> Me(MeRequest request, ServerCallContext context)
+        {
+            var userId = context.GetUserId();
+            var user = await _userRepository.Get(userId);
+            return new MeResponse
             {
                 Me = new Me
                 {
-                    Email = "someEmail@asdc.,com",
-                    Username = "use4rname",
-                    FirstName = "FIrasr",
-                    LastName = "lasrt"
+                    Email = user.Email,
+                    Username = user.Username,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
                 }
-            });
+            };
         }
     }
 }
