@@ -24,7 +24,7 @@ namespace Padel.Runner.Controllers
         {
             try
             {
-                var res = await _authService.Login(request, new ConnectionInfo {Ip = context.GetIpV4FromPeer()});
+                var res = await _authService.Login(request, new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()});
                 return new LoginResponse
                 {
                     Token = new OAuthToken

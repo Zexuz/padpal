@@ -1,7 +1,7 @@
 using System;
 using Grpc.Core;
 
-namespace Padel.Runner
+namespace Padel.Runner.Extensions
 {
     public static class ServerCallContextExtension
     {
