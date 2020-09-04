@@ -3,24 +3,22 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
 using Padel.Login.Repositories.User;
-using Padel.Login.Services.JsonWebToken;
-using Padel.Proto.User.V1;
+using Padel.Proto.Auth.V1;
 using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
-using User = Padel.Login.Repositories.User.User;
 
 namespace Padel.Login.Services
 {
-    public class UserService : IUserService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository      _userRepository;
         private readonly IPasswordService     _passwordService;
-        private readonly ILogger<UserService> _logger;
+        private readonly ILogger<AuthService> _logger;
         private readonly IOAuthTokenService   _oAuthTokenService;
 
-        public UserService(
+        public AuthService(
             IUserRepository userRepository,
             IPasswordService passwordService,
-            ILogger<UserService> logger,
+            ILogger<AuthService> logger,
             IOAuthTokenService oAuthTokenService
         )
         {

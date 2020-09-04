@@ -22,7 +22,7 @@ namespace Padel.Login
         {
             builder.RegisterType<UserRepository>().As<IUserRepository>();
             builder.RegisterType<RefreshTokenRepository>().As<IRefreshTokenRepository>();
-            builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<AuthService>().As<IAuthService>();
             builder.RegisterType<PasswordService>().As<IPasswordService>();
             builder.RegisterType<DatabaseConnectionFactory>().As<IDatabaseConnectionFactory>();
             builder.RegisterType<KeyLoader>().As<IKeyLoader>();

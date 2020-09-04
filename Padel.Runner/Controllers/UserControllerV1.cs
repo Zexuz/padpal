@@ -3,24 +3,24 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Login;
 using Padel.Login.Exceptions;
-using Padel.Proto.User.V1;
+using Padel.Proto.Auth.V1;
 
 namespace Padel.Runner.Controllers
 {
-    public class UserControllerV1 : UserService.UserServiceBase
+    public class UserControllerV1 : AuthService.AuthServiceBase
     {
-        private readonly Login.Services.IUserService _userService;
+        private readonly Login.Services.IAuthService _authService;
 
-        public UserControllerV1(Login.Services.IUserService userService)
+        public UserControllerV1(Login.Services.IAuthService authService)
         {
-            _userService = userService;
+            _authService = authService;
         }
 
         public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
         {
             try
             {
-                var res = await _userService.Login(request, new ConnectionInfo {Ip = context.GetIpV4FromPeer()});
+                var res = await _authService.Login(request, new ConnectionInfo {Ip = context.GetIpV4FromPeer()});
                 return new LoginResponse
                 {
                     Token = new OAuthToken
@@ -51,7 +51,7 @@ namespace Padel.Runner.Controllers
         {
             try
             {
-                await _userService.RegisterNewUser(request.User);
+                await _authService.RegisterNewUser(request.User);
             }
             catch (EmailIsAlreadyTakenException)
             {

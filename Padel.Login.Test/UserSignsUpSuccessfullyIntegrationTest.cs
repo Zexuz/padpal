@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Padel.Proto.User.V1;
+using Padel.Proto.Auth.V1;
 using Padel.Runner;
 using Xunit;
 
@@ -9,44 +9,16 @@ namespace Padel.Login.Test
 {
     public class UserSignsUpSuccessfullyIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthService.AuthServiceClient _authServiceClient;
 
         public UserSignsUpSuccessfullyIntegrationTest(CustomWebApplicationFactory<Startup> factory)
         {
-            _factory = factory;
-        }
-
-        [Fact]
-        public async Task SignsUpSuccess()
-        {
-            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
-
-            var payload = new RegisterRequest
-            {
-                User = new NewUser
-                {
-                    Username = "robin123",
-                    Email = "robin123",
-                    Password = "Hello4",
-                    FirstName = "Hello4",
-                    LastName = "Hello4",
-                    DateOfBirth = new NewUser.Types.Date
-                    {
-                        Year = 10,
-                        Month = 10,
-                        Day = 10
-                    }
-                }
-            };
-
-            await userServiceClient.RegisterAsync(payload);
+            _authServiceClient = new AuthService.AuthServiceClient(factory.CreateGrpcChannel());
         }
 
         [Fact]
         public async Task LoginsAfterSigningUpSuccessful()
         {
-            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
-
             var expectedTokenLength = TimeSpan.FromMinutes(30);
             var payload = new RegisterRequest
             {
@@ -72,8 +44,8 @@ namespace Padel.Login.Test
                 Password = payload.User.Password
             };
 
-            await userServiceClient.RegisterAsync(payload);
-            var res = await userServiceClient.LoginAsync(loginPayload);
+            await _authServiceClient.RegisterAsync(payload);
+            var res = await _authServiceClient.LoginAsync(loginPayload);
 
             var timeRange = DateTimeOffset.FromUnixTimeSeconds(res.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
 
@@ -86,8 +58,6 @@ namespace Padel.Login.Test
         [Fact]
         public async Task LoginsFailsWithBadCredentialsAfterSigningUpSuccessful()
         {
-            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
-
             var payload = new RegisterRequest
             {
                 User = new NewUser
@@ -106,9 +76,9 @@ namespace Padel.Login.Test
                 }
             };
 
-            await userServiceClient.RegisterAsync(payload);
+            await _authServiceClient.RegisterAsync(payload);
 
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await userServiceClient.LoginAsync(new LoginRequest
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.LoginAsync(new LoginRequest
             {
                 Email = payload.User.Email,
                 Password = "some other password"
@@ -118,9 +88,7 @@ namespace Padel.Login.Test
         [Fact]
         public async Task LoginsFailsWithBadCredentials()
         {
-            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
-
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await userServiceClient.LoginAsync(new LoginRequest
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.LoginAsync(new LoginRequest
             {
                 Email = "email_does_not_exists",
                 Password = "some other password"
@@ -130,8 +98,6 @@ namespace Padel.Login.Test
         [Fact]
         public async Task ThrowsErrorWhenUsernameIsTaken()
         {
-            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
-
             var payload = new RegisterRequest
             {
                 User = new NewUser
@@ -150,19 +116,17 @@ namespace Padel.Login.Test
                 }
             };
 
-            await userServiceClient.RegisterAsync(payload);
+            await _authServiceClient.RegisterAsync(payload);
 
             payload.User.Email = "someOtherEmail";
 
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await userServiceClient.RegisterAsync(payload));
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.RegisterAsync(payload));
             Assert.Equal("username-already-taken", ex.Trailers.GetValue("x-custom-error"));
         }
 
         [Fact]
         public async Task ThrowsErrorWhenEmailIsTaken()
         {
-            var userServiceClient = new UserService.UserServiceClient(_factory.CreateGrpcChannel());
-
             var payload = new RegisterRequest
             {
                 User = new NewUser
@@ -181,11 +145,11 @@ namespace Padel.Login.Test
                 }
             };
 
-            await userServiceClient.RegisterAsync(payload);
+            await _authServiceClient.RegisterAsync(payload);
 
             payload.User.Username = "someNewUsername";
 
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await userServiceClient.RegisterAsync(payload));
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.RegisterAsync(payload));
             Assert.Equal("email-already-taken", ex.Trailers.GetValue("x-custom-error"));
         }
     }

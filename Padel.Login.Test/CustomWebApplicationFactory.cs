@@ -18,19 +18,19 @@ namespace Padel.Login.Test
     
     public class FakeRemoteIpAddressMiddleware
     {
-        private readonly RequestDelegate next;
-        private readonly IPAddress       fakeIpAddress = IPAddress.Parse("127.168.1.32");
+        private readonly RequestDelegate _next;
+        private readonly IPAddress       _fakeIpAddress = IPAddress.Parse("127.168.1.32");
 
         public FakeRemoteIpAddressMiddleware(RequestDelegate next)
         {
-            this.next = next;
+            this._next = next;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
-            httpContext.Connection.RemoteIpAddress = fakeIpAddress;
+            httpContext.Connection.RemoteIpAddress = _fakeIpAddress;
 
-            await this.next(httpContext);
+            await this._next(httpContext);
         }
     }
     
@@ -48,13 +48,13 @@ namespace Padel.Login.Test
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
-        private static Random random = new Random();
+        private static Random _random = new Random();
 
         public static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+                .Select(s => s[_random.Next(s.Length)]).ToArray());
         }
 
         protected override IHostBuilder CreateHostBuilder()

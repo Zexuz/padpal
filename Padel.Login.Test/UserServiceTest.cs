@@ -4,33 +4,32 @@ using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
-using Padel.Login.Services.JsonWebToken;
-using Padel.Proto.User.V1;
+using Padel.Proto.Auth.V1;
 using Xunit;
 using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
 using User = Padel.Login.Repositories.User.User;
-using UserService = Padel.Login.Services.UserService;
+using AuthService = Padel.Login.Services.AuthService;
 
 namespace Padel.Login.Test
 {
-    public class UserServiceTest
+    public class AuthServiceTest
     {
-        private readonly ILogger<UserService> _fakeLogger;
+        private readonly ILogger<AuthService> _fakeLogger;
         private readonly IUserRepository      _fakeUserRepo;
         private readonly IPasswordService     _fakePasswordService;
         private readonly IOAuthTokenService   _fakeAuthTokenService;
 
 
-        private readonly UserService _sut;
+        private readonly AuthService _sut;
 
-        public UserServiceTest()
+        public AuthServiceTest()
         {
-            _fakeLogger = A.Fake<ILogger<UserService>>();
+            _fakeLogger = A.Fake<ILogger<AuthService>>();
             _fakeUserRepo = A.Fake<IUserRepository>();
             _fakePasswordService = A.Fake<IPasswordService>();
             _fakeAuthTokenService = A.Fake<IOAuthTokenService>();
 
-            _sut = new UserService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService);
+            _sut = new AuthService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService);
         }
 
         [Fact]
@@ -55,7 +54,7 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(new User {PasswordHash = "somePasswordHash"}));
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(false);
 
-            var loginRequest = new Proto.User.V1.LoginRequest
+            var loginRequest = new LoginRequest
             {
                 Email = "someEmail",
                 Password = "plainPassword"
