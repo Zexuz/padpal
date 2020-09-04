@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
+using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Proto.Auth.V1;
 using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
@@ -19,7 +20,8 @@ namespace Padel.Login.Services
             IUserRepository userRepository,
             IPasswordService passwordService,
             ILogger<AuthService> logger,
-            IOAuthTokenService oAuthTokenService
+            IOAuthTokenService oAuthTokenService,
+            IRefreshTokenRepository fakeRefreshTokenRepository
         )
         {
             _userRepository = userRepository;
@@ -76,6 +78,11 @@ namespace Padel.Login.Services
             }
 
             return await _oAuthTokenService.CreateNewRefreshToken(user, connectionInfo);
+        }
+
+        public async Task<OAuthToken> RefreshAccessToken(int userId, string refreshToken)
+        {
+            return await _oAuthTokenService.CreateNewAccessToken(userId, refreshToken);
         }
     }
 }

@@ -1,7 +1,9 @@
+using System;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
+using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Padel.Proto.Auth.V1;
@@ -14,10 +16,11 @@ namespace Padel.Login.Test
 {
     public class AuthServiceTest
     {
-        private readonly ILogger<AuthService> _fakeLogger;
-        private readonly IUserRepository      _fakeUserRepo;
-        private readonly IPasswordService     _fakePasswordService;
-        private readonly IOAuthTokenService   _fakeAuthTokenService;
+        private readonly ILogger<AuthService>    _fakeLogger;
+        private readonly IUserRepository         _fakeUserRepo;
+        private readonly IPasswordService        _fakePasswordService;
+        private readonly IOAuthTokenService      _fakeAuthTokenService;
+        private readonly IRefreshTokenRepository _fakeRefreshTokenRepository;
 
 
         private readonly AuthService _sut;
@@ -28,8 +31,9 @@ namespace Padel.Login.Test
             _fakeUserRepo = A.Fake<IUserRepository>();
             _fakePasswordService = A.Fake<IPasswordService>();
             _fakeAuthTokenService = A.Fake<IOAuthTokenService>();
+            _fakeRefreshTokenRepository = A.Fake<IRefreshTokenRepository>();
 
-            _sut = new AuthService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService);
+            _sut = new AuthService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService, _fakeRefreshTokenRepository);
         }
 
         [Fact]
@@ -198,6 +202,18 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s.Equals(user.Email)))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>.That.Matches(s => s.Equals(username)))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakeUserRepo.Insert(A<User>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public void Should_throw_exception_if_invalid_refreshToken()
+        {
+            Assert.False(true);
+        }
+
+        [Fact]
+        public void Should_throw_exception_if_refreshToken_is_revoked()
+        {
+            Assert.False(true);
         }
     }
 }

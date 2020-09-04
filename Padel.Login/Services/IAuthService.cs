@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Padel.Login.Repositories.User;
 using Padel.Proto.Auth.V1;
 using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
 
@@ -8,5 +9,6 @@ namespace Padel.Login.Services
     {
         Task RegisterNewUser(NewUser user);
         Task<OAuthToken> Login(LoginRequest request, ConnectionInfo info);
+        Task<OAuthToken> RefreshAccessToken(int userId, string refreshToken);
     }
 }

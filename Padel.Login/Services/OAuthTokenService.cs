@@ -42,9 +42,25 @@ namespace Padel.Login.Services
             };
         }
 
-        public Task<OAuthToken> CreateNewAccessToken(User user, string refreshToken)
+        public async Task<OAuthToken> CreateNewAccessToken(int userId, string refreshToken)
         {
-            throw new System.NotImplementedException();
+            var info = new ConnectionInfo{Ip = "192.168.0.1"};
+            var dbToken = await _refreshTokenRepository.FindToken(userId, refreshToken, info);
+
+            if (dbToken.IsDisabled)
+            {
+                throw new NotImplementedException();
+            }
+
+            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(new User {Id = userId}); // TODO REFACTOR! 
+            await _refreshTokenRepository.UpdateLastUsed(userId, refreshToken, info);
+            return new OAuthToken
+            {
+                Expires = expires,
+                Type = OAuthToken.OAuthTokenType.Bearer,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
         }
 
         private RefreshToken GenerateRefreshToken(User user, string userIp)

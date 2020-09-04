@@ -36,9 +36,10 @@ namespace Padel.Login.Test
 
             A.CallTo(() => _fakeRandom.GenerateSecureString(A<int>._)).Returns("someRandomString");
             A.CallTo(() => _fakeRefreshTokenRepository.Insert(A<RefreshToken>._)).Returns(Task.FromResult(5));
-            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>._)).Returns(("access-token", DateTimeOffset.Parse("2020-09-03 20:07")));
+            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>._))
+                .Returns(("access-token", DateTimeOffset.Parse("2020-09-03 20:07")));
 
-            var authToken = await _sut.CreateNewRefreshToken(user, new ConnectionInfo{Ip = "192.168.1.0"});
+            var authToken = await _sut.CreateNewRefreshToken(user, new ConnectionInfo {Ip = "192.168.1.0"});
 
             Assert.Equal(OAuthToken.OAuthTokenType.Bearer, authToken.Type);
             Assert.Equal("access-token", authToken.AccessToken);
@@ -46,10 +47,37 @@ namespace Padel.Login.Test
             Assert.Equal(DateTimeOffset.Parse("2020-09-03 20:07"), authToken.Expires);
 
             A.CallTo(() => _fakeRefreshTokenRepository.Insert(A<RefreshToken>.That.Matches(token =>
-                token.UserId == 1374 &&
-                token.Token  == "someRandomString" &&
+                token.UserId         == 1374               &&
+                token.Token          == "someRandomString" &&
                 token.LastUsedFromIp == "192.168.1.0"
             ))).MustHaveHappenedOnceExactly();
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(99)]
+        public async Task Should_refresh_accessToken_with_valid_refreshToken(int userId)
+        {
+            const string refreshToken = "someToken";
+
+            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>.That.Matches(user => user.Id == userId)))
+                .Returns(Task.FromResult(("someNewAccessToken", DateTimeOffset.UtcNow)));
+            A.CallTo(() => _fakeRefreshTokenRepository.FindToken(userId, refreshToken, A<ConnectionInfo>._)).Returns(Task.FromResult(new RefreshToken
+            {
+                IsDisabled = false,
+            }));
+
+            var res = await _sut.CreateNewAccessToken(userId, refreshToken);
+
+            Assert.Equal("someNewAccessToken", res.AccessToken);
+            Assert.Equal(refreshToken, res.RefreshToken);
+
+            A.CallTo(() => _fakeRefreshTokenRepository.UpdateLastUsed(
+                userId,
+                refreshToken,
+                A<ConnectionInfo>.That.Matches(info => info.Ip == "192.168.0.1"
+                )
+            )).MustHaveHappenedOnceExactly();
         }
     }
 }

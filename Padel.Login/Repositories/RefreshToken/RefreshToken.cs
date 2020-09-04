@@ -6,6 +6,7 @@ namespace Padel.Login.Repositories.RefreshToken
     [Table("[RefreshToken]")]
     public class RefreshToken
     {
+        // TODO add constraint that User + Token should be unique!!!
         public int Id { get; set; }
         public int UserId { get; set; }
         public string Token { get; set; }
