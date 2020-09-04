@@ -11,7 +11,7 @@ namespace Padel.Login.Test.IntegrationTests
 {
     public class AuthServiceIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly AuthService.AuthServiceClient               _authServiceClient;
+        private readonly AuthService.AuthServiceClient _authServiceClient;
         private readonly UserService.UserServiceClient _userServiceClient;
 
         public AuthServiceIntegrationTest(CustomWebApplicationFactory<Startup> factory)
@@ -57,8 +57,11 @@ namespace Padel.Login.Test.IntegrationTests
             Assert.Equal("log", meRes.Me.FirstName);
             Assert.Equal("in", meRes.Me.LastName);
 
+            // The JWT genreator will generate the same token twice sine there are no time between call
+            await Task.Delay(1000);
+
             var newAccessTokenRes = await _authServiceClient.GetNewAccessTokenAsync(new GetNewAccessTokenRequest
-                {RefreshToken = loginResponse.Token.RefreshToken});
+                {RefreshToken = loginResponse.Token.RefreshToken}, CreateAuthMetadata(loginResponse.Token));
             Assert.NotEqual(newAccessTokenRes.Token.AccessToken, loginResponse.Token.AccessToken);
             Assert.Equal(newAccessTokenRes.Token.RefreshToken, loginResponse.Token.RefreshToken);
 

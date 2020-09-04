@@ -35,9 +35,10 @@ namespace Padel.Login.Repositories
             throw new System.NotImplementedException();
         }
 
-        public bool Update(T obj)
+        public async Task<bool> UpdateAsync(T obj)
         {
-            throw new System.NotImplementedException();
+            using var conn = await ConnectionFactory.GetNewOpenConnection();
+            return await conn.UpdateAsync(obj);
         }
 
         public bool Update(IEnumerable<T> list)

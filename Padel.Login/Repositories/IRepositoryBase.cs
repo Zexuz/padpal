@@ -9,7 +9,7 @@ namespace Padel.Login.Repositories
         IEnumerable<T> GetAll();
         Task<int> Insert(T obj);
         int Insert(IEnumerable<T> list);
-        bool Update(T obj);
+        Task<bool> UpdateAsync(T obj);
         bool Update(IEnumerable<T> list);
         bool Delete(T obj);
         bool Delete(IEnumerable<T> list);

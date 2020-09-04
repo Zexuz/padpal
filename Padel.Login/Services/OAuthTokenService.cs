@@ -44,7 +44,7 @@ namespace Padel.Login.Services
 
         public async Task<OAuthToken> CreateNewAccessToken(int userId, string refreshToken, ConnectionInfo info)
         {
-            var dbToken = await _refreshTokenRepository.FindToken(userId, refreshToken, info);
+            var dbToken = await _refreshTokenRepository.FindToken(userId, refreshToken);
 
             if (dbToken.IsDisabled)
             {
@@ -52,7 +52,12 @@ namespace Padel.Login.Services
             }
 
             var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(new User {Id = userId}); // TODO REFACTOR! 
-            await _refreshTokenRepository.UpdateLastUsed(userId, refreshToken, info);
+            
+            dbToken.LastUsed = DateTimeOffset.UtcNow;
+            dbToken.LastUsedFromIp = info.Ip;
+            
+            await _refreshTokenRepository.UpdateAsync(dbToken);
+
             return new OAuthToken
             {
                 Expires = expires,
