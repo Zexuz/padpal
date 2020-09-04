@@ -42,9 +42,8 @@ namespace Padel.Login.Services
             };
         }
 
-        public async Task<OAuthToken> CreateNewAccessToken(int userId, string refreshToken)
+        public async Task<OAuthToken> CreateNewAccessToken(int userId, string refreshToken, ConnectionInfo info)
         {
-            var info = new ConnectionInfo{Ip = "192.168.0.1"};
             var dbToken = await _refreshTokenRepository.FindToken(userId, refreshToken, info);
 
             if (dbToken.IsDisabled)

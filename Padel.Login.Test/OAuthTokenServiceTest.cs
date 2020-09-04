@@ -67,7 +67,7 @@ namespace Padel.Login.Test
                 IsDisabled = false,
             }));
 
-            var res = await _sut.CreateNewAccessToken(userId, refreshToken);
+            var res = await _sut.CreateNewAccessToken(userId, refreshToken, new ConnectionInfo {Ip = "192.168.0.1"});
 
             Assert.Equal("someNewAccessToken", res.AccessToken);
             Assert.Equal(refreshToken, res.RefreshToken);

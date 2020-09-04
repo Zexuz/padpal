@@ -12,6 +12,6 @@ namespace Padel.Login.Services
         // TODO Replace User user -> int userId
         Task<OAuthToken> CreateNewRefreshToken(User user, ConnectionInfo connectionInfo);
 
-        Task<OAuthToken> CreateNewAccessToken(int userId, string refreshToken);
+        Task<OAuthToken> CreateNewAccessToken(int userId, string refreshToken, ConnectionInfo info);
     }
 }
