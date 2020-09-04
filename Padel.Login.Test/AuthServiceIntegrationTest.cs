@@ -7,11 +7,11 @@ using Xunit;
 
 namespace Padel.Login.Test
 {
-    public class UserSignsUpSuccessfullyIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class AuthServiceIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly AuthService.AuthServiceClient _authServiceClient;
 
-        public UserSignsUpSuccessfullyIntegrationTest(CustomWebApplicationFactory<Startup> factory)
+        public AuthServiceIntegrationTest(CustomWebApplicationFactory<Startup> factory)
         {
             _authServiceClient = new AuthService.AuthServiceClient(factory.CreateGrpcChannel());
         }

@@ -46,7 +46,7 @@ namespace Padel.Runner
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<UserControllerV1>();
+                endpoints.MapGrpcService<AuthControllerV1>();
             });
 
             new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();

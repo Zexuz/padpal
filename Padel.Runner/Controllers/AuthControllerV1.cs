@@ -7,11 +7,12 @@ using Padel.Proto.Auth.V1;
 
 namespace Padel.Runner.Controllers
 {
-    public class UserControllerV1 : AuthService.AuthServiceBase
+    // TODO Should be UserAuthController since we are auth the user here.
+    public class AuthControllerV1 : AuthService.AuthServiceBase
     {
         private readonly Login.Services.IAuthService _authService;
 
-        public UserControllerV1(Login.Services.IAuthService authService)
+        public AuthControllerV1(Login.Services.IAuthService authService)
         {
             _authService = authService;
         }
