@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Login.Test.IntegrationTests.Helpers;
 using Padel.Proto.Auth.V1;
+using Padel.Proto.User.V1;
 using Padel.Runner;
 using Xunit;
 
@@ -11,22 +12,27 @@ namespace Padel.Login.Test.IntegrationTests
     public class AuthServiceIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly AuthService.AuthServiceClient _authServiceClient;
+        private readonly UserService.UserServiceClient _userServiceClient;
 
         public AuthServiceIntegrationTest(CustomWebApplicationFactory<Startup> factory)
         {
-            _authServiceClient = new AuthService.AuthServiceClient(factory.CreateGrpcChannel());
+            var channel = factory.CreateGrpcChannel();
+            _authServiceClient = new AuthService.AuthServiceClient(channel);
+            _userServiceClient = new UserService.UserServiceClient(channel);
         }
 
         [Fact]
         public async Task LoginsAfterSigningUpSuccessful()
         {
+            static Metadata CreateAuthMetadata(OAuthToken oAuthToken) => new Metadata {{"Authorization", $"Bearer {oAuthToken.AccessToken}"}};
+
             var expectedTokenLength = TimeSpan.FromMinutes(30);
             var payload = new RegisterRequest
             {
                 User = new NewUser
                 {
                     Username = "login1",
-                    Email = "login1",
+                    Email = "login@padpal.io",
                     Password = "loggin1_password",
                     FirstName = "log",
                     LastName = "in",
@@ -39,21 +45,28 @@ namespace Padel.Login.Test.IntegrationTests
                 }
             };
 
-            var loginPayload = new LoginRequest
-            {
-                Email = payload.User.Email,
-                Password = payload.User.Password
-            };
-
             await _authServiceClient.RegisterAsync(payload);
-            var res = await _authServiceClient.LoginAsync(loginPayload);
+            var loginResponse = await _authServiceClient.LoginAsync(new LoginRequest {Email = payload.User.Email, Password = payload.User.Password});
 
-            var timeRange = DateTimeOffset.FromUnixTimeSeconds(res.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
+            var timeRange = DateTimeOffset.FromUnixTimeSeconds(loginResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
+            Assert.True(timeRange < TimeSpan.FromSeconds(10));
 
-            // TODO Verify that these tokens work. One by getting a new access token, and another by doing something, like getting the current user info?
-            Assert.True(timeRange                     < TimeSpan.FromSeconds(10));
-            Assert.True(res.Token.RefreshToken.Length > 60);
-            Assert.True(res.Token.AccessToken.Length  > 60);
+            var meRes = await _userServiceClient.MeAsync(new MeRequest { }, CreateAuthMetadata(loginResponse.Token));
+            Assert.Equal("login1", meRes.Me.Username);
+            Assert.Equal("login@padpal.io", meRes.Me.Email);
+            Assert.Equal("log", meRes.Me.FirstName);
+            Assert.Equal("in", meRes.Me.LastName);
+
+            var newAccessTokenRes = await _authServiceClient.GetNewAccessTokenAsync(new GetNewAccessTokenRequest
+                {RefreshToken = loginResponse.Token.RefreshToken});
+            Assert.NotEqual(newAccessTokenRes.Token.AccessToken, loginResponse.Token.AccessToken);
+            Assert.Equal(newAccessTokenRes.Token.RefreshToken, loginResponse.Token.RefreshToken);
+
+            var meResWithNewAccessToken = await _userServiceClient.MeAsync(new MeRequest { }, CreateAuthMetadata(newAccessTokenRes.Token));
+            Assert.Equal("login1", meResWithNewAccessToken.Me.Username);
+            Assert.Equal("login@padpal.io", meResWithNewAccessToken.Me.Email);
+            Assert.Equal("log", meResWithNewAccessToken.Me.FirstName);
+            Assert.Equal("in", meResWithNewAccessToken.Me.LastName);
         }
 
         [Fact]
