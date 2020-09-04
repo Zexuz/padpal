@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "Padel.Proto.User.V1";
+
+package user.v1;
+
+service UserService {
+    rpc Me (MeRequest) returns (MeResponse) {
+    }
+}
+
+message Me {
+    string username = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string email = 4;
+}
+
+message MeRequest {
+
+}
+
+message MeResponse {
+
+}

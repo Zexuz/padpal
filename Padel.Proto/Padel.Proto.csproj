@@ -16,6 +16,12 @@
 
     <ItemGroup>
         <Protobuf Include="**/*.proto" GrpcServices="Both" OutputDir="%(RelativeDir)" />
+        <Protobuf Update="user_service.proto">
+          <Access>Public</Access>
+          <ProtoCompile>True</ProtoCompile>
+          <CompileOutputs>True</CompileOutputs>
+          <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
     </ItemGroup>
 
 </Project>

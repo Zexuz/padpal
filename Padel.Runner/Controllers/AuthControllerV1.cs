@@ -8,6 +8,9 @@ using Padel.Proto.Auth.V1;
 namespace Padel.Runner.Controllers
 {
     // TODO Should be UserAuthController since we are auth the user here.
+    
+    // TODO Move all proto stufff here, and have a remapping of the objects to the domain layer
+    // The remapping class should also validate syntax, lenght and other stuff, this should be in the domain layer!
     public class AuthControllerV1 : AuthService.AuthServiceBase
     {
         private readonly Login.Services.IAuthService _authService;
