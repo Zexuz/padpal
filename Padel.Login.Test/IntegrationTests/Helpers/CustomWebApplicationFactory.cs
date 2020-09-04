@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Padel.Login.Test
+namespace Padel.Login.Test.IntegrationTests.Helpers
 {
     
     public class FakeRemoteIpAddressMiddleware

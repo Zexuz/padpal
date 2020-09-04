@@ -5,7 +5,7 @@ using Grpc.Net.Client;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Padel.Runner;
 
-namespace Padel.Login.Test
+namespace Padel.Login.Test.IntegrationTests.Helpers
 {
     public static class WebApplicationFactoryHelper
     {
