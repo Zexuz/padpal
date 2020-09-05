@@ -5,7 +5,7 @@ using Padel.Proto.User.V1;
 using Padel.Runner.Controllers;
 using Xunit;
 
-namespace Padel.Login.Test.Controllers
+namespace Padel.Runner.Test.Controllers
 {
     public class UserControllerV1Test: TestControllerBase
     {

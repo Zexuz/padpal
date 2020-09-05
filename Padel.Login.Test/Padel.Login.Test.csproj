@@ -5,8 +5,6 @@
         <LangVersion>8.0</LangVersion>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
-    
-    
 
     <PropertyGroup>
         <Nullable>enable</Nullable>
@@ -32,7 +30,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Padel.Login\Padel.Login.csproj" />
-      <ProjectReference Include="..\Padel.Runner\Padel.Runner.csproj" />
     </ItemGroup>
 
 </Project>

@@ -3,9 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Padel.Runner;
 
-namespace Padel.Login.Test.IntegrationTests.Helpers
+namespace Padel.Runner.Test.IntegrationTests.Helpers
 {
     public static class WebApplicationFactoryHelper
     {

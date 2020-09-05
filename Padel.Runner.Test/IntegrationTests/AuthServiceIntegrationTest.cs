@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Padel.Login.Test.IntegrationTests.Helpers;
 using Padel.Proto.Auth.V1;
 using Padel.Proto.User.V1;
-using Padel.Runner;
+using Padel.Runner.Test.IntegrationTests.Helpers;
 using Xunit;
 
-namespace Padel.Login.Test.IntegrationTests
+namespace Padel.Runner.Test.IntegrationTests
 {
     public class AuthServiceIntegrationTest : IClassFixture<CustomWebApplicationFactory<Startup>>
     {

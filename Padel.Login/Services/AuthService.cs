@@ -2,10 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
-using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
-using Padel.Proto.Auth.V1;
-using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
+using Padel.Login.Services.JsonWebToken;
 
 namespace Padel.Login.Services
 {
@@ -20,8 +18,7 @@ namespace Padel.Login.Services
             IUserRepository userRepository,
             IPasswordService passwordService,
             ILogger<AuthService> logger,
-            IOAuthTokenService oAuthTokenService,
-            IRefreshTokenRepository fakeRefreshTokenRepository
+            IOAuthTokenService oAuthTokenService
         )
         {
             _userRepository = userRepository;
@@ -47,7 +44,6 @@ namespace Padel.Login.Services
             }
 
             var hashedPassword = _passwordService.GenerateHashFromPlanText(user.Password);
-            var dateOfBirth = DateTime.Parse($"{user.DateOfBirth.Year}-{user.DateOfBirth.Month}-{user.DateOfBirth.Day}");
 
             var userId = await _userRepository.Insert(new User
             {
@@ -56,7 +52,7 @@ namespace Padel.Login.Services
                 PasswordHash = hashedPassword,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                DateOfBirth = dateOfBirth,
+                DateOfBirth = user.DateOfBirth,
                 Created = DateTimeOffset.UtcNow
             });
             _logger.LogDebug($"Created new user, UserId: {userId}");

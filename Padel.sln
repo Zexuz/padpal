@@ -2,11 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Login", "Padel.Login\Padel.Login.csproj", "{31DFD7CB-E143-4894-9B6E-47C3BF723A63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Proto", "Padel.Proto\Padel.Proto.csproj", "{D9D6867D-BDCD-429D-A195-9491D4034FB1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Runner", "Padel.Runner\Padel.Runner.csproj", "{CE275CC1-81A2-4467-BB83-35704F647957}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Login.Test", "Padel.Login.Test\Padel.Login.Test.csproj", "{ABB6C984-EA8D-4571-B74D-51D19D98AA91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Runner.Test", "Padel.Runner.Test\Padel.Runner.Test.csproj", "{34484CBF-AC47-45FB-ADE7-0C66758A3F79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,10 +18,6 @@ Global
 		{31DFD7CB-E143-4894-9B6E-47C3BF723A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31DFD7CB-E143-4894-9B6E-47C3BF723A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31DFD7CB-E143-4894-9B6E-47C3BF723A63}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9D6867D-BDCD-429D-A195-9491D4034FB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9D6867D-BDCD-429D-A195-9491D4034FB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9D6867D-BDCD-429D-A195-9491D4034FB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9D6867D-BDCD-429D-A195-9491D4034FB1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CE275CC1-81A2-4467-BB83-35704F647957}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CE275CC1-81A2-4467-BB83-35704F647957}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE275CC1-81A2-4467-BB83-35704F647957}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -30,5 +26,9 @@ Global
 		{ABB6C984-EA8D-4571-B74D-51D19D98AA91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABB6C984-EA8D-4571-B74D-51D19D98AA91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABB6C984-EA8D-4571-B74D-51D19D98AA91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34484CBF-AC47-45FB-ADE7-0C66758A3F79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34484CBF-AC47-45FB-ADE7-0C66758A3F79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34484CBF-AC47-45FB-ADE7-0C66758A3F79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34484CBF-AC47-45FB-ADE7-0C66758A3F79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

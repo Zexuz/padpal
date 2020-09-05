@@ -3,24 +3,19 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
-using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
-using Padel.Proto.Auth.V1;
+using Padel.Login.Services.JsonWebToken;
 using Xunit;
-using OAuthToken = Padel.Login.Services.JsonWebToken.OAuthToken;
-using User = Padel.Login.Repositories.User.User;
-using AuthService = Padel.Login.Services.AuthService;
 
 namespace Padel.Login.Test
 {
     public class AuthServiceTest
     {
-        private readonly ILogger<AuthService>    _fakeLogger;
-        private readonly IUserRepository         _fakeUserRepo;
-        private readonly IPasswordService        _fakePasswordService;
-        private readonly IOAuthTokenService      _fakeAuthTokenService;
-        private readonly IRefreshTokenRepository _fakeRefreshTokenRepository;
+        private readonly ILogger<AuthService> _fakeLogger;
+        private readonly IUserRepository      _fakeUserRepo;
+        private readonly IPasswordService     _fakePasswordService;
+        private readonly IOAuthTokenService   _fakeAuthTokenService;
 
 
         private readonly AuthService _sut;
@@ -31,9 +26,8 @@ namespace Padel.Login.Test
             _fakeUserRepo = A.Fake<IUserRepository>();
             _fakePasswordService = A.Fake<IPasswordService>();
             _fakeAuthTokenService = A.Fake<IOAuthTokenService>();
-            _fakeRefreshTokenRepository = A.Fake<IRefreshTokenRepository>();
 
-            _sut = new AuthService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService, _fakeRefreshTokenRepository);
+            _sut = new AuthService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService);
         }
 
         [Fact]
@@ -138,12 +132,7 @@ namespace Padel.Login.Test
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                DateOfBirth = new NewUser.Types.Date
-                {
-                    Day = int.Parse(day),
-                    Month = int.Parse(month),
-                    Year = int.Parse(year)
-                }
+                DateOfBirth = new DateTime(int.Parse(year), int.Parse(month), int.Parse(day))
             };
 
             await _sut.RegisterNewUser(user);

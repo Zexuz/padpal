@@ -6,6 +6,9 @@ using Padel.Login;
 using Padel.Login.Exceptions;
 using Padel.Proto.Auth.V1;
 using Padel.Runner.Extensions;
+using AuthService = Padel.Proto.Auth.V1.AuthService;
+using LoginRequest = Padel.Proto.Auth.V1.LoginRequest;
+using NewUser = Padel.Login.Services.NewUser;
 
 namespace Padel.Runner.Controllers
 {
@@ -26,9 +29,15 @@ namespace Padel.Runner.Controllers
         [AllowAnonymous]
         public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
         {
+            var connectionInfo = new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()};
+            var loginRequest = new Login.Services.LoginRequest
+            {
+                Email = request.Email,
+                Password = request.Password
+            };
             try
             {
-                var res = await _authService.Login(request, new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()});
+                var res = await _authService.Login(loginRequest, connectionInfo);
                 return new LoginResponse
                 {
                     Token = new OAuthToken
@@ -58,9 +67,18 @@ namespace Padel.Runner.Controllers
         [AllowAnonymous]
         public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
         {
+            var user = new NewUser()
+            {
+                Email = request.User.Email,
+                Password = request.User.Password,
+                Username = request.User.Username,
+                FirstName = request.User.FirstName,
+                LastName = request.User.LastName,
+                DateOfBirth = DateTime.Parse($"{request.User.DateOfBirth.Year}-{request.User.DateOfBirth.Month}-{request.User.DateOfBirth.Day}"),
+            };
             try
             {
-                await _authService.RegisterNewUser(request.User);
+                await _authService.RegisterNewUser(user);
             }
             catch (EmailIsAlreadyTakenException)
             {
