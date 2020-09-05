@@ -74,7 +74,7 @@ namespace Padel.Login.Services
                 throw new PasswordDoesNotMatchException(request.Email);
             }
 
-            return await _oAuthTokenService.CreateNewRefreshToken(user, connectionInfo);
+            return await _oAuthTokenService.CreateNewRefreshToken(user.Id, connectionInfo);
         }
 
         public async Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info)

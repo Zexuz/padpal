@@ -30,17 +30,12 @@ namespace Padel.Login.Test
         [Fact]
         public async Task Should_return_OAuthToken()
         {
-            var user = new User
-            {
-                Id = 1374
-            };
-
             A.CallTo(() => _fakeRandom.GenerateSecureString(A<int>._)).Returns("someRandomString");
             A.CallTo(() => _fakeRefreshTokenRepository.Insert(A<RefreshToken>._)).Returns(Task.FromResult(5));
-            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>._))
+            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<int>._))
                 .Returns(("access-token", DateTimeOffset.Parse("2020-09-03 20:07")));
 
-            var authToken = await _sut.CreateNewRefreshToken(user, new ConnectionInfo {Ip = "192.168.1.0"});
+            var authToken = await _sut.CreateNewRefreshToken(1374, new ConnectionInfo {Ip = "192.168.1.0"});
 
             Assert.Equal(OAuthToken.OAuthTokenType.Bearer, authToken.Type);
             Assert.Equal("access-token", authToken.AccessToken);
@@ -61,7 +56,7 @@ namespace Padel.Login.Test
         {
             const string refreshToken = "someToken";
 
-            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>.That.Matches(user => user.Id == userId)))
+            A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(userId))
                 .Returns(Task.FromResult(("someNewAccessToken", DateTimeOffset.UtcNow)));
             A.CallTo(() => _fakeRefreshTokenRepository.FindToken(refreshToken)).Returns(Task.FromResult<RefreshToken?>(new RefreshToken
             {

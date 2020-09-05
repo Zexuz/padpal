@@ -102,10 +102,10 @@ namespace Padel.Runner.Controllers
         }
 
 
+        [AllowAnonymous]
         public override async Task<GetNewAccessTokenResponse> GetNewAccessToken(GetNewAccessTokenRequest request, ServerCallContext context)
         {
-            var userId = context.GetUserId();
-            var info = new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()}; // TODO make this better! 
+            var info = new ConnectionInfo {Ip = context.GetIPv4().ToString()};
             try
             {
                 var res = await _authService.RefreshAccessToken(request.RefreshToken, info);
@@ -122,6 +122,7 @@ namespace Padel.Runner.Controllers
             }
             catch (Exception e)
             {
+                // TODO Logging and error handeling
                 Console.WriteLine(e);
                 throw;
             }

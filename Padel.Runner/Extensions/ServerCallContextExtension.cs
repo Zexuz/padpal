@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 using Grpc.Core;
 
@@ -9,6 +10,11 @@ namespace Padel.Runner.Extensions
         {
             var httpContext = context.GetHttpContext();
             return int.Parse(httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        }
+    
+        public static IPAddress GetIPv4(this ServerCallContext context)
+        {
+            return context.GetHttpContext().Connection.RemoteIpAddress;
         }
     }
 }

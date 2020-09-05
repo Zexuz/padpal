@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Padel.Login.Repositories.User;
 
 namespace Padel.Login.Services.JsonWebToken
 {
@@ -16,14 +15,14 @@ namespace Padel.Login.Services.JsonWebToken
             _options = options;
         }
 
-        public async Task<(string token, DateTimeOffset expires)> CreateNewAccessToken(User user)
+        public async Task<(string token, DateTimeOffset expires)> CreateNewAccessToken(int userId)
         {
             var exp = DateTimeOffset.UtcNow.Add(_options.LifeSpan);
 
             var claims = new Dictionary<string, string>
             {
                 {"exp", exp.ToUnixTimeSeconds().ToString()},
-                {"sub", user.Id.ToString()},
+                {"sub", userId.ToString()},
             };
 
             return (await _builder.Create(claims), exp);

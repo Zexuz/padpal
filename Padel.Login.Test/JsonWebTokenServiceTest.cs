@@ -29,11 +29,7 @@ namespace Padel.Login.Test
         [Fact]
         public async Task Should_create_token_with_correct_claims()
         {
-            var user = new User
-            {
-                Id = 1337,
-            };
-            await _sut.CreateNewAccessToken(user);
+            await _sut.CreateNewAccessToken(1337);
 
             A.CallTo(() => _fakeJsonWebTokenBuilder.Create(A<Dictionary<string, string>>.That.Matches(dict =>
                 (DateTimeOffset.FromUnixTimeSeconds(long.Parse(dict["exp"])) - DateTimeOffset.UtcNow) - _options.LifeSpan < TimeSpan.FromSeconds(1) &&

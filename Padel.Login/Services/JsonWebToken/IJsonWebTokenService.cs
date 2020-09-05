@@ -6,6 +6,6 @@ namespace Padel.Login.Services.JsonWebToken
 {
     public interface IJsonWebTokenService
     {
-        Task<(string token, DateTimeOffset expires)> CreateNewAccessToken(User user);
+        Task<(string token, DateTimeOffset expires)> CreateNewAccessToken(int userId);
     }
 }

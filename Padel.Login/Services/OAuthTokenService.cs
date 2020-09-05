@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Padel.Login.Exceptions;
 using Padel.Login.Repositories.RefreshToken;
-using Padel.Login.Repositories.User;
 using Padel.Login.Services.JsonWebToken;
 
 namespace Padel.Login.Services
@@ -22,15 +21,15 @@ namespace Padel.Login.Services
             _random = random;
         }
 
-        public Task InvalidateRefreshToken(User user, string refreshToken)
+        public Task InvalidateRefreshToken(int userId, string refreshToken)
         {
             throw new System.NotImplementedException();
         }
 
-        public async Task<OAuthToken> CreateNewRefreshToken(User user, ConnectionInfo connectionInfo)
+        public async Task<OAuthToken> CreateNewRefreshToken(int userId, ConnectionInfo connectionInfo)
         {
-            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(user);
-            var refreshToken = GenerateRefreshToken(user, connectionInfo.Ip);
+            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(userId);
+            var refreshToken = GenerateRefreshToken(userId, connectionInfo.Ip);
 
             await _refreshTokenRepository.Insert(refreshToken);
 
@@ -57,7 +56,7 @@ namespace Padel.Login.Services
                 throw new RefreshTokenIsRevokedException(dbToken.Id, info);
             }
 
-            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(new User {Id = dbToken.UserId}); // TODO REFACTOR! 
+            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(dbToken.UserId); 
 
             dbToken.LastUsed = DateTimeOffset.UtcNow;
             dbToken.LastUsedFromIp = info.Ip;
@@ -73,11 +72,11 @@ namespace Padel.Login.Services
             };
         }
 
-        private RefreshToken GenerateRefreshToken(User user, string userIp)
+        private RefreshToken GenerateRefreshToken(int userId, string userIp)
         {
             return new RefreshToken
             {
-                UserId = user.Id,
+                UserId = userId,
                 Token = _random.GenerateSecureString(RefreshTokenLength),
                 Created = DateTimeOffset.UtcNow,
                 DisabledWhen = null,

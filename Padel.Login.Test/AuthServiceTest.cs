@@ -76,7 +76,7 @@ namespace Padel.Login.Test
             var connectionInfo = new ConnectionInfo {Ip = "myIp"};
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(dbUser));
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(true);
-            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<User>._, A<ConnectionInfo>._)).Returns(Task.FromResult(new OAuthToken
+            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<int>._, A<ConnectionInfo>._)).Returns(Task.FromResult(new OAuthToken
             {
                 AccessToken = "some.jwt.token",
             }));
@@ -91,10 +91,8 @@ namespace Padel.Login.Test
 
             Assert.Equal("some.jwt.token", token.AccessToken);
 
-            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(
-                A<User>.That.Matches(user => user.Id           == 1),
-                A<ConnectionInfo>.That.Matches(info => info.Ip == "myIp")
-            )).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(1, A<ConnectionInfo>.That.Matches(info => info.Ip == "myIp")))
+                .MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(
                 A<string>.That.Matches(s => s == "somePasswordHash"),

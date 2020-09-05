@@ -6,11 +6,10 @@ namespace Padel.Login.Services
 {
     public interface IOAuthTokenService
     {
-        // TODO Replace User user -> int userId
-        Task InvalidateRefreshToken(User user, string refreshToken);
+        Task InvalidateRefreshToken(int userId, string refreshToken);
 
         // TODO Replace User user -> int userId
-        Task<OAuthToken> CreateNewRefreshToken(User user, ConnectionInfo connectionInfo);
+        Task<OAuthToken> CreateNewRefreshToken(int userId, ConnectionInfo connectionInfo);
 
         Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info);
     }
