@@ -77,9 +77,9 @@ namespace Padel.Login.Services
             return await _oAuthTokenService.CreateNewRefreshToken(user, connectionInfo);
         }
 
-        public async Task<OAuthToken> RefreshAccessToken(int userId, string refreshToken, ConnectionInfo info)
+        public async Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info)
         {
-            return await _oAuthTokenService.CreateNewAccessToken(userId, refreshToken, info);
+            return await _oAuthTokenService.RefreshAccessToken(refreshToken, info);
         }
     }
 }

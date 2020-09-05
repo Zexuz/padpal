@@ -4,6 +4,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
 using Padel.Login.Models;
+using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Padel.Login.Services.JsonWebToken;
@@ -192,18 +193,6 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s.Equals(user.Email)))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakeUserRepo.FindByUsername(A<string>.That.Matches(s => s.Equals(username)))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakeUserRepo.Insert(A<User>._)).MustNotHaveHappened();
-        }
-
-        [Fact]
-        public void Should_throw_exception_if_invalid_refreshToken()
-        {
-            Assert.False(true);
-        }
-
-        [Fact]
-        public void Should_throw_exception_if_refreshToken_is_revoked()
-        {
-            Assert.False(true);
         }
     }
 }

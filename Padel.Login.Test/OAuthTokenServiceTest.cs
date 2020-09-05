@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using FakeItEasy;
+using Padel.Login.Exceptions;
 using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
@@ -62,14 +63,14 @@ namespace Padel.Login.Test
 
             A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<User>.That.Matches(user => user.Id == userId)))
                 .Returns(Task.FromResult(("someNewAccessToken", DateTimeOffset.UtcNow)));
-            A.CallTo(() => _fakeRefreshTokenRepository.FindToken(userId, refreshToken)).Returns(Task.FromResult(new RefreshToken
+            A.CallTo(() => _fakeRefreshTokenRepository.FindToken(refreshToken)).Returns(Task.FromResult<RefreshToken?>(new RefreshToken
             {
                 UserId = userId,
                 IsDisabled = false,
                 Token = refreshToken,
             }));
 
-            var res = await _sut.CreateNewAccessToken(userId, refreshToken, new ConnectionInfo {Ip = "192.168.0.1"});
+            var res = await _sut.RefreshAccessToken(refreshToken, new ConnectionInfo {Ip = "192.168.0.1"});
 
             Assert.Equal("someNewAccessToken", res.AccessToken);
             Assert.Equal(refreshToken, res.RefreshToken);
@@ -81,6 +82,39 @@ namespace Padel.Login.Test
                     token.LastUsed - DateTimeOffset.UtcNow < TimeSpan.FromSeconds(1)
                 )
             )).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task Should_throw_exception_if_invalid_refreshToken()
+        {
+            var refreshToken = "someNoneExistingToken";
+            var connectionInfo = new ConnectionInfo {Ip = "someIp"};
+
+            A.CallTo(() => _fakeRefreshTokenRepository.FindToken(refreshToken)).Returns(Task.FromResult<RefreshToken?>(null!));
+
+            var ex = await Assert.ThrowsAsync<RefreshTokenDoesNotExistException>(() => _sut.RefreshAccessToken(refreshToken, connectionInfo));
+
+            Assert.Equal(refreshToken, ex.RefreshToken);
+            Assert.Equal("someIp", ex.Ip);
+        }
+
+        [Fact]
+        public async Task Should_throw_exception_if_refreshToken_is_revoked()
+        {
+            var refreshToken = "someNoneExistingToken";
+            var connectionInfo = new ConnectionInfo {Ip = "someIp"};
+
+            A.CallTo(() => _fakeRefreshTokenRepository.FindToken(refreshToken)).Returns(Task.FromResult<RefreshToken?>(new RefreshToken
+            {
+                Id = 1337,
+                IsDisabled = true,
+                Token = refreshToken,
+            }));
+
+            var ex = await Assert.ThrowsAsync<RefreshTokenIsRevokedException>(() => _sut.RefreshAccessToken(refreshToken, connectionInfo));
+
+            Assert.Equal(1337, ex.TokenId);
+            Assert.Equal("someIp", ex.Ip);
         }
     }
 }

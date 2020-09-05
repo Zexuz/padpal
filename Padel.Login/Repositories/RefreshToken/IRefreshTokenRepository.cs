@@ -4,6 +4,6 @@ namespace Padel.Login.Repositories.RefreshToken
 {
     public interface IRefreshTokenRepository : IRepositoryBase<RefreshToken>
     {
-        Task<RefreshToken> FindToken(int userId, string refreshToken);
+        Task<RefreshToken?> FindToken(string refreshToken);
     }
 }

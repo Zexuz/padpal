@@ -10,16 +10,15 @@ namespace Padel.Login.Repositories.RefreshToken
         {
         }
 
-        public async Task<RefreshToken> FindToken(int userId, string refreshToken)
+        public async Task<RefreshToken?> FindToken(string refreshToken)
         {
             var dictionary = new Dictionary<string, object>
             {
-                { "@userId", userId },
                 { "@token", refreshToken }
             };
-            
+
             using var conn = await ConnectionFactory.GetNewOpenConnection();
-            return await conn.QuerySingleOrDefaultAsync<RefreshToken>("SELECT * from RefreshToken where UserId = @userId and Token = @token", dictionary);
+            return await conn.QuerySingleOrDefaultAsync<RefreshToken>("SELECT * from RefreshToken where Token = @token", dictionary);
         }
     }
 }

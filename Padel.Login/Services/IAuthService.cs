@@ -8,6 +8,6 @@ namespace Padel.Login.Services
     {
         Task RegisterNewUser(NewUser user);
         Task<OAuthToken> Login(LoginRequest request, ConnectionInfo info);
-        Task<OAuthToken> RefreshAccessToken(int userId, string refreshToken, ConnectionInfo info);
+        Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info);
     }
 }

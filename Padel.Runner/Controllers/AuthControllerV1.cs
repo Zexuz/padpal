@@ -108,7 +108,7 @@ namespace Padel.Runner.Controllers
             var info = new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()}; // TODO make this better! 
             try
             {
-                var res = await _authService.RefreshAccessToken(userId, request.RefreshToken, info);
+                var res = await _authService.RefreshAccessToken(request.RefreshToken, info);
                 return new GetNewAccessTokenResponse
                 {
                     Token = new OAuthToken

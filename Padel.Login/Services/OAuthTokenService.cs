@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Padel.Login.Exceptions;
 using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services.JsonWebToken;
@@ -42,20 +43,25 @@ namespace Padel.Login.Services
             };
         }
 
-        public async Task<OAuthToken> CreateNewAccessToken(int userId, string refreshToken, ConnectionInfo info)
+        public async Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info)
         {
-            var dbToken = await _refreshTokenRepository.FindToken(userId, refreshToken);
+            var dbToken = await _refreshTokenRepository.FindToken(refreshToken);
+
+            if (dbToken == null)
+            {
+                throw new RefreshTokenDoesNotExistException(refreshToken, info);
+            }
 
             if (dbToken.IsDisabled)
             {
-                throw new NotImplementedException();
+                throw new RefreshTokenIsRevokedException(dbToken.Id, info);
             }
 
-            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(new User {Id = userId}); // TODO REFACTOR! 
-            
+            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(new User {Id = dbToken.UserId}); // TODO REFACTOR! 
+
             dbToken.LastUsed = DateTimeOffset.UtcNow;
             dbToken.LastUsedFromIp = info.Ip;
-            
+
             await _refreshTokenRepository.UpdateAsync(dbToken);
 
             return new OAuthToken
