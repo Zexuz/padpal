@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Login.Services
+namespace Padel.Login.Models
 {
     public class NewUser
     {

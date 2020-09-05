@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
+using Padel.Login.Models;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Padel.Login.Services.JsonWebToken;

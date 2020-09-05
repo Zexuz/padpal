@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Padel.Login.Models;
 using Padel.Login.Services.JsonWebToken;
 
 namespace Padel.Login.Services

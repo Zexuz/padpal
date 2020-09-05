@@ -32,6 +32,15 @@ namespace Padel.Runner.Test.Controllers
             Assert.Equal("robin", res.Me.FirstName);
             Assert.Equal("edbom", res.Me.LastName);
         }
+        
+        [Theory]
+        [InlineData("")]
+        public void Should_throw_exception_if_invalid_requestparams(string str)
+        {
+            // TODO THIS is also in the AuthController!!!
+            Assert.False(true);
+        }
+        
     }
 
 }

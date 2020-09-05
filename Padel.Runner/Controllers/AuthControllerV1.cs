@@ -8,7 +8,7 @@ using Padel.Proto.Auth.V1;
 using Padel.Runner.Extensions;
 using AuthService = Padel.Proto.Auth.V1.AuthService;
 using LoginRequest = Padel.Proto.Auth.V1.LoginRequest;
-using NewUser = Padel.Login.Services.NewUser;
+using NewUser = Padel.Login.Models.NewUser;
 
 namespace Padel.Runner.Controllers
 {
@@ -30,7 +30,7 @@ namespace Padel.Runner.Controllers
         public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
         {
             var connectionInfo = new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()};
-            var loginRequest = new Login.Services.LoginRequest
+            var loginRequest = new Login.Models.LoginRequest
             {
                 Email = request.Email,
                 Password = request.Password
