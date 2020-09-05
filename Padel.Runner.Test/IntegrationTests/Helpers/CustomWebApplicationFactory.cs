@@ -15,7 +15,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace Padel.Runner.Test.IntegrationTests.Helpers
 {
-    
     public class FakeRemoteIpAddressMiddleware
     {
         private readonly RequestDelegate _next;
@@ -23,17 +22,17 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
 
         public FakeRemoteIpAddressMiddleware(RequestDelegate next)
         {
-            this._next = next;
+            _next = next;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
             httpContext.Connection.RemoteIpAddress = _fakeIpAddress;
 
-            await this._next(httpContext);
+            await _next(httpContext);
         }
     }
-    
+
     public class CustomStartupFilter : IStartupFilter
     {
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
@@ -80,7 +79,7 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
             service.ConfigureAppConfiguration(builder => builder.AddInMemoryCollection(new[]
             {
                 new KeyValuePair<string, string>("Connections:Sql:padel",
-                    $"Server=DESKTOP-5UP1TEB;Database=padel_test_{RandomSuffix};Trusted_Connection=True;"),
+                    $"Server=DESKTOP-5UP1TEB;Database=padel_test_{RandomSuffix};Trusted_Connection=True;")
             }));
         }
 

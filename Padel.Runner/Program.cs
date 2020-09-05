@@ -13,8 +13,9 @@ namespace Padel.Runner
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -28,5 +29,6 @@ namespace Padel.Runner
                     });
                     webBuilder.UseStartup<Startup>();
                 });
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace Padel.Login.Services
 
         public Task InvalidateRefreshToken(int userId, string refreshToken)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public async Task<OAuthToken> CreateNewRefreshToken(int userId, ConnectionInfo connectionInfo)
@@ -47,16 +47,12 @@ namespace Padel.Login.Services
             var dbToken = await _refreshTokenRepository.FindToken(refreshToken);
 
             if (dbToken == null)
-            {
                 throw new RefreshTokenDoesNotExistException(refreshToken, info);
-            }
 
             if (dbToken.IsDisabled)
-            {
                 throw new RefreshTokenIsRevokedException(dbToken.Id, info);
-            }
 
-            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(dbToken.UserId); 
+            var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(dbToken.UserId);
 
             dbToken.LastUsed = DateTimeOffset.UtcNow;
             dbToken.LastUsedFromIp = info.Ip;
@@ -82,7 +78,7 @@ namespace Padel.Login.Services
                 DisabledWhen = null,
                 IsDisabled = false,
                 LastUsed = DateTimeOffset.UtcNow,
-                LastUsedFromIp = userIp,
+                LastUsedFromIp = userIp
             };
         }
     }

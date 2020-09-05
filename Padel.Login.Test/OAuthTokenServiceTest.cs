@@ -62,7 +62,7 @@ namespace Padel.Login.Test
             {
                 UserId = userId,
                 IsDisabled = false,
-                Token = refreshToken,
+                Token = refreshToken
             }));
 
             var res = await _sut.RefreshAccessToken(refreshToken, new ConnectionInfo {Ip = "192.168.0.1"});
@@ -103,7 +103,7 @@ namespace Padel.Login.Test
             {
                 Id = 1337,
                 IsDisabled = true,
-                Token = refreshToken,
+                Token = refreshToken
             }));
 
             var ex = await Assert.ThrowsAsync<RefreshTokenIsRevokedException>(() => _sut.RefreshAccessToken(refreshToken, connectionInfo));

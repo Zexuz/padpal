@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Padel.Runner.Test.Controllers
 {
-    public class UserControllerV1Test: TestControllerBase
+    public class UserControllerV1Test : TestControllerBase
     {
         [Fact]
         public async Task Me_should_return_currentUser_data()
@@ -18,21 +18,21 @@ namespace Padel.Runner.Test.Controllers
                 Email = "robin@email.com",
                 Username = "myUsername",
                 FirstName = "robin",
-                LastName = "edbom",
+                LastName = "edbom"
             }));
-            
+
             var ctx = CreateServerCallContextWithUserId(10);
 
             var controller = new UserControllerV1(fakeUserRepository);
 
             var res = await controller.Me(new MeRequest(), ctx);
-            
+
             Assert.Equal("robin@email.com", res.Me.Email);
             Assert.Equal("myUsername", res.Me.Username);
             Assert.Equal("robin", res.Me.FirstName);
             Assert.Equal("edbom", res.Me.LastName);
         }
-        
+
         [Theory]
         [InlineData("")]
         public void Should_throw_exception_if_invalid_requestparams(string str)
@@ -40,7 +40,5 @@ namespace Padel.Runner.Test.Controllers
             // TODO THIS is also in the AuthController!!!
             Assert.False(true);
         }
-        
     }
-
 }

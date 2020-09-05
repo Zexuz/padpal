@@ -5,7 +5,6 @@ namespace Padel.Login.Test
 {
     public class PasswordServiceTest
     {
-
         [Fact]
         public void Should_Generate_Hash_From_Password()
         {

@@ -32,7 +32,7 @@ namespace Padel.Runner.Test.Controllers
 
             var httpContext = new DefaultHttpContext();
             var claimsPrincipal = new ClaimsPrincipal();
-            claimsPrincipal.AddIdentity(new ClaimsIdentity(new Claim[] {new Claim(ClaimTypes.NameIdentifier, userId.ToString()),}));
+            claimsPrincipal.AddIdentity(new ClaimsIdentity(new Claim[] {new Claim(ClaimTypes.NameIdentifier, userId.ToString())}));
             httpContext.User = claimsPrincipal;
 
             ctx.UserState["__HttpContext"] = httpContext;

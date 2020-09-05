@@ -56,9 +56,7 @@ namespace Padel.Runner
             AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseRouting();
 

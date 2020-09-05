@@ -21,6 +21,5 @@ namespace Padel.Login.Repositories
             await connection.OpenAsync();
             return connection;
         }
-
     }
 }

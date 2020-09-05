@@ -22,9 +22,7 @@ namespace Padel.Login.Services
             var privateKeyPath = Path.Combine(basePath, "private.txt");
 
             if (!Directory.Exists(basePath))
-            {
                 Directory.CreateDirectory(basePath);
-            }
 
             if (!_fileService.DoesFileExist(publicKeyPath) || !_fileService.DoesFileExist(privateKeyPath))
             {

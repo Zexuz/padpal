@@ -14,7 +14,7 @@ namespace Padel.Login.Repositories.RefreshToken
         {
             var dictionary = new Dictionary<string, object>
             {
-                { "@token", refreshToken }
+                {"@token", refreshToken}
             };
 
             using var conn = await ConnectionFactory.GetNewOpenConnection();

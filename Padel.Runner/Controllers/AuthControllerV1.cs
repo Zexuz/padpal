@@ -74,7 +74,7 @@ namespace Padel.Runner.Controllers
                 Username = request.User.Username,
                 FirstName = request.User.FirstName,
                 LastName = request.User.LastName,
-                DateOfBirth = DateTime.Parse($"{request.User.DateOfBirth.Year}-{request.User.DateOfBirth.Month}-{request.User.DateOfBirth.Day}"),
+                DateOfBirth = DateTime.Parse($"{request.User.DateOfBirth.Year}-{request.User.DateOfBirth.Month}-{request.User.DateOfBirth.Day}")
             };
             try
             {
@@ -116,7 +116,7 @@ namespace Padel.Runner.Controllers
                         Expires = res.Expires.ToUnixTimeSeconds(),
                         Type = OAuthToken.Types.TokenType.Bearer,
                         AccessToken = res.AccessToken,
-                        RefreshToken = res.RefreshToken,
+                        RefreshToken = res.RefreshToken
                     }
                 };
             }

@@ -23,7 +23,10 @@ namespace Padel.Runner.Test.IntegrationTests
         [Fact]
         public async Task LoginsAfterSigningUpSuccessful()
         {
-            static Metadata CreateAuthMetadata(OAuthToken oAuthToken) => new Metadata {{"Authorization", $"Bearer {oAuthToken.AccessToken}"}};
+            static Metadata CreateAuthMetadata(OAuthToken oAuthToken)
+            {
+                return new Metadata {{"Authorization", $"Bearer {oAuthToken.AccessToken}"}};
+            }
 
             var expectedTokenLength = TimeSpan.FromMinutes(30);
             var payload = new RegisterRequest

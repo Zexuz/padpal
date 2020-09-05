@@ -37,9 +37,7 @@ namespace Padel.Login.Services.JsonWebToken
                 .MustVerifySignature();
 
             foreach (var (key, value) in claims)
-            {
                 tokenBuilder.AddClaim(key, value);
-            }
 
             return tokenBuilder.Encode();
         }

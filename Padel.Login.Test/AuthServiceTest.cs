@@ -78,7 +78,7 @@ namespace Padel.Login.Test
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(true);
             A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<int>._, A<ConnectionInfo>._)).Returns(Task.FromResult(new OAuthToken
             {
-                AccessToken = "some.jwt.token",
+                AccessToken = "some.jwt.token"
             }));
 
             var loginRequest = new LoginRequest

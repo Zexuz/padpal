@@ -14,9 +14,9 @@ namespace Padel.Login.Repositories.User
         {
             var dictionary = new Dictionary<string, object>
             {
-                { "@Username", username }
+                {"@Username", username}
             };
-            
+
             using var conn = await ConnectionFactory.GetNewOpenConnection();
             return await conn.QuerySingleOrDefaultAsync<User>("SELECT * from [User] where Username = @Username", dictionary);
         }
@@ -25,9 +25,9 @@ namespace Padel.Login.Repositories.User
         {
             var dictionary = new Dictionary<string, object>
             {
-                { "@Email", email }
+                {"@Email", email}
             };
-            
+
             using var conn = await ConnectionFactory.GetNewOpenConnection();
             return await conn.QuerySingleOrDefaultAsync<User>("SELECT * from [User] where Email = @Email", dictionary);
         }
