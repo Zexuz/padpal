@@ -1,1 +1,0 @@
-protoc -I ../pkg/service/user/ user.proto --go_out=plugins=grpc:../pkg/service/user/
