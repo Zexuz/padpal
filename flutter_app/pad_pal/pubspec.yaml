@@ -27,6 +27,8 @@ dependencies:
   flutter_bloc: ^6.0.0
   formz: ^0.2.0
   equatable: ^1.2.3
+  grpc: ^2.2.0
+  protobuf: ^1.0.1
   authentication_repository:
     path: packages/authentication_repository
   user_repository:

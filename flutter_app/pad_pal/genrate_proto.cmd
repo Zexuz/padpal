@@ -1,0 +1,1 @@
+protoc -I ./../../Padel.Runner/Protos ./../../Padel.Runner/Protos/auth_service.proto --plugin=protoc-gen-dart=c:\Users\desktop\AppData\Roaming\Pub\Cache\bin\protoc-gen-dart.bat --dart_out=grpc:lib/generated
