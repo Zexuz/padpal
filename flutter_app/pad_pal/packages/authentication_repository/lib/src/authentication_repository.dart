@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:authentication_repository/generated/auth_service.pbgrpc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:grpc/grpc.dart';
 import 'package:meta/meta.dart';
-import 'package:protobuf/protobuf.dart';
 
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {
@@ -37,23 +35,31 @@ class TokenStorage {
   TokenStorage._();
 }
 
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
+
 class AuthenticationRepository {
   AuthenticationRepository({AuthServiceClient authServiceClient, TokenStorage tokenStorage})
       : _authServiceClient = authServiceClient,
         _tokenStorage = tokenStorage;
 
-  // final _controller = StreamController<String>();
+  final _controller = StreamController<AuthenticationStatus>();
 
   AuthServiceClient _authServiceClient;
   TokenStorage _tokenStorage;
 
-  // Stream<String> get accessToken {
-  //   return _controller.stream;
-  // }
+
+  Future<String> get accessToken async {
+    return ""; // TODO check if the token has expiered, if it has, renewit with the refreshToken
+  }
+
+  Stream<AuthenticationStatus> get status {
+    return _controller.stream;
+  }
 
   Future<void> login({@required email, @required String password}) async {
     assert(email != null);
     assert(password != null);
+    // myFunc(_authServiceClient.login, LoginRequest());
 
     var call = _authServiceClient.login(LoginRequest()
       ..password = password
@@ -66,14 +72,21 @@ class AuthenticationRepository {
       var accessToken = AccessToken(
           token: res.token.accessToken,
           expires: DateTime.fromMillisecondsSinceEpoch(res.token.expires.toInt() * 1000, isUtc: true));
-          // expires: null);
+      // expires: null);
       _tokenStorage.accessToken = accessToken;
+      _controller.sink.add(AuthenticationStatus.authenticated);
     } on GrpcError catch (_) {
       throw SignUpFailure();
       // if (!_canHandel(e)) rethrow;
       // _handel(e);
     }
   }
+
+  Future<void> logOut() {
+    // TODO IMPLEMENT
+    // throw Exception("NOT IMPLEMENTED");
+  }
+
 
   // bool _canHandel(GrpcError e) {
   //   return true;
@@ -84,8 +97,16 @@ class AuthenticationRepository {
   // }
 
   Future<void> dispose() async {
-    // await _controller.close();
+    await _controller.close();
   }
+
+// Future<void> myFunc<TResponse, TRequest>(ResponseFuture<TResponse> Function(TRequest request, {CallOptions options}) method, TRequest request) async {
+//   var call = method(request, options: CallOptions(metadata: {'peer': 'Verner'})); // TODO add AUTH
+//
+//   var trailers = await call.trailers;
+//
+//   return await call;
+// }
 }
 
 // import 'dart:async';

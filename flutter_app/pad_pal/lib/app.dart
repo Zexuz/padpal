@@ -5,19 +5,15 @@ import 'package:pad_pal/authentication/authentication.dart';
 import 'package:pad_pal/home/home.dart';
 import 'package:pad_pal/login/login.dart';
 import 'package:pad_pal/splash/splash.dart';
-import 'package:user_repository/user_repository.dart';
 
 class App extends StatelessWidget {
   const App({
     Key key,
     @required this.authenticationRepository,
-    @required this.userRepository,
   })  : assert(authenticationRepository != null),
-        assert(userRepository != null),
         super(key: key);
 
   final AuthenticationRepository authenticationRepository;
-  final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +22,6 @@ class App extends StatelessWidget {
       child: BlocProvider(
         create: (_) => AuthenticationBloc(
           authenticationRepository: authenticationRepository,
-          userRepository: userRepository,
         ),
         child: AppView(),
       ),

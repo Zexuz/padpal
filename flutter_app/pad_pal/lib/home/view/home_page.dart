@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              'UserID: ${context.bloc<AuthenticationBloc>().state.user.id}',
+              'Username: ${context.bloc<AuthenticationBloc>().state.username}',
             ),
             RaisedButton(
               child: const Text('Logout'),

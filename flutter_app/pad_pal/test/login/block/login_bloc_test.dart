@@ -32,8 +32,8 @@ void main() {
         'emits [submissionInProgress, submissionSuccess] '
             'when login succeeds',
         build: () {
-          when(authenticationRepository.logIn(
-            username: 'username',
+          when(authenticationRepository.login(
+            email: 'emil',
             password: 'password',
           )).thenAnswer((_) => Future.value('user'));
           return loginBloc;
@@ -70,35 +70,35 @@ void main() {
       blocTest<LoginBloc, LoginState>(
         'emits [LoginInProgress, LoginFailure] when logIn fails',
         build: () {
-          when(authenticationRepository.logIn(
-            username: 'username',
+          when(authenticationRepository.login(
+            email: 'email',
             password: 'password',
           )).thenThrow(Exception('oops'));
           return loginBloc;
         },
         act: (bloc) {
           bloc
-            ..add(const LoginUsernameChanged('username'))
+            ..add(const LoginUsernameChanged('email'))
             ..add(const LoginPasswordChanged('password'))
             ..add(const LoginSubmitted());
         },
         expect: const <LoginState>[
           LoginState(
-            username: Username.dirty('username'),
+            username: Username.dirty('email'),
             status: FormzStatus.invalid,
           ),
           LoginState(
-            username: Username.dirty('username'),
+            username: Username.dirty('email'),
             password: Password.dirty('password'),
             status: FormzStatus.valid,
           ),
           LoginState(
-            username: Username.dirty('username'),
+            username: Username.dirty('email'),
             password: Password.dirty('password'),
             status: FormzStatus.submissionInProgress,
           ),
           LoginState(
-            username: Username.dirty('username'),
+            username: Username.dirty('email'),
             password: Password.dirty('password'),
             status: FormzStatus.submissionFailure,
           ),
