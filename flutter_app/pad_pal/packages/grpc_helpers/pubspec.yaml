@@ -1,4 +1,4 @@
-name: authentication_repository
+name: grpc_helpers
 description: Dart package to help with grpc.
 version: 1.0.0
 
@@ -10,6 +10,7 @@ dependencies:
   grpc: ^2.2.0
   protobuf: ^1.0.1
   equatable: ^1.2.3
+  global_configuration: ^1.6.0
 
 dev_dependencies:
   flutter_test:
