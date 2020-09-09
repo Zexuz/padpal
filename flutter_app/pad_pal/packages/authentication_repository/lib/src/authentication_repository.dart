@@ -39,8 +39,10 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
   AuthenticationRepository({AuthServiceClient authServiceClient, TokenStorage tokenStorage})
-      : _authServiceClient = authServiceClient,
-        _tokenStorage = tokenStorage;
+      : _authServiceClient = authServiceClient ??
+            AuthServiceClient(ClientChannel("192.168.10.240",
+                port: 5001, options: ChannelOptions(credentials: ChannelCredentials.insecure()))),
+        _tokenStorage = tokenStorage ?? TokenStorage._instance;
 
   final _controller = StreamController<AuthenticationStatus>();
 
