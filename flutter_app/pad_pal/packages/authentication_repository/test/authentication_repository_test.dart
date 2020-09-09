@@ -6,6 +6,7 @@ import 'package:authentication_repository/generated/auth_service.pbgrpc.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grpc/grpc.dart';
+import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:mockito/mockito.dart';
 
 class MockResponseFuture<T> extends Mock implements ResponseFuture<T> {

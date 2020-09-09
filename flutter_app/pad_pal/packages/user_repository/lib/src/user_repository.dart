@@ -10,13 +10,15 @@ class Me {
 }
 
 class UserRepository {
-  UserRepository({UserServiceClient userServiceClient})
-      : _userServiceClient = userServiceClient ?? UserServiceClient(GrpcChannelFactory().createChannel());
+  UserRepository({UserServiceClient userServiceClient, TokenManager tokenManager})
+      : _userServiceClient = userServiceClient ?? UserServiceClient(GrpcChannelFactory().createChannel()),
+        _tokenManager = tokenManager ?? TokenManager();
 
   final UserServiceClient _userServiceClient;
+  final TokenManager _tokenManager;
 
-  Future<Me> me(String accessToken) async {
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer $accessToken"});
+  Future<Me> me() async {
+    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
     final call = _userServiceClient.me(MeRequest(), options: callOptions);
 
     final protoRes = await call;

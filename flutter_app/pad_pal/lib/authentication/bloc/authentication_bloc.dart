@@ -62,10 +62,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     }
   }
 
-  final String _token =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOiIxNTk5Njc1MDQwIiwic3ViIjoiMiJ9.CWnDrLtuz9j5fzwooJDyFTR3ysT9ieSUuQUYsmIL3wouZec35TsDiApi6rrbvYJN-cOkwmc4q8ZG4e_zUty740V2DVvcLXz_hNq1r8jvs-GikdoRa0GV9zgErKmCopOhgfyERZ7EXBQ1jEccptwkcWtN1aLdcVzM3YQynBsZFdbfGuxtJuNJysO94z86eH6q9aRMsxX17CQJQFzcQEvXFsSYYsFKDm8eqYFpaL7qoy7OTlspO9sQRoBuo4PlETXb_LeQZdmF1xnWUAgebWz63z4Whm7XwvRCXMZ2BglwKkzzSJ022AUw7vaBM-5zKz0O3q1R7fjCk-cAq1MbgqOS6w';
-
   Future<String> _tryGetUsername() async {
-    return (await _userRepository.me(_token)).username;
+    return (await _userRepository.me()).username;
   }
 }

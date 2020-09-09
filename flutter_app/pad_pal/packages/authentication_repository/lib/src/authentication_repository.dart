@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:authentication_repository/generated/auth_service.pbgrpc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:grpc/grpc.dart';
 import 'package:meta/meta.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
@@ -9,19 +8,6 @@ import 'package:grpc_helpers/grpc_helpers.dart';
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {
   // TODO implement error codes here
-}
-
-class AccessToken extends Equatable {
-  final String token;
-  final DateTime expires;
-
-  const AccessToken({
-    @required this.token,
-    @required this.expires,
-  }) : assert(token != null);
-
-  @override
-  List<Object> get props => [token, expires];
 }
 
 class TokenStorage {
@@ -39,14 +25,16 @@ class TokenStorage {
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
-  AuthenticationRepository({AuthServiceClient authServiceClient, TokenStorage tokenStorage})
+  AuthenticationRepository({AuthServiceClient authServiceClient, TokenStorage tokenStorage, TokenManager tokenManager})
       : _authServiceClient = authServiceClient ?? AuthServiceClient(GrpcChannelFactory().createChannel()),
-        _tokenStorage = tokenStorage ?? TokenStorage._instance;
+        _tokenStorage = tokenStorage ?? TokenStorage._instance,
+        _tokenManager = tokenManager ?? TokenManager();
 
   final _controller = StreamController<AuthenticationStatus>();
 
   AuthServiceClient _authServiceClient;
   TokenStorage _tokenStorage;
+  TokenManager _tokenManager;
 
   Future<String> get accessToken async {
     return ""; // TODO check if the token has expiered, if it has, renewit with the refreshToken
@@ -77,6 +65,8 @@ class AuthenticationRepository {
           token: res.token.accessToken,
           expires: DateTime.fromMillisecondsSinceEpoch(res.token.expires.toInt() * 1000, isUtc: true));
       // expires: null);
+
+      _tokenManager.accessToken = accessToken;
       _tokenStorage.accessToken = accessToken;
       _controller.sink.add(AuthenticationStatus.authenticated);
     } on GrpcError catch (_) {
