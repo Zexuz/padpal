@@ -4,24 +4,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/authentication/authentication.dart';
 import 'package:pad_pal/splash/splash.dart';
 
+import 'home/view/home_page.dart';
 import 'login/view/login_page.dart';
 
 class App extends StatelessWidget {
-  const App({
-    Key key,
-    @required this.authenticationRepository,
-  })  : assert(authenticationRepository != null),
-        super(key: key);
-
-  final AuthenticationRepository authenticationRepository;
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (_) => AuthenticationRepository(),
+        )
+      ],
       child: BlocProvider(
-        create: (_) => AuthenticationBloc(
-          authenticationRepository: authenticationRepository,
+        create: (context) => AuthenticationBloc(
+          authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
         ),
         child: AppView(),
       ),
@@ -49,7 +47,7 @@ class _AppViewState extends State<AppView> {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
-                  Login.route(),
+                  HomePage.route(),
                   (route) => false,
                 );
                 break;
