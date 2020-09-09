@@ -51,7 +51,7 @@ void main() {
         expect(res.lastName, "edbom");
 
         var verification = verify(userServiceClient.me(any, options: captureAnyNamed('options')));
-        expect((verification.captured[0] as CallOptions).metadata, {'Authentication': 'Bearer \'myAccessToken\''});
+        expect((verification.captured[0] as CallOptions).metadata, {'Authorization': 'Bearer myAccessToken'});
       });
     });
   });

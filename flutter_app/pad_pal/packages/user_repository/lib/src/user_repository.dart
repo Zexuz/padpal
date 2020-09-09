@@ -9,12 +9,15 @@ class Me {
 }
 
 class UserRepository {
-  const UserRepository({UserServiceClient userServiceClient}) : _userServiceClient = userServiceClient;
+  UserRepository({UserServiceClient userServiceClient})
+      : _userServiceClient = userServiceClient ??
+            UserServiceClient(ClientChannel("192.168.10.240",
+                port: 5001, options: ChannelOptions(credentials: ChannelCredentials.insecure())));
 
   final UserServiceClient _userServiceClient;
 
   Future<Me> me(String accessToken) async {
-    final callOptions = CallOptions(metadata: {'Authentication': "Bearer '$accessToken'"});
+    final callOptions = CallOptions(metadata: {'Authorization': "Bearer $accessToken"});
     final call = _userServiceClient.me(MeRequest(), options: callOptions);
 
     final protoRes = await call;
