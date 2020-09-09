@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/authentication/authentication.dart';
 import 'package:pad_pal/splash/splash.dart';
+import 'package:user_repository/user_repository.dart';
 
 import 'home/view/home_page.dart';
 import 'login/view/login_page.dart';
@@ -15,10 +16,14 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider(
           create: (_) => AuthenticationRepository(),
-        )
+        ),
+        RepositoryProvider(
+          create: (_) => UserRepository(),
+        ),
       ],
       child: BlocProvider(
         create: (context) => AuthenticationBloc(
+          userRepository:  RepositoryProvider.of<UserRepository>(context),
           authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
         ),
         child: AppView(),
