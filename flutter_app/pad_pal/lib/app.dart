@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/authentication/authentication.dart';
 import 'package:pad_pal/splash/splash.dart';
 
+import 'login/view/login_page.dart';
+
 class App extends StatelessWidget {
   const App({
     Key key,
@@ -46,21 +48,16 @@ class _AppViewState extends State<AppView> {
           listener: (context, state) {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
-                print("authteicated");
-                // _navigator.pushAndRemoveUntil<void>(
-                //   Login.route(),
-                //   (route) => false,
-                // );
+                _navigator.pushAndRemoveUntil<void>(
+                  Login.route(),
+                  (route) => false,
+                );
                 break;
               case AuthenticationStatus.unauthenticated:
-                print("unautheticated");
-                // _navigator.pushAndRemoveUntil<void>(
-                //   LoginPage.route(),
-                //   (route) => false,
-                // );
-                break;
-              case AuthenticationStatus.unknown:
-                print("UNKIWN");
+                _navigator.pushAndRemoveUntil<void>(
+                  LoginPage.route(),
+                  (route) => false,
+                );
                 break;
               default:
                 break;
