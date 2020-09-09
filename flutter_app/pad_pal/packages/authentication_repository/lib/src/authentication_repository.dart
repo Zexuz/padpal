@@ -47,13 +47,16 @@ class AuthenticationRepository {
   AuthServiceClient _authServiceClient;
   TokenStorage _tokenStorage;
 
-
   Future<String> get accessToken async {
     return ""; // TODO check if the token has expiered, if it has, renewit with the refreshToken
   }
 
   Stream<AuthenticationStatus> get status {
     return _controller.stream;
+  }
+
+  void init() {
+    _controller.sink.add(AuthenticationStatus.unauthenticated);
   }
 
   Future<void> login({@required email, @required String password}) async {
@@ -86,7 +89,6 @@ class AuthenticationRepository {
     // TODO IMPLEMENT
     // throw Exception("NOT IMPLEMENTED");
   }
-
 
   // bool _canHandel(GrpcError e) {
   //   return true;

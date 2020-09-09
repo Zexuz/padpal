@@ -17,3 +17,17 @@ class SplashPage extends StatelessWidget {
     );
   }
 }
+
+class Login extends StatelessWidget {
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => Login());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+      child: Text("LoginPage"),
+    ));
+  }
+}
