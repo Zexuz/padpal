@@ -1,4 +1,5 @@
 import 'package:grpc/grpc.dart';
+import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:user_repository/generated/user_service.pbgrpc.dart';
 
 class Me {
@@ -10,9 +11,7 @@ class Me {
 
 class UserRepository {
   UserRepository({UserServiceClient userServiceClient})
-      : _userServiceClient = userServiceClient ??
-            UserServiceClient(ClientChannel("192.168.10.240",
-                port: 5001, options: ChannelOptions(credentials: ChannelCredentials.insecure())));
+      : _userServiceClient = userServiceClient ?? UserServiceClient(GrpcChannelFactory().createChannel());
 
   final UserServiceClient _userServiceClient;
 

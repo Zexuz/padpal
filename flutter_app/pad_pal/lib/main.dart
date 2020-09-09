@@ -2,8 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:pad_pal/app.dart';
 
-Future<void> main() async {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   var env = "dev";
-  await GlobalConfiguration().loadFromAsset("app_settings_$env.json");
+  await GlobalConfiguration().loadFromAsset("app_settings_$env");
   runApp(App());
 }

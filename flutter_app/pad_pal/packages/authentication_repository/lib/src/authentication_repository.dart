@@ -4,6 +4,7 @@ import 'package:authentication_repository/generated/auth_service.pbgrpc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:grpc/grpc.dart';
 import 'package:meta/meta.dart';
+import 'package:grpc_helpers/grpc_helpers.dart';
 
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {
@@ -39,9 +40,7 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
   AuthenticationRepository({AuthServiceClient authServiceClient, TokenStorage tokenStorage})
-      : _authServiceClient = authServiceClient ??
-            AuthServiceClient(ClientChannel("192.168.10.240",
-                port: 5001, options: ChannelOptions(credentials: ChannelCredentials.insecure()))),
+      : _authServiceClient = authServiceClient ?? AuthServiceClient(GrpcChannelFactory().createChannel()),
         _tokenStorage = tokenStorage ?? TokenStorage._instance;
 
   final _controller = StreamController<AuthenticationStatus>();
@@ -89,6 +88,7 @@ class AuthenticationRepository {
 
   Future<void> logOut() {
     // TODO IMPLEMENT
+    _controller.sink.add(AuthenticationStatus.unauthenticated);
     // throw Exception("NOT IMPLEMENTED");
   }
 
