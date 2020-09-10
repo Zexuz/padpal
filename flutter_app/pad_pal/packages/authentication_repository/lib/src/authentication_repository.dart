@@ -48,7 +48,7 @@ class AuthenticationRepository {
     _controller.sink.add(AuthenticationStatus.unauthenticated);
   }
 
-  Future<void> login({@required email, @required String password}) async {
+  Future<void> login({@required String email, @required String password}) async {
     assert(email != null);
     assert(password != null);
     // myFunc(_authServiceClient.login, LoginRequest());
@@ -73,6 +73,35 @@ class AuthenticationRepository {
       throw SignUpFailure();
       // if (!_canHandel(e)) rethrow;
       // _handel(e);
+    }
+  }
+
+  Future<void> register({
+    @required String email,
+    @required String password,
+    @required String username,
+    @required String firstName,
+    @required String lastName,
+  }) async {
+    assert(email != null);
+    assert(password != null);
+
+    var call = _authServiceClient.register(RegisterRequest()
+      ..user = (NewUser()
+        ..email = email
+        ..username = username
+        ..password = password
+        ..dateOfBirth = (NewUser_Date()
+          ..year = 1996
+          ..month = 11
+          ..day = 7)
+        ..firstName = firstName
+        ..lastName = lastName));
+
+    try {
+      await call;
+    } on GrpcError catch (_) {
+      throw SignUpFailure();
     }
   }
 

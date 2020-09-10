@@ -1,12 +1,13 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/login/login.dart';
+import 'package:pad_pal/login/cubit/login_cubit.dart';
+import 'package:pad_pal/sign_up/sign_up.dart';
 
 class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginBloc, LoginState>(
+    return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
           Scaffold.of(context)
@@ -21,11 +22,14 @@ class LoginForm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _UsernameInput(),
-            const Padding(padding: EdgeInsets.all(12)),
+            const SizedBox(height: 16.0),
+            _EmailInput(),
+            const SizedBox(height: 8.0),
             _PasswordInput(),
-            const Padding(padding: EdgeInsets.all(12)),
+            const SizedBox(height: 8.0),
             _LoginButton(),
+            const SizedBox(height: 4.0),
+            _SignUpButton(),
           ],
         ),
       ),
@@ -33,19 +37,20 @@ class LoginForm extends StatelessWidget {
   }
 }
 
-class _UsernameInput extends StatelessWidget {
+class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextField(
-          key: const Key('loginForm_usernameInput_textField'),
-          onChanged: (username) =>
-              context.bloc<LoginBloc>().add(LoginEmailChanged(username)),
+          key: const Key('loginForm_emailInput_textField'),
+          onChanged: (email) => context.bloc<LoginCubit>().emailChanged(email),
+          keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'username',
-            errorText: state.email.invalid ? 'invalid username' : null,
+            labelText: 'email',
+            helperText: '',
+            errorText: state.email.invalid ? 'invalid email' : null,
           ),
         );
       },
@@ -56,16 +61,17 @@ class _UsernameInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_passwordInput_textField'),
           onChanged: (password) =>
-              context.bloc<LoginBloc>().add(LoginPasswordChanged(password)),
+              context.bloc<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',
+            helperText: '',
             errorText: state.password.invalid ? 'invalid password' : null,
           ),
         );
@@ -77,21 +83,38 @@ class _PasswordInput extends StatelessWidget {
 class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : RaisedButton(
-                key: const Key('loginForm_continue_raisedButton'),
-                child: const Text('Login'),
-                onPressed: state.status.isValidated
-                    ? () {
-                        context.bloc<LoginBloc>().add(const LoginSubmitted());
-                      }
-                    : null,
-              );
+          key: const Key('loginForm_continue_raisedButton'),
+          child: const Text('LOGIN'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          color: const Color(0xFFFFD600),
+          onPressed: state.status.isValidated
+              ? () => context.bloc<LoginCubit>().logInWithCredentials()
+              : null,
+        );
       },
+    );
+  }
+}
+
+class _SignUpButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return FlatButton(
+      key: const Key('loginForm_createAccount_flatButton'),
+      child: Text(
+        'CREATE ACCOUNT',
+        style: TextStyle(color: theme.primaryColor),
+      ),
+      onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
     );
   }
 }
