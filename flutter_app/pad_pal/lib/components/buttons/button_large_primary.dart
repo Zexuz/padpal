@@ -22,26 +22,6 @@ class ButtonLargePrimary extends ButtonPrimaryBase {
 
   @override
   Widget build(BuildContext context) {
-    return buildInternal(context, primary, primaryTextStyle, 14.0);
-    /*
-
-        final button = RawMaterialButton(
-      fillColor: primary,
-      child: Padding(
-        padding: EdgeInsets.all(14.0),
-        child: Text(text, style: primaryTextStyle),
-      ),
-      onPressed: onPressed,
-      shape: shape,
-    );
-    return strech
-        ? SizedBox(
-            width: double.infinity,
-            child: button,
-          )
-        : button;
-
-
-    */
+    return buildInternal(context, primary, primaryTextStyle, 20.0);
   }
 }

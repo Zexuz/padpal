@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 abstract class ButtonPrimaryBase extends StatelessWidget {
   ButtonPrimaryBase(
       {Key key,
-        @required this.onPressed,
-        @required this.text,
-        this.stretch = true})
+      @required this.onPressed,
+      @required this.text,
+      this.stretch = true})
       : super(key: key);
 
   final String text;
@@ -20,10 +20,11 @@ abstract class ButtonPrimaryBase extends StatelessWidget {
   );
 
   @protected
-  Widget buildInternal(
-      BuildContext context, Color primary, TextStyle primaryTextStyle, double padding) {
+  Widget buildInternal(BuildContext context, Color primary,
+      TextStyle primaryTextStyle, double padding) {
     final button = RawMaterialButton(
       fillColor: primary,
+      constraints: BoxConstraints(minHeight: 0, minWidth:36.0),
       child: Padding(
         padding: EdgeInsets.all(padding), //TODO Check why we can't have padding that is less than 10
         child: Text(text, style: primaryTextStyle),
@@ -33,9 +34,9 @@ abstract class ButtonPrimaryBase extends StatelessWidget {
     );
     return stretch
         ? SizedBox(
-      width: double.infinity,
-      child: button,
-    )
+            width: double.infinity,
+            child: button,
+          )
         : button;
   }
 }

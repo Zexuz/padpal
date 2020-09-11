@@ -16,10 +16,6 @@ class ButtonSmallPrimary extends ButtonPrimaryBase {
   static final TextStyle primaryTextStyle =
       TextStyle(fontSize: fontSize, color: white);
 
-  static final ShapeBorder shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(6.0),
-  );
-
   @override
   Widget build(BuildContext context) {
     return buildInternal(context, primary, primaryTextStyle, 8.0);
