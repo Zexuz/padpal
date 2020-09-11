@@ -5,19 +5,21 @@ import 'button_primary_base.dart';
 
 class ButtonSmallPrimary extends ButtonPrimaryBase {
   ButtonSmallPrimary(
-      {Key key, VoidCallback onPressed, String text, bool stretch = true})
-      : super(onPressed: onPressed, text: text, stretch: stretch);
+      {Key key,
+      VoidCallback onPressed,
+      String text,
+      bool stretch = true,
+      bool isDisabled = false})
+      : super(
+            onPressed: onPressed,
+            text: text,
+            stretch: stretch,
+            isDisabled: isDisabled);
 
-  //0076FF
-  static final Color primary = Color.fromRGBO(0, 118, 255, 1.0);
-  static final Color white = Color.fromRGBO(255, 255, 255, 1.0);
-  static const fontSize = 14.0;
-
-  static final TextStyle primaryTextStyle =
-      TextStyle(fontSize: fontSize, color: white);
+  static const padding = 8.0;
 
   @override
   Widget build(BuildContext context) {
-    return buildInternal(context, primary, primaryTextStyle, 8.0);
+    return buildInternal(context, padding);
   }
 }

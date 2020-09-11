@@ -6,31 +6,21 @@ abstract class ButtonPrimaryBase extends StatelessWidget {
       {Key key,
       @required this.onPressed,
       @required this.text,
-      this.stretch = true})
+      @required this.stretch,
+      @required this.isDisabled})
       : super(key: key);
 
   final String text;
   final VoidCallback onPressed;
   final bool stretch;
-
-  static BorderRadius borderRadius = BorderRadius.circular(6.0);
-
-  static final ShapeBorder shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(6.0),
-  );
+  final bool isDisabled;
 
   @protected
-  Widget buildInternal(BuildContext context, Color primary,
-      TextStyle primaryTextStyle, double padding) {
-    final button = RawMaterialButton(
-      fillColor: primary,
-      constraints: BoxConstraints(minHeight: 0, minWidth:36.0),
-      child: Padding(
-        padding: EdgeInsets.all(padding), //TODO Check why we can't have padding that is less than 10
-        child: Text(text, style: primaryTextStyle),
-      ),
-      onPressed: onPressed,
-      shape: shape,
+  Widget buildInternal(BuildContext context, double padding) {
+    final button = RaisedButton(
+      padding: EdgeInsets.all(padding),
+      child: Text(text),
+      onPressed: isDisabled ? null : onPressed,
     );
     return stretch
         ? SizedBox(

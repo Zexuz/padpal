@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/authentication/authentication.dart';
 import 'package:pad_pal/splash/splash.dart';
+import 'package:pad_pal/theme.dart';
 import 'package:user_repository/user_repository.dart';
 
 import 'home/view/home_page.dart';
@@ -46,6 +47,7 @@ class _AppViewState extends State<AppView> {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: _navigatorKey,
+      theme: AppTheme.Current,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {

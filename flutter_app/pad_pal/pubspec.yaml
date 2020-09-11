@@ -30,6 +30,7 @@ dependencies:
   grpc: ^2.2.0
   protobuf: ^1.0.1
   global_configuration: ^1.6.0
+  google_fonts: ^1.1.0
   authentication_repository:
     path: packages/authentication_repository
   user_repository:
