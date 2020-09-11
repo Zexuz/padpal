@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static Color primary = Color.fromRGBO(0, 118, 255, 1);
+  static Color primary = const Color(0xff0076FF);
+  static Color light = const Color(0xFCFFFFFF);
+  static Color disabled = const Color(0xF6F7F9ff);
+
+  static Color secondaryButtonColor = Colors.white;
+  static Color secondaryButtonTextColor = Colors.black;
 
   static Color secondaryColorRed = Color.fromRGBO(255, 0, 80, 1);
   static Color secondaryColorOrange = Color.fromRGBO(255, 158, 0, 1);
@@ -10,7 +15,7 @@ class AppTheme {
   static ThemeData Current = ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.light,
-      primaryColor: Color.fromRGBO(0, 118, 255, 1),
+      primaryColor: primary,
       accentColor: Colors.white,
       buttonTheme: ButtonThemeData(
         shape: RoundedRectangleBorder(
