@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pad_pal/components/buttons.dart';
+import 'package:pad_pal/demo/avatar_demo.dart';
 import 'package:pad_pal/demo/botton_demo.dart';
 import 'package:pad_pal/demo/input_demo.dart';
 
@@ -11,6 +11,7 @@ class ComponentsPage extends StatelessWidget {
   final List<Widget> entries = [
     ButtonDemo(),
     InputDemo(),
+    AvatarDemo(),
     /*ButtonSmallPrimary(),
     ButtonLargeSecondary(),
     ButtonSmallSecondary(),
