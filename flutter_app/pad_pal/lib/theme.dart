@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static Color primary = const Color(0xff0076FF);
-  static Color light = const Color(0xFCFFFFFF);
+  static Color light = Color.fromRGBO(224, 239, 255, 1.0);
   static Color disabled = const Color(0xF6F7F9ff);
 
   static Color secondaryButtonColor = Colors.white;
