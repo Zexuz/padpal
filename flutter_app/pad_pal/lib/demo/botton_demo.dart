@@ -26,16 +26,12 @@ class ButtonDemo extends StatelessWidget {
 
     return [
       ButtonLargePrimary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonLargePrimary(onPressed: onPress, text: text, stretch: true, isDisabled: true),
       ButtonSmallPrimary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonSmallPrimary(onPressed: onPress, text: text, stretch: true, isDisabled: true),
       ButtonLargeSecondary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonLargeSecondary(onPressed: onPress, text: text, stretch: true, isDisabled: true),
       ButtonSmallSecondary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonSmallSecondary(onPressed: onPress, text: text, stretch: true, isDisabled: true),
       ButtonLargeLight(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonLargeLight(onPressed: onPress, text: text, stretch: true, isDisabled: true),
       ButtonSmallLight(onPressed: onPress, text: text, stretch: true, isDisabled: false),
+      ButtonLargeLight(onPressed: onPress, text: text, stretch: true, isDisabled: true),
       ButtonSmallLight(onPressed: onPress, text: text, stretch: true, isDisabled: true),
     ];
   }
