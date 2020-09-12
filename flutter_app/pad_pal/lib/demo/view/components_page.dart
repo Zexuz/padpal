@@ -9,6 +9,7 @@ class ComponentsPage extends StatelessWidget {
 
   final List<Widget> entries = [
     ButtonDemo(),
+    InputDemo(),
     /*ButtonSmallPrimary(),
     ButtonLargeSecondary(),
     ButtonSmallSecondary(),
@@ -19,7 +20,9 @@ class ComponentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:Text("Components demo") ,),
+      appBar: AppBar(
+        title: Text("Components demo"),
+      ),
       body: ListView.separated(
         padding: const EdgeInsets.all(8),
         itemCount: entries.length,
@@ -31,8 +34,7 @@ class ComponentsPage extends StatelessWidget {
                     child: Text(entries[index].runtimeType.toString()),
                     onPressed: () => Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => entries[index]),
+                          MaterialPageRoute(builder: (context) => entries[index]),
                         )),
               ));
         },
