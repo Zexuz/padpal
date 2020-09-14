@@ -11,6 +11,7 @@ class AppTheme {
 
   static Color secondaryColorRed = Color.fromRGBO(255, 0, 80, 1);
   static Color secondaryColorOrange = Color.fromRGBO(255, 158, 0, 1);
+  static Color secondaryColorOrangeWithOpacity = Color.fromRGBO(255, 158, 0, 0.12);
 
   static ThemeData Current = ThemeData(
       // Define the default brightness and colors.

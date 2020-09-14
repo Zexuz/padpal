@@ -11,8 +11,8 @@ class ButtonLargePrimary extends StatelessWidget {
 
   final String text;
   final VoidCallback onPressed;
-  final bool stretch;
-  final bool isDisabled;
+  final bool stretch; // TODO remove stretch
+  final bool isDisabled;// TODO remove isDisabled, let onPress dictate this
 
   static const padding = 20.0;
 

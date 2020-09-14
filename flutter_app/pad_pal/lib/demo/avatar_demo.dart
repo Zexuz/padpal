@@ -5,15 +5,16 @@ import 'package:dotted_border/dotted_border.dart';
 class LeaderAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    const size = 24.0;
     const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
     return CircleAvatar(
-      radius: 60,
+      radius: size * 1.2,
       backgroundColor: AppTheme.primary,
       child: CircleAvatar(
-        radius: 54,
+        radius: size * 1.09,
         backgroundColor: Colors.white,
         child: CircleAvatar(
-          radius: 50,
+          radius: size,
           backgroundImage: NetworkImage(url),
         ),
       ),
@@ -25,11 +26,18 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
+    const size = 24.0;
+
     return CircleAvatar(
-      radius: 50,
+      minRadius: size,
       child: CircleAvatar(
-        radius: 50,
-        backgroundImage: NetworkImage(url),
+        radius: size,
+        backgroundColor: Colors.black,
+        child: ClipOval(
+            child: Image.network(
+          url,
+          fit: BoxFit.cover,
+        )),
       ),
     );
   }
@@ -38,35 +46,29 @@ class Avatar extends StatelessWidget {
 class DottedAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    const size = 24.0;
+
     return Stack(
       children: [
         Center(
           child: CircleAvatar(
-            radius: 52,
+            radius: size + 2,
+            //backgroundColor: Colors.black.withOpacity(0.12),
             backgroundColor: AppTheme.secondaryColorOrange.withOpacity(0.12),
           ),
         ),
-        Column(
-          children: [
-            const SizedBox(
-              height: 1.0,
+        Center(
+          child: DottedBorder(
+            borderType: BorderType.Circle,
+            color: AppTheme.secondaryColorOrange,
+            strokeWidth: 1.0,
+            strokeCap: StrokeCap.butt,
+            dashPattern: [4],
+            child: CircleAvatar(
+              radius: size,
+              backgroundColor: Colors.transparent,
             ),
-            DottedBorder(
-              padding: EdgeInsets.all(1),
-              borderType: BorderType.Circle,
-              color: AppTheme.secondaryColorOrange,
-              strokeWidth: 2.0,
-              strokeCap: StrokeCap.butt,
-              dashPattern: [7],
-              radius: Radius.circular(50.0),
-              child: Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: AppTheme.secondaryColorOrange.withOpacity(0.12),
-                ),
-              ),
-            )
-          ],
+          ),
         )
       ],
     );
