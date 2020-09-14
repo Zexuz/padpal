@@ -1,31 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/authentication/authentication.dart';
+import 'package:pad_pal/home/view/event_page.dart';
+import 'package:pad_pal/home/view/profile_page.dart';
+import 'package:pad_pal/theme.dart';
 
-class HomePage extends StatelessWidget {
-  static Route route() {
+class HomePage extends StatefulWidget {
+  static Route<void> route() {
     return MaterialPageRoute<void>(builder: (_) => HomePage());
   }
 
   @override
+  State<StatefulWidget> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  static const List<Widget> _p = <Widget>[EventPage(), Text('qwe'), Text('Notifications'), ProfilePage()];
+
+  static const List<BottomNavigationBarItem> _items = <BottomNavigationBarItem>[
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      title: Text('Events'),
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.message),
+      title: Text('Messages'),
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.notifications),
+      title: Text('Notifications'),
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.account_box),
+      title: Text('Profile'),
+    ),
+  ];
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              'Username: ${context.bloc<AuthenticationBloc>().state.username}',
-            ),
-            RaisedButton(
-              child: const Text('Logout'),
-              onPressed: () {
-                context.bloc<AuthenticationBloc>().add(AuthenticationLogoutRequested());
-              },
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: _items,
+        currentIndex: _selectedIndex,
+        selectedItemColor: AppTheme.primary,
+        onTap: _onItemTapped,
+      ),
+      body: SafeArea(
+        // child: _pages(_selectedIndex),
+        child: _p[_selectedIndex],
       ),
     );
   }

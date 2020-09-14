@@ -94,7 +94,7 @@ class CustomCard extends StatelessWidget {
         Expanded(
           flex: 2,
           child: ButtonSmallPrimary(
-              onPressed: () => {}, text: "Apply now", stretch: true, isDisabled: false),
+              onPressed: () => <void>{}, text: 'Apply now', stretch: true, isDisabled: false),
         ),
         const SizedBox(
           width: 24,
@@ -102,7 +102,7 @@ class CustomCard extends StatelessWidget {
         Expanded(
           flex: 1,
           child: ButtonSmallSecondary(
-              onPressed: () => {}, text: "Details", stretch: true, isDisabled: false),
+              onPressed: () => <void>{}, text: "Details", stretch: true, isDisabled: false),
         )
       ],
     );

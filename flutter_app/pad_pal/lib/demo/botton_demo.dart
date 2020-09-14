@@ -16,14 +16,12 @@ class ButtonDemo extends StatelessWidget {
   }
 
   List<Widget> getEntries(BuildContext context) {
-    final onPress = () => {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text("Clicked!"),
-          ))
-        };
-    final text = "Wohaao!";
+    final onPress = () => Scaffold.of(context).showSnackBar(const SnackBar(
+          content: Text('Clicked!'),
+        ));
+    const String text = 'Wohaao!';
 
-    return [
+    return <Widget>[
       ButtonLargePrimary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
       ButtonSmallPrimary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
       ButtonLargeSecondary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
@@ -35,8 +33,8 @@ class ButtonDemo extends StatelessWidget {
     ];
   }
 
-  Widget builder(context) {
-    final entries = getEntries(context);
+  Widget builder(BuildContext context) {
+    final List<Widget> entries = getEntries(context);
 
     return ListView.separated(
       padding: const EdgeInsets.all(10),

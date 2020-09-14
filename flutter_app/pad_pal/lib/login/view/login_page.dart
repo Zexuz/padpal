@@ -12,10 +12,6 @@ class LoginPage extends StatelessWidget {
     return MaterialPageRoute<void>(builder: (_) => LoginPage());
   }
 
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +19,8 @@ class LoginPage extends StatelessWidget {
         title: const Text('Login'),
         actions: [
           FlatButton(
-              child: Text("Components"),
-              onPressed: () => Navigator.push(
+              child: const Text('Components'),
+              onPressed: () => Navigator.push<void>(
                     context,
                     ComponentsPage.route(),
                   ))

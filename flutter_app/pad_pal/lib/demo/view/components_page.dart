@@ -38,7 +38,7 @@ class ComponentsPage extends StatelessWidget {
                     child: Text(entries[index].runtimeType.toString()),
                     onPressed: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => entries[index]),
+                          MaterialPageRoute<void>(builder: (context) => entries[index]),
                         )),
               ));
         },
