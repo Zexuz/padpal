@@ -7,5 +7,5 @@ void main() async {
 
   var env = "dev";
   await GlobalConfiguration().loadFromAsset("app_settings_$env");
-  runApp(App());
+  runApp(AppPushs(child: App(),));
 }
