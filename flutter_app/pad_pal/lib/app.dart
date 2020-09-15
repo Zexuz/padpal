@@ -15,18 +15,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class AppPushs extends StatefulWidget {
-  AppPushs({
+class AppPush extends StatefulWidget {
+  AppPush({
     @required this.child,
   });
 
   final Widget child;
 
   @override
-  _AppPushsState createState() => _AppPushsState();
+  _AppPushState createState() => _AppPushState();
 }
 
-class _AppPushsState extends State<AppPushs> {
+class _AppPushState extends State<AppPush> {
 
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
