@@ -1,33 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pad_pal/components/buttons.dart';
-import 'package:pad_pal/demo/avatar_demo.dart';
+import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/theme.dart';
-
-class CardDemo extends StatelessWidget {
-  const CardDemo();
-
-  @override
-  Widget build(BuildContext context) {
-    final entries = [
-      CustomCard(),
-    ];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Avatar Demo'),
-      ),
-      backgroundColor: Color(0xFFDDE2E9),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(10),
-        itemCount: entries.length,
-        itemBuilder: (BuildContext context, int index) {
-          return entries[index];
-        },
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
-      ),
-    );
-  }
-}
 
 class CustomCard extends StatelessWidget {
   @override
@@ -70,8 +43,7 @@ class CustomCard extends StatelessWidget {
             color: AppTheme.secondaryColorOrangeWithOpacity,
             borderRadius: BorderRadius.all(Radius.circular(18)),
           ),
-          child: Text("3 Request",
-              style: TextStyle(fontSize: 12.0, color: AppTheme.secondaryColorOrange)),
+          child: Text("3 Request", style: TextStyle(fontSize: 12.0, color: AppTheme.secondaryColorOrange)),
         )
       ],
     );
@@ -94,16 +66,14 @@ class CustomCard extends StatelessWidget {
       children: [
         Expanded(
           flex: 2,
-          child: ButtonSmallPrimary(
-              onPressed: () => <void>{}, text: 'Apply now', stretch: true, isDisabled: false),
+          child: ButtonSmallPrimary(onPressed: () => <void>{}, text: 'Apply now', stretch: true, isDisabled: false),
         ),
         const SizedBox(
           width: 24,
         ),
         Expanded(
           flex: 1,
-          child: ButtonSmallSecondary(
-              onPressed: () => <void>{}, text: "Details", stretch: true, isDisabled: false),
+          child: ButtonSmallSecondary(onPressed: () => <void>{}, text: "Details", stretch: true, isDisabled: false),
         )
       ],
     );

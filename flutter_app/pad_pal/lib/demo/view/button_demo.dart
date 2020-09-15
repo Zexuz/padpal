@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../components/buttons.dart';
+import 'package:pad_pal/components/components.dart';
 
 class ButtonDemo extends StatelessWidget {
   const ButtonDemo();
