@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:pad_pal/app.dart';
+import 'package:pad_pal/app_push.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
