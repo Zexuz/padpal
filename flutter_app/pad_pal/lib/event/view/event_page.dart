@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pad_pal/create_event/view/create_event_page.dart';
 import 'package:pad_pal/demo/card_demo.dart';
-import 'package:pad_pal/home/view/create_event_page.dart';
 import 'package:pad_pal/theme.dart';
 
 class EventPage extends StatelessWidget {

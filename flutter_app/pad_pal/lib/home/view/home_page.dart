@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pad_pal/home/view/event_page.dart';
-import 'package:pad_pal/home/view/profile_page.dart';
+import 'package:pad_pal/event/view/event_page.dart';
+import 'package:pad_pal/messages/messages.dart';
+import 'package:pad_pal/notifications/notifications.dart';
+import 'package:pad_pal/profile/view/profile_page.dart';
 import 'package:pad_pal/theme.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +23,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  static const List<Widget> _p = <Widget>[EventPage(), Text('qwe'), Text('Notifications'), ProfilePage()];
+  static List<Widget> _p = const <Widget>[
+    EventPage(),
+    MessagesPage(),
+    NotificationsPage(),
+    ProfilePage(),
+  ];
 
   static const List<BottomNavigationBarItem> _items = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
