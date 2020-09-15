@@ -27,7 +27,6 @@ class AppPush extends StatefulWidget {
 }
 
 class _AppPushState extends State<AppPush> {
-
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
@@ -71,7 +70,8 @@ class _AppPushState extends State<AppPush> {
       },
     );
     _firebaseMessaging.getToken().then((value) => print('FCM token: $value'));
-    _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging
+        .requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
   }
 
   // TOP-LEVEL or STATIC function to handle background messages
@@ -100,18 +100,18 @@ class _AppPushState extends State<AppPush> {
     print("AppPushs params pushText : $pushText");
     print("AppPushs params pushAction : $action");
 
-    // @formatter:off
     var platformChannelSpecificsAndroid = new AndroidNotificationDetails(
-        'your channel id',
-        'your channel name',
-        'your channel description',
-        playSound: false,
-        enableVibration: false,
-        importance: Importance.Max,
-        priority: Priority.High);
-    // @formatter:on
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      playSound: false,
+      enableVibration: false,
+      importance: Importance.Max,
+      priority: Priority.High,
+    );
     var platformChannelSpecificsIos = new IOSNotificationDetails(presentSound: false);
-    var platformChannelSpecifics = new NotificationDetails(platformChannelSpecificsAndroid, platformChannelSpecificsIos);
+    var platformChannelSpecifics =
+        new NotificationDetails(platformChannelSpecificsAndroid, platformChannelSpecificsIos);
 
     new Future.delayed(Duration.zero, () {
       _flutterLocalNotificationsPlugin.show(
@@ -126,7 +126,6 @@ class _AppPushState extends State<AppPush> {
 }
 
 class App extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -140,7 +139,7 @@ class App extends StatelessWidget {
       ],
       child: BlocProvider(
         create: (context) => AuthenticationBloc(
-          userRepository:  RepositoryProvider.of<UserRepository>(context),
+          userRepository: RepositoryProvider.of<UserRepository>(context),
           authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
         ),
         child: AppView(),
