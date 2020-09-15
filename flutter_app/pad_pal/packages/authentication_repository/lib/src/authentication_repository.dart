@@ -48,6 +48,10 @@ class AuthenticationRepository {
     _controller.sink.add(AuthenticationStatus.unauthenticated);
   }
 
+  void loginDebug() {
+    _controller.sink.add(AuthenticationStatus.authenticated);
+  }
+
   Future<void> login({@required String email, @required String password}) async {
     assert(email != null);
     assert(password != null);

@@ -28,6 +28,8 @@ class LoginForm extends StatelessWidget {
             _PasswordInput(),
             const SizedBox(height: 8.0),
             _LoginButton(),
+            const SizedBox(height: 8.0),
+            _LoginDebugButton(),
             const SizedBox(height: 4.0),
             _SignUpButton(),
           ],
@@ -66,8 +68,7 @@ class _PasswordInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) =>
-              context.bloc<LoginCubit>().passwordChanged(password),
+          onChanged: (password) => context.bloc<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',
@@ -89,16 +90,36 @@ class _LoginButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : RaisedButton(
-          key: const Key('loginForm_continue_raisedButton'),
-          child: const Text('LOGIN'),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          color: const Color(0xFFFFD600),
-          onPressed: state.status.isValidated
-              ? () => context.bloc<LoginCubit>().logInWithCredentials()
-              : null,
-        );
+                key: const Key('loginForm_continue_raisedButton'),
+                child: const Text('LOGIN'),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                color: const Color(0xFFFFD600),
+                onPressed: state.status.isValidated ? () => context.bloc<LoginCubit>().logInWithCredentials() : null,
+              );
+      },
+    );
+  }
+}
+
+class _LoginDebugButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginCubit, LoginState>(
+      buildWhen: (previous, current) => previous.status != current.status,
+      builder: (context, state) {
+        return state.status.isSubmissionInProgress
+            ? const CircularProgressIndicator()
+            : RaisedButton(
+                key: const Key('loginDebugForm_continue_raisedButton'),
+                child: const Text('LOGIN DEBUG'),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                color: const Color(0xFFFFD600),
+                onPressed: () => context.bloc<LoginCubit>().loginDebug(),
+              );
       },
     );
   }

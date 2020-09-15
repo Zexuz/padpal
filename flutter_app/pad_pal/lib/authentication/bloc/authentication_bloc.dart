@@ -63,6 +63,10 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   }
 
   Future<String> _tryGetUsername() async {
-    return (await _userRepository.me()).username;
+    try {
+      return (await _userRepository.me()).username;
+    } catch (e) {
+      return "debug";
+    }
   }
 }
