@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class PasswordInput extends StatelessWidget {
@@ -28,6 +27,8 @@ class TextInput extends StatelessWidget {
 }
 
 class InputDemo extends StatelessWidget {
+  const InputDemo();
+
   @override
   Widget build(BuildContext context) {
     final entries = [

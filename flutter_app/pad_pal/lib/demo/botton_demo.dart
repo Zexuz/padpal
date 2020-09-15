@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../components/buttons.dart';
 
 class ButtonDemo extends StatelessWidget {
+  const ButtonDemo();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

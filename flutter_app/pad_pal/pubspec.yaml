@@ -32,6 +32,7 @@ dependencies:
   global_configuration: ^1.6.0
   dotted_border: ^1.0.6
   google_fonts: ^1.1.0
+  flare_flutter: ^2.0.6
   authentication_repository:
     path: packages/authentication_repository
   user_repository:
@@ -63,6 +64,7 @@ flutter:
   assets:
      - assets/cfg/app_settings_dev.json
      - assets/cfg/app_settings_prod.json
+     - assets/success_check.flr
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

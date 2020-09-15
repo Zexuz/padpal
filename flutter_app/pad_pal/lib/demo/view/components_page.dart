@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pad_pal/demo/avatar_demo.dart';
 import 'package:pad_pal/demo/botton_demo.dart';
 import 'package:pad_pal/demo/card_demo.dart';
+import 'package:pad_pal/demo/flare_demo.dart';
 import 'package:pad_pal/demo/input_demo.dart';
 
 class ComponentsPage extends StatelessWidget {
@@ -9,17 +10,13 @@ class ComponentsPage extends StatelessWidget {
     return MaterialPageRoute<void>(builder: (_) => ComponentsPage());
   }
 
-  final List<Widget> entries = [
+  final entries = const <Widget>[
     ButtonDemo(),
     InputDemo(),
     AvatarDemo(),
     CardDemo(),
-    /*ButtonSmallPrimary(),
-    ButtonLargeSecondary(),
-    ButtonSmallSecondary(),
-     */
+    FlareDemo(),
   ];
-  final List<int> colorCodes = [600, 500, 100];
 
   @override
   Widget build(BuildContext context) {

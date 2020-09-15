@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pad_pal/components/buttons.dart';
 import 'package:pad_pal/demo/avatar_demo.dart';
 import 'package:pad_pal/theme.dart';
-import 'package:dotted_border/dotted_border.dart';
 
 class CardDemo extends StatelessWidget {
+  const CardDemo();
+
   @override
   Widget build(BuildContext context) {
     final entries = [

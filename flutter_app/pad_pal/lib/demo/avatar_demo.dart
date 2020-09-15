@@ -76,6 +76,8 @@ class DottedAvatar extends StatelessWidget {
 }
 
 class AvatarDemo extends StatelessWidget {
+  const AvatarDemo();
+
   @override
   Widget build(BuildContext context) {
     final entries = [
