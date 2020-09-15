@@ -10,7 +10,6 @@ import 'home/view/home_page.dart';
 import 'login/view/login_page.dart';
 
 class App extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -24,7 +23,7 @@ class App extends StatelessWidget {
       ],
       child: BlocProvider(
         create: (context) => AuthenticationBloc(
-          userRepository:  RepositoryProvider.of<UserRepository>(context),
+          userRepository: RepositoryProvider.of<UserRepository>(context),
           authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
         ),
         child: AppView(),
