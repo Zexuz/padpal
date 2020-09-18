@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "Padel.Proto.Chat.V1";
+
+package chat.v1;
+
+service ChatService {
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
+  rpc SubscribeToRoom (SubscribeToRoomRequest) returns (stream RoomEvents) {}
+}
+
+message SubscribeToRoomRequest {
+  string roomId = 1;
+}
+
+message RoomEvents {
+  oneof event {
+    Message message = 1;
+  }
+}
+
+message Message{
+  string content = 1;
+  int32 author = 2;
+  int64 utcTimestamp = 3;
+}
+
+message SendMessageRequest {
+  string content = 1;
+}
+
+message SendMessageResponse {
+}

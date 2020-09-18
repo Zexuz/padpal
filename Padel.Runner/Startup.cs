@@ -67,9 +67,10 @@ namespace Padel.Runner
             {
                 endpoints.MapGrpcService<AuthControllerV1>();
                 endpoints.MapGrpcService<UserControllerV1>();
+                endpoints.MapGrpcService<ChatControllerV1>();
             });
 
-            new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();
+            // new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();
         }
     }
 }

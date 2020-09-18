@@ -16,8 +16,4 @@
         <PackageReference Include="JWT" Version="7.2.1" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Padel.Proto\Padel.Proto.csproj" />
-    </ItemGroup>
-
 </Project>

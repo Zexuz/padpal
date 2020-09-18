@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Padel.Chat\Padel.Chat.csproj" />
       <ProjectReference Include="..\Padel.Login\Padel.Login.csproj" />
     </ItemGroup>
 
