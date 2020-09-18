@@ -2,7 +2,10 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Padel.Chat;
 using Padel.Proto.Chat.V1;
+using ChatService = Padel.Proto.Chat.V1.ChatService;
+using Message = Padel.Proto.Chat.V1.Message;
 
 namespace Padel.Runner.Controllers
 {
@@ -10,6 +13,7 @@ namespace Padel.Runner.Controllers
     public class ChatControllerV1 : ChatService.ChatServiceBase
     {
         private static Chat.ChatService _chatService = new Padel.Chat.ChatService();
+        private static ChatRoomNofifier _chatRoomNofifier = new ChatRoomNofifier();
 
         public ChatControllerV1()
         {
@@ -17,6 +21,7 @@ namespace Padel.Runner.Controllers
 
         public override async Task<SendMessageResponse> SendMessage(SendMessageRequest request, ServerCallContext context)
         {
+            var userId = 4;
             await _chatService.SendMessage(4, request.Content);
             return new SendMessageResponse();
         }

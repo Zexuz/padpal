@@ -12,6 +12,7 @@ namespace Padel.Chat.Test
     //Get messages history for a room
     //Update when a participant (meself) was last seen active in chat. (Read status)
 
+
     public class ChatServiceTest
     {
         private readonly ChatService _sut;
