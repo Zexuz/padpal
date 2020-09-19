@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:pad_pal/services/notification/notification_service.dart';
 
 class AppPush extends StatefulWidget {
   AppPush({
@@ -11,13 +12,13 @@ class AppPush extends StatefulWidget {
   });
 
   final Widget child;
-
   @override
   _AppPushState createState() => _AppPushState();
 }
 
 class _AppPushState extends State<AppPush> {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final NotificationManager _notificationManager = NotificationManager();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
@@ -42,8 +43,14 @@ class _AppPushState extends State<AppPush> {
   _initFirebaseMessaging() {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) {
-        print('AppPushs onMessage : $message');
-        _showNotification(message);
+        try{
+          print('AppPushs onMessage : $message');
+          _handleNotification(message);
+        }catch(e){
+          print(e);
+        }
+
+        //_showNotification(message);
         return;
       },
       onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
@@ -69,6 +76,17 @@ class _AppPushState extends State<AppPush> {
     print('AppPushs myBackgroundMessageHandler : $message');
     _showNotification(message);
     return Future<void>.value();
+  }
+
+  void _handleNotification(Map<String, dynamic> message) {
+    var type = message["data"]["type"];
+    switch (type) {
+      case 'chat-message':
+        _notificationManager.addChatNotification(message["data"]["content"]);
+        break;
+      default:
+        throw Exception("Unknown type $type");
+    }
   }
 
   static Future _showNotification(Map<String, dynamic> message) async {

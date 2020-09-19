@@ -6,7 +6,16 @@ package chat.v1;
 
 service ChatService {
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
+  rpc GetMessages (GetMessagesRequest) returns (GetMessagesResponse) { }
   rpc SubscribeToRoom (SubscribeToRoomRequest) returns (stream RoomEvents) {}
+}
+
+message GetMessagesRequest {
+  int64 afterTimestamp = 1;
+}
+
+message GetMessagesResponse {
+  repeated Message messages =1;
 }
 
 message SubscribeToRoomRequest {

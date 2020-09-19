@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Runner.Test", "Padel.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat", "Padel.Chat\Padel.Chat.csproj", "{727CB04D-32A1-498D-B737-3E6564DCB809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Playground\Playground.csproj", "{009BFB1F-903E-42B6-8F63-06C2A2D8D408}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat.Test", "Padel.Chat.Test\Padel.Chat.Test.csproj", "{AD5597A2-4083-4B9F-B0BA-7254B2ED03E2}"
 EndProject
 Global
@@ -40,10 +38,6 @@ Global
 		{727CB04D-32A1-498D-B737-3E6564DCB809}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{727CB04D-32A1-498D-B737-3E6564DCB809}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{727CB04D-32A1-498D-B737-3E6564DCB809}.Release|Any CPU.Build.0 = Release|Any CPU
-		{009BFB1F-903E-42B6-8F63-06C2A2D8D408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{009BFB1F-903E-42B6-8F63-06C2A2D8D408}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{009BFB1F-903E-42B6-8F63-06C2A2D8D408}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{009BFB1F-903E-42B6-8F63-06C2A2D8D408}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AD5597A2-4083-4B9F-B0BA-7254B2ED03E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD5597A2-4083-4B9F-B0BA-7254B2ED03E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD5597A2-4083-4B9F-B0BA-7254B2ED03E2}.Release|Any CPU.ActiveCfg = Release|Any CPU

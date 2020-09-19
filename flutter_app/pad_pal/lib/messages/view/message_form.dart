@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/button/light/button_small_light.dart';
-import 'package:pad_pal/components/button/primary/button_large_primary.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/messages/bloc/message_cubit.dart';
 
@@ -24,6 +23,8 @@ class MessageForm extends StatelessWidget {
         );
 
         var messageCubit = context.bloc<MessageCubit>();
+
+        messageCubit.listenForMessages();
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -59,12 +60,6 @@ class MessageForm extends StatelessWidget {
                 )
               ],
             ),
-            ButtonLargePrimary(
-              text: "START LISTEN",
-              isDisabled: false,
-              stretch: true,
-              onPressed: () => messageCubit.listenForMessages(),
-            )
           ],
         );
       },

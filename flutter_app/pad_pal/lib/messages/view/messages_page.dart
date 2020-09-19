@@ -7,7 +7,6 @@ import 'package:pad_pal/messages/view/message_form.dart';
 class MessagesPage extends StatelessWidget {
   const MessagesPage();
 
-  // TODO CREATE A QUBIT!
   @override
   Widget build(BuildContext context) {
     return Scaffold(

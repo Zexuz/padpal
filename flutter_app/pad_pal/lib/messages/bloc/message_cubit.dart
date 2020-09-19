@@ -2,27 +2,31 @@ import 'dart:async';
 
 import 'package:chat_repository/src/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pad_pal/services/notification/notification_service.dart';
 
 class MessageCubit extends Cubit<MessageState> {
   MessageCubit(this.repository) : super(MessageState()..messages = []);
 
   final ChatRepository repository;
+  final _notificationStream = NotificationManager().notification;
+  StreamSubscription _streamSub;
 
   Future<void> sendMessage(String message) async {
     await repository.sendMessage(message);
   }
 
   Future<void> listenForMessages() async {
-    await repository.startListenForMessages();
-    repository.streamController.stream.listen((event) {
-      print(event);
-      print(state.messages.length);
-      emit(MessageState()..messages = List.from([...state.messages, event]));
+    if (_streamSub != null) return;
+
+    _streamSub = _notificationStream.listen((event) {
+      if (event.type != Notification.chatMessage) return;
+      final chatMessage = event as ChatMessageNotification;
+      emit(MessageState()..messages = List.from([...state.messages, chatMessage.content]));
     });
   }
 
   Future<void> stopListenForMessages() async {
-    // await repository.stop(message);
+    _streamSub.cancel();
   }
 }
 

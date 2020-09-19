@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Padel.Login;
 using Padel.Login.Services;
 using Padel.Runner.Controllers;
 
@@ -15,7 +14,7 @@ namespace Padel.Runner
 {
     public class Startup
     {
-        private ILifetimeScope AutofacContainer { get; set; }
+        private          ILifetimeScope AutofacContainer { get; set; }
         private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
@@ -25,7 +24,8 @@ namespace Padel.Runner
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new AutofacModule(_configuration));
+            builder.RegisterModule(new Login.AutofacModule(_configuration));
+            builder.RegisterModule(new Chat.AutofacModule(_configuration));
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
