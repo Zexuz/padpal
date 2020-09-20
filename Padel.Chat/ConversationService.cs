@@ -73,17 +73,7 @@ namespace Padel.Chat
                 throw new UserIsNotARoomParticipantException(userId);
             }
 
-            // TODO Convert to list
-            var messagesCopy = new Message[room.Messages.Length + 1];
-
-            for (int i = 0; i < room.Messages.Length; i++)
-            {
-                messagesCopy[i] = room.Messages[i];
-            }
-
-            messagesCopy[room.Messages.Length] = _messageFactory.Build(userId, content);
-
-            room.Messages = messagesCopy;
+            room.Messages.Add( _messageFactory.Build(userId, content));
             await _roomRepository.SaveAsync(room);
         }
     }
