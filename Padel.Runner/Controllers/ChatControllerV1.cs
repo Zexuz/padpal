@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FirebaseAdmin;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Padel.Chat;
+using Padel.Chat.old;
 using Padel.Proto.Chat.V1;
 using ChatService = Padel.Proto.Chat.V1.ChatService;
 using Message = Padel.Proto.Chat.V1.Message;
@@ -17,7 +17,7 @@ namespace Padel.Runner.Controllers
     {
         private readonly IRepository<ChatRoomModel, string> _repository;
         private readonly FirebaseApp                        _firebaseApp;
-        private static   Chat.ChatService                   _chatService      = new Padel.Chat.ChatService();
+        private static   Chat.old.ChatService               _chatService      = new Chat.old.ChatService();
         private static   ChatRoomNofifier                   _chatRoomNofifier = new ChatRoomNofifier();
 
         public ChatControllerV1(IRepository<ChatRoomModel, string> repository, FirebaseApp firebaseApp)
@@ -43,7 +43,7 @@ namespace Padel.Runner.Controllers
                 };
             }
 
-            room.Messages.Add(new Chat.Message
+            room.Messages.Add(new Chat.old.Message
             {
                 Author = new UserId(userId),
                 Content = request.Content,

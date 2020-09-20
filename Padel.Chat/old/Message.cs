@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Chat
+namespace Padel.Chat.old
 {
     public class Message
     {

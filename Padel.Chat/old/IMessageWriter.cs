@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Padel.Chat
+namespace Padel.Chat.old
 {
     public interface IMessageWriter
     {

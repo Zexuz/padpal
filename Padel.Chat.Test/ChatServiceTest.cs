@@ -1,18 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Padel.Chat.old;
 using Xunit;
 
 namespace Padel.Chat.Test
 {
-    // TODO, in order
-    //Send messages to a room
-    //Get messages for a room (Stream)
-
-    //Get messages history for a room
-    //Update when a participant (meself) was last seen active in chat. (Read status)
-
-
     public class ChatServiceTest
     {
         private readonly ChatService _sut;

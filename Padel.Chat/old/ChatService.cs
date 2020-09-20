@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Padel.Chat
+namespace Padel.Chat.old
 {
     public class ChatService
     {

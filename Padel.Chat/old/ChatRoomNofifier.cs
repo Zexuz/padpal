@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Padel.Chat
+namespace Padel.Chat.old
 {
     public class ChatRoomNofifier
     {

@@ -1,4 +1,5 @@
 using FakeItEasy;
+using Padel.Chat.old;
 using Xunit;
 
 namespace Padel.Chat.Test

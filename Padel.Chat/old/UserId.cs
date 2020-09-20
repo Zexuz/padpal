@@ -1,4 +1,4 @@
-namespace Padel.Chat
+namespace Padel.Chat.old
 {
     public class UserId : ValueType<int>
     {

@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Padel.Login;
 using Padel.Login.Services;
 using Padel.Runner.Controllers;
+using AutofacModule = Padel.Chat.old.AutofacModule;
 
 namespace Padel.Runner
 {
@@ -26,7 +27,7 @@ namespace Padel.Runner
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule(new Login.AutofacModule(_configuration));
-            builder.RegisterModule(new Chat.AutofacModule(_configuration));
+            builder.RegisterModule(new AutofacModule(_configuration));
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
