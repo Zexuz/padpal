@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using FluentAssertions;
 using Padel.Chat.old;
+using Padel.Chat.ValueTypes;
 using Xunit;
 
 namespace Padel.Chat.Test

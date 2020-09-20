@@ -6,6 +6,7 @@ using FirebaseAdmin;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Padel.Chat.old;
+using Padel.Chat.ValueTypes;
 using Padel.Proto.Chat.V1;
 using ChatService = Padel.Proto.Chat.V1.ChatService;
 using Message = Padel.Proto.Chat.V1.Message;

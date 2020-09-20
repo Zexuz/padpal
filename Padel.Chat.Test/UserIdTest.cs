@@ -1,4 +1,5 @@
 using Padel.Chat.old;
+using Padel.Chat.ValueTypes;
 using Xunit;
 
 namespace Padel.Chat.Test

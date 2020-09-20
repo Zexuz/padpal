@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Chat.old
+namespace Padel.Chat.ValueTypes
 {
     public class RoomId : ValueType<string>
     {

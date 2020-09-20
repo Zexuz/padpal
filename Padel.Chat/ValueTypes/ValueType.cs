@@ -1,4 +1,4 @@
-namespace Padel.Chat.old
+namespace Padel.Chat.ValueTypes
 {
     public abstract class ValueType<T>
     {
