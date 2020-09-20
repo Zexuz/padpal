@@ -76,5 +76,21 @@ namespace Padel.Chat
             room.Messages.Add( _messageFactory.Build(userId, content));
             await _roomRepository.SaveAsync(room);
         }
+
+        public async Task<ChatRoom> GetRoom(UserId userId, RoomId roomId)
+        {
+            var room = await _roomRepository.GetRoom(roomId);
+            if (room == null)
+            {
+                throw new RoomNotFoundException(roomId);
+            }
+            
+            if (room.Participants.All(id => id.Value != userId.Value))
+            {
+                throw new UserIsNotARoomParticipantException(userId);
+            }
+
+            return room;
+        }
     }
 }

@@ -233,5 +233,65 @@ namespace Padel.Chat.Test
                 A<string>.That.Matches(s => s       == message.Content)
             )).MustHaveHappened();
         }
+
+        [Fact]
+        public async Task GetRoom_throws_exception_when_not_found()
+        {
+            var userId = new UserId(4);
+
+            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
+
+            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(Task.FromResult<ChatRoom>(null));
+
+            var ex = await Assert.ThrowsAsync<RoomNotFoundException>(() => _sut.GetRoom(userId, roomId));
+            Assert.Equal(roomId, ex.RoomId);
+        }
+
+        [Fact]
+        public async Task GetRoom_throws_exception_is_user_is_not_a_participant()
+        {
+            var userId = new UserId(4);
+            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
+
+            var chatRoom = new ChatRoom
+            {
+                Admin = new UserId(1337),
+                Id = roomId,
+                Messages = new List<Message>(),
+                Participants = new List<UserId>
+                {
+                    new UserId(5748)
+                }
+            };
+
+            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(chatRoom);
+
+            var ex = await Assert.ThrowsAsync<UserIsNotARoomParticipantException>(() => _sut.GetRoom(userId, roomId));
+            Assert.Equal(userId, ex.UserId);
+        }
+        
+        [Fact]
+        public async Task GetRoom_returns_chatroom()
+        {
+            var userId = new UserId(4);
+            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
+
+            var chatRoom = new ChatRoom
+            {
+                Admin = new UserId(1337),
+                Id = roomId,
+                Messages = new List<Message>(),
+                Participants = new List<UserId>
+                {
+                    new UserId(4)
+                }
+            };
+
+            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(chatRoom);
+
+            var room = await _sut.GetRoom(userId, roomId);
+            
+            Assert.Equal(chatRoom,room);
+        }
     }
 }
