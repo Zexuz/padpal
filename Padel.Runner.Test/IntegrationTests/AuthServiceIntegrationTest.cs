@@ -48,7 +48,12 @@ namespace Padel.Runner.Test.IntegrationTests
             };
 
             await _authServiceClient.RegisterAsync(payload);
-            var loginResponse = await _authServiceClient.LoginAsync(new LoginRequest {Email = payload.User.Email, Password = payload.User.Password});
+            var loginResponse = await _authServiceClient.LoginAsync(new LoginRequest
+            {
+                Email = payload.User.Email,
+                Password = payload.User.Password,
+                FirebaseToken = "FirebaseToken"
+            });
 
             var timeRange = DateTimeOffset.FromUnixTimeSeconds(loginResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
             Assert.True(timeRange < TimeSpan.FromSeconds(10));
@@ -101,6 +106,44 @@ namespace Padel.Runner.Test.IntegrationTests
             {
                 Email = payload.User.Email,
                 Password = "some other password"
+            }));
+        }
+
+        [Theory]
+        [InlineData("login_username1", "my@email1.com", "password", "")]
+        public async Task LoginsFailsWithBadFirebaseTokenAfterSigningUpSuccessful
+        (
+            string username,
+            string email,
+            string password,
+            string firebaseToken
+        )
+        {
+            var payload = new RegisterRequest
+            {
+                User = new NewUser
+                {
+                    Username = username,
+                    Email = email,
+                    Password = password,
+                    FirstName = "log",
+                    LastName = "in",
+                    DateOfBirth = new NewUser.Types.Date
+                    {
+                        Year = 10,
+                        Month = 10,
+                        Day = 10
+                    }
+                }
+            };
+
+            await _authServiceClient.RegisterAsync(payload);
+
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.LoginAsync(new LoginRequest
+            {
+                Email = payload.User.Email,
+                Password = password,
+                FirebaseToken = firebaseToken,
             }));
         }
 

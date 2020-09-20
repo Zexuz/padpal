@@ -6,12 +6,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:pad_pal/services/notification/notification_service.dart';
 
+class FirebaseTokenContainer extends InheritedWidget {
+  const FirebaseTokenContainer({
+    Key key,
+    this.fcmToken,
+    @required Widget child,
+  })  : assert(child != null),
+        super(key: key, child: child);
+
+  final String fcmToken;
+
+  static FirebaseTokenContainer of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<FirebaseTokenContainer>();
+  }
+
+  @override
+  bool updateShouldNotify(FirebaseTokenContainer old) => fcmToken != old.fcmToken;
+}
+
 class AppPush extends StatefulWidget {
   AppPush({
     @required this.child,
   });
 
   final Widget child;
+
   @override
   _AppPushState createState() => _AppPushState();
 }
@@ -20,6 +39,8 @@ class _AppPushState extends State<AppPush> {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final NotificationManager _notificationManager = NotificationManager();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  String _fcmToken = null;
 
   @override
   initState() {
@@ -30,7 +51,7 @@ class _AppPushState extends State<AppPush> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return FirebaseTokenContainer(child: widget.child, fcmToken: _fcmToken);
   }
 
   _initLocalNotifications() {
@@ -43,10 +64,10 @@ class _AppPushState extends State<AppPush> {
   _initFirebaseMessaging() {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) {
-        try{
+        try {
           print('AppPushs onMessage : $message');
           _handleNotification(message);
-        }catch(e){
+        } catch (e) {
           print(e);
         }
 
@@ -66,7 +87,12 @@ class _AppPushState extends State<AppPush> {
         return;
       },
     );
-    _firebaseMessaging.getToken().then((value) => print('FCM token: $value'));
+    _firebaseMessaging.getToken().then((value) {
+      print('FCM token: $value');
+      setState(() {
+        _fcmToken = value;
+      });
+    });
     _firebaseMessaging
         .requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
   }

@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Padel.Login.Exceptions;
-using Padel.Login.Repositories.RefreshToken;
+using Padel.Login.Models;
+using Padel.Login.Repositories.Device;
 using Padel.Login.Services.JsonWebToken;
 
 namespace Padel.Login.Services
@@ -10,14 +11,14 @@ namespace Padel.Login.Services
     {
         private const int RefreshTokenLength = 64;
 
-        private readonly IJsonWebTokenService    _jsonWebTokenService;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly IRandom                 _random;
+        private readonly IJsonWebTokenService _jsonWebTokenService;
+        private readonly IDeviceRepository    _deviceRepository;
+        private readonly IRandom              _random;
 
-        public OAuthTokenService(IJsonWebTokenService jsonWebTokenService, IRefreshTokenRepository refreshTokenRepository, IRandom random)
+        public OAuthTokenService(IJsonWebTokenService jsonWebTokenService, IDeviceRepository deviceRepository, IRandom random)
         {
             _jsonWebTokenService = jsonWebTokenService;
-            _refreshTokenRepository = refreshTokenRepository;
+            _deviceRepository = deviceRepository;
             _random = random;
         }
 
@@ -26,25 +27,25 @@ namespace Padel.Login.Services
             throw new NotImplementedException();
         }
 
-        public async Task<OAuthToken> CreateNewRefreshToken(int userId, ConnectionInfo connectionInfo)
+        public async Task<OAuthToken> CreateNewRefreshToken(int userId, string firebaseToken, ConnectionInfo connectionInfo)
         {
             var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(userId);
-            var refreshToken = GenerateRefreshToken(userId, connectionInfo.Ip);
+            var refreshToken = GenerateNewDevice(userId, firebaseToken, connectionInfo.Ip);
 
-            await _refreshTokenRepository.Insert(refreshToken);
+            await _deviceRepository.Insert(refreshToken);
 
             return new OAuthToken
             {
                 Type = OAuthToken.OAuthTokenType.Bearer,
                 AccessToken = accessToken,
-                RefreshToken = refreshToken.Token,
+                RefreshToken = refreshToken.RefreshToken,
                 Expires = expires
             };
         }
 
         public async Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info)
         {
-            var dbToken = await _refreshTokenRepository.FindToken(refreshToken);
+            var dbToken = await _deviceRepository.FindByRefreshToken(refreshToken);
 
             if (dbToken == null)
                 throw new RefreshTokenDoesNotExistException(refreshToken, info);
@@ -57,7 +58,7 @@ namespace Padel.Login.Services
             dbToken.LastUsed = DateTimeOffset.UtcNow;
             dbToken.LastUsedFromIp = info.Ip;
 
-            await _refreshTokenRepository.UpdateAsync(dbToken);
+            await _deviceRepository.UpdateAsync(dbToken);
 
             return new OAuthToken
             {
@@ -68,12 +69,13 @@ namespace Padel.Login.Services
             };
         }
 
-        private RefreshToken GenerateRefreshToken(int userId, string userIp)
+        private Device GenerateNewDevice(int userId, string firebaseToken, string userIp)
         {
-            return new RefreshToken
+            return new Device
             {
                 UserId = userId,
-                Token = _random.GenerateSecureString(RefreshTokenLength),
+                RefreshToken = _random.GenerateSecureString(RefreshTokenLength),
+                FcmToken = firebaseToken,
                 Created = DateTimeOffset.UtcNow,
                 DisabledWhen = null,
                 IsDisabled = false,

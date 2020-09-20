@@ -15,3 +15,5 @@ class Password extends FormzInput<String, PasswordValidationError> {
     return _passwordRegExp.hasMatch(value) ? null : PasswordValidationError.invalid;
   }
 }
+
+

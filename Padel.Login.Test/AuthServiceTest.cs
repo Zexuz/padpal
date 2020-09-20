@@ -4,7 +4,6 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Login.Exceptions;
 using Padel.Login.Models;
-using Padel.Login.Repositories.RefreshToken;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Padel.Login.Services.JsonWebToken;
@@ -40,7 +39,8 @@ namespace Padel.Login.Test
             var loginRequest = new LoginRequest
             {
                 Email = "someEmail",
-                Password = "plainPassword"
+                Password = "plainPassword",
+                FirebaseToken = "token",
             };
             var ex = await Assert.ThrowsAsync<EmailDoesNotExistsException>(async () => await _sut.Login(loginRequest, new ConnectionInfo()));
             Assert.Equal("someEmail", ex.Email);
@@ -57,7 +57,8 @@ namespace Padel.Login.Test
             var loginRequest = new LoginRequest
             {
                 Email = "someEmail",
-                Password = "plainPassword"
+                Password = "plainPassword",
+                FirebaseToken = "token",
             };
             var ex = await Assert.ThrowsAsync<PasswordDoesNotMatchException>(async () => await _sut.Login(loginRequest, new ConnectionInfo()));
             Assert.Equal("someEmail", ex.Email);
@@ -76,22 +77,29 @@ namespace Padel.Login.Test
             var connectionInfo = new ConnectionInfo {Ip = "myIp"};
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(dbUser));
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(true);
-            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<int>._, A<ConnectionInfo>._)).Returns(Task.FromResult(new OAuthToken
-            {
-                AccessToken = "some.jwt.token"
-            }));
+            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<int>._, A<string>._, A<ConnectionInfo>._)).Returns(
+                Task.FromResult(new OAuthToken
+                {
+                    AccessToken = "some.jwt.token"
+                })
+            );
 
             var loginRequest = new LoginRequest
             {
                 Email = "someEmail",
-                Password = "plainPassword"
+                Password = "plainPassword",
+                FirebaseToken = "someFirebaseToken"
             };
 
             var token = await _sut.Login(loginRequest, connectionInfo);
 
             Assert.Equal("some.jwt.token", token.AccessToken);
 
-            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(1, A<ConnectionInfo>.That.Matches(info => info.Ip == "myIp")))
+            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(
+                    1,
+                    A<string>.That.Matches(s => s                  == "someFirebaseToken"),
+                    A<ConnectionInfo>.That.Matches(info => info.Ip == "myIp"))
+                )
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == "someEmail"))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(

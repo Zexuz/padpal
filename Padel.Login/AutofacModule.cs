@@ -2,7 +2,7 @@ using System;
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Padel.Login.Repositories;
-using Padel.Login.Repositories.RefreshToken;
+using Padel.Login.Repositories.Device;
 using Padel.Login.Repositories.User;
 using Padel.Login.Services;
 using Padel.Login.Services.JsonWebToken;
@@ -21,7 +21,7 @@ namespace Padel.Login
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<UserRepository>().As<IUserRepository>();
-            builder.RegisterType<RefreshTokenRepository>().As<IRefreshTokenRepository>();
+            builder.RegisterType<DeviceRepository>().As<IDeviceRepository>();
             builder.RegisterType<AuthService>().As<IAuthService>();
             builder.RegisterType<PasswordService>().As<IPasswordService>();
             builder.RegisterType<DatabaseConnectionFactory>().As<IDatabaseConnectionFactory>();

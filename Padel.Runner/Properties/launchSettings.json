@@ -4,8 +4,7 @@
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "GOOGLE_APPLICATION_CREDENTIALS": "/home/robin/Downloads/padpal-firebase-adminsdk.json"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

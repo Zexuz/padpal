@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Padel.Login;
 using Padel.Login.Services;
 using Padel.Runner.Controllers;
 
@@ -70,7 +71,7 @@ namespace Padel.Runner
                 endpoints.MapGrpcService<ChatControllerV1>();
             });
 
-            // new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();
+            new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();
         }
     }
 }

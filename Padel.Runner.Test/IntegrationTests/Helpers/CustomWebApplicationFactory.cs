@@ -64,7 +64,7 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
         public CustomWebApplicationFactory()
         {
             RandomSuffix = RandomString(15);
-            Db = new SqlConnection("Server=DESKTOP-5UP1TEB;Database=master;Trusted_Connection=True;");
+            Db = new SqlConnection("Server=127.0.0.1,1433;Database=master;User=sa;Password=yourStrong(!)Password;");
             Db.ExecuteScalar($"create database padel_test_{RandomSuffix}");
         }
 
@@ -79,7 +79,7 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
             service.ConfigureAppConfiguration(builder => builder.AddInMemoryCollection(new[]
             {
                 new KeyValuePair<string, string>("Connections:Sql:padel",
-                    $"Server=DESKTOP-5UP1TEB;Database=padel_test_{RandomSuffix};Trusted_Connection=True;")
+                    $"Server=127.0.0.1,1433;Database=padel_test_{RandomSuffix};User=sa;Password=yourStrong(!)Password;")
             }));
         }
 

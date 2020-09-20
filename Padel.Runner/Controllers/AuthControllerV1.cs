@@ -33,7 +33,8 @@ namespace Padel.Runner.Controllers
             var loginRequest = new Login.Models.LoginRequest
             {
                 Email = request.Email,
-                Password = request.Password
+                Password = request.Password,
+                FirebaseToken = request.FirebaseToken
             };
             try
             {

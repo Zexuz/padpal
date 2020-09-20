@@ -18,10 +18,11 @@ namespace Padel.Login.Migrations
                 .WithColumn("IsEmailVerified").AsBoolean().WithDefaultValue(false).NotNullable()
                 .WithColumn("Created").AsDateTimeOffset().NotNullable();
 
-            Create.Table("RefreshToken")
+            Create.Table("Device")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
                 .WithColumn("UserId").AsInt32().ForeignKey("user", "id").NotNullable()
-                .WithColumn("Token").AsString(100).Unique().NotNullable()
+                .WithColumn("RefreshToken").AsString(100).Unique().NotNullable()
+                .WithColumn("FcmToken").AsString(300).Unique().NotNullable()
                 .WithColumn("Created").AsDateTimeOffset().NotNullable()
                 .WithColumn("LastUsed").AsDateTimeOffset().NotNullable()
                 .WithColumn("IsDisabled").AsBoolean().WithDefaultValue(false).NotNullable()
