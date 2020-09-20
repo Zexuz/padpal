@@ -6,45 +6,50 @@ using Padel.Chat.ValueTypes;
 using Padel.Proto.Chat.V1;
 using Padel.Runner.Extensions;
 
-public class ChatControllerV1 : ChatService.ChatServiceBase
+namespace Padel.Runner.Controllers
 {
-    private readonly IConversationService _conversationService;
-
-    public ChatControllerV1(IConversationService conversationService)
+    public class ChatControllerV1 : ChatService.ChatServiceBase
     {
-        _conversationService = conversationService;
-    }
+        private readonly IConversationService _conversationService;
+        private readonly IRoomService         _roomService;
 
-    public override async Task<CreateRoomResponse> CreateRoom(CreateRoomRequest request, ServerCallContext context)
-    {
-        var userId = new UserId(context.GetUserId());
+        public ChatControllerV1(IConversationService conversationService, IRoomService roomService)
+        {
+            _conversationService = conversationService;
+            _roomService = roomService;
+        }
 
-        var room = await _conversationService.CreateRoom(userId.Value, request.Content, request.Participants);
+        public override async Task<CreateRoomResponse> CreateRoom(CreateRoomRequest request, ServerCallContext context)
+        {
+            var userId = new UserId(context.GetUserId());
 
-        return new CreateRoomResponse {RoomId = room.Id.Value};
-    }
+            var room = await _roomService.CreateRoom(userId, request.Content, request.Participants.Select(i => new UserId(i)));
 
-    public override Task<SendMessageResponse> SendMessage(SendMessageRequest request, ServerCallContext context)
-    {
-        // TODO implement
-        return base.SendMessage(request, context);
-    }
+            return new CreateRoomResponse {RoomId = room.Id.Value};
+        }
 
-    public override Task<GetRoomResponse> GetRoom(GetRoomRequest request, ServerCallContext context)
-    {   
-        return base.GetRoom(request, context);
-    }
+        public override Task<SendMessageResponse> SendMessage(SendMessageRequest request, ServerCallContext context)
+        {
+            // TODO implement
+            return base.SendMessage(request, context);
+        }
 
-    public override async Task<GetRoomsWhereUserIsParticipatingResponse> GetRoomsWhereUserIsParticipating(
-        GetRoomsWhereUserIsParticipatingRequest request, ServerCallContext context)
-    {
-        var userId = new UserId(context.GetUserId());
+        public override Task<GetRoomResponse> GetRoom(GetRoomRequest request, ServerCallContext context)
+        {
+            return base.GetRoom(request, context);
+        }
 
-        var rooms = await _conversationService.GetRoomsWhereUserIsParticipant(userId);
+        public override async Task<GetRoomsWhereUserIsParticipatingResponse> GetRoomsWhereUserIsParticipating(
+            GetRoomsWhereUserIsParticipatingRequest request, ServerCallContext context)
+        {
+            var userId = new UserId(context.GetUserId());
 
-        var response = new GetRoomsWhereUserIsParticipatingResponse();
-        response.RoomIds.AddRange(rooms.Select(room => room.Id.Value));
-        return response;
+            var rooms = await _conversationService.GetRoomsWhereUserIsParticipant(userId);
+
+            var response = new GetRoomsWhereUserIsParticipatingResponse();
+            response.RoomIds.AddRange(rooms.Select(room => room.Id.Value));
+            return response;
+        }
     }
 }
 

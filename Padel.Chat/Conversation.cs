@@ -4,9 +4,9 @@ using Padel.Chat.ValueTypes;
 
 namespace Padel.Chat
 {
-    public class Conversation : IEntity<int>
+    public class Conversation : IEntity<UserId>
     {
-        public int          Id          { get; set; } // The userId
-        public List<RoomId> MyChatRooms { get; set; } // List of all the rooms that I am participating in.
+        public UserId       Id          { get; set; }
+        public List<RoomId> MyChatRooms { get; set; }
     }
 }
