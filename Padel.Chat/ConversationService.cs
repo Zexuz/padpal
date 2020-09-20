@@ -6,19 +6,19 @@ namespace Padel.Chat
 {
     public class ConversationService : IConversationService
     {
-        private readonly IRoomRepository _roomRepository;
-        private readonly IMessageFactory _messageFactory;
-        private readonly IRoomService  _roomService;
+        private readonly IRoomRepository       _roomRepository;
+        private readonly IRoomService          _roomService;
+        private readonly IMessageSenderService _messageSenderService;
 
         public ConversationService(
-            IRoomRepository roomRepository,
-            IMessageFactory messageFactory,
-            IRoomService roomService
+            IRoomRepository       roomRepository,
+            IRoomService          roomService,
+            IMessageSenderService messageSenderService
         )
         {
             _roomRepository = roomRepository;
-            _messageFactory = messageFactory;
             _roomService = roomService;
+            _messageSenderService = messageSenderService;
         }
 
         public async Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId)
@@ -29,10 +29,7 @@ namespace Padel.Chat
         public async Task SendMessage(UserId userId, RoomId roomId, string content)
         {
             var room = await _roomService.GetRoom(userId, roomId);
-
-            room.Messages.Add(_messageFactory.Build(userId, content));
-
-            await _roomRepository.SaveAsync(room);
+            await _messageSenderService.SendMessage(userId, room, content);
         }
     }
 }

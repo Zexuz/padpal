@@ -9,21 +9,21 @@ namespace Padel.Chat
     public class RoomService : IRoomService
     {
         private readonly IRepository<Conversation, UserId> _conversationRepository;
-        private readonly IConversationService              _conversationService;
         private readonly IRoomFactory                      _roomFactory;
         private readonly IRoomRepository                   _roomRepository;
+        private readonly IMessageSenderService             _messageSenderService;
 
         public RoomService(
             IRepository<Conversation, UserId> conversationRepository,
-            IConversationService              conversationService,
             IRoomFactory                      roomFactory,
-            IRoomRepository                   roomRepository
+            IRoomRepository                   roomRepository,
+            IMessageSenderService messageSenderService
         )
         {
             _conversationRepository = conversationRepository;
-            _conversationService = conversationService;
             _roomFactory = roomFactory;
             _roomRepository = roomRepository;
+            _messageSenderService = messageSenderService;
         }
 
         public async Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IEnumerable<UserId> participants)
@@ -48,7 +48,7 @@ namespace Padel.Chat
                 await _conversationRepository.SaveAsync(coon);
             }
 
-            await _conversationService.SendMessage(adminUserId, room.Id, initMessage);
+            await _messageSenderService.SendMessage(adminUserId, room, initMessage);
             return room;
         }
 

@@ -8,23 +8,27 @@ using Xunit;
 
 namespace Padel.Chat.Test
 {
-
     public class RoomServiceTest
     {
         private readonly RoomService                       _sut;
         private readonly IRepository<Conversation, UserId> _fakeConversationRepository;
-        private readonly IConversationService              _fakeConversationService;
         private readonly IRoomFactory                      _fakeRoomFactory;
         private readonly IRoomRepository                   _fakeRoomRepository;
+        private          IMessageSenderService             _fakeMessageSenderService;
 
         public RoomServiceTest()
         {
             _fakeConversationRepository = A.Fake<IRepository<Conversation, UserId>>();
             _fakeRoomRepository = A.Fake<IRoomRepository>();
-            _fakeConversationService = A.Fake<IConversationService>();
             _fakeRoomFactory = A.Fake<IRoomFactory>();
+            _fakeMessageSenderService = A.Fake<IMessageSenderService>();
 
-            _sut = new RoomService(_fakeConversationRepository, _fakeConversationService, _fakeRoomFactory, _fakeRoomRepository);
+            _sut = new RoomService(
+                _fakeConversationRepository,
+                _fakeRoomFactory,
+                _fakeRoomRepository,
+                _fakeMessageSenderService
+            );
         }
 
         [Fact]
@@ -65,7 +69,7 @@ namespace Padel.Chat.Test
                 conversation.MyChatRooms.Exists(s => s == roomId)
             ))).MustHaveHappened();
 
-            A.CallTo(() => _fakeConversationService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeMessageSenderService.SendMessage(myUserId, expectedRoom, initMessage)).MustHaveHappenedOnceExactly();
 
             A.CallTo(() => _fakeRoomRepository.SaveAsync(expectedRoom)).MustHaveHappened();
 
@@ -127,7 +131,7 @@ namespace Padel.Chat.Test
                 conversation.MyChatRooms.Count == 3
             ))).MustHaveHappened();
 
-            A.CallTo(() => _fakeConversationService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeMessageSenderService.SendMessage(myUserId, actualRoom, initMessage)).MustHaveHappenedOnceExactly();
 
             A.CallTo(() => _fakeRoomRepository.SaveAsync(expectedRoom)).MustHaveHappened();
 

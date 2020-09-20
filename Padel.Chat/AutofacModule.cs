@@ -26,6 +26,7 @@ namespace Padel.Chat
             builder.RegisterType<RoomService>().As<IRoomService>();
             builder.RegisterType<RoomIdGenerator>().As<IRoomIdGenerator>();
             builder.RegisterType<RoomRepository>().As<IRoomRepository>();
+            builder.RegisterType<MessageSenderService>().As<IMessageSenderService>();
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FakeItEasy;
@@ -10,18 +9,18 @@ namespace Padel.Chat.Test
 {
     public class ConversationServiceTest
     {
-        private readonly ConversationService _sut;
-        private readonly IRoomService        _fakeRoomService;
-        private readonly IRoomRepository     _fakeRoomRepository;
-        private readonly IMessageFactory     _fakeMessageFactory;
+        private readonly ConversationService   _sut;
+        private readonly IRoomService          _fakeRoomService;
+        private readonly IRoomRepository       _fakeRoomRepository;
+        private readonly IMessageSenderService _fakeMessageSenderService;
 
         public ConversationServiceTest()
         {
             _fakeRoomRepository = A.Fake<IRoomRepository>();
             _fakeRoomService = A.Fake<IRoomService>();
-            _fakeMessageFactory = A.Fake<IMessageFactory>();
+            _fakeMessageSenderService = A.Fake<IMessageSenderService>();
 
-            _sut = new ConversationService(_fakeRoomRepository, _fakeMessageFactory, _fakeRoomService);
+            _sut = new ConversationService(_fakeRoomRepository, _fakeRoomService, _fakeMessageSenderService);
         }
 
         [Fact]
@@ -61,30 +60,12 @@ namespace Padel.Chat.Test
                 Participants = roomParticipants
             };
 
-            var message = new Message
-            {
-                Author = userId,
-                Content = content,
-                Timestamp = DateTimeOffset.UtcNow
-            };
-
-            A.CallTo(() => _fakeRoomService.GetRoom(userId,roomId)).Returns(originalChatRoom);
-            A.CallTo(() => _fakeMessageFactory.Build(A<UserId>._, A<string>._)).Returns(message);
+            A.CallTo(() => _fakeRoomService.GetRoom(userId, roomId)).Returns(originalChatRoom);
 
             await _sut.SendMessage(userId, roomId, content);
 
-            A.CallTo(() => _fakeRoomService.GetRoom(userId,roomId)).MustHaveHappened();
-            A.CallTo(() => _fakeRoomRepository.SaveAsync(A<ChatRoom>.That.Matches(room =>
-                room.Admin.Value    == originalChatRoom.Admin.Value &&
-                room.Id             == roomId                       &&
-                room.Messages.Count == 1                            &&
-                room.Messages[0]    == message                      &&
-                room.Participants   == roomParticipants
-            ))).MustHaveHappened();
-            A.CallTo(() => _fakeMessageFactory.Build(
-                A<UserId>.That.Matches(s => s.Value == message.Author.Value),
-                A<string>.That.Matches(s => s       == message.Content)
-            )).MustHaveHappened();
+            A.CallTo(() => _fakeRoomService.GetRoom(userId, roomId)).MustHaveHappened();
+            A.CallTo(() => _fakeMessageSenderService.SendMessage(userId,originalChatRoom,content)).MustHaveHappened();
         }
     }
 }
