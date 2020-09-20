@@ -20,12 +20,12 @@ namespace Padel.Chat.Test
         private readonly IRepository<Conversation, int> _fakeRepository;
         private readonly IRoomService                   _fakeRoomService;
         private readonly IRoomFactory                   _fakeRoomFactory;
-        private readonly IRepository<ChatRoom, RoomId>  _fakeRoomRepository;
+        private readonly IRoomRepository                _fakeRoomRepository;
 
         public ConversationServiceTest()
         {
             _fakeRepository = A.Fake<IRepository<Conversation, int>>();
-            _fakeRoomRepository = A.Fake<IRepository<ChatRoom, RoomId>>();
+            _fakeRoomRepository = A.Fake<IRoomRepository>();
             _fakeRoomService = A.Fake<IRoomService>();
             _fakeRoomFactory = A.Fake<IRoomFactory>();
 
@@ -73,7 +73,7 @@ namespace Padel.Chat.Test
             A.CallTo(() => _fakeRoomService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
 
             A.CallTo(() => _fakeRoomRepository.SaveAsync(expectedRoom)).MustHaveHappened();
-            
+
             expectedRoom.Should().BeEquivalentTo(actualRoom);
         }
 
@@ -131,10 +131,27 @@ namespace Padel.Chat.Test
             ))).MustHaveHappened();
 
             A.CallTo(() => _fakeRoomService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
-            
+
             A.CallTo(() => _fakeRoomRepository.SaveAsync(expectedRoom)).MustHaveHappened();
 
             expectedRoom.Should().BeEquivalentTo(actualRoom);
+        }
+
+        [Fact]
+        public async Task GetRoomsWhereUserIsParticipant_should_return_rooms_where_user_is_a_participant()
+        {
+            var userId = new UserId(4);
+
+            A.CallTo(() => _fakeRoomRepository.GetRoomsWhereUsersIsParticipant(userId)).Returns(new List<ChatRoom>
+            {
+                new ChatRoom(),
+                new ChatRoom(),
+                new ChatRoom(),
+            });
+
+            var rooms = await _sut.GetRoomsWhereUserIsParticipant(userId);
+
+            Assert.Equal(3, rooms.Count);
         }
     }
 }

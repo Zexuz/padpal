@@ -39,44 +39,39 @@ namespace Padel.Chat.old
 
     public class MongoRepository<TEntity, TIdentifier> : IRepository<TEntity, TIdentifier> where TEntity : class, IEntity<TIdentifier>
     {
-        private readonly IMongoDatabase _database;
+        protected readonly IMongoCollection<TEntity> Collection;
+
 
         public MongoRepository(IMongoDbConnectionFactory client)
         {
-            _database = client.Database;
+            Collection = client.Database.GetCollection<TEntity>(typeof(TEntity).Name);
         }
 
         public async Task<TEntity> GetAsync(TIdentifier id)
         {
-            return await _database.GetCollection<TEntity>(typeof(TEntity).Name).Find(x => x.Id.Equals(id)).FirstOrDefaultAsync();
+            return await Collection.Find(x => x.Id.Equals(id)).FirstOrDefaultAsync();
         }
 
         public Task<List<TEntity>> GetAll()
         {
-            return _database.GetCollection<TEntity>(typeof(TEntity).Name).Find(new BsonDocument()).ToListAsync();
+            return Collection.Find(new BsonDocument()).ToListAsync();
         }
 
         public async Task<TEntity> SaveAsync(TEntity entity)
         {
-            var collection = _database.GetCollection<TEntity>(typeof(TEntity).Name);
-
-            await collection.ReplaceOneAsync(x => x.Id.Equals(entity.Id), entity, new ReplaceOptions() {IsUpsert = true});
+            await Collection.ReplaceOneAsync(x => x.Id.Equals(entity.Id), entity, new ReplaceOptions() {IsUpsert = true});
 
             return entity;
         }
 
         public async Task Delete(TIdentifier id)
         {
-            var collection = _database.GetCollection<TEntity>(typeof(TEntity).Name);
-
-            await collection.DeleteOneAsync(x => x.Id.Equals(id));
+            await Collection.DeleteOneAsync(x => x.Id.Equals(id));
         }
 
         public async Task Delete(TEntity entity)
         {
-            var collection = _database.GetCollection<TEntity>(typeof(TEntity).Name);
-
-            await collection.DeleteOneAsync(x => x.Id.Equals(entity.Id));
+            await Collection.DeleteOneAsync(x => x.Id.Equals(entity.Id));
         }
     }
 

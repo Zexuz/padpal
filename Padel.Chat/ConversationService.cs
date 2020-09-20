@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Padel.Chat.old;
@@ -6,18 +5,18 @@ using Padel.Chat.ValueTypes;
 
 namespace Padel.Chat
 {
-    public class ConversationService
+    public class ConversationService : IConversationService
     {
         private readonly IRepository<Conversation, int> _repository;
         private readonly IRoomService                   _roomService;
         private readonly IRoomFactory                   _roomFactory;
-        private readonly IRepository<ChatRoom, RoomId>  _roomRepository;
+        private readonly IRoomRepository                _roomRepository;
 
         public ConversationService(
             IRepository<Conversation, int> repository,
             IRoomService                   roomService,
             IRoomFactory                   roomFactory,
-            IRepository<ChatRoom, RoomId>  roomRepository
+            IRoomRepository                roomRepository
         )
         {
             _repository = repository;
@@ -50,6 +49,11 @@ namespace Padel.Chat
 
             await _roomService.SendMessage(adminUserId, room.Id, initMessage);
             return room;
+        }
+
+        public async Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId)
+        {
+            return await _roomRepository.GetRoomsWhereUsersIsParticipant(userId);
         }
     }
 }
