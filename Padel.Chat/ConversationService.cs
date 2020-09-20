@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Padel.Chat.old;
+using Padel.Chat.Test;
 
 namespace Padel.Chat
 {
@@ -8,15 +9,20 @@ namespace Padel.Chat
     {
         private readonly IRepository<Conversation, int> _repository;
         private readonly IRoomService                   _roomService;
+        private readonly IRoomIdGenerator               _roomIdGenerator;
 
-        public ConversationService(IRepository<Conversation, int> repository, IRoomService roomService)
+        public ConversationService(IRepository<Conversation, int> repository, IRoomService roomService, IRoomIdGenerator roomIdGenerator)
         {
             _repository = repository;
             _roomService = roomService;
+            _roomIdGenerator = roomIdGenerator;
         }
 
-        public async Task CreateRoom(string roomId, int adminUserId, string initMessage, int[] participants)
+        public async Task<string> CreateRoom(int adminUserId, string initMessage, int[] participants)
         {
+            var roomId = _roomIdGenerator.GenerateNewRoomId();
+            // TODO Here we should generate a new room
+            
             var allParticipants = new List<int> {adminUserId};
             allParticipants.AddRange(participants);
 
@@ -35,6 +41,7 @@ namespace Padel.Chat
             }
 
             await _roomService.SendMessage(adminUserId, roomId, initMessage);
+            return roomId;
         }
     }
 }

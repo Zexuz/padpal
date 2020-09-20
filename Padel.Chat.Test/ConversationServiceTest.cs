@@ -16,12 +16,15 @@ namespace Padel.Chat.Test
         private readonly ConversationService            _sut;
         private readonly IRepository<Conversation, int> _fakeRepository;
         private readonly IRoomService                   _fakeRoomService;
+        private readonly IRoomIdGenerator               _fakeRoomIdGenerator;
 
         public ConversationServiceTest()
         {
             _fakeRepository = A.Fake<IRepository<Conversation, int>>();
-             _fakeRoomService =  A.Fake<IRoomService>();
-            _sut = new ConversationService(_fakeRepository, _fakeRoomService);
+            _fakeRoomService = A.Fake<IRoomService>();
+            _fakeRoomIdGenerator = A.Fake<IRoomIdGenerator>();
+
+            _sut = new ConversationService(_fakeRepository, _fakeRoomService, _fakeRoomIdGenerator);
         }
 
         [Fact]
@@ -31,11 +34,11 @@ namespace Padel.Chat.Test
             var participants = new[] {5, 7, 99};
             var initMessage = "asd";
 
-            const string roomId = "roomId"; // This will come from the backend
-
+            const string expectedRoomId = "roomId";
+            A.CallTo(() => _fakeRoomIdGenerator.GenerateNewRoomId()).Returns(expectedRoomId);
             A.CallTo(() => _fakeRepository.GetAsync(A<int>._)).Returns(Task.FromResult<Conversation>(null));
 
-            await _sut.CreateRoom(roomId, myUserId, initMessage, participants);
+            var actualRoomId = await _sut.CreateRoom(myUserId, initMessage, participants);
 
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
                 conversation.Id == 4 &&
@@ -54,7 +57,8 @@ namespace Padel.Chat.Test
                 conversation.MyChatRooms.Exists(s => s == "roomId")
             ))).MustHaveHappened();
 
-            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, expectedRoomId, initMessage)).MustHaveHappenedOnceExactly();
+            Assert.Equal(expectedRoomId, actualRoomId);
         }
 
         [Fact]
@@ -64,14 +68,15 @@ namespace Padel.Chat.Test
             var participants = new[] {5, 7, 99};
             var initMessage = "asd";
 
-            const string roomId = "roomId"; // This will come from the backend
+            const string expectedRoomId = "roomId";
+            A.CallTo(() => _fakeRoomIdGenerator.GenerateNewRoomId()).Returns(expectedRoomId);
             A.CallTo(() => _fakeRepository.GetAsync(4)).Returns(new Conversation {Id = 4, MyChatRooms = new List<string> {"someRoom"}});
             A.CallTo(() => _fakeRepository.GetAsync(5)).Returns(Task.FromResult<Conversation>(null));
             A.CallTo(() => _fakeRepository.GetAsync(7)).Returns(Task.FromResult<Conversation>(null));
             A.CallTo(() => _fakeRepository.GetAsync(99)).Returns(new Conversation
                 {Id = 99, MyChatRooms = new List<string> {"someOtherRoom", "anotherRoom"}});
 
-            await _sut.CreateRoom(roomId, myUserId, initMessage, participants);
+            var actualRoomId = await _sut.CreateRoom(myUserId, initMessage, participants);
 
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
                 conversation.Id == 4                          &&
@@ -92,7 +97,9 @@ namespace Padel.Chat.Test
                 conversation.MyChatRooms.Count == 3
             ))).MustHaveHappened();
 
-            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, expectedRoomId, initMessage)).MustHaveHappenedOnceExactly();
+
+            Assert.Equal(expectedRoomId, actualRoomId);
         }
     }
 }
