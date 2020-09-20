@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Padel.Chat.old;
-using Padel.Chat.Test;
 
 namespace Padel.Chat
 {
@@ -9,20 +9,27 @@ namespace Padel.Chat
     {
         private readonly IRepository<Conversation, int> _repository;
         private readonly IRoomService                   _roomService;
-        private readonly IRoomIdGenerator               _roomIdGenerator;
+        private readonly IRoomFactory                   _roomFactory;
+        private readonly IRepository<ChatRoom, RoomId>  _roomRepository;
 
-        public ConversationService(IRepository<Conversation, int> repository, IRoomService roomService, IRoomIdGenerator roomIdGenerator)
+        public ConversationService(
+            IRepository<Conversation, int> repository,
+            IRoomService                   roomService,
+            IRoomFactory                   roomFactory,
+            IRepository<ChatRoom, RoomId>  roomRepository
+        )
         {
             _repository = repository;
             _roomService = roomService;
-            _roomIdGenerator = roomIdGenerator;
+            _roomFactory = roomFactory;
+            _roomRepository = roomRepository;
         }
 
-        public async Task<string> CreateRoom(int adminUserId, string initMessage, int[] participants)
+        public async Task<ChatRoom> CreateRoom(int adminUserId, string initMessage, int[] participants)
         {
-            var roomId = _roomIdGenerator.GenerateNewRoomId();
-            // TODO Here we should generate a new room
-            
+            var room = _roomFactory.NewRoom();
+            await _roomRepository.SaveAsync(room);
+
             var allParticipants = new List<int> {adminUserId};
             allParticipants.AddRange(participants);
 
@@ -32,16 +39,16 @@ namespace Padel.Chat
 
                 if (coon == null)
                 {
-                    coon = new Conversation {Id = participant, MyChatRooms = new List<string>()};
+                    coon = new Conversation {Id = participant, MyChatRooms = new List<RoomId>()};
                 }
 
-                coon.MyChatRooms.Add(roomId);
+                coon.MyChatRooms.Add(room.Id);
 
                 await _repository.SaveAsync(coon);
             }
 
-            await _roomService.SendMessage(adminUserId, roomId, initMessage);
-            return roomId;
+            await _roomService.SendMessage(adminUserId, room.Id, initMessage);
+            return room;
         }
     }
 }

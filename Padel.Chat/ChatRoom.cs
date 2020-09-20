@@ -3,9 +3,9 @@ using Padel.Chat.old;
 
 namespace Padel.Chat
 {
-    public class ChatRoom
+    public class ChatRoom : IEntity<RoomId>
     {
-        public Guid      Id           { get; set; }
+        public RoomId    Id           { get; set; }
         public UserId    Admin        { get; set; }
         public UserId[]  Participants { get; set; }
         public Message[] Messages     { get; set; }

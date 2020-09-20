@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FakeItEasy;
+using FluentAssertions;
 using Padel.Chat.old;
 using Xunit;
 
@@ -16,15 +18,17 @@ namespace Padel.Chat.Test
         private readonly ConversationService            _sut;
         private readonly IRepository<Conversation, int> _fakeRepository;
         private readonly IRoomService                   _fakeRoomService;
-        private readonly IRoomIdGenerator               _fakeRoomIdGenerator;
+        private readonly IRoomFactory                   _fakeRoomFactory;
+        private readonly IRepository<ChatRoom, RoomId>  _fakeRoomRepository;
 
         public ConversationServiceTest()
         {
             _fakeRepository = A.Fake<IRepository<Conversation, int>>();
+            _fakeRoomRepository = A.Fake<IRepository<ChatRoom, RoomId>>();
             _fakeRoomService = A.Fake<IRoomService>();
-            _fakeRoomIdGenerator = A.Fake<IRoomIdGenerator>();
+            _fakeRoomFactory = A.Fake<IRoomFactory>();
 
-            _sut = new ConversationService(_fakeRepository, _fakeRoomService, _fakeRoomIdGenerator);
+            _sut = new ConversationService(_fakeRepository, _fakeRoomService, _fakeRoomFactory, _fakeRoomRepository);
         }
 
         [Fact]
@@ -34,31 +38,42 @@ namespace Padel.Chat.Test
             var participants = new[] {5, 7, 99};
             var initMessage = "asd";
 
-            const string expectedRoomId = "roomId";
-            A.CallTo(() => _fakeRoomIdGenerator.GenerateNewRoomId()).Returns(expectedRoomId);
+            var roomId = new RoomId("e885499f-b6ae-472b-8b0b-c06d33558b25");
+            var expectedRoom = new ChatRoom
+            {
+                Admin = new UserId(myUserId),
+                Id = roomId,
+                Messages = new Message[0],
+                Participants = new UserId[0]
+            };
+
+            A.CallTo(() => _fakeRoomFactory.NewRoom()).Returns(expectedRoom);
             A.CallTo(() => _fakeRepository.GetAsync(A<int>._)).Returns(Task.FromResult<Conversation>(null));
 
-            var actualRoomId = await _sut.CreateRoom(myUserId, initMessage, participants);
+            var actualRoom = await _sut.CreateRoom(myUserId, initMessage, participants);
 
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
                 conversation.Id == 4 &&
-                conversation.MyChatRooms.Exists(s => s == "roomId")
+                conversation.MyChatRooms.Exists(s => s == roomId)
             ))).MustHaveHappened();
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
                 conversation.Id == 5 &&
-                conversation.MyChatRooms.Exists(s => s == "roomId")
+                conversation.MyChatRooms.Exists(s => s == roomId)
             ))).MustHaveHappened();
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
                 conversation.Id == 7 &&
-                conversation.MyChatRooms.Exists(s => s == "roomId")
+                conversation.MyChatRooms.Exists(s => s == roomId)
             ))).MustHaveHappened();
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
                 conversation.Id == 99 &&
-                conversation.MyChatRooms.Exists(s => s == "roomId")
+                conversation.MyChatRooms.Exists(s => s == roomId)
             ))).MustHaveHappened();
 
-            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, expectedRoomId, initMessage)).MustHaveHappenedOnceExactly();
-            Assert.Equal(expectedRoomId, actualRoomId);
+            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => _fakeRoomRepository.SaveAsync(expectedRoom)).MustHaveHappened();
+            
+            expectedRoom.Should().BeEquivalentTo(actualRoom);
         }
 
         [Fact]
@@ -68,38 +83,57 @@ namespace Padel.Chat.Test
             var participants = new[] {5, 7, 99};
             var initMessage = "asd";
 
-            const string expectedRoomId = "roomId";
-            A.CallTo(() => _fakeRoomIdGenerator.GenerateNewRoomId()).Returns(expectedRoomId);
-            A.CallTo(() => _fakeRepository.GetAsync(4)).Returns(new Conversation {Id = 4, MyChatRooms = new List<string> {"someRoom"}});
+            var roomId = new RoomId("e885499f-b6ae-472b-8b0b-c06d33558b25");
+            var expectedRoom = new ChatRoom
+            {
+                Admin = new UserId(myUserId),
+                Id = roomId,
+                Messages = new Message[0],
+                Participants = new UserId[0]
+            };
+
+            A.CallTo(() => _fakeRoomFactory.NewRoom()).Returns(expectedRoom);
+
+            A.CallTo(() => _fakeRepository.GetAsync(4)).Returns(new Conversation
+                {Id = 4, MyChatRooms = new List<RoomId> {new RoomId("00000001-b6ae-472b-8b0b-c06d33558b25")}});
             A.CallTo(() => _fakeRepository.GetAsync(5)).Returns(Task.FromResult<Conversation>(null));
             A.CallTo(() => _fakeRepository.GetAsync(7)).Returns(Task.FromResult<Conversation>(null));
             A.CallTo(() => _fakeRepository.GetAsync(99)).Returns(new Conversation
-                {Id = 99, MyChatRooms = new List<string> {"someOtherRoom", "anotherRoom"}});
+            {
+                Id = 99,
+                MyChatRooms = new List<RoomId>
+                {
+                    new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25"),
+                    new RoomId("00000003-b6ae-472b-8b0b-c06d33558b25")
+                }
+            });
 
-            var actualRoomId = await _sut.CreateRoom(myUserId, initMessage, participants);
+            var actualRoom = await _sut.CreateRoom(myUserId, initMessage, participants);
 
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
-                conversation.Id == 4                          &&
-                conversation.MyChatRooms.Contains("someRoom") &&
-                conversation.MyChatRooms.Contains("roomId")   &&
+                conversation.Id == 4                                                                                      &&
+                conversation.MyChatRooms.Exists(r => r.Value == new RoomId("00000001-b6ae-472b-8b0b-c06d33558b25").Value) &&
+                conversation.MyChatRooms.Exists(r => r.Value == roomId.Value)                                             &&
                 conversation.MyChatRooms.Count == 2
             ))).MustHaveHappened();
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
-                conversation.Id == 5                                &&
-                conversation.MyChatRooms.Exists(s => s == "roomId") &&
+                conversation.Id == 5                                          &&
+                conversation.MyChatRooms.Exists(r => r.Value == roomId.Value) &&
                 conversation.MyChatRooms.Count == 1
             ))).MustHaveHappened();
             A.CallTo(() => _fakeRepository.SaveAsync(A<Conversation>.That.Matches(conversation =>
-                conversation.Id == 99                              &&
-                conversation.MyChatRooms.Contains("someOtherRoom") &&
-                conversation.MyChatRooms.Contains("anotherRoom")   &&
-                conversation.MyChatRooms.Contains("roomId")        &&
+                conversation.Id == 99                                                                                     &&
+                conversation.MyChatRooms.Exists(r => r.Value == new RoomId("00000003-b6ae-472b-8b0b-c06d33558b25").Value) &&
+                conversation.MyChatRooms.Exists(r => r.Value == new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25").Value) &&
+                conversation.MyChatRooms.Exists(r => r.Value == roomId.Value)                                             &&
                 conversation.MyChatRooms.Count == 3
             ))).MustHaveHappened();
 
-            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, expectedRoomId, initMessage)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeRoomService.SendMessage(myUserId, roomId, initMessage)).MustHaveHappenedOnceExactly();
+            
+            A.CallTo(() => _fakeRoomRepository.SaveAsync(expectedRoom)).MustHaveHappened();
 
-            Assert.Equal(expectedRoomId, actualRoomId);
+            expectedRoom.Should().BeEquivalentTo(actualRoom);
         }
     }
 }
