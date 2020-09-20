@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FakeItEasy;
-using Padel.Login.Repositories.User;
 using Padel.Login.Services.JsonWebToken;
 using Xunit;
 

@@ -1,4 +1,4 @@
-namespace Padel.Chat.Test
+namespace Padel.Chat
 {
     public interface IRoomIdGenerator
     {

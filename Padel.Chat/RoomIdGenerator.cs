@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Chat.Test
+namespace Padel.Chat
 {
     public class RoomIdGenerator : IRoomIdGenerator
     {

@@ -21,6 +21,7 @@ namespace Padel.Chat.Test
         private readonly IRoomService                   _fakeRoomService;
         private readonly IRoomFactory                   _fakeRoomFactory;
         private readonly IRoomRepository                _fakeRoomRepository;
+        private readonly IMessageFactory                _fakeMessageFactory;
 
         public ConversationServiceTest()
         {
@@ -28,8 +29,9 @@ namespace Padel.Chat.Test
             _fakeRoomRepository = A.Fake<IRoomRepository>();
             _fakeRoomService = A.Fake<IRoomService>();
             _fakeRoomFactory = A.Fake<IRoomFactory>();
+            _fakeMessageFactory = A.Fake<IMessageFactory>();
 
-            _sut = new ConversationService(_fakeRepository, _fakeRoomService, _fakeRoomFactory, _fakeRoomRepository);
+            _sut = new ConversationService(_fakeRepository, _fakeRoomService, _fakeRoomFactory, _fakeRoomRepository, _fakeMessageFactory);
         }
 
         [Fact]
@@ -152,6 +154,84 @@ namespace Padel.Chat.Test
             var rooms = await _sut.GetRoomsWhereUserIsParticipant(userId);
 
             Assert.Equal(3, rooms.Count);
+        }
+
+        [Fact]
+        public async Task SendMessage_should_throw_is_user_is_not_a_participant()
+        {
+            var userId = new UserId(4);
+            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
+
+            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(new ChatRoom
+            {
+                Participants = new[]
+                {
+                    new UserId(1),
+                    new UserId(2),
+                    new UserId(3)
+                }
+            });
+
+            var ex = await Assert.ThrowsAsync<UserIsNotARoomParticipantException>(() => _sut.SendMessage(userId, roomId, "content"));
+            Assert.Equal(userId, ex.UserId);
+        }
+
+        [Fact]
+        public async Task SendMessage_should_throw_RoomNotFound()
+        {
+            var userId = new UserId(4);
+            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
+
+            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(Task.FromResult<ChatRoom>(null));
+
+            var ex = await Assert.ThrowsAsync<RoomNotFoundException>(() => _sut.SendMessage(userId, roomId, "content"));
+            Assert.Equal(roomId, ex.RoomId);
+        }
+
+        [Fact]
+        public async Task SendMessage_should_add_message_to_room_and_save_to_database()
+        {
+            var userId = new UserId(4);
+            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
+            var content = "padpal is the best!";
+
+            var roomParticipants = new[]
+            {
+                userId,
+            };
+
+            var originalChatRoom = new ChatRoom
+            {
+                Admin = new UserId(1337),
+                Id = roomId,
+                Messages = new Message[0],
+                Participants = roomParticipants
+            };
+
+            var message = new Message
+            {
+                Author = userId,
+                Content = content,
+                Timestamp = DateTimeOffset.UtcNow
+            };
+
+            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(originalChatRoom);
+            A.CallTo(() => _fakeMessageFactory.Build(A<UserId>._, A<string>._)).Returns(message);
+
+            await _sut.SendMessage(userId, roomId, content);
+
+            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).MustHaveHappened();
+            A.CallTo(() => _fakeRoomRepository.SaveAsync(A<ChatRoom>.That.Matches(room =>
+                room.Admin.Value     == originalChatRoom.Admin.Value &&
+                room.Id              == roomId                       &&
+                room.Messages.Length == 1                            &&
+                room.Messages[0]     == message                      &&
+                room.Participants    == roomParticipants
+            ))).MustHaveHappened();
+            A.CallTo(() => _fakeMessageFactory.Build(
+                A<UserId>.That.Matches(s => s.Value == message.Author.Value),
+                A<string>.That.Matches(s => s       == message.Content)
+            )).MustHaveHappened();
         }
     }
 }

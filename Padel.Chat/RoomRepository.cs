@@ -18,5 +18,10 @@ namespace Padel.Chat
             var result = await Collection.FindAsync<ChatRoom>(filter);
             return result.ToList();
         }
+
+        public Task<ChatRoom> GetRoom(RoomId roomId)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

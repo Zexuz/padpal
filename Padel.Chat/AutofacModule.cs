@@ -1,8 +1,9 @@
 using Autofac;
 using FirebaseAdmin;
 using Microsoft.Extensions.Configuration;
+using Padel.Chat.old;
 
-namespace Padel.Chat.old
+namespace Padel.Chat
 {
     public class AutofacModule : Module
     {

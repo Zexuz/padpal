@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Padel.Login;
 using Padel.Login.Services;
 using Padel.Runner.Controllers;
-using AutofacModule = Padel.Chat.old.AutofacModule;
+using AutofacModule = Padel.Chat.AutofacModule;
 
 namespace Padel.Runner
 {

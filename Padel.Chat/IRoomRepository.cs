@@ -8,5 +8,6 @@ namespace Padel.Chat
     public interface IRoomRepository : IRepository<ChatRoom, RoomId>
     {
         Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUsersIsParticipant(UserId userId);
+        Task<ChatRoom>                      GetRoom(RoomId                         roomId);
     }
 }

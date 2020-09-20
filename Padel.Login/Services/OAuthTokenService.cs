@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Padel.Login.Exceptions;
-using Padel.Login.Models;
 using Padel.Login.Repositories.Device;
 using Padel.Login.Services.JsonWebToken;
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Padel.Chat.old;
 using Padel.Chat.ValueTypes;
@@ -11,21 +12,24 @@ namespace Padel.Chat
         private readonly IRoomService                   _roomService;
         private readonly IRoomFactory                   _roomFactory;
         private readonly IRoomRepository                _roomRepository;
+        private readonly IMessageFactory                _messageFactory;
 
         public ConversationService(
             IRepository<Conversation, int> repository,
             IRoomService                   roomService,
             IRoomFactory                   roomFactory,
-            IRoomRepository                roomRepository
+            IRoomRepository                roomRepository,
+            IMessageFactory                messageFactory
         )
         {
             _repository = repository;
             _roomService = roomService;
             _roomFactory = roomFactory;
             _roomRepository = roomRepository;
+            _messageFactory = messageFactory;
         }
 
-        public async Task<ChatRoom> CreateRoom(int adminUserId, string initMessage, int[] participants)
+        public async Task<ChatRoom> CreateRoom(int adminUserId, string initMessage, IEnumerable<int> participants)
         {
             var room = _roomFactory.NewRoom();
             await _roomRepository.SaveAsync(room);
@@ -54,6 +58,33 @@ namespace Padel.Chat
         public async Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId)
         {
             return await _roomRepository.GetRoomsWhereUsersIsParticipant(userId);
+        }
+
+        public async Task SendMessage(UserId userId, RoomId roomId, string content)
+        {
+            var room = await _roomRepository.GetRoom(roomId);
+            if (room == null)
+            {
+                throw new RoomNotFoundException(roomId);
+            }
+
+            if (room.Participants.All(id => id.Value != userId.Value))
+            {
+                throw new UserIsNotARoomParticipantException(userId);
+            }
+
+            // TODO Convert to list
+            var messagesCopy = new Message[room.Messages.Length + 1];
+
+            for (int i = 0; i < room.Messages.Length; i++)
+            {
+                messagesCopy[i] = room.Messages[i];
+            }
+
+            messagesCopy[room.Messages.Length] = _messageFactory.Build(userId, content);
+
+            room.Messages = messagesCopy;
+            await _roomRepository.SaveAsync(room);
         }
     }
 }
