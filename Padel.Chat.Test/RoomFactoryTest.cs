@@ -29,7 +29,7 @@ namespace Padel.Chat.Test
 
             var room = _sut.NewRoom(userId, userIds.Select(i => new UserId(i)).ToList());
 
-            Assert.Equal("SomeRoomId", room.Id.Value);
+            Assert.Equal("SomeRoomId", room.RoomId.Value);
             Assert.Empty(room.Messages);
             Assert.Equal(userIds.Length + 1 ,room.Participants.Count);
             Assert.Equal(userId.Value, room.Participants[0].Value);

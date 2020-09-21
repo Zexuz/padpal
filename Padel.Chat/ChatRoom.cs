@@ -1,12 +1,16 @@
 using System.Collections.Generic;
+using MongoDB.Bson;
+using Padel.Chat.MongoDb;
 using Padel.Chat.old;
 using Padel.Chat.ValueTypes;
 
 namespace Padel.Chat
 {
-    public class ChatRoom : IEntity<RoomId>
+    [BsonCollection("chatRoom")]
+    public class ChatRoom : IDocument
     {
-        public RoomId        Id           { get; set; }
+        public ObjectId      Id           { get; set; }
+        public RoomId        RoomId       { get; set; }
         public UserId        Admin        { get; set; }
         public List<UserId>  Participants { get; set; }
         public List<Message> Messages     { get; set; }

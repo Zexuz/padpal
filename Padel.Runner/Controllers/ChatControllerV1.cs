@@ -27,7 +27,7 @@ namespace Padel.Runner.Controllers
 
             var room = await _roomService.CreateRoom(userId, request.Content, request.Participants.Select(i => new UserId(i)).ToList());
 
-            return new CreateRoomResponse {RoomId = room.Id.Value};
+            return new CreateRoomResponse {RoomId = room.RoomId.Value};
         }
 
         public override Task<SendMessageResponse> SendMessage(SendMessageRequest request, ServerCallContext context)
@@ -45,7 +45,7 @@ namespace Padel.Runner.Controllers
                 Room = new Padel.Proto.Chat.V1.ChatRoom()
                 {
                     Admin = room.Admin.Value,
-                    Id = room.Id.Value,
+                    Id = room.RoomId.Value,
                     Messages =
                     {
                         room.Messages.Select(message => new Message
@@ -69,7 +69,7 @@ namespace Padel.Runner.Controllers
             var rooms = await _conversationService.GetRoomsWhereUserIsParticipant(userId);
 
             var response = new GetRoomsWhereUserIsParticipatingResponse();
-            response.RoomIds.AddRange(rooms.Select(room => room.Id.Value));
+            response.RoomIds.AddRange(rooms.Select(room => room.RoomId.Value));
             return response;
         }
     }

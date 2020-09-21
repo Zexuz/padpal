@@ -21,7 +21,7 @@ namespace Padel.Chat
         {
             room.Messages.Add(_messageFactory.Build(userId, content));
 
-            await _roomRepository.SaveAsync(room);
+            await _roomRepository.ReplaceOneAsync(room);
         }
     }
 }

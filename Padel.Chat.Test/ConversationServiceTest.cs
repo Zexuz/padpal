@@ -55,7 +55,7 @@ namespace Padel.Chat.Test
             var originalChatRoom = new ChatRoom
             {
                 Admin = new UserId(1337),
-                Id = roomId,
+                RoomId = roomId,
                 Messages = new List<Message>(),
                 Participants = roomParticipants
             };

@@ -37,7 +37,7 @@ namespace Padel.Chat.Test
             var originalChatRoom = new ChatRoom
             {
                 Admin = new UserId(1337),
-                Id = roomId,
+                RoomId = roomId,
                 Messages = new List<Message>(),
                 Participants = roomParticipants
             };
@@ -53,11 +53,11 @@ namespace Padel.Chat.Test
 
             await _sut.SendMessage(userId, originalChatRoom, content);
 
-            A.CallTo(() => _fakeRoomRepository.SaveAsync(A<ChatRoom>.That.Matches(room =>
-                room.Admin.Value    == originalChatRoom.Admin.Value &&
-                room.Id             == roomId                       &&
-                room.Messages.Count == 1                            &&
-                room.Messages[0]    == message                      &&
+            A.CallTo(() => _fakeRoomRepository.ReplaceOneAsync(A<ChatRoom>.That.Matches(room =>
+                room.Admin.Value == originalChatRoom.Admin.Value &&
+                Equals(room.RoomId, roomId)                      &&
+                room.Messages.Count == 1                         &&
+                room.Messages[0]    == message                   &&
                 room.Participants   == roomParticipants
             ))).MustHaveHappened();
             A.CallTo(() => _fakeMessageFactory.Build(

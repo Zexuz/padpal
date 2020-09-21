@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Driver;
 
 namespace Padel.Runner.Test.IntegrationTests.Helpers
 {
@@ -77,6 +79,10 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
+        private readonly MongoClient _client;
+
+        private const string DbTestPrefix = "padpal_test_";
+
         protected override IHostBuilder CreateHostBuilder()
         {
             return base.CreateHostBuilder().ConfigureServices(services => { services.AddSingleton<IStartupFilter, CustomStartupFilter>(); });
@@ -86,7 +92,9 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
         {
             RandomSuffix = StringGenerator.RandomString(15);
             Db = new SqlConnection("Server=127.0.0.1,1433;Database=master;User=sa;Password=yourStrong(!)Password;");
-            Db.ExecuteScalar($"create database padel_test_{RandomSuffix}");
+            Db.ExecuteScalar($"create database {DbTestPrefix}{RandomSuffix}");
+
+            _client = new MongoClient("mongodb://localhost:27017");
         }
 
         public string        RandomSuffix { get; set; }
@@ -100,15 +108,25 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
             service.ConfigureAppConfiguration(builder => builder.AddInMemoryCollection(new[]
             {
                 new KeyValuePair<string, string>("Connections:Sql:padel",
-                    $"Server=127.0.0.1,1433;Database=padel_test_{RandomSuffix};User=sa;Password=yourStrong(!)Password;")
+                    $"Server=127.0.0.1,1433;Database={DbTestPrefix}{RandomSuffix};User=sa;Password=yourStrong(!)Password;"),
+                new KeyValuePair<string, string>("Connections:MongoDb:padel:url", $"mongodb://localhost:27017"),
+                new KeyValuePair<string, string>("Connections:MongoDb:padel:database", DbTestPrefix + RandomSuffix)
             }));
         }
 
         protected override void Dispose(bool disposing)
         {
-            Db.ExecuteScalar($"ALTER DATABASE padel_test_{RandomSuffix} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;");
-            Db.ExecuteScalar($"drop database padel_test_{RandomSuffix}");
+            Db.ExecuteScalar($"ALTER DATABASE {DbTestPrefix}{RandomSuffix} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;");
+            Db.ExecuteScalar($"drop database {DbTestPrefix}{RandomSuffix}");
             Db.Dispose();
+
+            foreach (var document in _client.ListDatabases().ToList())
+            {
+                var databaseName = document["name"].AsString;
+                if (!databaseName.StartsWith(DbTestPrefix)) continue;
+                _client.DropDatabase(databaseName);
+            }
+
             base.Dispose(disposing);
         }
     }

@@ -32,7 +32,7 @@ namespace Padel.Chat
             return new ChatRoom
             {
                 Admin = userId,
-                Id = new RoomId(_roomIdGenerator.GenerateNewRoomId()),
+                RoomId = new RoomId(_roomIdGenerator.GenerateNewRoomId()),
                 Messages = new List<Message>(),
                 Participants = allParticipants
             };

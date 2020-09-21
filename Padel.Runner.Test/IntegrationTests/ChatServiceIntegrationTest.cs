@@ -38,7 +38,7 @@ namespace Padel.Runner.Test.IntegrationTests
 
             Assert.Equal(createRoomResponse.RoomId, getRoomResponse.Room.Id);
             Assert.Equal(2, getRoomResponse.Room.Participants.Count);
-            Assert.Equal(1, getRoomResponse.Room.Messages.Count);
+            Assert.Single(getRoomResponse.Room.Messages);
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Padel.Runner.Test.IntegrationTests
             var createRoomResponse1 = await _chatServiceClient.CreateRoomAsync(new CreateRoomRequest
                 {
                     Content = "When_user_creates_a_room_it_should_be_able_to_see_that_room_in_GetRoomsWhereUserIsParticipating",
-                    Participants = {1, 5, 6, 712}
+                    Participants = {3, 5, 6, 712}
                 },
                 _authHeader
             );
@@ -64,6 +64,8 @@ namespace Padel.Runner.Test.IntegrationTests
                 await _chatServiceClient.GetRoomsWhereUserIsParticipatingAsync(new GetRoomsWhereUserIsParticipatingRequest(), _authHeader);
 
             Assert.Equal(2, res.RoomIds.Count);
+            Assert.Contains(createRoomResponse.RoomId, res.RoomIds);
+            Assert.Contains(createRoomResponse1.RoomId, res.RoomIds);
         }
     }
 }

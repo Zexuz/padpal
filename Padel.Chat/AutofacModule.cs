@@ -1,6 +1,7 @@
 using Autofac;
 using FirebaseAdmin;
 using Microsoft.Extensions.Configuration;
+using Padel.Chat.MongoDb;
 using Padel.Chat.old;
 
 namespace Padel.Chat
@@ -16,8 +17,12 @@ namespace Padel.Chat
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new MongoDbConnectionFactory("mongodb://localhost:27017", "padpal")).As<IMongoDbConnectionFactory>();
-            builder.RegisterGeneric(typeof(MongoRepository<,>)).As(typeof(IRepository<,>));
+            builder.RegisterInstance(new MongoDbSettings
+            {
+                ConnectionString = _configuration["Connections:MongoDb:padel:url"],
+                DatabaseName = _configuration["Connections:MongoDb:padel:database"]
+            }).As<IMongoDbSettings>();
+            builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
             builder.RegisterInstance(FirebaseApp.DefaultInstance ?? FirebaseApp.Create()).AsSelf().SingleInstance();
 
             builder.RegisterType<ConversationService>().As<IConversationService>();

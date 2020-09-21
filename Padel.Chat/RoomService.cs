@@ -1,23 +1,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Padel.Chat.old;
+using Padel.Chat.MongoDb;
 using Padel.Chat.ValueTypes;
 
 namespace Padel.Chat
 {
     public class RoomService : IRoomService
     {
-        private readonly IRepository<Conversation, UserId> _conversationRepository;
-        private readonly IRoomFactory                      _roomFactory;
-        private readonly IRoomRepository                   _roomRepository;
-        private readonly IMessageSenderService             _messageSenderService;
+        private readonly IMongoRepository<Conversation> _conversationRepository;
+        private readonly IRoomFactory                   _roomFactory;
+        private readonly IRoomRepository                _roomRepository;
+        private readonly IMessageSenderService          _messageSenderService;
 
         public RoomService(
-            IRepository<Conversation, UserId> conversationRepository,
-            IRoomFactory                      roomFactory,
-            IRoomRepository                   roomRepository,
-            IMessageSenderService messageSenderService
+            IMongoRepository<Conversation> conversationRepository,
+            IRoomFactory                   roomFactory,
+            IRoomRepository                roomRepository,
+            IMessageSenderService          messageSenderService
         )
         {
             _conversationRepository = conversationRepository;
@@ -29,20 +29,22 @@ namespace Padel.Chat
         public async Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants)
         {
             var room = _roomFactory.NewRoom(adminUserId, participants);
-            await _roomRepository.SaveAsync(room);
+            await _roomRepository.InsertOneAsync(room);
 
             foreach (var participant in room.Participants)
             {
-                var coon = await _conversationRepository.GetAsync(participant);
+                var coon = await _conversationRepository.FindOneAsync(conversation => conversation.UserId.Equals(participant));
 
                 if (coon == null)
                 {
-                    coon = new Conversation {Id = participant, MyChatRooms = new List<RoomId>()};
+                    coon = new Conversation {UserId = participant, MyChatRooms = new List<RoomId>{room.RoomId}};
+                    await _conversationRepository.InsertOneAsync(coon);
+                    continue;
                 }
 
-                coon.MyChatRooms.Add(room.Id);
+                coon.MyChatRooms.Add(room.RoomId);
 
-                await _conversationRepository.SaveAsync(coon);
+                await _conversationRepository.ReplaceOneAsync(coon);
             }
 
             await _messageSenderService.SendMessage(adminUserId, room, initMessage);
