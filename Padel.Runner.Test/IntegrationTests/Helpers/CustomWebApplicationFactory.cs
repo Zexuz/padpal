@@ -15,6 +15,36 @@ using Microsoft.Extensions.Hosting;
 
 namespace Padel.Runner.Test.IntegrationTests.Helpers
 {
+    public static class StringGenerator
+    {
+        private static readonly Random _random = new Random();
+
+        public const string Letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public const string Digits  = "123456789";
+
+        public static string RandomEmail()
+        {
+            return RandomString(10, Letters) + "@gmail.com";
+        }
+
+        public static string RandomUsername()
+        {
+            return RandomString(10);
+        }
+
+        public static string RandomPassword()
+        {
+            return RandomString(10);
+        }
+
+
+        public static string RandomString(int length, string chars = Letters + Digits)
+        {
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+    }
+
     public class FakeRemoteIpAddressMiddleware
     {
         private readonly RequestDelegate _next;
@@ -47,15 +77,6 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
 
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
-        private static Random _random = new Random();
-
-        public static string RandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[_random.Next(s.Length)]).ToArray());
-        }
-
         protected override IHostBuilder CreateHostBuilder()
         {
             return base.CreateHostBuilder().ConfigureServices(services => { services.AddSingleton<IStartupFilter, CustomStartupFilter>(); });
@@ -63,13 +84,13 @@ namespace Padel.Runner.Test.IntegrationTests.Helpers
 
         public CustomWebApplicationFactory()
         {
-            RandomSuffix = RandomString(15);
+            RandomSuffix = StringGenerator.RandomString(15);
             Db = new SqlConnection("Server=127.0.0.1,1433;Database=master;User=sa;Password=yourStrong(!)Password;");
             Db.ExecuteScalar($"create database padel_test_{RandomSuffix}");
         }
 
-        public string RandomSuffix { get; set; }
-        public SqlConnection Db { get; private set; }
+        public string        RandomSuffix { get; set; }
+        public SqlConnection Db           { get; private set; }
 
 
         protected override void ConfigureWebHost(IWebHostBuilder service)
