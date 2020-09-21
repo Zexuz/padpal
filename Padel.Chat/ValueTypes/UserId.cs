@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Padel.Chat.ValueTypes
 {
     public class UserId : ValueType<int>
@@ -10,5 +12,10 @@ namespace Padel.Chat.ValueTypes
         {
             return Value > 0;
         }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Value;
+        } 
     }
 }

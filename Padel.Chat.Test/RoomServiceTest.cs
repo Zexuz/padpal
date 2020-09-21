@@ -47,7 +47,7 @@ namespace Padel.Chat.Test
                 Participants = new List<UserId>()
             };
 
-            A.CallTo(() => _fakeRoomFactory.NewRoom(A<UserId>._)).Returns(expectedRoom);
+            A.CallTo(() => _fakeRoomFactory.NewRoom(A<UserId>._, A<List<UserId>>._)).Returns(expectedRoom);
             A.CallTo(() => _fakeConversationRepository.GetAsync(A<UserId>._)).Returns(Task.FromResult<Conversation>(null));
 
             var actualRoom = await _sut.CreateRoom(myUserId, initMessage, participants);
@@ -92,7 +92,7 @@ namespace Padel.Chat.Test
                 Participants = new List<UserId>()
             };
 
-            A.CallTo(() => _fakeRoomFactory.NewRoom(myUserId)).Returns(expectedRoom);
+            A.CallTo(() => _fakeRoomFactory.NewRoom(myUserId, A<List<UserId>>._)).Returns(expectedRoom);
 
             A.CallTo(() => _fakeConversationRepository.GetAsync(A<UserId>.That.Matches(id => id.Value == 4))).Returns(new Conversation
                 {Id = new UserId(4), MyChatRooms = new List<RoomId> {new RoomId("00000001-b6ae-472b-8b0b-c06d33558b25")}});

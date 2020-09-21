@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MongoDB.Driver;
 using Padel.Chat.old;
 using Padel.Chat.ValueTypes;
 
@@ -6,7 +7,7 @@ namespace Padel.Chat
 {
     public interface IRoomFactory
     {
-        ChatRoom NewRoom(UserId userId);
+        ChatRoom NewRoom(UserId userId, IReadOnlyList<UserId> participants);
     }
 
     public class RoomFactory : IRoomFactory
@@ -18,15 +19,43 @@ namespace Padel.Chat
             _roomIdGenerator = roomIdGenerator;
         }
 
-        public ChatRoom NewRoom(UserId userId)
+        public ChatRoom NewRoom(UserId userId, IReadOnlyList<UserId> participants)
         {
+            var allParticipants = new List<UserId> {userId};
+            allParticipants.AddRange(participants);
+
+            if (TryGetDuplicate(allParticipants, out var duplicate))
+            {
+                throw new ParticipantAlreadyAddedException(duplicate);
+            }
+
             return new ChatRoom
             {
                 Admin = userId,
                 Id = new RoomId(_roomIdGenerator.GenerateNewRoomId()),
                 Messages = new List<Message>(),
-                Participants = new List<UserId> {userId}
+                Participants = allParticipants
             };
+        }
+
+        private bool TryGetDuplicate(List<UserId> ids, out UserId duplicate)
+        {
+            duplicate = null;
+            var hashSet = new HashSet<UserId>();
+
+            for (var i = 0; i < ids.Count; i++)
+            {
+                var item = ids[i];
+                if (hashSet.Contains(item))
+                {
+                    duplicate = item;
+                    return true;
+                }
+
+                hashSet.Add(item);
+            }
+
+            return false;
         }
     }
 }

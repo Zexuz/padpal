@@ -26,15 +26,12 @@ namespace Padel.Chat
             _messageSenderService = messageSenderService;
         }
 
-        public async Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IEnumerable<UserId> participants)
+        public async Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants)
         {
-            var room = _roomFactory.NewRoom(adminUserId);
+            var room = _roomFactory.NewRoom(adminUserId, participants);
             await _roomRepository.SaveAsync(room);
 
-            var allParticipants = new List<UserId> {adminUserId};
-            allParticipants.AddRange(participants);
-
-            foreach (var participant in allParticipants)
+            foreach (var participant in room.Participants)
             {
                 var coon = await _conversationRepository.GetAsync(participant);
 
@@ -60,7 +57,7 @@ namespace Padel.Chat
         private async Task<ChatRoom> VerifyUsersAccessToRoom(UserId userId, RoomId roomId)
         {
             var room = await _roomRepository.GetRoom(roomId);
-            if (room == null)
+            if (room == null) // ROOM ID is null
             {
                 throw new RoomNotFoundException(roomId);
             }

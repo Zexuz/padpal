@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Padel.Chat.ValueTypes
 {
@@ -11,6 +12,11 @@ namespace Padel.Chat.ValueTypes
         public override bool IsValid()
         {
             return Guid.TryParse(Value, out _);
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Value;
         }
     }
 }

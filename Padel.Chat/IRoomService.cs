@@ -6,7 +6,7 @@ namespace Padel.Chat
 {
     public interface IRoomService
     {
-        Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IEnumerable<UserId> participants);
+        Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants);
         Task<ChatRoom> GetRoom(UserId    userId,      RoomId roomId);
     }
 }

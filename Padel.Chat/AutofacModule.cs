@@ -18,8 +18,8 @@ namespace Padel.Chat
         {
             builder.Register(c => new MongoDbConnectionFactory("mongodb://localhost:27017", "padpal")).As<IMongoDbConnectionFactory>();
             builder.RegisterGeneric(typeof(MongoRepository<,>)).As(typeof(IRepository<,>));
-            builder.RegisterInstance(FirebaseApp.Create()).AsSelf().SingleInstance();
-            
+            builder.RegisterInstance(FirebaseApp.DefaultInstance ?? FirebaseApp.Create()).AsSelf().SingleInstance();
+
             builder.RegisterType<ConversationService>().As<IConversationService>();
             builder.RegisterType<MessageFactory>().As<IMessageFactory>();
             builder.RegisterType<RoomFactory>().As<IRoomFactory>();

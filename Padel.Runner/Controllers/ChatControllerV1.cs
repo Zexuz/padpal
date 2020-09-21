@@ -25,7 +25,7 @@ namespace Padel.Runner.Controllers
         {
             var userId = new UserId(context.GetUserId());
 
-            var room = await _roomService.CreateRoom(userId, request.Content, request.Participants.Select(i => new UserId(i)));
+            var room = await _roomService.CreateRoom(userId, request.Content, request.Participants.Select(i => new UserId(i)).ToList());
 
             return new CreateRoomResponse {RoomId = room.Id.Value};
         }
@@ -36,9 +36,29 @@ namespace Padel.Runner.Controllers
             return base.SendMessage(request, context);
         }
 
-        public override Task<GetRoomResponse> GetRoom(GetRoomRequest request, ServerCallContext context)
+        public override async Task<GetRoomResponse> GetRoom(GetRoomRequest request, ServerCallContext context)
         {
-            return base.GetRoom(request, context);
+            var userId = new UserId(context.GetUserId());
+            var room = await _roomService.GetRoom(userId, new RoomId(request.RoomId));
+            return new GetRoomResponse
+            {
+                Room = new Padel.Proto.Chat.V1.ChatRoom()
+                {
+                    Admin = room.Admin.Value,
+                    Id = room.Id.Value,
+                    Messages =
+                    {
+                        room.Messages.Select(message => new Message
+                            {
+                                Author = message.Author.Value,
+                                Content = message.Content,
+                                UtcTimestamp = message.Timestamp.ToUnixTimeSeconds()
+                            }
+                        )
+                    },
+                    Participants = {room.Participants.Select(id => id.Value)}
+                }
+            };
         }
 
         public override async Task<GetRoomsWhereUserIsParticipatingResponse> GetRoomsWhereUserIsParticipating(
