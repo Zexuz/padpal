@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
 
-namespace Padel.Chat.Services
+namespace Padel.Chat.Services.Impl
 {
     public class PushNotificationService
     {

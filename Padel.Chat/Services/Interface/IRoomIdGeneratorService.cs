@@ -1,4 +1,4 @@
-namespace Padel.Chat.Services
+namespace Padel.Chat.Services.Interface
 {
     public interface IRoomIdGeneratorService
     {

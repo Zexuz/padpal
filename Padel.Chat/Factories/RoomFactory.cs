@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Padel.Chat.Exceptions;
 using Padel.Chat.Models;
 using Padel.Chat.Services;
+using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
 
 namespace Padel.Chat.Factories

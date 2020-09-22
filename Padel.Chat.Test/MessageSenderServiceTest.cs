@@ -6,6 +6,7 @@ using Padel.Chat.Factories;
 using Padel.Chat.Models;
 using Padel.Chat.Repositories;
 using Padel.Chat.Services;
+using Padel.Chat.Services.Impl;
 using Padel.Chat.ValueTypes;
 using Xunit;
 

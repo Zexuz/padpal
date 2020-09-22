@@ -4,6 +4,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Padel.Chat;
 using Padel.Chat.Services;
+using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
 using Padel.Proto.Chat.V1;
 using Padel.Runner.Extensions;

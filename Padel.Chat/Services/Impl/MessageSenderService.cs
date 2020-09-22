@@ -2,9 +2,10 @@ using System.Threading.Tasks;
 using Padel.Chat.Factories;
 using Padel.Chat.Models;
 using Padel.Chat.Repositories;
+using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
 
-namespace Padel.Chat.Services
+namespace Padel.Chat.Services.Impl
 {
     public class MessageSenderService : IMessageSenderService
     {
