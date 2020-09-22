@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+option csharp_namespace = "Padel.Proto.Chat.V1";
+
+package chat.v1;
+
+service ChatService {
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
+  rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {}
+  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {}
+  rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {}
+}
+
+message SendMessageRequest {
+  string roomId = 1;
+  string content = 2;
+}
+
+message SendMessageResponse {
+}
+
+message CreateRoomRequest {
+  string content = 1;
+  repeated int32 participants = 2;
+}
+
+message CreateRoomResponse {
+  string roomId = 1;
+}
+
+message GetRoomsWhereUserIsParticipatingRequest {
+
+}
+
+message GetRoomsWhereUserIsParticipatingResponse {
+  repeated string roomIds = 1;
+}
+
+message GetRoomRequest {
+  string roomId = 1;
+}
+
+message GetRoomResponse {
+  ChatRoom room = 1;
+}
+
+
+message ChatRoom{
+  string id = 1;
+  int32 admin = 2;
+  repeated int32 participants = 3;
+  repeated Message messages = 4;
+}
+
+
+message GetMessagesRequest {
+  int64 afterTimestamp = 1;
+}
+
+message GetMessagesResponse {
+  repeated Message messages = 1;
+}
+
+message Message{
+  string content = 1;
+  int32 author = 2;
+  int64 utcTimestamp = 3;
+}

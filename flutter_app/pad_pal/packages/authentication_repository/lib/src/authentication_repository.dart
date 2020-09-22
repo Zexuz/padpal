@@ -52,14 +52,16 @@ class AuthenticationRepository {
     _controller.sink.add(AuthenticationStatus.authenticated);
   }
 
-  Future<void> login({@required String email, @required String password}) async {
+  Future<void> login({@required String email, @required String password, @required String fcmToken}) async {
     assert(email != null);
     assert(password != null);
+    assert(fcmToken != null);
     // myFunc(_authServiceClient.login, LoginRequest());
 
     var call = _authServiceClient.login(LoginRequest()
       ..password = password
-      ..email = email);
+      ..email = email
+      ..firebaseToken = fcmToken);
 
     // var trailers = await res.trailers;
 

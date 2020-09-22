@@ -17,4 +17,6 @@ samples, guidance on mobile development, and a full API reference.
 
 
 ## Prerequisite
-pub global activate protoc_plugin
+flutter
+dart (for protoc_plugin)
+flutter pub global activate protoc_plugin

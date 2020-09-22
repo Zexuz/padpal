@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
+import 'package:pad_pal/authentication/models/fcmToken.dart';
 import 'package:pad_pal/authentication/models/models.dart';
 
 part 'login_state.dart';
@@ -17,15 +18,27 @@ class LoginCubit extends Cubit<LoginState> {
     final email = Email.dirty(value);
     emit(state.copyWith(
       email: email,
-      status: Formz.validate([email, state.password]),
+      status: Formz.validate([email, state.password, state.fcmToken]),
     ));
   }
 
   void passwordChanged(String value) {
     final password = Password.dirty(value);
+   try{
+     emit(state.copyWith(
+       password: password,
+       status: Formz.validate([state.email, state.fcmToken, password]),
+     ));
+   }catch(e){
+     print(e);
+    }
+  }
+
+  void addFcmToken(String value) {
+    final token = FcmToken.dirty(value ?? "");
     emit(state.copyWith(
-      password: password,
-      status: Formz.validate([state.email, password]),
+      token: token,
+      status: Formz.validate([state.email, state.password, token]),
     ));
   }
 
@@ -42,6 +55,7 @@ class LoginCubit extends Cubit<LoginState> {
       await _authenticationRepository.login(
         email: state.email.value,
         password: state.password.value,
+        fcmToken: state.fcmToken.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {

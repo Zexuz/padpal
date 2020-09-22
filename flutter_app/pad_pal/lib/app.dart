@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/authentication/authentication.dart';
@@ -19,6 +20,9 @@ class App extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (_) => UserRepository(),
+        ),
+        RepositoryProvider(
+          create: (_) => ChatRepository(),
         ),
       ],
       child: BlocProvider(
