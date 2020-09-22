@@ -66,7 +66,7 @@ namespace Padel.Runner.Controllers
         {
             var userId = new UserId(context.GetUserId());
 
-            var rooms = await _conversationService.GetRoomsWhereUserIsParticipant(userId);
+            var rooms = await _roomService.GetRoomsWhereUserIsParticipant(userId);
 
             var response = new GetRoomsWhereUserIsParticipatingResponse();
             response.RoomIds.AddRange(rooms.Select(room => room.RoomId.Value));

@@ -190,6 +190,23 @@ namespace Padel.Chat.Test
             var ex = await Assert.ThrowsAsync<UserIsNotARoomParticipantException>(() => _sut.GetRoom(userId, roomId));
             Assert.Equal(userId, ex.UserId);
         }
+        
+        [Fact]
+        public async Task GetRoomsWhereUserIsParticipant_should_return_rooms_where_user_is_a_participant()
+        {
+            var userId = new UserId(4);
+
+            A.CallTo(() => _fakeRoomRepository.GetRoomsWhereUsersIsParticipant(userId)).Returns(new List<ChatRoom>
+            {
+                new ChatRoom(),
+                new ChatRoom(),
+                new ChatRoom(),
+            });
+
+            var rooms = await _sut.GetRoomsWhereUserIsParticipant(userId);
+
+            Assert.Equal(3, rooms.Count);
+        }
 
         [Fact]
         public async Task GetRoom_returns_chatroom()

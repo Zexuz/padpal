@@ -60,6 +60,11 @@ namespace Padel.Chat.Services.Impl
         {
             return await VerifyUsersAccessToRoom(userId, roomId);
         }
+        
+        public async Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId)
+        {
+            return await _roomRepository.GetRoomsWhereUsersIsParticipant(userId);
+        }
 
         private async Task<ChatRoom> VerifyUsersAccessToRoom(UserId userId, RoomId roomId)
         {

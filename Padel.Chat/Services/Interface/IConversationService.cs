@@ -7,7 +7,6 @@ namespace Padel.Chat.Services.Interface
 {
     public interface IConversationService
     {
-        Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId);
         Task                                SendMessage(UserId                    userId, RoomId roomId, string content);
     }
 }

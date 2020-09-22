@@ -14,33 +14,14 @@ namespace Padel.Chat.Test
     {
         private readonly ConversationService   _sut;
         private readonly IRoomService          _fakeRoomService;
-        private readonly IRoomRepository       _fakeRoomRepository;
         private readonly IMessageSenderService _fakeMessageSenderService;
 
         public ConversationServiceTest()
         {
-            _fakeRoomRepository = A.Fake<IRoomRepository>();
             _fakeRoomService = A.Fake<IRoomService>();
             _fakeMessageSenderService = A.Fake<IMessageSenderService>();
 
-            _sut = new ConversationService(_fakeRoomRepository, _fakeRoomService, _fakeMessageSenderService);
-        }
-
-        [Fact]
-        public async Task GetRoomsWhereUserIsParticipant_should_return_rooms_where_user_is_a_participant()
-        {
-            var userId = new UserId(4);
-
-            A.CallTo(() => _fakeRoomRepository.GetRoomsWhereUsersIsParticipant(userId)).Returns(new List<ChatRoom>
-            {
-                new ChatRoom(),
-                new ChatRoom(),
-                new ChatRoom(),
-            });
-
-            var rooms = await _sut.GetRoomsWhereUserIsParticipant(userId);
-
-            Assert.Equal(3, rooms.Count);
+            _sut = new ConversationService(_fakeRoomService, _fakeMessageSenderService);
         }
 
         [Fact]
