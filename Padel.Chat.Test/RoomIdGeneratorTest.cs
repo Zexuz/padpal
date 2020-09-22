@@ -1,14 +1,15 @@
+using Padel.Chat.Services;
 using Xunit;
 
 namespace Padel.Chat.Test
 {
     public class RoomIdGeneratorTest
     {
-        private readonly RoomIdGenerator _sut;
+        private readonly RoomIdGeneratorService _sut;
 
         public RoomIdGeneratorTest()
         {
-            _sut = new RoomIdGenerator();
+            _sut = new RoomIdGeneratorService();
         }
 
 

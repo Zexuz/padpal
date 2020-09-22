@@ -1,5 +1,8 @@
 using System.Linq;
 using FakeItEasy;
+using Padel.Chat.Exceptions;
+using Padel.Chat.Factories;
+using Padel.Chat.Services;
 using Padel.Chat.ValueTypes;
 using Xunit;
 
@@ -8,13 +11,13 @@ namespace Padel.Chat.Test
     public class RoomFactoryTest
     {
         private readonly RoomFactory      _sut;
-        private readonly IRoomIdGenerator _fakeRoomIdGenerator;
+        private readonly IRoomIdGeneratorService _fakeRoomIdGeneratorService;
 
         public RoomFactoryTest()
         {
-            _fakeRoomIdGenerator = A.Fake<IRoomIdGenerator>();
+            _fakeRoomIdGeneratorService = A.Fake<IRoomIdGeneratorService>();
 
-            _sut = new RoomFactory(_fakeRoomIdGenerator);
+            _sut = new RoomFactory(_fakeRoomIdGeneratorService);
         }
 
 
@@ -24,7 +27,7 @@ namespace Padel.Chat.Test
         [InlineData(78, 2, 5478, 46587)]
         public void NewRoom_should_create_room(params int[] userIds)
         {
-            A.CallTo(() => _fakeRoomIdGenerator.GenerateNewRoomId()).Returns("SomeRoomId");
+            A.CallTo(() => _fakeRoomIdGeneratorService.GenerateNewRoomId()).Returns("SomeRoomId");
             var userId = new UserId(4);
 
             var room = _sut.NewRoom(userId, userIds.Select(i => new UserId(i)).ToList());
@@ -40,7 +43,7 @@ namespace Padel.Chat.Test
         [InlineData(8, 8)]
         public void NewRoom_should_throw_if_adding_same_user_twice(params int[] userIds)
         {
-            A.CallTo(() => _fakeRoomIdGenerator.GenerateNewRoomId()).Returns("SomeRoomId");
+            A.CallTo(() => _fakeRoomIdGeneratorService.GenerateNewRoomId()).Returns("SomeRoomId");
             var userId = new UserId(4);
 
             Assert.Throws<ParticipantAlreadyAddedException>(() => _sut.NewRoom(userId, userIds.Select(i => new UserId(i)).ToList()));

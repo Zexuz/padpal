@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FakeItEasy;
-using Padel.Chat.old;
+using Padel.Chat.Factories;
+using Padel.Chat.Models;
+using Padel.Chat.Repositories;
+using Padel.Chat.Services;
 using Padel.Chat.ValueTypes;
 using Xunit;
 

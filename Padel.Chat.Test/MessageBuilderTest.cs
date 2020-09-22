@@ -1,4 +1,5 @@
 using System;
+using Padel.Chat.Factories;
 using Padel.Chat.ValueTypes;
 using Xunit;
 
