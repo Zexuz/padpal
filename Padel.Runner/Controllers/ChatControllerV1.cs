@@ -30,10 +30,13 @@ namespace Padel.Runner.Controllers
             return new CreateRoomResponse {RoomId = room.RoomId.Value};
         }
 
-        public override Task<SendMessageResponse> SendMessage(SendMessageRequest request, ServerCallContext context)
+        public override async Task<SendMessageResponse> SendMessage(SendMessageRequest request, ServerCallContext context)
         {
-            // TODO implement
-            return base.SendMessage(request, context);
+            var userId = new UserId(context.GetUserId());
+
+            await _conversationService.SendMessage(userId, new RoomId(request.RoomId), request.Content);
+
+            return new SendMessageResponse();
         }
 
         public override async Task<GetRoomResponse> GetRoom(GetRoomRequest request, ServerCallContext context)

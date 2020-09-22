@@ -22,6 +22,7 @@ namespace Padel.Chat.Services.Impl
         {
             var room = await _roomService.GetRoom(userId, roomId);
             await _messageSenderService.SendMessage(userId, room, content);
+            // todo send firebase notification
         }
     }
 }
