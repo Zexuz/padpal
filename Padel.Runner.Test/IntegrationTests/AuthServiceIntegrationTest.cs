@@ -29,12 +29,12 @@ namespace Padel.Runner.Test.IntegrationTests
             var payload = new RegisterRequest {User = _randomUser.NewUser};
 
             await _authServiceClient.RegisterAsync(payload);
-            var loginResponse = await _authServiceClient.SignInAsync(CreateSignInRequest(_randomUser));
+            var signInResponse = await _authServiceClient.SignInAsync(CreateSignInRequest(_randomUser));
 
-            var timeRange = DateTimeOffset.FromUnixTimeSeconds(loginResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
+            var timeRange = DateTimeOffset.FromUnixTimeSeconds(signInResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
             Assert.True(timeRange < TimeSpan.FromSeconds(10));
 
-            var meRes = await _userServiceClient.MeAsync(new MeRequest { }, CreateAuthMetadata(loginResponse.Token));
+            var meRes = await _userServiceClient.MeAsync(new MeRequest { }, CreateAuthMetadata(signInResponse.Token));
             Assert.Equal(_randomUser.Username, meRes.Me.Username);
             Assert.Equal(_randomUser.Email, meRes.Me.Email);
             Assert.Equal(_randomUser.FirstName, meRes.Me.FirstName);
@@ -44,9 +44,9 @@ namespace Padel.Runner.Test.IntegrationTests
             await Task.Delay(1000);
 
             var newAccessTokenRes = await _authServiceClient.GetNewAccessTokenAsync(new GetNewAccessTokenRequest
-                {RefreshToken = loginResponse.Token.RefreshToken}, CreateAuthMetadata(loginResponse.Token));
-            Assert.NotEqual(newAccessTokenRes.Token.AccessToken, loginResponse.Token.AccessToken);
-            Assert.Equal(newAccessTokenRes.Token.RefreshToken, loginResponse.Token.RefreshToken);
+                {RefreshToken = signInResponse.Token.RefreshToken}, CreateAuthMetadata(signInResponse.Token));
+            Assert.NotEqual(newAccessTokenRes.Token.AccessToken, signInResponse.Token.AccessToken);
+            Assert.Equal(newAccessTokenRes.Token.RefreshToken, signInResponse.Token.RefreshToken);
 
             var meResWithNewAccessToken = await _userServiceClient.MeAsync(new MeRequest { }, CreateAuthMetadata(newAccessTokenRes.Token));
             Assert.Equal(_randomUser.Username, meResWithNewAccessToken.Me.Username);

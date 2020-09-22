@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Padel.Chat.Factories;
 using Padel.Chat.Repositories;
 using Padel.Chat.Repositories.MongoDb;
-using Padel.Chat.Services;
 using Padel.Chat.Services.Impl;
 using Padel.Chat.Services.Interface;
 

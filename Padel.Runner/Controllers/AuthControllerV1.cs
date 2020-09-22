@@ -2,13 +2,12 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Padel.Login;
-using Padel.Login.Exceptions;
+using Padel.Identity;
+using Padel.Identity.Exceptions;
 using Padel.Proto.Auth.V1;
 using Padel.Runner.Extensions;
 using AuthService = Padel.Proto.Auth.V1.AuthService;
-using LoginRequest = Padel.Proto.Auth.V1.SignInRequest;
-using NewUser = Padel.Login.Models.NewUser;
+using NewUser = Padel.Identity.Models.NewUser;
 
 namespace Padel.Runner.Controllers
 {
@@ -19,9 +18,9 @@ namespace Padel.Runner.Controllers
     [Authorize]
     public class AuthControllerV1 : AuthService.AuthServiceBase
     {
-        private readonly Login.Services.IAuthService _authService;
+        private readonly Identity.Services.IAuthService _authService;
 
-        public AuthControllerV1(Login.Services.IAuthService authService)
+        public AuthControllerV1(Identity.Services.IAuthService authService)
         {
             _authService = authService;
         }
@@ -30,7 +29,7 @@ namespace Padel.Runner.Controllers
         public override async Task<SignInResponse> SignIn(SignInRequest request, ServerCallContext context)
         {
             var connectionInfo = new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()};
-            var loginRequest = new Login.Models.LoginRequest
+            var signInRequest = new Identity.Models.SignInRequest
             {
                 Email = request.Email,
                 Password = request.Password,
@@ -38,7 +37,7 @@ namespace Padel.Runner.Controllers
             };
             try
             {
-                var res = await _authService.Login(loginRequest, connectionInfo);
+                var res = await _authService.SignIn(signInRequest, connectionInfo);
                 return new SignInResponse
                 {
                     Token = new OAuthToken

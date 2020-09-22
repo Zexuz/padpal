@@ -11,7 +11,7 @@ namespace Padel.Runner.Test.IntegrationTests
     {
         private readonly ChatService.ChatServiceClient _chatServiceClient;
         private readonly UserGeneratedData             _user;
-        private readonly SignInResponse                 _loginResponse;
+        private readonly SignInResponse                 _signInResponse;
         private          Metadata                      _authHeader;
 
         public ChatServiceIntegrationTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
@@ -19,8 +19,8 @@ namespace Padel.Runner.Test.IntegrationTests
             var channel = factory.CreateGrpcChannel();
             _chatServiceClient = new ChatService.ChatServiceClient(channel);
             _user = UserGeneratedData.Random();
-            _loginResponse = RegisterAndSignInUser(_user).GetAwaiter().GetResult();
-            _authHeader = CreateAuthMetadata(_loginResponse.Token);
+            _signInResponse = RegisterAndSignInUser(_user).GetAwaiter().GetResult();
+            _authHeader = CreateAuthMetadata(_signInResponse.Token);
         }
 
         [Fact]

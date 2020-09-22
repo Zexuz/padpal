@@ -1,4 +1,3 @@
-using Padel.Chat.Services;
 using Padel.Chat.Services.Impl;
 using Xunit;
 

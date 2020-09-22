@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Login", "Padel.Login\Padel.Login.csproj", "{31DFD7CB-E143-4894-9B6E-47C3BF723A63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity", "Padel.Identity\Padel.Identity.csproj", "{31DFD7CB-E143-4894-9B6E-47C3BF723A63}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Runner", "Padel.Runner\Padel.Runner.csproj", "{CE275CC1-81A2-4467-BB83-35704F647957}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Login.Test", "Padel.Login.Test\Padel.Login.Test.csproj", "{ABB6C984-EA8D-4571-B74D-51D19D98AA91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity.Test", "Padel.Identity.Test\Padel.Identity.Test.csproj", "{ABB6C984-EA8D-4571-B74D-51D19D98AA91}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Runner.Test", "Padel.Runner.Test\Padel.Runner.Test.csproj", "{34484CBF-AC47-45FB-ADE7-0C66758A3F79}"
 EndProject

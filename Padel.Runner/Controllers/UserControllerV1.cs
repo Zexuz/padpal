@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Padel.Login.Repositories.User;
+using Padel.Identity.Repositories.User;
 using Padel.Proto.User.V1;
 using Padel.Runner.Extensions;
 

@@ -7,8 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Padel.Login;
-using Padel.Login.Services;
+using Padel.Identity;
+using Padel.Identity.Services;
 using Padel.Runner.Controllers;
 using AutofacModule = Padel.Chat.AutofacModule;
 
@@ -26,7 +26,7 @@ namespace Padel.Runner
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new Login.AutofacModule(_configuration));
+            builder.RegisterModule(new Identity.AutofacModule(_configuration));
             builder.RegisterModule(new AutofacModule(_configuration));
         }
 

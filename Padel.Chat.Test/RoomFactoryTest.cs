@@ -2,7 +2,6 @@ using System.Linq;
 using FakeItEasy;
 using Padel.Chat.Exceptions;
 using Padel.Chat.Factories;
-using Padel.Chat.Services;
 using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
 using Xunit;
