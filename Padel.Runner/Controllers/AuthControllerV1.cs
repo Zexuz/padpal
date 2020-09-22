@@ -7,7 +7,7 @@ using Padel.Login.Exceptions;
 using Padel.Proto.Auth.V1;
 using Padel.Runner.Extensions;
 using AuthService = Padel.Proto.Auth.V1.AuthService;
-using LoginRequest = Padel.Proto.Auth.V1.LoginRequest;
+using LoginRequest = Padel.Proto.Auth.V1.SignInRequest;
 using NewUser = Padel.Login.Models.NewUser;
 
 namespace Padel.Runner.Controllers
@@ -27,7 +27,7 @@ namespace Padel.Runner.Controllers
         }
 
         [AllowAnonymous]
-        public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
+        public override async Task<SignInResponse> SignIn(SignInRequest request, ServerCallContext context)
         {
             var connectionInfo = new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()};
             var loginRequest = new Login.Models.LoginRequest
@@ -39,7 +39,7 @@ namespace Padel.Runner.Controllers
             try
             {
                 var res = await _authService.Login(loginRequest, connectionInfo);
-                return new LoginResponse
+                return new SignInResponse
                 {
                     Token = new OAuthToken
                     {

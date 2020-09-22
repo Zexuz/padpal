@@ -23,13 +23,13 @@ namespace Padel.Runner.Test.IntegrationTests
         }
 
         [Fact]
-        public async Task LoginsAfterSigningUpSuccessful()
+        public async Task SignInAfterRegisterSuccessful()
         {
             var expectedTokenLength = TimeSpan.FromMinutes(30);
             var payload = new RegisterRequest {User = _randomUser.NewUser};
 
             await _authServiceClient.RegisterAsync(payload);
-            var loginResponse = await _authServiceClient.LoginAsync(CreateLoginRequest(_randomUser));
+            var loginResponse = await _authServiceClient.SignInAsync(CreateSignInRequest(_randomUser));
 
             var timeRange = DateTimeOffset.FromUnixTimeSeconds(loginResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
             Assert.True(timeRange < TimeSpan.FromSeconds(10));
@@ -56,13 +56,13 @@ namespace Padel.Runner.Test.IntegrationTests
         }
 
         [Fact]
-        public async Task LoginsFailsWithBadCredentialsAfterSigningUpSuccessful()
+        public async Task SignInFailsWithBadCredentialsAfterRegisterSuccessful()
         {
             var payload = new RegisterRequest {User = _randomUser.NewUser};
 
             await _authServiceClient.RegisterAsync(payload);
 
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.LoginAsync(new LoginRequest
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignInAsync(new SignInRequest
             {
                 Email = payload.User.Email,
                 Password = "some other password"
@@ -71,13 +71,13 @@ namespace Padel.Runner.Test.IntegrationTests
 
         [Theory]
         [InlineData("")]
-        public async Task LoginsFailsWithBadFirebaseTokenAfterSigningUpSuccessful(string firebaseToken)
+        public async Task SignInFailsWithBadFirebaseTokenAfterRegisterSuccessful(string firebaseToken)
         {
             var payload = new RegisterRequest {User = _randomUser.NewUser};
 
             await _authServiceClient.RegisterAsync(payload);
 
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.LoginAsync(new LoginRequest
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignInAsync(new SignInRequest
             {
                 Email = payload.User.Email,
                 Password = payload.User.Password,
@@ -86,9 +86,9 @@ namespace Padel.Runner.Test.IntegrationTests
         }
 
         [Fact]
-        public async Task LoginsFailsWithBadCredentials()
+        public async Task SignInFailsWithBadCredentials()
         {
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.LoginAsync(new LoginRequest
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignInAsync(new SignInRequest
             {
                 Email = "email_does_not_exists",
                 Password = "some other password"

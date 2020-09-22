@@ -7,13 +7,13 @@ package auth.v1;
 service AuthService {
     rpc Register (RegisterRequest) returns (RegisterResponse) {
     }
-    rpc Login (LoginRequest) returns (LoginResponse) {
+    rpc SignIn (SignInRequest) returns (SignInResponse) {
     }
     rpc GetNewAccessToken (GetNewAccessTokenRequest) returns (GetNewAccessTokenResponse) {
     }
 }
 
-message LoginRequest {
+message SignInRequest {
     string email = 1;
     string password = 2;
     string firebaseToken = 3;
@@ -40,7 +40,7 @@ message OAuthToken {
     }
 }
 
-message LoginResponse {
+message SignInResponse {
     OAuthToken token = 1;
 }
 

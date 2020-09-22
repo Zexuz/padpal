@@ -15,11 +15,11 @@ namespace Padel.Runner.Test.IntegrationTests
             _authServiceClient = new AuthService.AuthServiceClient(channel);
         }
 
-        protected async Task<LoginResponse> RegisterAndLoginUser(UserGeneratedData user)
+        protected async Task<SignInResponse> RegisterAndSignInUser(UserGeneratedData user)
         {
             await _authServiceClient.RegisterAsync(new RegisterRequest {User = user.NewUser});
 
-            return await _authServiceClient.LoginAsync(CreateLoginRequest(user));
+            return await _authServiceClient.SignInAsync(CreateSignInRequest(user));
         }
 
         protected static Metadata CreateAuthMetadata(OAuthToken oAuthToken)
@@ -27,9 +27,9 @@ namespace Padel.Runner.Test.IntegrationTests
             return new Metadata {{"Authorization", $"Bearer {oAuthToken.AccessToken}"}};
         }
 
-        protected static LoginRequest CreateLoginRequest(UserGeneratedData randomUser)
+        protected static SignInRequest CreateSignInRequest(UserGeneratedData randomUser)
         {
-            return new LoginRequest
+            return new SignInRequest
             {
                 Email = randomUser.Email,
                 Password = randomUser.Password,
