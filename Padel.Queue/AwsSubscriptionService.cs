@@ -39,7 +39,7 @@ namespace Padel.Queue
         public async Task CreateQueueAndSubscribeToTopic()
         {
             const int maxRetries = 3;
-            var delayTime = TimeSpan.FromSeconds(10);
+            var delayTime = TimeSpan.FromSeconds(1);
 
             try
             {
@@ -61,7 +61,7 @@ namespace Padel.Queue
                     Topic topic;
                     while ((topic = await _topicService.FindTopic(topicName)) == null)
                     {
-                        if (++currentTry > 3)
+                        if (currentTry++ == 3)
                         {
                             _logger.LogCritical($"Could not find topic with name {topicName}, max retries reached");
                             throw new Exception($"Could not find topic with name {topicName}, max retries reached");

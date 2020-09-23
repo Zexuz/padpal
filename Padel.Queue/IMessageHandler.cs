@@ -3,11 +3,8 @@ using Amazon.SQS.Model;
 
 namespace Padel.Queue
 {
-    public interface IMessageProcessor
+    public interface IMessageHandler
     {
-        public string EventName { get; }
-        bool          CanProcess(string eventName);
-
         Task ProcessAsync(Message message);
     }
 }
