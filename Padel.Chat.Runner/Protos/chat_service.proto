@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.Chat.V1";
 
+option go_package = "gateway/chatpb";
+
 package chat.v1;
 
 service ChatService {
