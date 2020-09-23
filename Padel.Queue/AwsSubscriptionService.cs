@@ -17,6 +17,7 @@ namespace Padel.Queue
         private readonly AppConfig                        _appConfig;
         private readonly IAmazonSQS                       _sqsClient;
         private readonly IAmazonSimpleNotificationService _snsClient;
+        private readonly ITopicService                    _topicService;
         private readonly ILogger<AwsSubscriptionService>  _logger;
 
         public AwsSubscriptionService
@@ -24,12 +25,14 @@ namespace Padel.Queue
             AppConfig                        appConfig,
             IAmazonSQS                       sqsClient,
             IAmazonSimpleNotificationService snsClient,
+            ITopicService                    topicService,
             ILogger<AwsSubscriptionService>  logger
         )
         {
             _appConfig = appConfig;
             _sqsClient = sqsClient;
             _snsClient = snsClient;
+            _topicService = topicService;
             _logger = logger;
         }
 
@@ -51,7 +54,7 @@ namespace Padel.Queue
 
                 foreach (var topicName in _appConfig.Topics)
                 {
-                    var topic = await GetTopic(topicName);
+                    var topic = await _topicService.FindOrCreateTopic(topicName);
 
                     var arn = await _snsClient.SubscribeQueueAsync(topic.TopicArn, _sqsClient, queueUrl);
                     await _snsClient.SetSubscriptionAttributesAsync(new SetSubscriptionAttributesRequest
@@ -100,23 +103,6 @@ namespace Padel.Queue
                 }
             });
             return queueResponse.QueueUrl;
-        }
-
-        private async Task<Topic> GetTopic(string topicName)
-        {
-            var topic = await _snsClient.FindTopicAsync(topicName);
-            if (topic == null)
-            {
-                var createTopicResponse = await _snsClient.CreateTopicAsync(topicName);
-                if (createTopicResponse.HttpStatusCode != HttpStatusCode.OK)
-                {
-                    throw new Exception("");
-                }
-
-                topic = new Topic {TopicArn = createTopicResponse.TopicArn};
-            }
-
-            return topic;
         }
 
         private async Task<string> GetDeadLetterQueueArn(CreateQueueResponse dlcQueueResponse)
