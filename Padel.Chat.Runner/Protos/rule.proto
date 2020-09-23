@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "gateway/rulepb";
+
+package rule.v1;
+
+extend google.protobuf.MethodOptions {
+  optional Rule rule = 72295730;
+  optional string unrestricted = 8788778; 
+}
+
+message Rule {
+  required string unrestricted = 1; // Authorize vs AllowAnanomyz in c#
+}

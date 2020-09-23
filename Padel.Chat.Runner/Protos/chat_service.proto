@@ -4,12 +4,20 @@ option csharp_namespace = "Padel.Proto.Chat.V1";
 
 option go_package = "gateway/chatpb";
 
+import "google/protobuf/descriptor.proto";
+import "rule.proto";
+
 package chat.v1;
 
 service ChatService {
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
   rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {}
-  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {}
+  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {
+    option (rule.v1.unrestricted) = "hello robin";
+    option (rule.v1.rule) = {
+      unrestricted:"world";
+    };
+  }
   rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {}
 }
 
