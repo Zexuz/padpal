@@ -3,18 +3,64 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Proto.Auth.V1;
 using Padel.Proto.User.V1;
-using Padel.Runner.Test.IntegrationTests.Helpers;
+using Padel.Test.Core;
 using Xunit;
 
-namespace Padel.Runner.Test.IntegrationTests
+namespace Padel.Identity.Runner.Test
 {
-    public class AuthServiceIntegrationTest : GrpcIntegrationTestBase, IClassFixture<CustomWebApplicationFactory<Startup>>
+    public abstract class GrpcIntegrationTestBase
+    {
+        private readonly AuthService.AuthServiceClient _authServiceClient;
+
+        protected GrpcIntegrationTestBase(SqlWebApplicationFactory<Startup> factory)
+        {
+            var channel = factory.CreateGrpcChannel();
+            _authServiceClient = new AuthService.AuthServiceClient(channel);
+        }
+
+        protected async Task<SignInResponse> RegisterAndSignInUser(UserGeneratedData user)
+        {
+            await _authServiceClient.RegisterAsync(new RegisterRequest {User = CreateNewUser(user)});
+
+            return await _authServiceClient.SignInAsync(CreateSignInRequest(user));
+        }
+
+        protected static Metadata CreateAuthMetadata(OAuthToken oAuthToken)
+        {
+            return new Metadata {{"Authorization", $"Bearer {oAuthToken.AccessToken}"}};
+        }
+
+        protected static SignInRequest CreateSignInRequest(UserGeneratedData randomUser)
+        {
+            return new SignInRequest
+            {
+                Email = randomUser.Email,
+                Password = randomUser.Password,
+                FirebaseToken = randomUser.FirebaseToken
+            };
+        }
+
+        protected static NewUser CreateNewUser(UserGeneratedData user)
+        {
+            return new NewUser
+            {
+                Username = user.Username,
+                Email = user.Email,
+                Password = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                DateOfBirth = new NewUser.Types.Date {Year = user.DateOfBirth.Year, Month = user.DateOfBirth.Month, Day = user.DateOfBirth.Day}
+            };
+        }
+    }
+
+    public class AuthServiceIntegrationTest : GrpcIntegrationTestBase, IClassFixture<SqlWebApplicationFactory<Startup>>
     {
         private readonly AuthService.AuthServiceClient _authServiceClient;
         private readonly UserService.UserServiceClient _userServiceClient;
         private readonly UserGeneratedData             _randomUser;
 
-        public AuthServiceIntegrationTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
+        public AuthServiceIntegrationTest(SqlWebApplicationFactory<Startup> factory) : base(factory)
         {
             var channel = factory.CreateGrpcChannel();
             _authServiceClient = new AuthService.AuthServiceClient(channel);
@@ -26,7 +72,7 @@ namespace Padel.Runner.Test.IntegrationTests
         public async Task SignInAfterRegisterSuccessful()
         {
             var expectedTokenLength = TimeSpan.FromMinutes(30);
-            var payload = new RegisterRequest {User = _randomUser.NewUser};
+            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
 
             await _authServiceClient.RegisterAsync(payload);
             var signInResponse = await _authServiceClient.SignInAsync(CreateSignInRequest(_randomUser));
@@ -58,7 +104,7 @@ namespace Padel.Runner.Test.IntegrationTests
         [Fact]
         public async Task SignInFailsWithBadCredentialsAfterRegisterSuccessful()
         {
-            var payload = new RegisterRequest {User = _randomUser.NewUser};
+            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
 
             await _authServiceClient.RegisterAsync(payload);
 
@@ -73,7 +119,7 @@ namespace Padel.Runner.Test.IntegrationTests
         [InlineData("")]
         public async Task SignInFailsWithBadFirebaseTokenAfterRegisterSuccessful(string firebaseToken)
         {
-            var payload = new RegisterRequest {User = _randomUser.NewUser};
+            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
 
             await _authServiceClient.RegisterAsync(payload);
 
@@ -98,7 +144,7 @@ namespace Padel.Runner.Test.IntegrationTests
         [Fact]
         public async Task ThrowsErrorWhenUsernameIsTaken()
         {
-            var payload = new RegisterRequest {User = _randomUser.NewUser};
+            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
 
             await _authServiceClient.RegisterAsync(payload);
 
@@ -111,7 +157,7 @@ namespace Padel.Runner.Test.IntegrationTests
         [Fact]
         public async Task ThrowsErrorWhenEmailIsTaken()
         {
-            var payload = new RegisterRequest {User = _randomUser.NewUser};
+            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
 
             await _authServiceClient.RegisterAsync(payload);
 

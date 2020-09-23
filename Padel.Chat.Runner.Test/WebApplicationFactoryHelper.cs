@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace Padel.Runner.Test.IntegrationTests.Helpers
+namespace Padel.Chat.Runner.Test
 {
     public static class WebApplicationFactoryHelper
     {
-        public static GrpcChannel CreateGrpcChannel(this WebApplicationFactory<Startup> factory)
+        public static GrpcChannel CreateGrpcChannel(this MongoWebApplicationFactory<Startup> factory)
         {
             var client = factory.CreateDefaultClient(new ResponseVersionHandler());
             return GrpcChannel.ForAddress(client.BaseAddress, new GrpcChannelOptions

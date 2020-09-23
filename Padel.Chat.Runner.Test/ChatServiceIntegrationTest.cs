@@ -1,40 +1,36 @@
 using System.Threading.Tasks;
 using Grpc.Core;
-using Padel.Proto.Auth.V1;
 using Padel.Proto.Chat.V1;
-using Padel.Runner.Test.IntegrationTests.Helpers;
 using Xunit;
 
-namespace Padel.Runner.Test.IntegrationTests
+namespace Padel.Chat.Runner.Test
 {
-    public class ChatServiceIntegrationTest : GrpcIntegrationTestBase, IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ChatServiceIntegrationTest : IClassFixture<MongoWebApplicationFactory<Startup>>
     {
         private readonly ChatService.ChatServiceClient _chatServiceClient;
-        private readonly UserGeneratedData             _user;
-        private readonly SignInResponse                 _signInResponse;
-        private          Metadata                      _authHeader;
 
-        public ChatServiceIntegrationTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
+        public ChatServiceIntegrationTest(MongoWebApplicationFactory<Startup> factoryBase)
         {
-            var channel = factory.CreateGrpcChannel();
+            var channel = factoryBase.CreateGrpcChannel();
             _chatServiceClient = new ChatService.ChatServiceClient(channel);
-            _user = UserGeneratedData.Random();
-            _signInResponse = RegisterAndSignInUser(_user).GetAwaiter().GetResult();
-            _authHeader = CreateAuthMetadata(_signInResponse.Token);
         }
 
         [Fact]
         public async Task When_user_creates_a_room_it_should_be_able_to_see_that_room_in_GetRoom()
         {
+            var _requestHeader = new Metadata
+            {
+                {"padpal-user-id", "1"},
+            };
             var createRoomResponse = await _chatServiceClient.CreateRoomAsync(new CreateRoomRequest
                 {
                     Content = "When_user_creates_a_room_it_should_be_able_to_see_that_room_in_GetRoom",
                     Participants = {1337}
                 },
-                _authHeader
+                _requestHeader
             );
 
-            var getRoomResponse = await _chatServiceClient.GetRoomAsync(new GetRoomRequest {RoomId = createRoomResponse.RoomId}, _authHeader);
+            var getRoomResponse = await _chatServiceClient.GetRoomAsync(new GetRoomRequest {RoomId = createRoomResponse.RoomId}, _requestHeader);
 
             Assert.Equal(createRoomResponse.RoomId, getRoomResponse.Room.Id);
             Assert.Equal(2, getRoomResponse.Room.Participants.Count);
@@ -44,12 +40,16 @@ namespace Padel.Runner.Test.IntegrationTests
         [Fact]
         public async Task When_user_creates_a_room_it_should_be_able_to_see_that_room_in_GetRoomsWhereUserIsParticipating()
         {
+            var _requestHeader = new Metadata
+            {
+                {"padpal-user-id", "2"},
+            };
             var createRoomResponse = await _chatServiceClient.CreateRoomAsync(new CreateRoomRequest
                 {
                     Content = "When_user_creates_a_room_it_should_be_able_to_see_that_room_in_GetRoomsWhereUserIsParticipating",
                     Participants = {1338}
                 },
-                _authHeader
+                _requestHeader
             );
 
             var createRoomResponse1 = await _chatServiceClient.CreateRoomAsync(new CreateRoomRequest
@@ -57,11 +57,11 @@ namespace Padel.Runner.Test.IntegrationTests
                     Content = "When_user_creates_a_room_it_should_be_able_to_see_that_room_in_GetRoomsWhereUserIsParticipating",
                     Participants = {3, 5, 6, 712}
                 },
-                _authHeader
+                _requestHeader
             );
 
             var res =
-                await _chatServiceClient.GetRoomsWhereUserIsParticipatingAsync(new GetRoomsWhereUserIsParticipatingRequest(), _authHeader);
+                await _chatServiceClient.GetRoomsWhereUserIsParticipatingAsync(new GetRoomsWhereUserIsParticipatingRequest(), _requestHeader);
 
             Assert.Equal(2, res.RoomIds.Count);
             Assert.Contains(createRoomResponse.RoomId, res.RoomIds);
