@@ -19,18 +19,7 @@ namespace Padel.Chat.Runner
         {
             return Host.CreateDefaultBuilder(args)
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.ConfigureKestrel(options =>
-                    {
-                        options.Listen(IPAddress.Any, 5001, listenOptions =>
-                        {
-                            listenOptions.Protocols = HttpProtocols.Http2;
-                            // listenOptions.UseHttps("<path to .pfx file>", "<certificate password>");
-                        });
-                    });
-                    webBuilder.UseStartup<Startup>();
-                });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
     }
 }
