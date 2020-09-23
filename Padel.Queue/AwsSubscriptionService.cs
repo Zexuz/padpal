@@ -38,6 +38,9 @@ namespace Padel.Queue
 
         public async Task CreateQueueAndSubscribeToTopic()
         {
+            const int maxRetries = 3;
+            var delayTime = TimeSpan.FromSeconds(10);
+
             try
             {
                 var listQueuesResponse = await _sqsClient.ListQueuesAsync(_appConfig.AwsQueueName);
@@ -54,7 +57,20 @@ namespace Padel.Queue
 
                 foreach (var topicName in _appConfig.Topics)
                 {
-                    var topic = await _topicService.FindOrCreateTopic(topicName);
+                    int currentTry = 0;
+                    Topic topic;
+                    while ((topic = await _topicService.FindTopic(topicName)) == null)
+                    {
+                        if (++currentTry > 3)
+                        {
+                            _logger.LogCritical($"Could not find topic with name {topicName}, max retries reached");
+                            throw new Exception($"Could not find topic with name {topicName}, max retries reached");
+                        }
+
+                        _logger.LogWarning(
+                            $"Could not find topic with name {topicName}, no: {currentTry}/{maxRetries}, retrying again in: {delayTime.ToString()}");
+                        await Task.Delay(delayTime);
+                    }
 
                     var arn = await _snsClient.SubscribeQueueAsync(topic.TopicArn, _sqsClient, queueUrl);
                     await _snsClient.SetSubscriptionAttributesAsync(new SetSubscriptionAttributesRequest

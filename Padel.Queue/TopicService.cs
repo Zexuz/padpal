@@ -15,9 +15,14 @@ namespace Padel.Queue
             _snsClient = snsClient;
         }
 
+        public async Task<Topic> FindTopic(string name)
+        {
+            return await _snsClient.FindTopicAsync(name);
+        }
+
         public async Task<Topic> FindOrCreateTopic(string name)
         {
-            var topic = await _snsClient.FindTopicAsync(name);
+            var topic = await FindTopic(name);
             if (topic != null) return topic;
 
             var createTopicResponse = await _snsClient.CreateTopicAsync(name);
