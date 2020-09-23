@@ -13,5 +13,8 @@
         <PackageReference Include="FirebaseAdmin" Version="1.16.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Padel.Queue.Interface\Padel.Queue.Interface.csproj" />
+    </ItemGroup>
 
 </Project>
