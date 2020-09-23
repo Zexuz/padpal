@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using FakeItEasy;
 using Padel.Identity.Repositories.User;
+using Padel.Identity.Runner.Controllers;
 using Padel.Proto.User.V1;
-using Padel.Runner.Controllers;
 using Xunit;
 
-namespace Padel.Runner.Test.Controllers
+namespace Padel.Identity.Runner.Test.Controllers
 {
     public class UserControllerV1Test : TestControllerBase
     {

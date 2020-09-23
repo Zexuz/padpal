@@ -7,7 +7,7 @@ using Grpc.Core;
 using Grpc.Core.Testing;
 using Microsoft.AspNetCore.Http;
 
-namespace Padel.Runner.Test.Controllers
+namespace Padel.Identity.Runner.Test.Controllers
 {
     public abstract class TestControllerBase
     {

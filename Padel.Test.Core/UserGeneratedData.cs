@@ -1,8 +1,6 @@
 using System;
-using Padel.Proto.Auth.V1;
-using Padel.Runner.Test.IntegrationTests.Helpers;
 
-namespace Padel.Runner.Test.IntegrationTests
+namespace Padel.Test.Core
 {
     public class UserGeneratedData
     {
@@ -13,7 +11,6 @@ namespace Padel.Runner.Test.IntegrationTests
         public string   LastName      { get; private set; }
         public DateTime DateOfBirth   { get; private set; }
         public string   FirebaseToken { get; private set; }
-        public NewUser  NewUser       { get; private set; }
 
 
         public static UserGeneratedData Random()
@@ -34,15 +31,6 @@ namespace Padel.Runner.Test.IntegrationTests
                 FirstName = firstName,
                 LastName = lastName,
                 DateOfBirth = dateOfBirth,
-                NewUser = new NewUser
-                {
-                    Username = username,
-                    Email = email,
-                    Password = password,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    DateOfBirth = new NewUser.Types.Date {Year = dateOfBirth.Year, Month = dateOfBirth.Month, Day = dateOfBirth.Day}
-                },
             };
         }
     }

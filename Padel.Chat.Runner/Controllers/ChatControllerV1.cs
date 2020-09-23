@@ -2,14 +2,13 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Padel.Chat.Runner.Extensions;
 using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
 using Padel.Proto.Chat.V1;
-using Padel.Runner.Extensions;
 
-namespace Padel.Runner.Controllers
+namespace Padel.Chat.Runner.Controllers
 {
-    [Authorize]
     public class ChatControllerV1 : ChatService.ChatServiceBase
     {
         private readonly IConversationService _conversationService;

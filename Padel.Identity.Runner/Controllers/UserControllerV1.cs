@@ -2,10 +2,10 @@
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Padel.Identity.Repositories.User;
+using Padel.Identity.Runner.Extensions;
 using Padel.Proto.User.V1;
-using Padel.Runner.Extensions;
 
-namespace Padel.Runner.Controllers
+namespace Padel.Identity.Runner.Controllers
 {
     // TODO Rename this conteoller to MeController, b/c this is where we fetch data about the current user?
     // Lets combine Me and UserService untill we know how it will be implemented

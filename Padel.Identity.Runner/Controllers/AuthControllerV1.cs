@@ -2,20 +2,18 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Padel.Identity;
 using Padel.Identity.Exceptions;
+using Padel.Identity.Runner.Extensions;
 using Padel.Proto.Auth.V1;
-using Padel.Runner.Extensions;
 using AuthService = Padel.Proto.Auth.V1.AuthService;
 using NewUser = Padel.Identity.Models.NewUser;
 
-namespace Padel.Runner.Controllers
+namespace Padel.Identity.Runner.Controllers
 {
     // TODO Should be UserAuthController since we are auth the user here.
 
     // TODO Move all proto stufff here, and have a remapping of the objects to the domain layer
     // The remapping class should also validate syntax, lenght and other stuff, this should be in the domain layer!
-    [Authorize]
     public class AuthControllerV1 : AuthService.AuthServiceBase
     {
         private readonly Identity.Services.IAuthService _authService;
@@ -25,7 +23,6 @@ namespace Padel.Runner.Controllers
             _authService = authService;
         }
 
-        [AllowAnonymous]
         public override async Task<SignInResponse> SignIn(SignInRequest request, ServerCallContext context)
         {
             var connectionInfo = new ConnectionInfo {Ip = context.GetHttpContext().Connection.RemoteIpAddress.ToString()};
@@ -64,7 +61,6 @@ namespace Padel.Runner.Controllers
             }
         }
 
-        [AllowAnonymous]
         public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
         {
             var user = new NewUser()
@@ -102,7 +98,6 @@ namespace Padel.Runner.Controllers
         }
 
 
-        [AllowAnonymous]
         public override async Task<GetNewAccessTokenResponse> GetNewAccessToken(GetNewAccessTokenRequest request, ServerCallContext context)
         {
             var info = new ConnectionInfo {Ip = context.GetIPv4().ToString()};
