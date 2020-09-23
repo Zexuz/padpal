@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.Auth.V1";
 
+option go_package = "gateway/authpb";
+
 package auth.v1;
 
 service AuthService {

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.User.V1";
 
+option go_package = "gateway/userbp";
+
 package user.v1;
 
 service UserService {
