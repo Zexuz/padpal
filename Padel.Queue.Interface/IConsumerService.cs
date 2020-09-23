@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-namespace Padel.Queue
+namespace Padel.Queue.Interface
 {
-    public interface ISqsConsumerService
+    public interface IConsumerService
     {
         void            StartConsuming();
         void            StopConsuming();

@@ -13,17 +13,17 @@ namespace Padel.Queue
 {
     public class QueueService : IQueueService
     {
-        private readonly AppConfig                            _appConfig;
-        private readonly IAmazonSQS                           _sqsClient;
-        private readonly ILogger<QueueService>                _logger;
-        private readonly ConcurrentDictionary<string, string> _queueUrlCache;
+        private readonly AppConfig             _appConfig;
+        private readonly IAmazonSQS            _sqsClient;
+        private readonly IQueueCache           _queueCache;
+        private readonly ILogger<QueueService> _logger;
 
-        public QueueService(AppConfig awsConfig, IAmazonSQS sqsClient, ILogger<QueueService> logger)
+        public QueueService(AppConfig awsConfig, IAmazonSQS sqsClient, IQueueCache queueCache, ILogger<QueueService> logger)
         {
             _appConfig = awsConfig;
             _sqsClient = sqsClient;
+            _queueCache = queueCache;
             _logger = logger;
-            _queueUrlCache = new ConcurrentDictionary<string, string>();
         }
 
         public string GetQueueName()
@@ -33,7 +33,7 @@ namespace Padel.Queue
 
         public async Task<List<Message>> GetMessagesAsync(string queueName, CancellationToken cancellationToken = default)
         {
-            var queueUrl = await GetQueueUrl(queueName);
+            var queueUrl = await _queueCache.GetQueueUrl(queueName);
 
             try
             {
@@ -71,7 +71,7 @@ namespace Padel.Queue
 
         public async Task PostMessageAsync(string queueName, string messageBody, string messageType)
         {
-            var queueUrl = await GetQueueUrl(queueName);
+            var queueUrl = await _queueCache.GetQueueUrl(queueName);
 
             try
             {
@@ -98,7 +98,7 @@ namespace Padel.Queue
 
         public async Task DeleteMessageAsync(string queueName, string receiptHandle)
         {
-            var queueUrl = await GetQueueUrl(queueName);
+            var queueUrl = await _queueCache.GetQueueUrl(queueName);
 
             try
             {
@@ -153,30 +153,6 @@ namespace Padel.Queue
             {
                 _logger.LogError($"Failed to ReprocessMessages from queue {deadLetterQueueName}");
                 throw;
-            }
-        }
-
-        private async Task<string> GetQueueUrl(string queueName)
-        {
-            if (string.IsNullOrEmpty(queueName))
-            {
-                throw new ArgumentException("Queue name should not be blank.");
-            }
-
-            if (_queueUrlCache.TryGetValue(queueName, out var result))
-            {
-                return result;
-            }
-
-            try
-            {
-                var response = await _sqsClient.GetQueueUrlAsync(queueName);
-                return _queueUrlCache.AddOrUpdate(queueName, response.QueueUrl, (q, url) => url);
-            }
-            catch (QueueDoesNotExistException ex)
-            {
-                throw new InvalidOperationException(
-                    $"Could not retrieve the URL for the queue '{queueName}' as it does not exist or you do not have access to it.", ex);
             }
         }
     }

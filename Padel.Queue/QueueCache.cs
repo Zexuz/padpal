@@ -7,7 +7,7 @@ using Amazon.SQS.Model;
 
 namespace Padel.Queue
 {
-    public class QueueCache
+    public class QueueCache : IQueueCache
     {
         private readonly ConcurrentDictionary<string, string> _queueUrlCache;
         private readonly IAmazonSQS                           _sqsClient;

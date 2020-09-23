@@ -12,9 +12,9 @@ namespace Padel.Queue
     {
         private readonly IQueueService               _queueService;
         private readonly List<IMessageProcessor>     _messageProcessors;
-        private readonly ILogger<SqsConsumerService> _logger;
+        private readonly ILogger<ConsumerService> _logger;
 
-        public MessageHandler(IQueueService queueService, List<IMessageProcessor> messageProcessors, ILogger<SqsConsumerService> logger)
+        public MessageHandler(IQueueService queueService, List<IMessageProcessor> messageProcessors, ILogger<ConsumerService> logger)
         {
             _queueService = queueService;
             _messageProcessors = messageProcessors;

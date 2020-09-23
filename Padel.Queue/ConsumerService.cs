@@ -1,17 +1,18 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {
-    public class SqsConsumerService : ISqsConsumerService
+    public class ConsumerService : IConsumerService
     {
         private readonly IQueueService   _queueService;
         private readonly IMessageHandler _messageProcessors;
 
         private CancellationTokenSource _tokenSource;
 
-        public SqsConsumerService(IQueueService queueService, IMessageHandler messageProcessors)
+        public ConsumerService(IQueueService queueService, IMessageHandler messageProcessors)
         {
             _queueService = queueService;
             _messageProcessors = messageProcessors;

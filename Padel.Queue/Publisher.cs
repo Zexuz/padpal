@@ -5,28 +5,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
+using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {
-    public interface IPublisher
-    {
-        public IReadOnlyList<IRegisteredEvent> Events { get; }
-        Task                                   RegisterEvent(string name, Type type);
-    }
-
-    public interface IRegisteredEvent
-    {
-        Type   Type { get; set; }
-        string Name { get; set; }
-    }
-
-    internal class RegisteredEvent : IRegisteredEvent
-    {
-        public Type   Type { get; set; }
-        public string Name { get; set; }
-        public Topic  Arn  { get; set; }
-    }
-
     public class Publisher : IPublisher
     {
         public IReadOnlyList<IRegisteredEvent> Events => _events;

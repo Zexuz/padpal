@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Padel.Queue
+namespace Padel.Queue.Interface
 {
     public interface ISubscriptionService
     {
