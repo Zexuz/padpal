@@ -26,7 +26,11 @@ namespace Padel.Notification.Runner.HealthCheck
             {
                 var health = await _healthCheckService.CheckHealthAsync(stoppingToken);
 
-                _healthService.SetStatus("notification", health.Status == HealthStatus.Healthy
+                _healthService.SetStatus("notification.v1.Notification", health.Status == HealthStatus.Healthy
+                    ? HealthCheckResponse.Types.ServingStatus.Serving
+                    : HealthCheckResponse.Types.ServingStatus.NotServing);
+
+                _healthService.SetStatus(string.Empty, health.Status == HealthStatus.Healthy
                     ? HealthCheckResponse.Types.ServingStatus.Serving
                     : HealthCheckResponse.Types.ServingStatus.NotServing);
 
