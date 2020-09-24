@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using Padel.Runner.Test.IntegrationTests.Helpers;
+using Padel.Test.Core;
 
-namespace Padel.Chat.Test.Functional.Helper
+namespace Padel.Chat.Test.Functional.Helpers
 {
     public class MongoWebApplicationFactory<TStartup> : WebApplicationFactoryBase<TStartup> where TStartup : class
     {

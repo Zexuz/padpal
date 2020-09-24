@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Chat.Runner;
-using Padel.Chat.Test.Functional.Helper;
+using Padel.Chat.Test.Functional.Helpers;
 using Padel.Proto.Chat.V1;
 using Xunit;
 

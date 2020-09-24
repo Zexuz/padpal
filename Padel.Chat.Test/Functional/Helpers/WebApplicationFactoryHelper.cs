@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Grpc.Net.Client;
 using Padel.Chat.Runner;
 
-namespace Padel.Chat.Test.Functional.Helper
+namespace Padel.Chat.Test.Functional.Helpers
 {
     public static class WebApplicationFactoryHelper
     {
