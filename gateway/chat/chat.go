@@ -2,7 +2,7 @@ package chat
 
 import (
 	"context"
-	"github.com/mkdir-sweden/padpal/gateway/chatpb"
+	"github.com/mkdir-sweden/padpal/gateway/protos/chat_v1"
 	"google.golang.org/grpc"
 )
 

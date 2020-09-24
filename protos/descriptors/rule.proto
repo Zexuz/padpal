@@ -2,9 +2,9 @@ syntax = "proto2";
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "gateway/rulepb";
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/descriptors";
 
-package rule.v1;
+package descriptors;
 
 extend google.protobuf.MethodOptions {
   optional Rule rule = 72295730;

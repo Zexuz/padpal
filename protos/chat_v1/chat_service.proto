@@ -2,10 +2,10 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.Chat.V1";
 
-option go_package = "gateway/chatpb";
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/chatpb";
 
 import "google/protobuf/descriptor.proto";
-import "rule.proto";
+import "descriptors/rule.proto";
 
 package chat.v1;
 
@@ -13,7 +13,7 @@ service ChatService {
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
   rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {}
   rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {
-    option (rule.v1.rule) = {
+    option (descriptors.rule) = {
       shouldValidate:true,
     };
   }

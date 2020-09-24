@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"github.com/mkdir-sweden/padpal/gateway/authpb"
+	"github.com/mkdir-sweden/padpal/gateway/protos/auth_v1"
 	"google.golang.org/grpc"
 )
 

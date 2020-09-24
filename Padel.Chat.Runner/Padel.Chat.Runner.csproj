@@ -5,8 +5,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\*.proto" GrpcServices="Both" ProtoRoot="Protos\" />
+        <Protobuf Include="..\protos\chat_v1\chat_service.proto" Link="protos\chat_service.proto"  ProtoRoot="..\protos\"/>
+        <Protobuf Include="..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
     </ItemGroup>
+
 
     <ItemGroup>
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
