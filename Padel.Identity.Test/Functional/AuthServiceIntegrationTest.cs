@@ -1,35 +1,30 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Padel.Grpc.Core;
 using Padel.Identity.Runner;
+using Padel.Identity.Services;
+using Padel.Identity.Services.JsonWebToken;
 using Padel.Identity.Test.Functional.Helpers;
 using Padel.Proto.Auth.V1;
 using Padel.Proto.User.V1;
 using Padel.Test.Core;
 using Xunit;
+using AuthService = Padel.Proto.Auth.V1.AuthService;
+using OAuthToken = Padel.Proto.Auth.V1.OAuthToken;
 
 namespace Padel.Identity.Test.Functional
 {
     public abstract class GrpcIntegrationTestBase
     {
-        private readonly AuthService.AuthServiceClient _authServiceClient;
-
-        protected GrpcIntegrationTestBase(SqlWebApplicationFactory<Startup> factory)
+        protected static async Task<Metadata> CreateAuthMetadata(OAuthToken oAuthToken)
         {
-            var channel = factory.CreateGrpcChannel();
-            _authServiceClient = new AuthService.AuthServiceClient(channel);
-        }
+            var jsonWebTokenBuilder = new JsonWebTokenBuilder(new KeyLoader(new FileService()));
 
-        protected async Task<SignInResponse> RegisterAndSignInUser(UserGeneratedData user)
-        {
-            await _authServiceClient.RegisterAsync(new RegisterRequest {User = CreateNewUser(user)});
-
-            return await _authServiceClient.SignInAsync(CreateSignInRequest(user));
-        }
-
-        protected static Metadata CreateAuthMetadata(OAuthToken oAuthToken)
-        {
-            return new Metadata {{"Authorization", $"Bearer {oAuthToken.AccessToken}"}};
+            var claims = await jsonWebTokenBuilder.DecodeToken<Dictionary<string, object>>(oAuthToken.AccessToken);
+            var userId = claims["sub"];
+            return new Metadata {{Constants.UserIdHeaderKey, userId.ToString()}};
         }
 
         protected static SignInRequest CreateSignInRequest(UserGeneratedData randomUser)
@@ -62,7 +57,7 @@ namespace Padel.Identity.Test.Functional
         private readonly UserService.UserServiceClient _userServiceClient;
         private readonly UserGeneratedData             _randomUser;
 
-        public AuthServiceIntegrationTest(SqlWebApplicationFactory<Startup> factory) : base(factory)
+        public AuthServiceIntegrationTest(SqlWebApplicationFactory<Startup> factory)
         {
             var channel = factory.CreateGrpcChannel();
             _authServiceClient = new AuthService.AuthServiceClient(channel);
@@ -82,7 +77,7 @@ namespace Padel.Identity.Test.Functional
             var timeRange = DateTimeOffset.FromUnixTimeSeconds(signInResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
             Assert.True(timeRange < TimeSpan.FromSeconds(10));
 
-            var meRes = await _userServiceClient.MeAsync(new MeRequest { }, CreateAuthMetadata(signInResponse.Token));
+            var meRes = await _userServiceClient.MeAsync(new MeRequest { },await CreateAuthMetadata(signInResponse.Token));
             Assert.Equal(_randomUser.Username, meRes.Me.Username);
             Assert.Equal(_randomUser.Email, meRes.Me.Email);
             Assert.Equal(_randomUser.FirstName, meRes.Me.FirstName);
@@ -92,11 +87,11 @@ namespace Padel.Identity.Test.Functional
             await Task.Delay(1000);
 
             var newAccessTokenRes = await _authServiceClient.GetNewAccessTokenAsync(new GetNewAccessTokenRequest
-                {RefreshToken = signInResponse.Token.RefreshToken}, CreateAuthMetadata(signInResponse.Token));
+                {RefreshToken = signInResponse.Token.RefreshToken}, await CreateAuthMetadata(signInResponse.Token));
             Assert.NotEqual(newAccessTokenRes.Token.AccessToken, signInResponse.Token.AccessToken);
             Assert.Equal(newAccessTokenRes.Token.RefreshToken, signInResponse.Token.RefreshToken);
 
-            var meResWithNewAccessToken = await _userServiceClient.MeAsync(new MeRequest { }, CreateAuthMetadata(newAccessTokenRes.Token));
+            var meResWithNewAccessToken = await _userServiceClient.MeAsync(new MeRequest { }, await CreateAuthMetadata(newAccessTokenRes.Token));
             Assert.Equal(_randomUser.Username, meResWithNewAccessToken.Me.Username);
             Assert.Equal(_randomUser.Email, meResWithNewAccessToken.Me.Email);
             Assert.Equal(_randomUser.FirstName, meResWithNewAccessToken.Me.FirstName);
