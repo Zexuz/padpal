@@ -19,10 +19,10 @@ namespace Padel.Identity.Services.JsonWebToken
         {
             var exp = DateTimeOffset.UtcNow.Add(_options.LifeSpan);
 
-            var claims = new Dictionary<string, string>
+            var claims = new Dictionary<string, object>
             {
-                {"exp", exp.ToUnixTimeSeconds().ToString()},
-                {"sub", userId.ToString()}
+                {"exp", exp.ToUnixTimeSeconds()},
+                {"sub", userId}
             };
 
             return (await _builder.Create(claims), exp);

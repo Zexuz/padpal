@@ -19,17 +19,19 @@ namespace Padel.Identity.Test
 
             A.CallTo(() => fakeKeyLoader.Load()).Returns((rsaGenerator, rsaGenerator));
 
-            var claims = new Dictionary<string, string>
+            var claims = new Dictionary<string, object>
             {
-                {"name", "robin"}
+                {"name", "robin"},
+                {"asInt", 1337}
             };
 
             var jwt = new JsonWebTokenBuilder(fakeKeyLoader);
 
             var token = await jwt.Create(claims);
 
-            var decodeToken = await jwt.DecodeToken<Dictionary<string, string>>(token);
+            var decodeToken = await jwt.DecodeToken<Dictionary<string, object>>(token);
             Assert.Equal("robin", decodeToken["name"]);
+            Assert.Equal((long)1337, decodeToken["asInt"]);
         }
 
         [Fact]
@@ -42,7 +44,7 @@ namespace Padel.Identity.Test
 
             A.CallTo(() => fakeKeyLoader.Load()).Returns((rsaGenerator, rsaGenerator1));
 
-            var claims = new Dictionary<string, string>
+            var claims = new Dictionary<string, object>
             {
                 {"name", "robin"}
             };
