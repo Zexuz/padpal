@@ -69,8 +69,12 @@ func (o *myObject) jwtValidator(
 		}
 
 		if standard, ok := token.Claims.(*jwt.StandardClaims); ok {
-			md := metadata.Pairs("padpal-user-id", standard.Subject)
-			ctx = metadata.NewOutgoingContext(ctx, md)
+			md, ok := metadata.FromIncomingContext(ctx)
+			if !ok {
+				return errors.New("not ok")
+			}
+			md.Set("padpal-user-id", standard.Subject)
+			ctx = metadata.NewIncomingContext(ctx, md)
 		} else {
 			return errors.New("token claims is wrong")
 		}
@@ -99,11 +103,11 @@ func keyFunc(pubKey []byte) func(token *jwt.Token) (interface{}, error) {
 }
 
 func getTokenFromHeader(ctx context.Context) (string, error) {
-	metadata, ok := metadata.FromIncomingContext(ctx)
+	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", errors.New("not ok")
 	}
-	authorization := metadata.Get("authorization")
+	authorization := md.Get("authorization")
 	if len(authorization) == 0 {
 		return "", errors.New("missing authorization header")
 	}

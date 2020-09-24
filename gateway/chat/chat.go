@@ -8,7 +8,7 @@ import (
 
 func NewChatService(conn *grpc.ClientConn) *chatpb.ChatServiceService {
 	client := &chatService{
-		client: chatpb.NewChatServiceClient(conn),
+		pbClient: chatpb.NewChatServiceClient(conn),
 	}
 
 	service := &chatpb.ChatServiceService{
@@ -22,21 +22,21 @@ func NewChatService(conn *grpc.ClientConn) *chatpb.ChatServiceService {
 }
 
 type chatService struct {
-	client chatpb.ChatServiceClient
+	pbClient chatpb.ChatServiceClient
 }
 
 func (s *chatService) SendMessage(ctx context.Context, request *chatpb.SendMessageRequest) (*chatpb.SendMessageResponse, error) {
-	return s.client.SendMessage(ctx, request)
+	return s.pbClient.SendMessage(ctx, request)
 }
 
 func (s *chatService) CreateRoom(ctx context.Context, request *chatpb.CreateRoomRequest) (*chatpb.CreateRoomResponse, error) {
-	return s.client.CreateRoom(ctx, request)
+	return s.pbClient.CreateRoom(ctx, request)
 }
 
 func (s *chatService) GetRoomsWhereUserIsParticipating(ctx context.Context, request *chatpb.GetRoomsWhereUserIsParticipatingRequest) (*chatpb.GetRoomsWhereUserIsParticipatingResponse, error) {
-	return s.client.GetRoomsWhereUserIsParticipating(ctx, request)
+	return s.pbClient.GetRoomsWhereUserIsParticipating(ctx, request)
 }
 
 func (s *chatService) GetRoom(ctx context.Context, request *chatpb.GetRoomRequest) (*chatpb.GetRoomResponse, error) {
-	return s.client.GetRoom(ctx, request)
+	return s.pbClient.GetRoom(ctx, request)
 }
