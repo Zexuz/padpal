@@ -1,11 +1,14 @@
 ﻿using Autofac;
+using Grpc.HealthCheck;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Padel.Notification.Runner.Controllers;
+using Padel.Notification.Runner.HealthCheck;
 
 namespace Padel.Notification.Runner
 {
@@ -28,6 +31,16 @@ namespace Padel.Notification.Runner
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+
+            var hcBuilder = services.AddHealthChecks();
+            // hcBuilder.AddCheck(
+            //     "OrderingDB-check",
+            //     new CustomHealthCheck(),
+            //     HealthStatus.Unhealthy,
+            //     new string[] {"orderingdb"});
+
+            services.AddSingleton<HealthServiceImpl>();
+            services.AddHostedService<StatusService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +55,12 @@ namespace Padel.Notification.Runner
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions
+                {
+                    // ResponseWriter = async (context, report) => { await context.Response.WriteAsync(JsonSerializer.Serialize(report.Entries)); }
+                });
+
+                endpoints.MapGrpcService<HealthServiceImpl>();
                 endpoints.MapGrpcService<NotificationControllerV1>();
 
                 endpoints.MapGet("/",

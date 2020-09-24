@@ -15,6 +15,10 @@ namespace Padel.Notification.Test.Unit
         {
             _sut = new NotificationControllerV1();
         }
+        
+        // TODO Save the FCMToken and subscribe to topics!
+        
+        // Can we use middlewares here? One that is called "SetUpService" that set us the aws queue and topic subscription
 
         [Fact]
         public async Task Should_throw_if_argument_is_invalid()
