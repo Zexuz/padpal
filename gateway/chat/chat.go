@@ -34,7 +34,7 @@ func (s *chatService) CreateRoom(ctx context.Context, request *chatpb.CreateRoom
 }
 
 func (s *chatService) GetRoomsWhereUserIsParticipating(ctx context.Context, request *chatpb.GetRoomsWhereUserIsParticipatingRequest) (*chatpb.GetRoomsWhereUserIsParticipatingResponse, error) {
-	return s.GetRoomsWhereUserIsParticipating(ctx, request)
+	return s.client.GetRoomsWhereUserIsParticipating(ctx, request)
 }
 
 func (s *chatService) GetRoom(ctx context.Context, request *chatpb.GetRoomRequest) (*chatpb.GetRoomResponse, error) {

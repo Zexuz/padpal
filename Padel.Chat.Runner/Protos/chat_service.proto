@@ -13,9 +13,8 @@ service ChatService {
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
   rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {}
   rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {
-    option (rule.v1.unrestricted) = "hello robin";
     option (rule.v1.rule) = {
-      unrestricted:"world";
+      shouldValidate:true,
     };
   }
   rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {}
