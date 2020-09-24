@@ -22,7 +22,7 @@ namespace Padel.Identity.Services.JsonWebToken
             var claims = new Dictionary<string, object>
             {
                 {"exp", exp.ToUnixTimeSeconds()},
-                {"sub", userId}
+                {"sub", userId.ToString()}
             };
 
             return (await _builder.Create(claims), exp);
