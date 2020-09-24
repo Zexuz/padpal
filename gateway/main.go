@@ -22,6 +22,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 )
 
 const (
@@ -55,7 +56,7 @@ func (o *myObject) jwtValidator(
 	opts ...grpc.CallOption,
 ) error {
 
-	//start := time.Now()
+	start := time.Now()
 
 	fileDescriptor, _ := descriptor.MessageDescriptorProto(req)
 	q := linq.From(fileDescriptor.GetService()).Where(func(c interface{}) bool {
@@ -75,8 +76,8 @@ func (o *myObject) jwtValidator(
 	})
 
 	md := q.(*descriptorpb.MethodDescriptorProto)
-	ex := proto.GetExtension(md.Options, rulepb.E_Rule)
-	rule := ex.(*rulepb.Rule)
+	ex := proto.GetExtension(md.Options, rulepb.E_Authorization)
+	rule := ex.(*rulepb.Authorization)
 
 	if rule.GetShouldValidate() {
 		metadata, ok := metadata2.FromIncomingContext(ctx)
@@ -124,22 +125,19 @@ func (o *myObject) jwtValidator(
 
 		if standard, ok := token.Claims.(*jwt.StandardClaims); ok {
 			if standard.Issuer != "" {
-				panic(errors.New("issues is not expected"))
+				return errors.New("issues is not expected")
 			}
+			md := metadata2.Pairs("padpal-user-id", standard.Subject)
+			ctx = metadata2.NewOutgoingContext(ctx, md)
 		} else {
-			panic(errors.New("token claims is wrong"))
+			return errors.New("token claims is wrong")
 		}
-
-		print(token)
 	}
 
-	//elapsed := time.Since(start)
-	//log.Printf("Binomial took %s", elapsed)
+	elapsed := time.Since(start)
+	log.Printf("Binomial took %s", elapsed)
 
 	err := invoker(ctx, method, req, reply, cc, opts...)
-	if err != nil {
-		print(err.Error())
-	}
 	return err
 }
 

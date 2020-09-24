@@ -10,14 +10,26 @@ import "descriptors/rule.proto";
 package chat.v1;
 
 service ChatService {
-  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
-  rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {}
-  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {
-    option (descriptors.rule) = {
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {
+    option (descriptors.authorization) = {
       shouldValidate:true,
     };
   }
-  rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {}
+  rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
 }
 
 message SendMessageRequest {
