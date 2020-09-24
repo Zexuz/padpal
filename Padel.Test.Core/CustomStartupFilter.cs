@@ -2,7 +2,7 @@ using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Padel.Runner.Test.IntegrationTests.Helpers
+namespace Padel.Test.Core
 {
     public class CustomStartupFilter : IStartupFilter
     {

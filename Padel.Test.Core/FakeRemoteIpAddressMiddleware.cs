@@ -2,7 +2,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Padel.Runner.Test.IntegrationTests.Helpers
+namespace Padel.Test.Core
 {
     public class FakeRemoteIpAddressMiddleware
     {

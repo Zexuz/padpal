@@ -2,9 +2,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Padel.Test.Core;
 
-namespace Padel.Runner.Test.IntegrationTests.Helpers
+namespace Padel.Test.Core
 {
     public class WebApplicationFactoryBase<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
