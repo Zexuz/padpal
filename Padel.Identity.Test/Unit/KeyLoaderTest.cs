@@ -5,7 +5,7 @@ using FakeItEasy;
 using Padel.Identity.Services;
 using Xunit;
 
-namespace Padel.Identity.Runner.Test.Unit
+namespace Padel.Identity.Test.Unit
 {
     public class KeyLoaderTest
     {

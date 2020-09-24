@@ -7,7 +7,7 @@ using Padel.Identity.Services;
 using Padel.Identity.Services.JsonWebToken;
 using Xunit;
 
-namespace Padel.Identity.Runner.Test.Unit
+namespace Padel.Identity.Test.Unit
 {
     public class OAuthTokenServiceTest
     {

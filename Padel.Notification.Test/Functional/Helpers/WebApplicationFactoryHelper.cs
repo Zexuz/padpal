@@ -2,13 +2,13 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
-using Padel.Identity.Runner;
+using Padel.Notification.Runner;
 
-namespace Padel.Identity.Test.Functional.Helpers
+namespace Padel.Notification.Test.Functional.Helpers
 {
     public static class WebApplicationFactoryHelper
     {
-        public static GrpcChannel CreateGrpcChannel(this SqlWebApplicationFactory<Startup> factory)
+        public static GrpcChannel CreateGrpcChannel(this MongoWebApplicationFactory<Startup> factory)
         {
             var client = factory.CreateDefaultClient(new ResponseVersionHandler());
             return GrpcChannel.ForAddress(client.BaseAddress, new GrpcChannelOptions

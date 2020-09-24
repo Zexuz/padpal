@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Padel.Test.Core;
 
-namespace Padel.Identity.Runner.Test.Functional.Helpers
+namespace Padel.Identity.Test.Functional.Helpers
 {
     public class SqlWebApplicationFactory<TStartup> : WebApplicationFactoryBase<TStartup> where TStartup : class
     {

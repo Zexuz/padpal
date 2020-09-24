@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\protos\chat_v1\chat_service.proto" Link="protos\chat_service.proto"  ProtoRoot="..\protos\"/>
+        <Protobuf Include="..\protos\chat_v1\chat_service.proto" Link="protos\chat_service.proto" ProtoRoot="..\protos\" />
         <Protobuf Include="..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
     </ItemGroup>
 
@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Padel.Chat\Padel.Chat.csproj" />
+      <ProjectReference Include="..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
     </ItemGroup>
 
 </Project>

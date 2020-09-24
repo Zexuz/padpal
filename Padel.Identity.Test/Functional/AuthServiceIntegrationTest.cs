@@ -1,13 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Padel.Identity.Runner.Test.Functional.Helpers;
+using Padel.Identity.Runner;
+using Padel.Identity.Test.Functional.Helpers;
 using Padel.Proto.Auth.V1;
 using Padel.Proto.User.V1;
 using Padel.Test.Core;
 using Xunit;
 
-namespace Padel.Identity.Runner.Test.Functional
+namespace Padel.Identity.Test.Functional
 {
     public abstract class GrpcIntegrationTestBase
     {

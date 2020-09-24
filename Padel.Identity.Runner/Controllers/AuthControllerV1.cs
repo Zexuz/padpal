@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
 using Padel.Identity.Exceptions;
-using Padel.Identity.Runner.Extensions;
 using Padel.Proto.Auth.V1;
 using AuthService = Padel.Proto.Auth.V1.AuthService;
 using NewUser = Padel.Identity.Models.NewUser;
+using Padel.Grpc.Core;
 
 namespace Padel.Identity.Runner.Controllers
 {
