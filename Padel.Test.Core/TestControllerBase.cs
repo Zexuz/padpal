@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Core.Testing;
-using Microsoft.AspNetCore.Http;
 
 namespace Padel.Test.Core
 {
@@ -13,11 +11,16 @@ namespace Padel.Test.Core
     {
         protected static ServerCallContext CreateServerCallContextWithUserId(int userId)
         {
+            var md = new Metadata
+            {
+                {"padpal-user-id", userId.ToString()}
+            };
+
             var ctx = TestServerCallContext.Create(
                 "",
                 "",
                 DateTime.Now,
-                Metadata.Empty,
+                md,
                 CancellationToken.None,
                 "",
                 new AuthContext(
@@ -30,12 +33,6 @@ namespace Padel.Test.Core
                 options => { }
             );
 
-            var httpContext = new DefaultHttpContext();
-            var claimsPrincipal = new ClaimsPrincipal();
-            claimsPrincipal.AddIdentity(new ClaimsIdentity(new Claim[] {new Claim(ClaimTypes.NameIdentifier, userId.ToString())}));
-            httpContext.User = claimsPrincipal;
-
-            ctx.UserState["__HttpContext"] = httpContext;
             return ctx;
         }
     }
