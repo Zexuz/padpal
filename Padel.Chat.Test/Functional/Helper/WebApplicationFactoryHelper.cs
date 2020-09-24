@@ -2,9 +2,9 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
-using Microsoft.AspNetCore.Mvc.Testing;
+using Padel.Chat.Runner;
 
-namespace Padel.Chat.Runner.Test
+namespace Padel.Chat.Test.Functional.Helper
 {
     public static class WebApplicationFactoryHelper
     {

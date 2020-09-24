@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using Grpc.Core;
+using Padel.Chat.Runner;
+using Padel.Chat.Test.Functional.Helper;
 using Padel.Proto.Chat.V1;
 using Xunit;
 
-namespace Padel.Chat.Runner.Test
+namespace Padel.Chat.Test.Functional
 {
     public class ChatServiceIntegrationTest : IClassFixture<MongoWebApplicationFactory<Startup>>
     {

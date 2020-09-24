@@ -14,7 +14,7 @@ using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
 using Xunit;
 
-namespace Padel.Chat.Test
+namespace Padel.Chat.Test.Unit
 {
     public class RoomServiceTest
     {

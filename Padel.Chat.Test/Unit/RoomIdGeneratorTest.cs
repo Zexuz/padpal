@@ -1,7 +1,7 @@
 using Padel.Chat.Services.Impl;
 using Xunit;
 
-namespace Padel.Chat.Test
+namespace Padel.Chat.Test.Unit
 {
     public class RoomIdGeneratorTest
     {

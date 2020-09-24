@@ -1,9 +1,10 @@
 using System;
 using Padel.Chat.Factories;
+using Padel.Chat.Test.Unit.Extensions;
 using Padel.Chat.ValueTypes;
 using Xunit;
 
-namespace Padel.Chat.Test
+namespace Padel.Chat.Test.Unit
 {
     public class MessageBuilderTest
     {

@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Padel.Chat.Test
+namespace Padel.Chat.Test.Unit.Extensions
 {
     public static class AssertExtension
     {

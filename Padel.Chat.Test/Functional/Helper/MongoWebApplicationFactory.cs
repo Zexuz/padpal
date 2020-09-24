@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Padel.Runner.Test.IntegrationTests.Helpers;
 
-namespace Padel.Chat.Runner.Test
+namespace Padel.Chat.Test.Functional.Helper
 {
     public class MongoWebApplicationFactory<TStartup> : WebApplicationFactoryBase<TStartup> where TStartup : class
     {
