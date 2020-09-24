@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\protos\notification_v1\notification_service.proto" Link="protos\notification_service.proto" ProtoRoot="..\protos\" />
+        <Protobuf Include="..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.31.0" />
+    </ItemGroup>
+
+</Project>
