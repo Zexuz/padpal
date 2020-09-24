@@ -15,4 +15,10 @@
         <PackageReference Include="Grpc.AspNetCore" Version="2.31.0" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <ProjectReference Include="..\Padel.Notification\Padel.Notification.csproj" />
+      <ProjectReference Include="..\Padel.Queue.Interface\Padel.Queue.Interface.csproj" />
+    </ItemGroup>
+
 </Project>
