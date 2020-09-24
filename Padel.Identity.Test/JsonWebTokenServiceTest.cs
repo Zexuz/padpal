@@ -30,9 +30,9 @@ namespace Padel.Identity.Test
         {
             await _sut.CreateNewAccessToken(1337);
 
-            A.CallTo(() => _fakeJsonWebTokenBuilder.Create(A<Dictionary<string, string>>.That.Matches(dict =>
-                DateTimeOffset.FromUnixTimeSeconds(long.Parse(dict["exp"])) - DateTimeOffset.UtcNow - _options.LifeSpan < TimeSpan.FromSeconds(1) &&
-                dict["sub"]                                                                                             == "1337"
+            A.CallTo(() => _fakeJsonWebTokenBuilder.Create(A<Dictionary<string, object>>.That.Matches(dict =>
+                DateTimeOffset.FromUnixTimeSeconds((long) dict["exp"]) - DateTimeOffset.UtcNow - _options.LifeSpan < TimeSpan.FromSeconds(1) &&
+                (string) dict["sub"]                                                                                        == "1337"
             ))).MustHaveHappenedOnceExactly();
         }
     }

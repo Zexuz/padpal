@@ -2,13 +2,34 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.Chat.V1";
 
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/chatpb";
+
+import "google/protobuf/descriptor.proto";
+import "descriptors/rule.proto";
+
 package chat.v1;
 
 service ChatService {
-  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
-  rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {}
-  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {}
-  rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {}
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
 }
 
 message SendMessageRequest {

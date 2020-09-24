@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/descriptors";
+
+package descriptors;
+
+extend google.protobuf.MethodOptions {
+  optional Authorization authorization = 72295730;
+}
+
+message Authorization {
+  required bool shouldValidate = 1;
+}

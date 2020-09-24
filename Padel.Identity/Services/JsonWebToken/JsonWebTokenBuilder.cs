@@ -27,7 +27,7 @@ namespace Padel.Identity.Services.JsonWebToken
             return json;
         }
 
-        public async Task<string> Create(Dictionary<string, string> claims)
+        public async Task<string> Create(Dictionary<string, object> claims)
         {
             // TODO We should cache the key or something, it's not good that everytime we decode a token must read from file storage
             var (publicKey, privateKey) = await _keyLoader.Load();
