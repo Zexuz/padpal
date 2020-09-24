@@ -38,12 +38,14 @@ const (
 // Validate JWT token here in the gateway
 
 func withClientUnaryInterceptor() grpc.DialOption {
-	m := &myObject{}
+	m := &myObject{
+		publicKey: []byte("-----BEGIN CERTIFICATE-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA9SFtmaHLsT0mnNvDJ+zyXkKR5gJz21FGLOh1DDkIbANWZPWz0I3rR+Ltap6LUixwbUm8XvdUsmc4AxpEceblviw7oAz8t9Ju29/WsvmmRJA2NOdWOL88Ob7ghp4yDEGtGxVaoRlrnzNrdczAGIMpvLXggvrK49mu9llT8RH1Z3V0ZMQ8Akc3D6y+ddADvNEx7Vz2OTP0ISEr+7ZC4appC5dkTzyXePp8drZvsITe0ejMP4ZXo7UNgly7x+vNyzfnAv+6HgFSc72SBJncSjOhXuMJIg1f3PgQ1CHu2Yn+w2ZXNg5D7icSU1dv/6H1UTvg+YEAMi7dqpX8QpZWDxBWbQIDAQAB\n-----END CERTIFICATE-----"),
+	}
 	return grpc.WithUnaryInterceptor(m.jwtValidator)
 }
 
 type myObject struct {
-	// todo validate JWT
+	publicKey []byte
 }
 
 func (o *myObject) jwtValidator(
@@ -58,75 +60,27 @@ func (o *myObject) jwtValidator(
 
 	start := time.Now()
 
-	fileDescriptor, _ := descriptor.MessageDescriptorProto(req)
-	q := linq.From(fileDescriptor.GetService()).Where(func(c interface{}) bool {
-		sd := c.(*descriptorpb.ServiceDescriptorProto)
-		return strings.HasPrefix(method, fmt.Sprintf("/%s.%s", fileDescriptor.GetPackage(), sd.GetName()))
-	}).SelectMany(func(c interface{}) linq.Query {
-		sd := c.(*descriptorpb.ServiceDescriptorProto)
-		return linq.From(sd.GetMethod())
-	}).SingleWith(func(c interface{}) bool {
-		md := c.(*descriptorpb.MethodDescriptorProto)
-		//xType := reflect.TypeOf(c)
-		//xValue := reflect.ValueOf(c)
-		//fmt.Println(xType, xValue)
-		a := strings.Split(method, "/")[2]
-		b := md.GetName()
-		return strings.EqualFold(b, a)
-	})
+	option, err := o.getAuthorizationOption(req, method)
+	if err != nil {
+		return err
+	}
 
-	md := q.(*descriptorpb.MethodDescriptorProto)
-	ex := proto.GetExtension(md.Options, rulepb.E_Authorization)
-	rule := ex.(*rulepb.Authorization)
-
-	if rule.GetShouldValidate() {
-		metadata, ok := metadata2.FromIncomingContext(ctx)
-		if !ok {
-			return errors.New("not ok")
-		}
-		authorization := metadata.Get("authorization")
-		if len(authorization) == 0 {
-			return errors.New("missing authorization header")
-		}
-		if len(authorization) != 1 {
-			return errors.New(fmt.Sprintf("authorization header has %d lenght", len(authorization)))
+	if option.GetShouldValidate() {
+		tokenString, err2 := getTokenFromHeader(ctx)
+		if err2 != nil {
+			return err2
 		}
 
-		splits := strings.Split(authorization[0], " ")
-
-		if len(splits) != 2 {
-			return errors.New(fmt.Sprintf("authorization header more then two splits, actual: %d", len(splits)))
-		}
-
-		tokenString := splits[1]
-
-		pubKey := []byte("-----BEGIN CERTIFICATE-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA9SFtmaHLsT0mnNvDJ+zyXkKR5gJz21FGLOh1DDkIbANWZPWz0I3rR+Ltap6LUixwbUm8XvdUsmc4AxpEceblviw7oAz8t9Ju29/WsvmmRJA2NOdWOL88Ob7ghp4yDEGtGxVaoRlrnzNrdczAGIMpvLXggvrK49mu9llT8RH1Z3V0ZMQ8Akc3D6y+ddADvNEx7Vz2OTP0ISEr+7ZC4appC5dkTzyXePp8drZvsITe0ejMP4ZXo7UNgly7x+vNyzfnAv+6HgFSc72SBJncSjOhXuMJIg1f3PgQ1CHu2Yn+w2ZXNg5D7icSU1dv/6H1UTvg+YEAMi7dqpX8QpZWDxBWbQIDAQAB\n-----END CERTIFICATE-----")
-
-		token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-			key, err := jwt.ParseRSAPublicKeyFromPEM(pubKey)
-			if err != nil {
-				return nil, err
-			}
-
-			if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
-
-			return key, nil
-		})
-
+		token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, keyFunc(o.publicKey))
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		if !token.Valid {
-			panic(errors.New("token is not valid"))
+			return errors.New("token is not valid")
 		}
 
 		if standard, ok := token.Claims.(*jwt.StandardClaims); ok {
-			if standard.Issuer != "" {
-				return errors.New("issues is not expected")
-			}
 			md := metadata2.Pairs("padpal-user-id", standard.Subject)
 			ctx = metadata2.NewOutgoingContext(ctx, md)
 		} else {
@@ -137,24 +91,73 @@ func (o *myObject) jwtValidator(
 	elapsed := time.Since(start)
 	log.Printf("Binomial took %s", elapsed)
 
-	err := invoker(ctx, method, req, reply, cc, opts...)
+	err = invoker(ctx, method, req, reply, cc, opts...)
 	return err
 }
 
+func keyFunc(pubKey []byte) func(token *jwt.Token) (interface{}, error) {
+	return func(token *jwt.Token) (interface{}, error) {
+		key, err := jwt.ParseRSAPublicKeyFromPEM(pubKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return key, nil
+	}
+}
+
+func getTokenFromHeader(ctx context.Context) (string, error) {
+	metadata, ok := metadata2.FromIncomingContext(ctx)
+	if !ok {
+		return "", errors.New("not ok")
+	}
+	authorization := metadata.Get("authorization")
+	if len(authorization) == 0 {
+		return "", errors.New("missing authorization header")
+	}
+	if len(authorization) != 1 {
+		return "", errors.New(fmt.Sprintf("authorization header has %d lenght", len(authorization)))
+	}
+
+	splits := strings.Split(authorization[0], " ")
+
+	if len(splits) != 2 {
+		return "", errors.New(fmt.Sprintf("authorization header more then two splits, actual: %d", len(splits)))
+	}
+
+	tokenString := splits[1]
+	return tokenString, nil
+}
+
+func (o *myObject) getAuthorizationOption(req interface{}, method string) (*rulepb.Authorization, error) {
+	fileDescriptor, _ := descriptor.MessageDescriptorProto(req)
+	q := linq.From(fileDescriptor.GetService()).Where(func(c interface{}) bool {
+		sd := c.(*descriptorpb.ServiceDescriptorProto)
+		return strings.HasPrefix(method, fmt.Sprintf("/%s.%s", fileDescriptor.GetPackage(), sd.GetName()))
+	}).SelectMany(func(c interface{}) linq.Query {
+		sd := c.(*descriptorpb.ServiceDescriptorProto)
+		return linq.From(sd.GetMethod())
+	}).SingleWith(func(c interface{}) bool {
+		md := c.(*descriptorpb.MethodDescriptorProto)
+		a := strings.Split(method, "/")[2]
+		b := md.GetName()
+		return strings.EqualFold(b, a)
+	})
+
+	md := q.(*descriptorpb.MethodDescriptorProto)
+	ex := proto.GetExtension(md.Options, rulepb.E_Authorization)
+	rule, ok := ex.(*rulepb.Authorization)
+	if !ok {
+		return nil, errors.New("could not get Authorization option")
+	}
+	return rule, nil
+}
+
 func main() {
-
-	//start := time.Now()
-	//
-	//c, d := descriptor.MessageDescriptorProto(&chatpb.GetRoomsWhereUserIsParticipatingRequest{})
-	//a := chatpb.File_chat_service_proto.Options().ProtoReflect()
-	//ex := proto.GetExtension(c.GetService()[0].Method[2].Options, rulepb.E_Unrestricted)
-	//ex1 := proto.GetExtension(c.GetService()[0].Method[2].Options, rulepb.E_Rule)
-	////ex2 := proto.GetExtension(ex1, rulepb.E_Rule)
-	//p := ex1.(*rulepb.Rule)
-	//elapsed := time.Since(start)
-	//log.Printf("Binomial took %s", elapsed)
-	//print(a, c, d, ex.(string), p.GetUnrestricted())
-
 	flag.Parse()
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
