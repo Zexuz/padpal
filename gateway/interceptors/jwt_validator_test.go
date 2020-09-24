@@ -80,6 +80,43 @@ func Test_myObject_jwtValidator(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "ErrMissingAuthorizationOption",
+			fields: struct {
+				publicKey []byte
+			}{
+				publicKey: []byte("-----BEGIN CERTIFICATE-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA9SFtmaHLsT0mnNvDJ+zyXkKR5gJz21FGLOh1DDkIbANWZPWz0I3rR+Ltap6LUixwbUm8XvdUsmc4AxpEceblviw7oAz8t9Ju29/WsvmmRJA2NOdWOL88Ob7ghp4yDEGtGxVaoRlrnzNrdczAGIMpvLXggvrK49mu9llT8RH1Z3V0ZMQ8Akc3D6y+ddADvNEx7Vz2OTP0ISEr+7ZC4appC5dkTzyXePp8drZvsITe0ejMP4ZXo7UNgly7x+vNyzfnAv+6HgFSc72SBJncSjOhXuMJIg1f3PgQ1CHu2Yn+w2ZXNg5D7icSU1dv/6H1UTvg+YEAMi7dqpX8QpZWDxBWbQIDAQAB\n-----END CERTIFICATE-----"),
+			},
+			args: struct {
+				ctx     context.Context
+				method  string
+				req     interface{}
+				reply   interface{}
+				cc      *grpc.ClientConn
+				invoker grpc.UnaryInvoker
+				opts    []grpc.CallOption
+			}{
+				ctx:    createMetadata(),
+				method: "/chat.v1.ChatService/SendMessage",
+				req:    &struct{}{},
+				reply:  &struct{}{},
+				cc:     nil,
+				invoker: func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, opts ...grpc.CallOption) error {
+					md, ok := metadata.FromIncomingContext(ctx)
+					if !ok {
+						return errors.New("ok was false")
+					}
+
+					if md.Get("padpal-user-id")[0] != "1" {
+						return errors.New("padpal-user-id is not set")
+					}
+
+					return nil
+				},
+				opts: nil,
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

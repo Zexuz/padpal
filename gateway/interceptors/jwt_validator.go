@@ -12,9 +12,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
-	"log"
 	"strings"
-	"time"
 )
 
 // TODO
@@ -22,8 +20,15 @@ import (
 // https://github.com/envoyproxy/protoc-gen-validate
 // https://github.com/grpc-ecosystem/go-grpc-middleware
 
-// TODO
-// Validate JWT token here in the gateway
+var (
+	ErrMissingAuthorizationOption        = errors.New("could not get Authorization option")
+	ErrCouldNotParseIncomingMetadata     = errors.New("could not parse incoming metadata")
+	ErrMissingAuthorizationHeader        = errors.New("missing authorization header")
+	ErrToManyValuesInAuthorizationHeader = errors.New("header has more than one item")
+	ErrMalformedAuthorizationHeader      = errors.New("header does not have format 'Bearer <token>'")
+	ErrTokenInvalid                      = errors.New("token is invalid")
+	ErrInvalidClaims                     = errors.New("claims are wrong")
+)
 
 func WithJwtValidationUnaryInterceptor() grpc.DialOption {
 	m := &myObject{
@@ -45,9 +50,6 @@ func (o *myObject) jwtValidator(
 	invoker grpc.UnaryInvoker,
 	opts ...grpc.CallOption,
 ) error {
-
-	start := time.Now()
-
 	option, err := o.getAuthorizationOption(req, method)
 	if err != nil {
 		return err
@@ -65,23 +67,20 @@ func (o *myObject) jwtValidator(
 		}
 
 		if !token.Valid {
-			return errors.New("token is not valid")
+			return ErrTokenInvalid
 		}
 
 		if standard, ok := token.Claims.(*jwt.StandardClaims); ok {
 			md, ok := metadata.FromIncomingContext(ctx)
 			if !ok {
-				return errors.New("not ok")
+				return ErrCouldNotParseIncomingMetadata
 			}
 			md.Set("padpal-user-id", standard.Subject)
 			ctx = metadata.NewIncomingContext(ctx, md)
 		} else {
-			return errors.New("token claims is wrong")
+			return ErrInvalidClaims
 		}
 	}
-
-	elapsed := time.Since(start)
-	log.Printf("Binomial took %s", elapsed)
 
 	err = invoker(ctx, method, req, reply, cc, opts...)
 	return err
@@ -105,27 +104,35 @@ func keyFunc(pubKey []byte) func(token *jwt.Token) (interface{}, error) {
 func getTokenFromHeader(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", errors.New("not ok")
+		return "", ErrCouldNotParseIncomingMetadata
 	}
 	authorization := md.Get("authorization")
 	if len(authorization) == 0 {
-		return "", errors.New("missing authorization header")
+		return "", ErrMissingAuthorizationHeader
 	}
 	if len(authorization) != 1 {
-		return "", errors.New(fmt.Sprintf("authorization header has %d lenght", len(authorization)))
+		print(fmt.Sprintf("authorization header has %d lenght", len(authorization)))
+		return "", ErrToManyValuesInAuthorizationHeader
 	}
 
 	splits := strings.Split(authorization[0], " ")
 
 	if len(splits) != 2 {
-		return "", errors.New(fmt.Sprintf("authorization header more then two splits, actual: %d", len(splits)))
+		print(fmt.Sprintf("authorization header more then two splits, actual: %d", len(splits)))
+		return "", ErrMalformedAuthorizationHeader
 	}
 
 	tokenString := splits[1]
 	return tokenString, nil
 }
 
-func (o *myObject) getAuthorizationOption(req interface{}, method string) (*rulepb.Authorization, error) {
+func (o *myObject) getAuthorizationOption(req interface{}, method string) (res *rulepb.Authorization, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			print(fmt.Sprintf("could not get auth option form request-type: %v", req))
+			err = ErrMissingAuthorizationOption
+		}
+	}()
 	fileDescriptor, _ := descriptor.MessageDescriptorProto(req)
 	q := linq.From(fileDescriptor.GetService()).Where(func(c interface{}) bool {
 		sd := c.(*descriptorpb.ServiceDescriptorProto)
@@ -144,7 +151,7 @@ func (o *myObject) getAuthorizationOption(req interface{}, method string) (*rule
 	ex := proto.GetExtension(md.Options, rulepb.E_Authorization)
 	rule, ok := ex.(*rulepb.Authorization)
 	if !ok {
-		return nil, errors.New("could not get Authorization option")
+		return nil, ErrMissingAuthorizationOption
 	}
 	return rule, nil
 }
