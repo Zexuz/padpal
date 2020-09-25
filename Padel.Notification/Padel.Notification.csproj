@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Padel.Queue\Padel.Queue.csproj" />
       <ProjectReference Include="..\Padel.Repository.Core\Padel.Repository.Core.csproj" />
     </ItemGroup>
 </Project>

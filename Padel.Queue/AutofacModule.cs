@@ -5,7 +5,6 @@ using Amazon.SimpleNotificationService.Model;
 using Amazon.SQS;
 using Autofac;
 using Microsoft.Extensions.Configuration;
-using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {

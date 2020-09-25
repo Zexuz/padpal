@@ -9,7 +9,6 @@ using Amazon.SimpleNotificationService.Model;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Microsoft.Extensions.Logging;
-using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {

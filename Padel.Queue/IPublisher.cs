@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Padel.Queue.Interface
+namespace Padel.Queue
 {
     public interface IPublisher
     {

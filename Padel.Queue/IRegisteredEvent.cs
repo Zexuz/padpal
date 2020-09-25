@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Queue.Interface
+namespace Padel.Queue
 {
     public interface IRegisteredEvent
     {

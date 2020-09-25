@@ -1,6 +1,5 @@
 using System;
 using Amazon.SimpleNotificationService.Model;
-using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {
