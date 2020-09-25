@@ -10,7 +10,7 @@ import "descriptors/rule.proto";
 package chat.v1;
 
 message ChatMessageReceived{
-  option (descriptors.messageType) = "chat.v1.ChatMessageReceived";
+  option (descriptors.messageType) = "chat_v1_ChatMessageReceived";
   string roomId = 1;
   repeated int32 participants = 2;
   //  repeated Message messages = 3;

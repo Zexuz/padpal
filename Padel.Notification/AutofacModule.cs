@@ -1,5 +1,7 @@
 using Autofac;
+using FirebaseAdmin;
 using Microsoft.Extensions.Configuration;
+using Padel.Notification.MessageProcessors;
 using Padel.Queue;
 using Padel.Repository.Core.MongoDb;
 
@@ -17,7 +19,8 @@ namespace Padel.Notification
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
-            builder.RegisterType<ChatMessageMessageHandler>().As<IMessageProcessor>();
+            builder.RegisterType<ChatMessageReceivedProcessor>().As<IMessageProcessor>();
+            builder.RegisterInstance(FirebaseApp.DefaultInstance ?? FirebaseApp.Create()).AsSelf().SingleInstance();
         }
     }
 }
