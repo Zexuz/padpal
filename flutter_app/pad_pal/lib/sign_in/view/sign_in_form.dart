@@ -2,13 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 import 'package:pad_pal/app_push.dart';
-import 'package:pad_pal/login/cubit/login_cubit.dart';
+import 'package:pad_pal/sign_in/cubit/sign_in_cubit.dart';
 import 'package:pad_pal/sign_up/sign_up.dart';
 
-class LoginForm extends StatelessWidget {
+class SignInForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginState>(
+    return BlocListener<SignInCubit, SignInState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
           Scaffold.of(context)
@@ -44,11 +44,11 @@ class LoginForm extends StatelessWidget {
 class _FcmToken extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
+    return BlocBuilder<SignInCubit, SignInState>(
       buildWhen: (previous, current) => previous.fcmToken != current.fcmToken,
       builder: (context, state) {
         var token = FirebaseTokenContainer.of(context).fcmToken;
-        context.bloc<LoginCubit>().addFcmToken(token);
+        context.bloc<SignInCubit>().addFcmToken(token);
 
         if (state.fcmToken.invalid) {
           return Text("Invalid FCM Token");
@@ -63,12 +63,12 @@ class _FcmToken extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
+    return BlocBuilder<SignInCubit, SignInState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_emailInput_textField'),
-          onChanged: (email) => context.bloc<LoginCubit>().emailChanged(email),
+          onChanged: (email) => context.bloc<SignInCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'email',
@@ -84,12 +84,12 @@ class _EmailInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
+    return BlocBuilder<SignInCubit, SignInState>(
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) => context.bloc<LoginCubit>().passwordChanged(password),
+          onChanged: (password) => context.bloc<SignInCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'password',
@@ -105,7 +105,7 @@ class _PasswordInput extends StatelessWidget {
 class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
+    return BlocBuilder<SignInCubit, SignInState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
@@ -117,7 +117,7 @@ class _LoginButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 color: const Color(0xFFFFD600),
-                onPressed: state.status.isValidated ? () => context.bloc<LoginCubit>().logInWithCredentials() : null,
+                onPressed: state.status.isValidated ? () => context.bloc<SignInCubit>().SignInWithCredentials() : null,
               );
       },
     );
@@ -127,7 +127,7 @@ class _LoginButton extends StatelessWidget {
 class _LoginDebugButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginCubit, LoginState>(
+    return BlocBuilder<SignInCubit, SignInState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
@@ -139,7 +139,7 @@ class _LoginDebugButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 color: const Color(0xFFFFD600),
-                onPressed: () => context.bloc<LoginCubit>().loginDebug(),
+                onPressed: () => context.bloc<SignInCubit>().SignInDebug(),
               );
       },
     );

@@ -8,7 +8,7 @@ import 'package:pad_pal/theme.dart';
 import 'package:user_repository/user_repository.dart';
 
 import 'home/view/home_page.dart';
-import 'login/view/login_page.dart';
+import 'sign_in/view/sign_in_page.dart';
 
 class App extends StatelessWidget {
   @override
@@ -63,7 +63,7 @@ class _AppViewState extends State<AppView> {
                 break;
               case AuthenticationStatus.unauthenticated:
                 _navigator.pushAndRemoveUntil<void>(
-                  LoginPage.route(),
+                  SignInPage.route(),
                   (route) => false,
                 );
                 break;

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/demo/view.dart';
 import 'package:pad_pal/demo/view/components_page.dart';
-import 'package:pad_pal/login/cubit/login_cubit.dart';
+import 'package:pad_pal/sign_in/cubit/sign_in_cubit.dart';
 
-import 'login_form.dart';
+import 'sign_in_form.dart';
 
-class LoginPage extends StatelessWidget {
+class SignInPage extends StatelessWidget {
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => LoginPage());
+    return MaterialPageRoute<void>(builder: (_) => SignInPage());
   }
 
   @override
@@ -29,10 +29,10 @@ class LoginPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
-          create: (_) => LoginCubit(
+          create: (_) => SignInCubit(
             context.repository<AuthenticationRepository>(),
           ),
-          child: LoginForm(),
+          child: SignInForm(),
         ),
       ),
     );

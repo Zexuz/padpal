@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:ffi';
 
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:authentication_repository/generated/auth_service.pbgrpc.dart';
+import 'package:authentication_repository/generated/auth_v1/auth_service.pbgrpc.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grpc/grpc.dart';
@@ -54,7 +54,7 @@ void main() {
     group('signUp', () {
       test('throws AssertionError when email is null', () {
         expect(
-          () => authenticationRepository.login(
+          () => authenticationRepository.signIn(
             email: null,
             password: password,
           ),
@@ -64,7 +64,7 @@ void main() {
 
       test('throws AssertionError when password is null', () {
         expect(
-          () => authenticationRepository.login(
+          () => authenticationRepository.signIn(
             email: email,
             password: null,
           ),
@@ -72,18 +72,18 @@ void main() {
         );
       });
 
-      test('calls grpc method login and saves accessToken', () async {
+      test('calls grpc method signIn and saves accessToken', () async {
         when(
-          authServiceClient.login(any),
+          authServiceClient.signIn(any),
         ).thenAnswer(
-          (_) => MockResponseFuture<LoginResponse>(LoginResponse()
+          (_) => MockResponseFuture<SignInResponse>(SignInResponse()
             ..token = (OAuthToken()
               ..accessToken = "myAccessToken"
               ..expires = Int64.parseInt(1599562028.toString()))),
         );
 
-        await authenticationRepository.login(email: email, password: password);
-        verify(authServiceClient.login(LoginRequest()
+        await authenticationRepository.signIn(email: email, password: password);
+        verify(authServiceClient.signIn(SignInRequest()
               ..password = password
               ..email = email))
             .called(1);
@@ -92,40 +92,40 @@ void main() {
             .called(1);
       });
 
-      test('succeeds when authServiceClient.login succeeds', () async {
+      test('succeeds when authServiceClient.signIn succeeds', () async {
         when(
-          authServiceClient.login(any),
+          authServiceClient.signIn(any),
         ).thenAnswer(
-          (_) => MockResponseFuture<LoginResponse>(LoginResponse()..token = (OAuthToken()..accessToken = "")),
+          (_) => MockResponseFuture<SignInResponse>(SignInResponse()..token = (OAuthToken()..accessToken = "")),
         );
 
         expect(
-          authenticationRepository.login(email: email, password: password),
+          authenticationRepository.signIn(email: email, password: password),
           completes,
         );
       });
 
-      test('throws SignUpFailure when authServiceClient.login throws', () async {
+      test('throws SignUpFailure when authServiceClient.signIn throws', () async {
         when(
-          authServiceClient.login(any),
+          authServiceClient.signIn(any),
         ).thenAnswer(
-          (_) => MockResponseThrowFuture<LoginResponse>(GrpcError.deadlineExceeded()),
+          (_) => MockResponseThrowFuture<SignInResponse>(GrpcError.deadlineExceeded()),
         );
         expect(
-          authenticationRepository.login(email: email, password: password),
+          authenticationRepository.signIn(email: email, password: password),
           throwsA(isA<SignUpFailure>()),
         );
       });
 
-      test('return OAuthToken when authServiceClient.login succeeds', () async {
+      test('return OAuthToken when authServiceClient.signIn succeeds', () async {
         when(
-          authServiceClient.login(any),
+          authServiceClient.signIn(any),
         ).thenAnswer(
-          (_) => MockResponseFuture<LoginResponse>(
-              LoginResponse()..token = (OAuthToken()..accessToken = "someAccessToken")),
+          (_) => MockResponseFuture<SignInResponse>(
+              SignInResponse()..token = (OAuthToken()..accessToken = "someAccessToken")),
         );
 
-        await authenticationRepository.login(email: email, password: password);
+        await authenticationRepository.signIn(email: email, password: password);
 
         // await expectLater(
         //     authenticationRepository.accessToken,

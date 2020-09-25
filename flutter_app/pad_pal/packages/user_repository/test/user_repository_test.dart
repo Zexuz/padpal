@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:mockito/mockito.dart';
-import 'package:user_repository/generated/user_service.pbgrpc.dart';
-import 'package:user_repository/generated/user_service.pbgrpc.dart' as pb;
+import 'package:user_repository/generated/user_v1/user_service.pbgrpc.dart';
+import 'package:user_repository/generated/user_v1/user_service.pbgrpc.dart' as pb;
 import 'package:user_repository/src/user_repository.dart';
 
 class MockUserServiceClient extends Mock implements UserServiceClient {}

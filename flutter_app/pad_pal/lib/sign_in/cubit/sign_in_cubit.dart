@@ -5,12 +5,12 @@ import 'package:formz/formz.dart';
 import 'package:pad_pal/authentication/models/fcmToken.dart';
 import 'package:pad_pal/authentication/models/models.dart';
 
-part 'login_state.dart';
+part 'sign_in_state.dart';
 
-class LoginCubit extends Cubit<LoginState> {
-  LoginCubit(this._authenticationRepository)
+class SignInCubit extends Cubit<SignInState> {
+  SignInCubit(this._authenticationRepository)
       : assert(_authenticationRepository != null),
-        super(const LoginState());
+        super(const SignInState());
 
   final AuthenticationRepository _authenticationRepository;
 
@@ -42,17 +42,17 @@ class LoginCubit extends Cubit<LoginState> {
     ));
   }
 
-  Future<void> loginDebug() async {
+  Future<void> SignInDebug() async {
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     _authenticationRepository.loginDebug();
     emit(state.copyWith(status: FormzStatus.submissionSuccess));
   }
 
-  Future<void> logInWithCredentials() async {
+  Future<void> SignInWithCredentials() async {
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await _authenticationRepository.login(
+      await _authenticationRepository.signIn(
         email: state.email.value,
         password: state.password.value,
         fcmToken: state.fcmToken.value,

@@ -1,4 +1,4 @@
 {
   "authServiceGrpcAddress": "192.168.10.146",
-  "authServiceGrpcPort": 5001
+  "authServiceGrpcPort": 50051
 }
