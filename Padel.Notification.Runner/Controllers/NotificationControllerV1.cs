@@ -10,9 +10,9 @@ namespace Padel.Notification.Runner.Controllers
 {
     public class NotificationControllerV1 : Proto.Notification.V1.Notification.NotificationBase
     {
-        private readonly IMongoRepository<NotificationServiceRepoModel> _mongoRepository;
+        private readonly IMongoRepository<UserNotificationSetting> _mongoRepository;
 
-        public NotificationControllerV1(IMongoRepository<NotificationServiceRepoModel> mongoRepository)
+        public NotificationControllerV1(IMongoRepository<UserNotificationSetting> mongoRepository)
         {
             _mongoRepository = mongoRepository;
         }
@@ -30,7 +30,7 @@ namespace Padel.Notification.Runner.Controllers
             var repoModel = await _mongoRepository.FindOneAsync(model => model.UserId == userId);
             if (repoModel == null)
             {
-                await _mongoRepository.InsertOneAsync(new NotificationServiceRepoModel
+                await _mongoRepository.InsertOneAsync(new UserNotificationSetting
                 {
                     UserId = userId,
                     FCMTokens = new List<string> {request.FcmToken}

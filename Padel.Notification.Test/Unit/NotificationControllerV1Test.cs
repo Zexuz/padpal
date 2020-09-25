@@ -16,11 +16,11 @@ namespace Padel.Notification.Test.Unit
     public class NotificationControllerV1Test : TestControllerBase
     {
         private readonly NotificationControllerV1                       _sut;
-        private readonly IMongoRepository<NotificationServiceRepoModel> _fakeMongoRepo;
+        private readonly IMongoRepository<UserNotificationSetting> _fakeMongoRepo;
 
         public NotificationControllerV1Test()
         {
-            _fakeMongoRepo = A.Fake<IMongoRepository<NotificationServiceRepoModel>>();
+            _fakeMongoRepo = A.Fake<IMongoRepository<UserNotificationSetting>>();
             _sut = new NotificationControllerV1(_fakeMongoRepo);
         }
 
@@ -48,12 +48,12 @@ namespace Padel.Notification.Test.Unit
                 FcmToken = "myFCMToken"
             };
 
-            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<NotificationServiceRepoModel, bool>>>._))
-                .Returns(Task.FromResult<NotificationServiceRepoModel>(null));
+            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._))
+                .Returns(Task.FromResult<UserNotificationSetting>(null));
 
             await _sut.AppendFcmTokenToUser(request, ctx);
 
-            A.CallTo(() => _fakeMongoRepo.InsertOneAsync(A<NotificationServiceRepoModel>.That.Matches(model =>
+            A.CallTo(() => _fakeMongoRepo.InsertOneAsync(A<UserNotificationSetting>.That.Matches(model =>
                 model.UserId          == 2 &&
                 model.FCMTokens.Count == 1 &&
                 model.FCMTokens[0]    == "myFCMToken"
@@ -70,8 +70,8 @@ namespace Padel.Notification.Test.Unit
                 FcmToken = "myFCMToken"
             };
 
-            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<NotificationServiceRepoModel, bool>>>._)).Returns(
-                new NotificationServiceRepoModel
+            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._)).Returns(
+                new UserNotificationSetting
                 {
                     UserId = 2,
                     FCMTokens = new List<string> {"myOldToken"}
@@ -79,7 +79,7 @@ namespace Padel.Notification.Test.Unit
 
             await _sut.AppendFcmTokenToUser(request, ctx);
 
-            A.CallTo(() => _fakeMongoRepo.ReplaceOneAsync(A<NotificationServiceRepoModel>.That.Matches(model =>
+            A.CallTo(() => _fakeMongoRepo.ReplaceOneAsync(A<UserNotificationSetting>.That.Matches(model =>
                 model.UserId          == 2 &&
                 model.FCMTokens.Count == 2 &&
                 model.FCMTokens[0]    == "myOldToken" &&

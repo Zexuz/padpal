@@ -79,6 +79,7 @@ namespace Padel.Notification.Runner
             var consumerService = container.Resolve<IConsumerService>();
 
             subscriptionService.CreateQueueAndSubscribeToTopic().Wait();
+            // consumerService.ReprocessMessagesAsync().Wait();
             consumerService.StartConsuming();
         }
     }

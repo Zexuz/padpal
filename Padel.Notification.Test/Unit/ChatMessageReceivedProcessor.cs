@@ -17,16 +17,16 @@ namespace Padel.Notification.Test.Unit
 {
     public class ChatMessageReceivedProcessorTest
     {
-        private readonly ChatMessageReceivedProcessor                   _sut;
-        private readonly IFirebaseCloudMessaging                        _fakeFirebaseCloudMessaging;
-        private readonly IMongoRepository<NotificationServiceRepoModel> _fakeRepo;
-        private          ILogger<ChatMessageReceivedProcessor>          logger;
+        private readonly ChatMessageReceivedProcessor          _sut;
+        private readonly IFirebaseCloudMessaging               _fakeFirebaseCloudMessaging;
+        private readonly IMongoRepository<UserNotificationSetting> _fakeRepo;
+        private          ILogger<ChatMessageReceivedProcessor> logger;
 
         public ChatMessageReceivedProcessorTest()
         {
             logger = A.Fake<ILogger<ChatMessageReceivedProcessor>>();
             _fakeFirebaseCloudMessaging = A.Fake<IFirebaseCloudMessaging>();
-            _fakeRepo = A.Fake<IMongoRepository<NotificationServiceRepoModel>>();
+            _fakeRepo = A.Fake<IMongoRepository<UserNotificationSetting>>();
             _sut = new ChatMessageReceivedProcessor(_fakeFirebaseCloudMessaging, _fakeRepo, logger);
         }
 
@@ -53,12 +53,12 @@ namespace Padel.Notification.Test.Unit
 
             var findResults = new[]
             {
-                new NotificationServiceRepoModel {UserId = 10, FCMTokens = new List<string> {"a", "b"}},
-                new NotificationServiceRepoModel {UserId = 10, FCMTokens = new List<string> {"c"}},
+                new UserNotificationSetting {UserId = 10, FCMTokens = new List<string> {"a", "b"}},
+                new UserNotificationSetting {UserId = 10, FCMTokens = new List<string> {"c"}},
                 null,
             };
 
-            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<NotificationServiceRepoModel, bool>>>._)).ReturnsNextFromSequence(findResults);
+            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._)).ReturnsNextFromSequence(findResults);
 
             await _sut.ProcessAsync(message);
 
