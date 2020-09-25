@@ -51,7 +51,7 @@ namespace Padel.Queue
 
             await _snsService.PublishAsync(new PublishRequest
             {
-                Message = JsonSerializer.Serialize(message),
+                Message = JsonSerializer.Serialize(message, new JsonSerializerOptions{PropertyNamingPolicy = JsonNamingPolicy.CamelCase}),
                 MessageAttributes = new Dictionary<string, MessageAttributeValue>
                 {
                     {
