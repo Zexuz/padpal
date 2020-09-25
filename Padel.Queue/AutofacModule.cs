@@ -2,7 +2,6 @@
 using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleNotificationService;
-using Amazon.SimpleNotificationService.Model;
 using Amazon.SQS;
 using Autofac;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +47,7 @@ namespace Padel.Queue
             builder.RegisterType<QueueService>().As<IQueueService>();
             builder.RegisterType<TopicService>().As<ITopicService>();
             builder.RegisterType<QueueCache>().As<IQueueCache>();
+            builder.RegisterType<Publisher>().As<IPublisher>().SingleInstance();
         }
     }
 }
