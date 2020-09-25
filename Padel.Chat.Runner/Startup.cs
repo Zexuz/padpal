@@ -1,12 +1,15 @@
-﻿using Autofac;
+﻿using System.Linq;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Google.Protobuf;
+using Google.Protobuf.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Padel.Chat.Events;
 using Padel.Chat.Runner.Controllers;
+using Padel.Proto.Chat.V1;
 using Padel.Queue;
 
 namespace Padel.Chat.Runner
@@ -49,7 +52,10 @@ namespace Padel.Chat.Runner
             var container = app.ApplicationServices.GetAutofacRoot();
             var publisher = container.Resolve<IPublisher>();
 
-            publisher.RegisterEvent(ChatMessageEvent.MessageType, typeof(ChatMessageEvent));
+            var messageType = ChatMessageReceived.Descriptor
+                .GetOptions()
+                .GetExtension(new Extension<MessageOptions, string>(418301, FieldCodec.ForString(1)));
+            publisher.RegisterEvent(messageType, typeof(ChatMessageReceived)).Wait();
         }
     }
 }

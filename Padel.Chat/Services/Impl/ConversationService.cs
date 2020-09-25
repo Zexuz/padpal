@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Padel.Chat.Events;
 using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
+using Padel.Proto.Chat.V1;
 using Padel.Queue;
 
 namespace Padel.Chat.Services.Impl
@@ -13,6 +14,7 @@ namespace Padel.Chat.Services.Impl
         private readonly IMessageSenderService _messageSenderService;
         private readonly IPublisher            _publisher;
 
+        // TODO THIS Serice seems uneccecary. why not just use "IMessageSenderSevice"?
         public ConversationService(IRoomService roomService, IMessageSenderService messageSenderService, IPublisher publisher)
         {
             _roomService = roomService;
@@ -24,12 +26,17 @@ namespace Padel.Chat.Services.Impl
         {
             var room = await _roomService.GetRoom(userId, roomId);
             await _messageSenderService.SendMessage(userId, room, content);
-         
-            await _publisher.PublishMessage(new ChatMessageEvent
-            {
-                Content = content,
-                Participants = room.Participants.Select(id => id.Value).ToList()
-            });
+
+            await _publisher.PublishMessage(
+                new ChatMessageReceived()
+                {
+                    RoomId = room.RoomId.Value,
+                    Participants =
+                    {
+                        room.Participants.Select(id => id.Value).ToList()
+                    }
+                }
+            );
         }
     }
 }
