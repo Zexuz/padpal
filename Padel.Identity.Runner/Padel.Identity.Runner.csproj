@@ -5,11 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" />
-        <Protobuf Include="..\protos\user_v1\user_service.proto" Link="protos\user_service.proto" />
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.31.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />

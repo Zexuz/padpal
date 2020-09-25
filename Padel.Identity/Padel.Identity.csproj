@@ -6,13 +6,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="5.2.0" />
-        <PackageReference Include="Dapper" Version="2.0.35" />
-        <PackageReference Include="Dapper.Contrib" Version="2.0.35" />
-        <PackageReference Include="FluentMigrator" Version="3.2.9" />
-        <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
-        <PackageReference Include="FluentMigrator.Runner.MySql" Version="3.2.9" />
-        <PackageReference Include="JWT" Version="7.2.1" />
+        <PackageReference Include="Autofac" Version="5.2.0"/>
+        <PackageReference Include="Google.Protobuf" Version="3.13.0"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.31.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.31.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Dapper" Version="2.0.35"/>
+        <PackageReference Include="Dapper.Contrib" Version="2.0.35"/>
+        <PackageReference Include="FluentMigrator" Version="3.2.9"/>
+        <PackageReference Include="FluentMigrator.Runner" Version="3.2.9"/>
+        <PackageReference Include="FluentMigrator.Runner.MySql" Version="3.2.9"/>
+        <PackageReference Include="JWT" Version="7.2.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto"/>
+        <Protobuf Include="..\protos\user_v1\user_service.proto" Link="protos\user_service.proto"/>
     </ItemGroup>
 
 </Project>
