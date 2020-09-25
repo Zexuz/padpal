@@ -39,7 +39,7 @@ namespace Padel.Queue
         public async Task CreateQueueAndSubscribeToTopic()
         {
             const int maxRetries = 3;
-            var delayTime = TimeSpan.FromSeconds(1);
+            var delayTime = TimeSpan.FromSeconds(20);
 
             try
             {
