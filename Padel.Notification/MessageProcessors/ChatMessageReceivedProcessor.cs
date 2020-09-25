@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
-using Google.Protobuf;
-using Google.Protobuf.Reflection;
 using Microsoft.Extensions.Logging;
+using Padel.Notification.Extensions;
 using Padel.Proto.Chat.V1;
 using Padel.Queue;
 using Message = Amazon.SQS.Model.Message;
@@ -22,10 +21,7 @@ namespace Padel.Notification.MessageProcessors
 
         private readonly ILogger<ChatMessageReceivedProcessor> _logger;
 
-        // TODO Create extension method for this
-        public string EventName => ChatMessageReceived.Descriptor
-            .GetOptions()
-            .GetExtension(new Extension<MessageOptions, string>(418301, FieldCodec.ForString(1)));
+        public string EventName => ChatMessageReceived.Descriptor.GetMessageName();
 
         public ChatMessageReceivedProcessor(ILogger<ChatMessageReceivedProcessor> logger)
         {
