@@ -15,14 +15,15 @@ import (
 )
 
 const (
-	port = "192.168.10.146:50051"
+	port = ":50051"
 )
 
 func main() {
 	flag.Parse()
 	var opts []grpc.DialOption
+	var serverOps []grpc.ServerOption
 	opts = append(opts, grpc.WithInsecure())
-	opts = append(opts, interceptors.WithJwtValidationUnaryInterceptor())
+	serverOps = append(serverOps, interceptors.WithJwtValidationUnaryInterceptor())
 
 	opts = append(opts, grpc.WithBlock())
 	chatConn, err := grpc.Dial("localhost:5001", opts...)
@@ -41,7 +42,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpc.NewServer(serverOps...)
 
 	reflection.Register(s)
 	chatpb.RegisterChatServiceService(s, chat.NewChatService(chatConn))
