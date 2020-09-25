@@ -1,5 +1,6 @@
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Padel.Repository.Core.MongoDb;
 
 namespace Padel.Notification
 {
@@ -14,6 +15,7 @@ namespace Padel.Notification
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
         }
     }
 }

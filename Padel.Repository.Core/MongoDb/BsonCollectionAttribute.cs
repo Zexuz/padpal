@@ -1,6 +1,6 @@
 using System;
 
-namespace Padel.Chat.Repositories.MongoDb
+namespace Padel.Repository.Core.MongoDb
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class BsonCollectionAttribute : Attribute

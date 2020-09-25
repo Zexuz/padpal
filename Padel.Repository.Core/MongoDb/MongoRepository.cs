@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Padel.Chat.Repositories.MongoDb
+namespace Padel.Repository.Core.MongoDb
 {
     public class MongoRepository<TDocument> : IMongoRepository<TDocument> where TDocument : IDocument
     {
@@ -108,7 +108,7 @@ namespace Padel.Chat.Repositories.MongoDb
         public virtual async Task ReplaceOneAsync(TDocument document)
         {
             var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, document.Id);
-            await _collection.ReplaceOneAsync(filter, document,new ReplaceOptions() {IsUpsert = true});
+            await _collection.ReplaceOneAsync(filter, document,new ReplaceOptions());
         }
 
         public void DeleteOne(Expression<Func<TDocument, bool>> filterExpression)

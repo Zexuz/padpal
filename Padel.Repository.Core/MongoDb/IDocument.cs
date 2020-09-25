@@ -2,7 +2,7 @@ using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Padel.Chat.Repositories.MongoDb
+namespace Padel.Repository.Core.MongoDb
 {
     public interface IDocument
     {

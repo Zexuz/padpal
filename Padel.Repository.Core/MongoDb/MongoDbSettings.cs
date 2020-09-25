@@ -1,4 +1,4 @@
-namespace Padel.Chat.Repositories.MongoDb
+namespace Padel.Repository.Core.MongoDb
 {
     public class MongoDbSettings : IMongoDbSettings
     {

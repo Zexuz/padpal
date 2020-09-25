@@ -1,7 +1,7 @@
 using System;
 using MongoDB.Bson;
 
-namespace Padel.Chat.Repositories.MongoDb
+namespace Padel.Repository.Core.MongoDb
 {
     // Mongodb handles DateTime as UTC
     public abstract class Document : IDocument

@@ -8,10 +8,10 @@ using Padel.Chat.Exceptions;
 using Padel.Chat.Factories;
 using Padel.Chat.Models;
 using Padel.Chat.Repositories;
-using Padel.Chat.Repositories.MongoDb;
 using Padel.Chat.Services.Impl;
 using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
+using Padel.Repository.Core.MongoDb;
 using Xunit;
 
 namespace Padel.Chat.Test.Unit
