@@ -9,6 +9,13 @@ import "descriptors/rule.proto";
 
 package chat.v1;
 
+message ChatMessageReceived{
+  option (descriptors.messageType) = "chat.v1.ChatMessageReceived";
+  string roomId = 1;
+  repeated int32 participants = 2;
+  //  repeated Message messages = 3;
+}
+
 service ChatService {
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {
     option (descriptors.authorization) = {
