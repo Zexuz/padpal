@@ -20,6 +20,7 @@ namespace Padel.Notification
         {
             builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
             builder.RegisterType<ChatMessageReceivedProcessor>().As<IMessageProcessor>();
+            builder.RegisterType<FirebaseCloudMessagingWrapper>().As<IFirebaseCloudMessaging>();
             builder.RegisterInstance(FirebaseApp.DefaultInstance ?? FirebaseApp.Create()).AsSelf().SingleInstance();
         }
     }

@@ -37,6 +37,7 @@ namespace Padel.Queue
                     throw new Exception($"No processor found for message type '{messageType}'");
                 }
 
+                _logger.LogDebug($"Processing Message: {messageType}, body: {message.Body}");
                 await processor.ProcessAsync(message);
                 await _queueService.DeleteMessageAsync(message.ReceiptHandle);
             }

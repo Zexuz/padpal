@@ -1,20 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
-using MongoDB.Bson;
 using Padel.Grpc.Core;
+using Padel.Notification.MessageProcessors;
 using Padel.Proto.Notification.V1;
 using Padel.Repository.Core.MongoDb;
 
 namespace Padel.Notification.Runner.Controllers
 {
-    public class NotificationServiceRepoModel : IDocument
-    {
-        public ObjectId     Id        { get; set; }
-        public int          UserId    { get; set; }
-        public List<string> FCMTokens { get; set; }
-    }
-
     public class NotificationControllerV1 : Proto.Notification.V1.Notification.NotificationBase
     {
         private readonly IMongoRepository<NotificationServiceRepoModel> _mongoRepository;
