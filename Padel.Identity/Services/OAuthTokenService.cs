@@ -26,10 +26,10 @@ namespace Padel.Identity.Services
             throw new NotImplementedException();
         }
 
-        public async Task<OAuthToken> CreateNewRefreshToken(int userId, string firebaseToken, ConnectionInfo connectionInfo)
+        public async Task<OAuthToken> CreateNewRefreshToken(int userId, ConnectionInfo connectionInfo)
         {
             var (accessToken, expires) = await _jsonWebTokenService.CreateNewAccessToken(userId);
-            var refreshToken = GenerateNewDevice(userId, firebaseToken, connectionInfo.Ip);
+            var refreshToken = GenerateNewDevice(userId, connectionInfo.Ip);
 
             await _deviceRepository.Insert(refreshToken);
 
@@ -68,13 +68,12 @@ namespace Padel.Identity.Services
             };
         }
 
-        private Device GenerateNewDevice(int userId, string firebaseToken, string userIp)
+        private Device GenerateNewDevice(int userId, string userIp)
         {
             return new Device
             {
                 UserId = userId,
                 RefreshToken = _random.GenerateSecureString(RefreshTokenLength),
-                FcmToken = firebaseToken,
                 Created = DateTimeOffset.UtcNow,
                 DisabledWhen = null,
                 IsDisabled = false,

@@ -28,8 +28,7 @@ namespace Padel.Identity.Runner.Controllers
             var signInRequest = new Identity.Models.SignInRequest
             {
                 Email = request.Email,
-                Password = request.Password,
-                FirebaseToken = request.FirebaseToken
+                Password = request.Password
             };
             try
             {

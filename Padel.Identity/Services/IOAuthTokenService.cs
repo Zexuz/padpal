@@ -7,8 +7,7 @@ namespace Padel.Identity.Services
     {
         Task InvalidateRefreshToken(int userId, string refreshToken);
 
-        // TODO Replace User user -> int userId
-        Task<OAuthToken> CreateNewRefreshToken(int userId, string firebaseToken, ConnectionInfo connectionInfo);
+        Task<OAuthToken> CreateNewRefreshToken(int userId, ConnectionInfo connectionInfo);
 
         Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info);
     }

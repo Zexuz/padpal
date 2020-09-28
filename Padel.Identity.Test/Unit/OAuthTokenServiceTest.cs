@@ -34,7 +34,7 @@ namespace Padel.Identity.Test.Unit
             A.CallTo(() => _fakeJsonWebTokenService.CreateNewAccessToken(A<int>._))
                 .Returns(("access-token", DateTimeOffset.Parse("2020-09-03 20:07")));
 
-            var authToken = await _sut.CreateNewRefreshToken(1374, "firebaseToken", new ConnectionInfo {Ip = "192.168.1.0"});
+            var authToken = await _sut.CreateNewRefreshToken(1374, new ConnectionInfo {Ip = "192.168.1.0"});
 
             Assert.Equal(OAuthToken.OAuthTokenType.Bearer, authToken.Type);
             Assert.Equal("access-token", authToken.AccessToken);

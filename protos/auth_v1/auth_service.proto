@@ -18,7 +18,6 @@ service AuthService {
 message SignInRequest {
     string email = 1;
     string password = 2;
-    string firebaseToken = 3;
 }
 
 message GetNewAccessTokenRequest {
