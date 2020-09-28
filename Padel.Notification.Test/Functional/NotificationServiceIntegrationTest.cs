@@ -1,9 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using FakeItEasy;
 using Grpc.Core;
 using Padel.Grpc.Core;
 using Padel.Notification.Runner;
 using Padel.Notification.Test.Functional.Helpers;
 using Padel.Proto.Notification.V1;
+using Padel.Queue;
 using Xunit;
 
 namespace Padel.Notification.Test.Functional
@@ -14,7 +18,18 @@ namespace Padel.Notification.Test.Functional
 
         public NotificationServiceIntegrationTest(MongoWebApplicationFactory<Startup> factory)
         {
-            var channel = factory.CreateGrpcChannel();
+            var fakePublisher = A.Fake<IPublisher>();
+            var fakeConsumer = A.Fake<IConsumerService>();
+            var fakeSubscriptionService = A.Fake<ISubscriptionService>();
+
+            var overrides = new Dictionary<object, Type>
+            {
+                {fakePublisher, typeof(IPublisher)},
+                {fakeConsumer, typeof(IConsumerService)},
+                {fakeSubscriptionService, typeof(ISubscriptionService)},
+            };
+
+            var channel = factory.CreateGrpcChannel(overrides);
             _notificationClient = new Proto.Notification.V1.Notification.NotificationClient(channel);
         }
 

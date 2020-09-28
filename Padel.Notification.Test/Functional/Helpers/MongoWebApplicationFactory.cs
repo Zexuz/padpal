@@ -22,7 +22,8 @@ namespace Padel.Notification.Test.Functional.Helpers
             service.ConfigureAppConfiguration(builder => builder.AddInMemoryCollection(new[]
             {
                 new KeyValuePair<string, string>("Connections:MongoDb:padel:url", $"mongodb://localhost:27017"),
-                new KeyValuePair<string, string>("Connections:MongoDb:padel:database", DbTestPrefix + RandomSuffix)
+                new KeyValuePair<string, string>("Connections:MongoDb:padel:database", DbTestPrefix + RandomSuffix),
+                new KeyValuePair<string, string>("AWS:Region", "eu-north-1"),
             }));
         }
 

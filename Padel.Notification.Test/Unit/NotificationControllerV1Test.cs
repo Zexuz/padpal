@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Grpc.Core;
-using Padel.Notification.MessageProcessors;
 using Padel.Notification.Runner.Controllers;
 using Padel.Proto.Notification.V1;
 using Padel.Repository.Core.MongoDb;

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Grpc.Core;
-using Padel.Notification.MessageProcessors;
 using Padel.Proto.Notification.V1;
 using Padel.Repository.Core.MongoDb;
 

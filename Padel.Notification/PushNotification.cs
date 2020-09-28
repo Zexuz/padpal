@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Threading.Tasks;
-using FirebaseAdmin.Messaging;
-
 namespace Padel.Notification
 {
     public abstract class PushNotification<T>

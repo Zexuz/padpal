@@ -1,5 +1,4 @@
 using Autofac;
-using FirebaseAdmin;
 using Microsoft.Extensions.Configuration;
 using Padel.Notification.MessageProcessors;
 using Padel.Queue;

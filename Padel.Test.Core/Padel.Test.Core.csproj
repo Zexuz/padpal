@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Autofac" Version="5.2.0" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="FakeItEasy" Version="6.2.0" />
         <PackageReference Include="Grpc.Core.Testing" Version="2.31.0" />
         <PackageReference Include="Grpc.Net.Client" Version="2.31.0" />

@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using FakeItEasy;
 using Grpc.Core;
 using Padel.Chat.Runner;
 using Padel.Chat.Test.Functional.Helpers;
 using Padel.Proto.Chat.V1;
+using Padel.Queue;
 using Xunit;
 
 namespace Padel.Chat.Test.Functional
@@ -10,10 +14,18 @@ namespace Padel.Chat.Test.Functional
     public class ChatServiceIntegrationTest : IClassFixture<MongoWebApplicationFactory<Startup>>
     {
         private readonly ChatService.ChatServiceClient _chatServiceClient;
+        private readonly IPublisher                    _fakePublisher;
 
         public ChatServiceIntegrationTest(MongoWebApplicationFactory<Startup> factoryBase)
         {
-            var channel = factoryBase.CreateGrpcChannel();
+            _fakePublisher = A.Fake<IPublisher>();
+
+            var overrides = new Dictionary<object, Type>
+            {
+                {_fakePublisher, typeof(IPublisher)}
+            };
+
+            var channel = factoryBase.CreateGrpcChannel(overrides);
             _chatServiceClient = new ChatService.ChatServiceClient(channel);
         }
 
