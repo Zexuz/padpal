@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Padel.Chat.Events;
 using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
 using Padel.Proto.Chat.V1;

@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FakeItEasy;
-using Padel.Chat.Events;
-using Padel.Chat.Models;
 using Padel.Chat.Services.Impl;
 using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
+using Padel.Proto.Chat.V1;
 using Padel.Queue;
 using Xunit;
+using ChatRoom = Padel.Chat.Models.ChatRoom;
+using Message = Padel.Chat.Models.Message;
 
 namespace Padel.Chat.Test.Unit
 {
@@ -55,10 +56,9 @@ namespace Padel.Chat.Test.Unit
 
             A.CallTo(() => _fakeRoomService.GetRoom(userId, roomId)).MustHaveHappened();
             A.CallTo(() => _fakeMessageSenderService.SendMessage(userId, originalChatRoom, content)).MustHaveHappened();
-            A.CallTo(() => _fakePublisher.PublishMessage(A<object>.That.Matches(o => 
-                o.GetType() == typeof(ChatMessageEvent) &&
-                ((ChatMessageEvent)o).Participants.Count == 3 &&
-                ((ChatMessageEvent)o).Content == content 
+            A.CallTo(() => _fakePublisher.PublishMessage(A<object>.That.Matches(o =>
+                o is ChatMessageReceived &&
+                ((ChatMessageReceived) o).Participants.Count == 3
             ))).MustHaveHappened();
         }
     }
