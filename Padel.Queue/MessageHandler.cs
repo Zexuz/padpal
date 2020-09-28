@@ -10,11 +10,11 @@ namespace Padel.Queue
 {
     public class MessageHandler : IMessageHandler
     {
-        private readonly IQueueService               _queueService;
-        private readonly List<IMessageProcessor>     _messageProcessors;
-        private readonly ILogger<ConsumerService> _logger;
+        private readonly IQueueService                  _queueService;
+        private readonly IEnumerable<IMessageProcessor> _messageProcessors;
+        private readonly ILogger<ConsumerService>       _logger;
 
-        public MessageHandler(IQueueService queueService, List<IMessageProcessor> messageProcessors, ILogger<ConsumerService> logger)
+        public MessageHandler(IQueueService queueService, IEnumerable<IMessageProcessor> messageProcessors, ILogger<ConsumerService> logger)
         {
             _queueService = queueService;
             _messageProcessors = messageProcessors;
@@ -37,6 +37,7 @@ namespace Padel.Queue
                     throw new Exception($"No processor found for message type '{messageType}'");
                 }
 
+                _logger.LogDebug($"Processing Message: {messageType}, body: {message.Body}");
                 await processor.ProcessAsync(message);
                 await _queueService.DeleteMessageAsync(message.ReceiptHandle);
             }

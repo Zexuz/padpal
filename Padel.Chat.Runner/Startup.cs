@@ -1,10 +1,15 @@
-﻿using Autofac;
+﻿using System.Linq;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Padel.Chat.Runner.Controllers;
+using Padel.Chat.Runner.Extensions;
+using Padel.Proto.Chat.V1;
+using Padel.Queue;
 
 namespace Padel.Chat.Runner
 {
@@ -20,6 +25,7 @@ namespace Padel.Chat.Runner
         public void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterModule(new AutofacModule(_configuration));
+            builder.RegisterModule(new Padel.Queue.AutofacModule(_configuration));
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -41,6 +47,12 @@ namespace Padel.Chat.Runner
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapGrpcService<ChatControllerV1>(); });
+
+            var container = app.ApplicationServices.GetAutofacRoot();
+            var publisher = container.Resolve<IPublisher>();
+
+            var messageType = ChatMessageReceived.Descriptor.GetMessageName();
+            publisher.RegisterEvent(messageType, typeof(ChatMessageReceived)).Wait();
         }
     }
 }

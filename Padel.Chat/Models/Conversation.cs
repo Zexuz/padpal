@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MongoDB.Bson;
-using Padel.Chat.Repositories.MongoDb;
 using Padel.Chat.ValueTypes;
+using Padel.Repository.Core.MongoDb;
 
 namespace Padel.Chat.Models
 {

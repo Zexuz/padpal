@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:authentication_repository/generated/auth_service.pbgrpc.dart';
+import 'package:authentication_repository/generated/auth_v1/auth_service.pbgrpc.dart';
 import 'package:grpc/grpc.dart';
 import 'package:meta/meta.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
@@ -52,13 +52,13 @@ class AuthenticationRepository {
     _controller.sink.add(AuthenticationStatus.authenticated);
   }
 
-  Future<void> login({@required String email, @required String password, @required String fcmToken}) async {
+  Future<void> signIn({@required String email, @required String password, @required String fcmToken}) async {
     assert(email != null);
     assert(password != null);
     assert(fcmToken != null);
     // myFunc(_authServiceClient.login, LoginRequest());
 
-    var call = _authServiceClient.login(LoginRequest()
+    var call = _authServiceClient.signIn(SignInRequest()
       ..password = password
       ..email = email
       ..firebaseToken = fcmToken);

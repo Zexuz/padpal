@@ -5,18 +5,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\protos\chat_v1\chat_service.proto" Link="protos\chat_service.proto"  ProtoRoot="..\protos\"/>
-        <Protobuf Include="..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
-    </ItemGroup>
-
-
-    <ItemGroup>
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.31.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Padel.Chat\Padel.Chat.csproj" />
+      <ProjectReference Include="..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
     </ItemGroup>
 
 </Project>

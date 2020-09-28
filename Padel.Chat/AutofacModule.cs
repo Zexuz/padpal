@@ -1,11 +1,10 @@
 using Autofac;
-using FirebaseAdmin;
 using Microsoft.Extensions.Configuration;
 using Padel.Chat.Factories;
 using Padel.Chat.Repositories;
-using Padel.Chat.Repositories.MongoDb;
 using Padel.Chat.Services.Impl;
 using Padel.Chat.Services.Interface;
+using Padel.Repository.Core.MongoDb;
 
 namespace Padel.Chat
 {
@@ -26,7 +25,6 @@ namespace Padel.Chat
                 DatabaseName = _configuration["Connections:MongoDb:padel:database"]
             }).As<IMongoDbSettings>();
             builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
-            builder.RegisterInstance(FirebaseApp.DefaultInstance ?? FirebaseApp.Create()).AsSelf().SingleInstance();
 
             builder.RegisterType<ConversationService>().As<IConversationService>();
             builder.RegisterType<MessageFactory>().As<IMessageFactory>();

@@ -1,6 +1,6 @@
 import 'package:grpc/grpc.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
-import 'package:user_repository/generated/user_service.pbgrpc.dart';
+import 'package:user_repository/generated/user_v1/user_service.pbgrpc.dart';
 
 class Me {
   String username;

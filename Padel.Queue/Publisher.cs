@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
-using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {
@@ -52,7 +51,7 @@ namespace Padel.Queue
 
             await _snsService.PublishAsync(new PublishRequest
             {
-                Message = JsonSerializer.Serialize(message),
+                Message = JsonSerializer.Serialize(message, new JsonSerializerOptions{PropertyNamingPolicy = JsonNamingPolicy.CamelCase}),
                 MessageAttributes = new Dictionary<string, MessageAttributeValue>
                 {
                     {

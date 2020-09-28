@@ -9,7 +9,6 @@ using Amazon.SimpleNotificationService.Model;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Microsoft.Extensions.Logging;
-using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {
@@ -40,7 +39,7 @@ namespace Padel.Queue
         public async Task CreateQueueAndSubscribeToTopic()
         {
             const int maxRetries = 3;
-            var delayTime = TimeSpan.FromSeconds(1);
+            var delayTime = TimeSpan.FromSeconds(20);
 
             try
             {

@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
-using Padel.Chat.Runner.Extensions;
 using Padel.Chat.Services.Interface;
 using Padel.Chat.ValueTypes;
+using Padel.Grpc.Core;
 using Padel.Proto.Chat.V1;
 
 namespace Padel.Chat.Runner.Controllers

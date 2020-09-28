@@ -10,6 +10,10 @@ extend google.protobuf.MethodOptions {
   optional Authorization authorization = 72295730;
 }
 
+extend google.protobuf.MessageOptions {
+  optional string messageType = 418301;
+}
+
 message Authorization {
   required bool shouldValidate = 1;
 }

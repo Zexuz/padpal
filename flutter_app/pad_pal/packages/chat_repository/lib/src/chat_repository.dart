@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:grpc_helpers/grpc_helpers.dart';
-import 'package:chat_repository/generated/chat_service.pbgrpc.dart';
+import 'package:chat_repository/generated/chat_v1/chat_service.pbgrpc.dart';
 
 class ChatRepository {
   ChatRepository({ChatServiceClient chatServiceClient})

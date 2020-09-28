@@ -30,60 +30,51 @@ var (
 	ErrInvalidClaims                     = errors.New("claims are wrong")
 )
 
-func WithJwtValidationUnaryInterceptor() grpc.DialOption {
+func WithJwtValidationUnaryInterceptor() grpc.ServerOption {
 	m := &myObject{
 		publicKey: []byte("-----BEGIN CERTIFICATE-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA9SFtmaHLsT0mnNvDJ+zyXkKR5gJz21FGLOh1DDkIbANWZPWz0I3rR+Ltap6LUixwbUm8XvdUsmc4AxpEceblviw7oAz8t9Ju29/WsvmmRJA2NOdWOL88Ob7ghp4yDEGtGxVaoRlrnzNrdczAGIMpvLXggvrK49mu9llT8RH1Z3V0ZMQ8Akc3D6y+ddADvNEx7Vz2OTP0ISEr+7ZC4appC5dkTzyXePp8drZvsITe0ejMP4ZXo7UNgly7x+vNyzfnAv+6HgFSc72SBJncSjOhXuMJIg1f3PgQ1CHu2Yn+w2ZXNg5D7icSU1dv/6H1UTvg+YEAMi7dqpX8QpZWDxBWbQIDAQAB\n-----END CERTIFICATE-----"),
 	}
-	return grpc.WithUnaryInterceptor(m.jwtValidator)
+	return grpc.UnaryInterceptor(m.jwtValidator)
 }
 
 type myObject struct {
 	publicKey []byte
 }
 
-func (o *myObject) jwtValidator(
-	ctx context.Context,
-	method string,
-	req interface{},
-	reply interface{},
-	cc *grpc.ClientConn,
-	invoker grpc.UnaryInvoker,
-	opts ...grpc.CallOption,
-) error {
-	option, err := o.getAuthorizationOption(req, method)
+func (o *myObject) jwtValidator(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+	option, err := o.getAuthorizationOption(req, info.FullMethod)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if option.GetShouldValidate() {
 		tokenString, err2 := getTokenFromHeader(ctx)
 		if err2 != nil {
-			return err2
+			return nil, err2
 		}
 
 		token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, keyFunc(o.publicKey))
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if !token.Valid {
-			return ErrTokenInvalid
+			return nil, ErrTokenInvalid
 		}
 
 		if standard, ok := token.Claims.(*jwt.StandardClaims); ok {
 			md, ok := metadata.FromIncomingContext(ctx)
 			if !ok {
-				return ErrCouldNotParseIncomingMetadata
+				return nil, ErrCouldNotParseIncomingMetadata
 			}
 			md.Set("padpal-user-id", standard.Subject)
-			ctx = metadata.NewIncomingContext(ctx, md)
+			ctx = metadata.NewOutgoingContext(ctx, md)
 		} else {
-			return ErrInvalidClaims
+			return nil, ErrInvalidClaims
 		}
 	}
 
-	err = invoker(ctx, method, req, reply, cc, opts...)
-	return err
+	return handler(ctx, req)
 }
 
 func keyFunc(pubKey []byte) func(token *jwt.Token) (interface{}, error) {

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "Padel.Proto.Notification.V1";
+
+option go_package = "github.com/mkdir-sweden/padpal/notification/protos/noticitaionpb";
+
+import "descriptors/rule.proto";
+
+package notification.v1;
+
+service Notification {
+  // TODO maybe let the app query this service and fetch a list of all possible subscriptions, and have a "updateSubscription" method that changes what notication we push to the device? 
+  rpc AppendFcmTokenToUser (AppendFcmTokenToUserRequest) returns (AppendFcmTokenToUserResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message AppendFcmTokenToUserRequest {
+  string fcmToken = 1;
+}
+
+message AppendFcmTokenToUserResponse {
+}

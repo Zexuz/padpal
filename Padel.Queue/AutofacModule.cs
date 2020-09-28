@@ -1,11 +1,10 @@
-﻿using Amazon;
+﻿using System.Linq;
+using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleNotificationService;
-using Amazon.SimpleNotificationService.Model;
 using Amazon.SQS;
 using Autofac;
 using Microsoft.Extensions.Configuration;
-using Padel.Queue.Interface;
 
 namespace Padel.Queue
 {
@@ -24,8 +23,23 @@ namespace Padel.Queue
 
             var auth = new BasicAWSCredentials(_configuration["AWS:AccessKey"], _configuration["AWS:SecretKey"]);
 
-            builder.RegisterInstance(new AmazonSQSClient(auth)).As<IAmazonService>();
-            builder.RegisterInstance(new AmazonSimpleNotificationServiceClient(auth)).As<ISimpleNotificationServicePaginatorFactory>();
+            var config = new AppConfig()
+            {
+                AwsQueueName = _configuration["AWS:Queue:Name"],
+                AwsQueueLongPollTimeSeconds = 5,
+                AwsQueueMaxRetries = 3,
+                Topics = _configuration
+                    .GetSection("AWS:Topics")
+                    .AsEnumerable()
+                    .Select(pair => pair.Value)
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToArray()
+            };
+
+            builder.RegisterInstance(config).AsSelf();
+
+            builder.RegisterInstance(new AmazonSQSClient(auth)).As<IAmazonSQS>();
+            builder.RegisterInstance(new AmazonSimpleNotificationServiceClient(auth)).As<IAmazonSimpleNotificationService>();
 
             builder.RegisterType<AwsSubscriptionService>().As<ISubscriptionService>();
             builder.RegisterType<ConsumerService>().As<IConsumerService>().SingleInstance();
@@ -33,6 +47,7 @@ namespace Padel.Queue
             builder.RegisterType<QueueService>().As<IQueueService>();
             builder.RegisterType<TopicService>().As<ITopicService>();
             builder.RegisterType<QueueCache>().As<IQueueCache>();
+            builder.RegisterType<Publisher>().As<IPublisher>().SingleInstance();
         }
     }
 }

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Padel.Chat.Models;
-using Padel.Chat.Repositories.MongoDb;
 using Padel.Chat.ValueTypes;
+using Padel.Repository.Core.MongoDb;
 
 namespace Padel.Chat.Repositories
 {
