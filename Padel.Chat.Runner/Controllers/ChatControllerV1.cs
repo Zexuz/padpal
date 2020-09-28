@@ -8,14 +8,15 @@ using Padel.Proto.Chat.V1;
 
 namespace Padel.Chat.Runner.Controllers
 {
+    // TODO CREATE UNIT TEST FOR ChatController
     public class ChatControllerV1 : ChatService.ChatServiceBase
     {
-        private readonly IConversationService _conversationService;
-        private readonly IRoomService         _roomService;
+        private readonly IMessageSenderService _messageSenderService;
+        private readonly IRoomService          _roomService;
 
-        public ChatControllerV1(IConversationService conversationService, IRoomService roomService)
+        public ChatControllerV1(IMessageSenderService messageSenderService, IRoomService roomService)
         {
-            _conversationService = conversationService;
+            _messageSenderService = messageSenderService;
             _roomService = roomService;
         }
 
@@ -32,7 +33,8 @@ namespace Padel.Chat.Runner.Controllers
         {
             var userId = new UserId(context.GetUserId());
 
-            await _conversationService.SendMessage(userId, new RoomId(request.RoomId), request.Content);
+            var room = await _roomService.GetRoom(userId, new RoomId(request.RoomId));
+            await _messageSenderService.SendMessage(userId, room, request.Content);
 
             return new SendMessageResponse();
         }
