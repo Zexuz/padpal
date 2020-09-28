@@ -17,10 +17,10 @@ namespace Padel.Notification.Test.Unit
 {
     public class ChatMessageReceivedProcessorTest
     {
-        private readonly ChatMessageReceivedProcessor          _sut;
-        private readonly IFirebaseCloudMessaging               _fakeFirebaseCloudMessaging;
+        private readonly ChatMessageReceivedProcessor              _sut;
+        private readonly IFirebaseCloudMessaging                   _fakeFirebaseCloudMessaging;
         private readonly IMongoRepository<UserNotificationSetting> _fakeRepo;
-        private          ILogger<ChatMessageReceivedProcessor> logger;
+        private          ILogger<ChatMessageReceivedProcessor>     logger;
 
         public ChatMessageReceivedProcessorTest()
         {
@@ -65,6 +65,26 @@ namespace Padel.Notification.Test.Unit
             A.CallTo(() => _fakeFirebaseCloudMessaging.SendMulticastAsync(A<MulticastMessage>.That.Matches(m =>
                 m.Tokens.Count == 3
             ))).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task Should_NOT_send_notification_to_users_when_there_are_no_FCMTokens()
+        {
+            var message = new Message
+            {
+                Body = JsonSerializer.Serialize(new ChatMessageReceived
+                {
+                    Participants = {10, 5, 1337},
+                    RoomId = "this is a roomid"
+                }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
+            };
+
+            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._))
+                .Returns(Task.FromResult<UserNotificationSetting>(null));
+
+            await _sut.ProcessAsync(message);
+
+            A.CallTo(() => _fakeFirebaseCloudMessaging.SendMulticastAsync(A<MulticastMessage>._)).MustNotHaveHappened();
         }
     }
 }

@@ -12,17 +12,17 @@ namespace Padel.Notification.MessageProcessors
 {
     public class ChatMessageReceivedProcessor : IMessageProcessor
     {
-        private readonly IFirebaseCloudMessaging                        _firebaseCloudMessaging;
+        private readonly IFirebaseCloudMessaging                   _firebaseCloudMessaging;
         private readonly IMongoRepository<UserNotificationSetting> _mongoRepository;
-        private readonly ILogger<ChatMessageReceivedProcessor>          _logger;
+        private readonly ILogger<ChatMessageReceivedProcessor>     _logger;
 
         public string EventName => ChatMessageReceived.Descriptor.GetMessageName();
 
         public ChatMessageReceivedProcessor
         (
-            IFirebaseCloudMessaging                        firebaseCloudMessaging,
+            IFirebaseCloudMessaging                   firebaseCloudMessaging,
             IMongoRepository<UserNotificationSetting> mongoRepository,
-            ILogger<ChatMessageReceivedProcessor>          logger
+            ILogger<ChatMessageReceivedProcessor>     logger
         )
         {
             _firebaseCloudMessaging = firebaseCloudMessaging;
@@ -51,7 +51,11 @@ namespace Padel.Notification.MessageProcessors
                 tokens.AddRange(res.FCMTokens);
             }
 
-            // TODO Handle case where we have 0 tokens!
+            if (tokens.Count == 0)
+            {
+                return;
+            }
+
             await _firebaseCloudMessaging.SendMulticastAsync(new MulticastMessage
             {
                 Data = new Dictionary<string, string>
