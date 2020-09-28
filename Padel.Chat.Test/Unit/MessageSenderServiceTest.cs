@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Padel.Chat.Factories;
-using Padel.Chat.Models;
 using Padel.Chat.Repositories;
 using Padel.Chat.Services.Impl;
 using Padel.Chat.ValueTypes;
+using Padel.Proto.Chat.V1;
+using Padel.Queue;
 using Xunit;
+using ChatRoom = Padel.Chat.Models.ChatRoom;
+using Message = Padel.Chat.Models.Message;
 
 namespace Padel.Chat.Test.Unit
 {
@@ -16,13 +19,15 @@ namespace Padel.Chat.Test.Unit
         private readonly MessageSenderService _sut;
         private readonly IRoomRepository      _fakeRoomRepository;
         private readonly IMessageFactory      _fakeMessageFactory;
+        private          IPublisher           _fakePublisher;
 
         public MessageSenderServiceTest()
         {
             _fakeRoomRepository = A.Fake<IRoomRepository>();
             _fakeMessageFactory = A.Fake<IMessageFactory>();
+            _fakePublisher = A.Fake<IPublisher>();
 
-            _sut = new MessageSenderService(_fakeRoomRepository, _fakeMessageFactory);
+            _sut = new MessageSenderService(_fakeRoomRepository, _fakeMessageFactory, _fakePublisher);
         }
 
         [Fact]
@@ -34,7 +39,9 @@ namespace Padel.Chat.Test.Unit
 
             var roomParticipants = new List<UserId>()
             {
-                userId
+                userId,
+                new UserId(789),
+                new UserId(1325)
             };
 
             var originalChatRoom = new ChatRoom
@@ -67,6 +74,10 @@ namespace Padel.Chat.Test.Unit
                 A<UserId>.That.Matches(s => s.Value == message.Author.Value),
                 A<string>.That.Matches(s => s       == message.Content)
             )).MustHaveHappened();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<object>.That.Matches(o =>
+                o is ChatMessageReceived &&
+                ((ChatMessageReceived) o).Participants.Count == 3
+            ))).MustHaveHappened();
         }
     }
 }

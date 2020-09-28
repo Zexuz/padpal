@@ -26,7 +26,6 @@ namespace Padel.Chat
             }).As<IMongoDbSettings>();
             builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
 
-            builder.RegisterType<ConversationService>().As<IConversationService>();
             builder.RegisterType<MessageFactory>().As<IMessageFactory>();
             builder.RegisterType<RoomFactory>().As<IRoomFactory>();
             builder.RegisterType<RoomService>().As<IRoomService>();

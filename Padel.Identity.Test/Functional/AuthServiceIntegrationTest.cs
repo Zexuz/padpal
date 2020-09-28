@@ -33,7 +33,6 @@ namespace Padel.Identity.Test.Functional
             {
                 Email = randomUser.Email,
                 Password = randomUser.Password,
-                FirebaseToken = randomUser.FirebaseToken
             };
         }
 
@@ -109,22 +108,6 @@ namespace Padel.Identity.Test.Functional
             {
                 Email = payload.User.Email,
                 Password = "some other password"
-            }));
-        }
-
-        [Theory]
-        [InlineData("")]
-        public async Task SignInFailsWithBadFirebaseTokenAfterRegisterSuccessful(string firebaseToken)
-        {
-            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
-
-            await _authServiceClient.RegisterAsync(payload);
-
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignInAsync(new SignInRequest
-            {
-                Email = payload.User.Email,
-                Password = payload.User.Password,
-                FirebaseToken = firebaseToken,
             }));
         }
 

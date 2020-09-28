@@ -40,7 +40,6 @@ namespace Padel.Identity.Test.Unit
             {
                 Email = "someEmail",
                 Password = "plainPassword",
-                FirebaseToken = "token",
             };
             var ex = await Assert.ThrowsAsync<EmailDoesNotExistsException>(async () => await _sut.SignIn(singInRequest, new ConnectionInfo()));
             Assert.Equal("someEmail", ex.Email);
@@ -58,7 +57,6 @@ namespace Padel.Identity.Test.Unit
             {
                 Email = "someEmail",
                 Password = "plainPassword",
-                FirebaseToken = "token",
             };
             var ex = await Assert.ThrowsAsync<PasswordDoesNotMatchException>(async () => await _sut.SignIn(signInRequest, new ConnectionInfo()));
             Assert.Equal("someEmail", ex.Email);
@@ -77,7 +75,7 @@ namespace Padel.Identity.Test.Unit
             var connectionInfo = new ConnectionInfo {Ip = "myIp"};
             A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>._)).Returns(Task.FromResult(dbUser));
             A.CallTo(() => _fakePasswordService.IsPasswordOfHash(A<string>._, A<string>._)).Returns(true);
-            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<int>._, A<string>._, A<ConnectionInfo>._)).Returns(
+            A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(A<int>._, A<ConnectionInfo>._)).Returns(
                 Task.FromResult(new OAuthToken
                 {
                     AccessToken = "some.jwt.token"
@@ -88,7 +86,6 @@ namespace Padel.Identity.Test.Unit
             {
                 Email = "someEmail",
                 Password = "plainPassword",
-                FirebaseToken = "someFirebaseToken"
             };
 
             var token = await _sut.SignIn(signInRequest, connectionInfo);
@@ -97,7 +94,6 @@ namespace Padel.Identity.Test.Unit
 
             A.CallTo(() => _fakeAuthTokenService.CreateNewRefreshToken(
                     1,
-                    A<string>.That.Matches(s => s                  == "someFirebaseToken"),
                     A<ConnectionInfo>.That.Matches(info => info.Ip == "myIp"))
                 )
                 .MustHaveHappenedOnceExactly();

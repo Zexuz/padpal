@@ -63,7 +63,6 @@ namespace Padel.Identity.Services
         {
             if(string.IsNullOrWhiteSpace(request.Email))throw new ArgumentException();
             if(string.IsNullOrWhiteSpace(request.Password))throw new ArgumentException();
-            if(string.IsNullOrWhiteSpace(request.FirebaseToken))throw new ArgumentException();
 
             var user = await _userRepository.FindByEmail(request.Email)!;
             if (user == null)
@@ -78,7 +77,7 @@ namespace Padel.Identity.Services
                 throw new PasswordDoesNotMatchException(request.Email);
             }
 
-            return await _oAuthTokenService.CreateNewRefreshToken(user.Id, request.FirebaseToken, connectionInfo);
+            return await _oAuthTokenService.CreateNewRefreshToken(user.Id, connectionInfo);
         }
 
         public async Task<OAuthToken> RefreshAccessToken(string refreshToken, ConnectionInfo info)

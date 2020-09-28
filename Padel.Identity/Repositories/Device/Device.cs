@@ -9,7 +9,6 @@ namespace Padel.Identity.Repositories.Device
         public int Id { get; set; }
         public int UserId { get; set; }
         public string RefreshToken { get; set; }
-        public string FcmToken { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset LastUsed { get; set; }
         public bool IsDisabled { get; set; }
