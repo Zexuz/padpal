@@ -28,7 +28,7 @@ func main() {
 	serverOps = append(serverOps, interceptors.WithJwtValidationUnaryInterceptor())
 
 	// This is good to have for HC maybe
-	//opts = append(opts, grpc.WithBlock())
+	opts = append(opts, grpc.WithBlock())
 	chatConn, err := grpc.Dial("localhost:5001", opts...)
 	if err != nil {
 		log.Fatalf("fail to dial: %v", err)

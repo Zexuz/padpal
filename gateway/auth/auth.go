@@ -12,7 +12,7 @@ func NewAuthService(conn *grpc.ClientConn) *authpb.AuthServiceService {
 	}
 
 	service := &authpb.AuthServiceService{
-		Register:          client.Register,
+		SignUp:            client.SignUp,
 		SignIn:            client.SignIn,
 		GetNewAccessToken: client.GetNewAccessToken,
 	}
@@ -24,8 +24,8 @@ type authService struct {
 	client authpb.AuthServiceClient
 }
 
-func (c *authService) Register(ctx context.Context, request *authpb.RegisterRequest) (*authpb.RegisterResponse, error) {
-	return c.client.Register(ctx, request)
+func (c *authService) SignUp(ctx context.Context, request *authpb.SignUpRequest) (*authpb.SignUpResponse, error) {
+	return c.client.SignUp(ctx, request)
 }
 func (c *authService) SignIn(ctx context.Context, request *authpb.SignInRequest) (*authpb.SignInResponse, error) {
 	return c.client.SignIn(ctx, request)
