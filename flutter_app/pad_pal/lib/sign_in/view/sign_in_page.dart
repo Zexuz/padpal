@@ -15,19 +15,19 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-        actions: [
-          FlatButton(
-              child: const Text('Components'),
-              onPressed: () => Navigator.push<void>(
-                    context,
-                    ComponentsPage.route(),
-                  ))
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Login'),
+      //   actions: [
+      //     FlatButton(
+      //         child: const Text('Components'),
+      //         onPressed: () => Navigator.push<void>(
+      //               context,
+      //               ComponentsPage.route(),
+      //             ))
+      //   ],
+      // ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(24.0),
         child: BlocProvider(
           create: (_) => SignInCubit(
             context.repository<AuthenticationRepository>(),

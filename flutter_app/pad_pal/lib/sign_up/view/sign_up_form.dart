@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:pad_pal/components/button/primary/button_large_primary.dart';
-import 'package:pad_pal/components/button/primary/button_small_primary.dart';
+import 'package:pad_pal/components/button/texbt_button/text_button.dart';
 import 'package:pad_pal/sign_in/signIn.dart';
 import 'package:pad_pal/sign_up/cubit/sign_up_cubit.dart';
 
@@ -76,27 +76,6 @@ class _EmailInput extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _SwitchToSignIn extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text("Already have an account?"),
-        ButtonSmallPrimary(
-          stretch: false,
-          isDisabled: false,
-          onPressed: () => Navigator.push<void>(
-            context,
-            SignInPage.route(),
-          ),
-          text: "Sign in",
-        ),
-      ],
     );
   }
 }
@@ -175,12 +154,34 @@ class _SignUpButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ButtonLargePrimary(
                 key: const Key('signUpForm_continue_raisedButton'),
-                text: 'SIGN UP',
+                text: 'Sign up',
                 isDisabled: false,
                 stretch: false,
                 onPressed: state.status.isValidated ? () => context.bloc<SignUpCubit>().signUpFormSubmitted() : null,
               );
       },
+    );
+  }
+}
+
+class _SwitchToSignIn extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          "Already have an account?",
+          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12.0, color: Color(0xFF959DA6)),
+        ),
+        TextButton(
+          onPressed: () => Navigator.push<void>(
+            context,
+            SignInPage.route(),
+          ),
+          text: "Sign in",
+        ),
+      ],
     );
   }
 }
