@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:pad_pal/components/button/primary/button_large_primary.dart';
+import 'package:pad_pal/components/button/primary/button_small_primary.dart';
+import 'package:pad_pal/sign_in/signIn.dart';
 import 'package:pad_pal/sign_up/cubit/sign_up_cubit.dart';
 
 class SignUpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final List<Widget> inputs = [
-      _UsernameInput(),
-      _EmailInput(),
-      _PasswordInput(),
-      _NameInput(),
-      _SignUpButton(),
-    ];
-
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
@@ -24,12 +19,40 @@ class SignUpForm extends StatelessWidget {
             );
         }
       },
-      child: ListView.separated(
-        itemCount: inputs.length,
-        itemBuilder: (BuildContext context, int index) {
-          return inputs[index];
-        },
-        separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 8.0),
+      child: ListView(
+        children: [
+          const SizedBox(height: 48.0),
+          Center(
+            child: const Text("<LOGO GOES HERE>"),
+          ),
+          const SizedBox(height: 48.0),
+          Center(
+            child: const Text(
+              "Sign up",
+              style: TextStyle(color: Color(0xFF172331), fontSize: 36, fontWeight: FontWeight.w700),
+            ),
+          ),
+          const SizedBox(height: 12.0),
+          Center(
+            child: const Text(
+              "Find new padel pals and\njoin games nearby",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Color(0xFF959DA6), fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(height: 38.0),
+          _NameInput(),
+          const SizedBox(height: 12.0),
+          _UsernameInput(),
+          const SizedBox(height: 12.0),
+          _EmailInput(),
+          const SizedBox(height: 12.0),
+          _PasswordInput(),
+          const SizedBox(height: 24.0),
+          _SignUpButton(),
+          const SizedBox(height: 12.0),
+          _SwitchToSignIn(),
+        ],
       ),
     );
   }
@@ -46,12 +69,34 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.bloc<SignUpCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'email',
-            helperText: '',
+            suffixIcon: Icon(Icons.email),
+            border: OutlineInputBorder(),
+            labelText: 'Email',
             errorText: state.email.invalid ? 'invalid email' : null,
           ),
         );
       },
+    );
+  }
+}
+
+class _SwitchToSignIn extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text("Already have an account?"),
+        ButtonSmallPrimary(
+          stretch: false,
+          isDisabled: false,
+          onPressed: () => Navigator.push<void>(
+            context,
+            SignInPage.route(),
+          ),
+          text: "Sign in",
+        ),
+      ],
     );
   }
 }
@@ -67,9 +112,10 @@ class _PasswordInput extends StatelessWidget {
           onChanged: (password) => context.bloc<SignUpCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'password',
-            helperText: '',
+            suffixIcon: Icon(Icons.lock),
             errorText: state.password.invalid ? 'invalid password' : null,
+            border: OutlineInputBorder(),
+            labelText: "Password",
           ),
         );
       },
@@ -85,11 +131,12 @@ class _UsernameInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('signUpForm_usernameInput_textField'),
-          onChanged: (username) => context.bloc<SignUpCubit>().usernameChanged(username),
+          onChanged: (password) => context.bloc<SignUpCubit>().usernameChanged(password),
           decoration: InputDecoration(
-            labelText: 'username',
-            helperText: '',
-            errorText: state.username.invalid ? 'invalid username' : null,
+            suffixIcon: Icon(Icons.find_replace),
+            errorText: state.password.invalid ? 'invalid username' : null,
+            border: OutlineInputBorder(),
+            labelText: "Username",
           ),
         );
       },
@@ -107,8 +154,9 @@ class _NameInput extends StatelessWidget {
           key: const Key('signUpForm_nameInput_textField'),
           onChanged: (firstName) => context.bloc<SignUpCubit>().nameChanged(firstName),
           decoration: InputDecoration(
-            labelText: 'name',
-            helperText: '',
+            suffixIcon: Icon((Icons.account_box)),
+            border: OutlineInputBorder(),
+            labelText: 'Full name',
             errorText: state.name.invalid ? 'invalid name' : null,
           ),
         );
@@ -125,13 +173,11 @@ class _SignUpButton extends StatelessWidget {
       builder: (context, state) {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
-            : RaisedButton(
+            : ButtonLargePrimary(
                 key: const Key('signUpForm_continue_raisedButton'),
-                child: const Text('SIGN UP'),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                color: Colors.orangeAccent,
+                text: 'SIGN UP',
+                isDisabled: false,
+                stretch: false,
                 onPressed: state.status.isValidated ? () => context.bloc<SignUpCubit>().signUpFormSubmitted() : null,
               );
       },

@@ -13,9 +13,8 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(24.0),
         child: BlocProvider<SignUpCubit>(
           create: (_) => SignUpCubit(
             context.repository<AuthenticationRepository>(),
