@@ -1,0 +1,19 @@
+name: notification_repository
+description: Dart package which manages the notification domain.
+version: 1.0.0
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  meta: ^1.1.8
+  grpc: ^2.2.0
+  protobuf: ^1.0.1
+  equatable: ^1.2.3
+  grpc_helpers:
+    path: ../grpc_helpers
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^4.0.0

@@ -3,6 +3,7 @@
 [ ! -d "flutter_app/pad_pal/packages/user_repository/lib/generated" ] && mkdir flutter_app/pad_pal/packages/user_repository/lib/generated
 [ ! -d "flutter_app/pad_pal/packages/authentication_repository/lib/generated" ] && mkdir flutter_app/pad_pal/packages/authentication_repository/lib/generated
 [ ! -d "flutter_app/pad_pal/packages/chat_repository/lib/generated" ] && mkdir flutter_app/pad_pal/packages/chat_repository/lib/generated
+[ ! -d "flutter_app/pad_pal/packages/notification_repository/lib/generated" ] && mkdir flutter_app/pad_pal/packages/notification_repository/lib/generated
 
 
 protoc -I ./includes/ -I ./protos/ --go_out=gateway/protos --go-grpc_out=gateway/protos \
@@ -18,5 +19,9 @@ protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/user_repository/lib/generated \
   user_v1/user_service.proto
+  
+protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/notification_repository/lib/generated \
+  notification_v1/notification_service.proto
+
 
 
