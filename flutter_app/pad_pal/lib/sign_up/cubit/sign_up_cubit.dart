@@ -38,19 +38,11 @@ class SignUpCubit extends Cubit<SignUpState> {
     ));
   }
 
-  void firstNameChanged(String value) {
-    final firstName = Name.dirty(value);
+  void nameChanged(String value) {
+    final name = Name.dirty(value);
     emit(state.copyWith(
-      firstName: firstName,
-      status: Formz.validate([state.email, firstName]),
-    ));
-  }
-
-  void lastNameChanged(String value) {
-    final lastName = Name.dirty(value);
-    emit(state.copyWith(
-      lastName: lastName,
-      status: Formz.validate([state.email, lastName]),
+      name: name,
+      status: Formz.validate([state.email, name]),
     ));
   }
 
@@ -58,12 +50,11 @@ class SignUpCubit extends Cubit<SignUpState> {
     if (!state.status.isValidated) return;
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
-      await _authenticationRepository.register(
+      await _authenticationRepository.signUp(
         username: state.username.value,
         email: state.email.value,
         password: state.password.value,
-        firstName: state.firstName.value,
-        lastName: state.firstName.value,
+        name: state.name.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {

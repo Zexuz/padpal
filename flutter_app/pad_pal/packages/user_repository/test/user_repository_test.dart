@@ -9,6 +9,7 @@ import 'package:user_repository/generated/user_v1/user_service.pbgrpc.dart' as p
 import 'package:user_repository/src/user_repository.dart';
 
 class MockUserServiceClient extends Mock implements UserServiceClient {}
+
 // TODO Move to test_helpers
 class MockResponseFuture<T> extends Mock implements ResponseFuture<T> {
   final T value;
@@ -41,8 +42,7 @@ void main() {
             ..me = (pb.Me()
               ..username = "zexuz"
               ..email = "robin@mkdir.se"
-              ..firstName = "robin"
-              ..lastName = "edbom")),
+              ..name = "robin edbom")),
         );
 
         final accessToken = AccessToken(token: "myAccessToken", expires: DateTime.now().add(Duration(minutes: 30)));
@@ -52,8 +52,7 @@ void main() {
 
         expect(res.username, "zexuz");
         expect(res.email, "robin@mkdir.se");
-        expect(res.firstName, "robin");
-        expect(res.lastName, "edbom");
+        expect(res.name, "robin edbom");
 
         var verification = verify(userServiceClient.me(any, options: captureAnyNamed('options')));
         expect((verification.captured[0] as CallOptions).metadata, {'Authorization': 'Bearer myAccessToken'});

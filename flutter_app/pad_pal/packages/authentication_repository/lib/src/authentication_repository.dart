@@ -80,27 +80,25 @@ class AuthenticationRepository {
     }
   }
 
-  Future<void> register({
+  Future<void> signUp({
     @required String email,
     @required String password,
     @required String username,
-    @required String firstName,
-    @required String lastName,
+    @required String name,
   }) async {
     assert(email != null);
     assert(password != null);
 
-    var call = _authServiceClient.register(RegisterRequest()
+    var call = _authServiceClient.signUp(SignUpRequest()
       ..user = (NewUser()
         ..email = email
         ..username = username
         ..password = password
+        ..name = name
         ..dateOfBirth = (NewUser_Date()
           ..year = 1996
           ..month = 11
-          ..day = 7)
-        ..firstName = firstName
-        ..lastName = lastName));
+          ..day = 7)));
 
     try {
       await call;

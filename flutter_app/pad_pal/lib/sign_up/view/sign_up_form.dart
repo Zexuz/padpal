@@ -10,8 +10,7 @@ class SignUpForm extends StatelessWidget {
       _UsernameInput(),
       _EmailInput(),
       _PasswordInput(),
-      _FirstNameInput(),
-      _LastNameInput(),
+      _NameInput(),
       _SignUpButton(),
     ];
 
@@ -98,39 +97,19 @@ class _UsernameInput extends StatelessWidget {
   }
 }
 
-class _FirstNameInput extends StatelessWidget {
+class _NameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) => previous.firstName != current.firstName,
+      buildWhen: (previous, current) => previous.name != current.name,
       builder: (context, state) {
         return TextField(
-          key: const Key('signUpForm_firstNameInput_textField'),
-          onChanged: (firstName) => context.bloc<SignUpCubit>().firstNameChanged(firstName),
+          key: const Key('signUpForm_nameInput_textField'),
+          onChanged: (firstName) => context.bloc<SignUpCubit>().nameChanged(firstName),
           decoration: InputDecoration(
-            labelText: 'first name',
+            labelText: 'name',
             helperText: '',
-            errorText: state.firstName.invalid ? 'invalid name' : null,
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _LastNameInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) => previous.lastName != current.lastName,
-      builder: (context, state) {
-        return TextField(
-          key: const Key('signUpForm_lastNameInput_textField'),
-          onChanged: (lastName) => context.bloc<SignUpCubit>().lastNameChanged(lastName),
-          decoration: InputDecoration(
-            labelText: 'last name',
-            helperText: '',
-            errorText: state.lastName.invalid ? 'invalid name' : null,
+            errorText: state.name.invalid ? 'invalid name' : null,
           ),
         );
       },

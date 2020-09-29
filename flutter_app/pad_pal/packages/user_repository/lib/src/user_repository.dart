@@ -5,8 +5,7 @@ import 'package:user_repository/generated/user_v1/user_service.pbgrpc.dart';
 class Me {
   String username;
   String email;
-  String firstName;
-  String lastName;
+  String name;
 }
 
 class UserRepository {
@@ -25,7 +24,6 @@ class UserRepository {
     return Me()
       ..email = protoRes.me.email
       ..username = protoRes.me.username
-      ..firstName = protoRes.me.firstName
-      ..lastName = protoRes.me.lastName;
+      ..name = protoRes.me.name;
   }
 }

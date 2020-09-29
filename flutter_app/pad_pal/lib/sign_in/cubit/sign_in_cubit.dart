@@ -18,7 +18,7 @@ class SignInCubit extends Cubit<SignInState> {
     final email = Email.dirty(value);
     emit(state.copyWith(
       email: email,
-      status: Formz.validate([email, state.password, state.fcmToken]),
+      status: Formz.validate([email, state.password]),
     ));
   }
 
@@ -27,19 +27,11 @@ class SignInCubit extends Cubit<SignInState> {
    try{
      emit(state.copyWith(
        password: password,
-       status: Formz.validate([state.email, state.fcmToken, password]),
+       status: Formz.validate([state.email, password]),
      ));
    }catch(e){
      print(e);
     }
-  }
-
-  void addFcmToken(String value) {
-    final token = FcmToken.dirty(value ?? "");
-    emit(state.copyWith(
-      token: token,
-      status: Formz.validate([state.email, state.password, token]),
-    ));
   }
 
   Future<void> SignInDebug() async {
@@ -55,7 +47,6 @@ class SignInCubit extends Cubit<SignInState> {
       await _authenticationRepository.signIn(
         email: state.email.value,
         password: state.password.value,
-        fcmToken: state.fcmToken.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {

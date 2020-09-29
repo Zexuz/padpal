@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
-import 'package:pad_pal/app_push.dart';
 import 'package:pad_pal/sign_in/cubit/sign_in_cubit.dart';
 import 'package:pad_pal/sign_up/sign_up.dart';
 
@@ -23,7 +22,6 @@ class SignInForm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _FcmToken(),
             const SizedBox(height: 16.0),
             _EmailInput(),
             const SizedBox(height: 8.0),
@@ -37,25 +35,6 @@ class SignInForm extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _FcmToken extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignInCubit, SignInState>(
-      buildWhen: (previous, current) => previous.fcmToken != current.fcmToken,
-      builder: (context, state) {
-        var token = FirebaseTokenContainer.of(context).fcmToken;
-        context.bloc<SignInCubit>().addFcmToken(token);
-
-        if (state.fcmToken.invalid) {
-          return Text("Invalid FCM Token");
-        }
-
-        return Container();
-      },
     );
   }
 }
