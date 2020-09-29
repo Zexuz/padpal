@@ -7,15 +7,14 @@ option go_package = "gateway/userbp";
 package user.v1;
 
 service UserService {
-    rpc Me (MeRequest) returns (MeResponse) {
-    }
+  rpc Me (MeRequest) returns (MeResponse) {
+  }
 }
 
 message Me {
-    string username = 1;
-    string firstName = 2;
-    string lastName = 3;
-    string email = 4;
+  string username = 1;
+  string name = 2;
+  string email = 3;
 }
 
 message MeRequest {
@@ -23,5 +22,5 @@ message MeRequest {
 }
 
 message MeResponse {
-    Me me = 1;
+  Me me = 1;
 }

@@ -43,8 +43,7 @@ namespace Padel.Identity.Test.Functional
                 Username = user.Username,
                 Email = user.Email,
                 Password = user.Password,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                Name = user.Name,
                 DateOfBirth = new NewUser.Types.Date {Year = user.DateOfBirth.Year, Month = user.DateOfBirth.Month, Day = user.DateOfBirth.Day}
             };
         }
@@ -65,22 +64,21 @@ namespace Padel.Identity.Test.Functional
         }
 
         [Fact]
-        public async Task SignInAfterRegisterSuccessful()
+        public async Task SignInAfterSignUpSuccessful()
         {
             var expectedTokenLength = TimeSpan.FromMinutes(30);
-            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
+            var payload = new SignUpRequest {User = CreateNewUser(_randomUser)};
 
-            await _authServiceClient.RegisterAsync(payload);
+            await _authServiceClient.SignUpAsync(payload);
             var signInResponse = await _authServiceClient.SignInAsync(CreateSignInRequest(_randomUser));
 
             var timeRange = DateTimeOffset.FromUnixTimeSeconds(signInResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
             Assert.True(timeRange < TimeSpan.FromSeconds(10));
 
-            var meRes = await _userServiceClient.MeAsync(new MeRequest { },await CreateAuthMetadata(signInResponse.Token));
+            var meRes = await _userServiceClient.MeAsync(new MeRequest { }, await CreateAuthMetadata(signInResponse.Token));
             Assert.Equal(_randomUser.Username, meRes.Me.Username);
             Assert.Equal(_randomUser.Email, meRes.Me.Email);
-            Assert.Equal(_randomUser.FirstName, meRes.Me.FirstName);
-            Assert.Equal(_randomUser.LastName, meRes.Me.LastName);
+            Assert.Equal(_randomUser.Name, meRes.Me.Name);
 
             // The JWT genreator will generate the same token twice sine there are no time between call
             await Task.Delay(1000);
@@ -93,16 +91,15 @@ namespace Padel.Identity.Test.Functional
             var meResWithNewAccessToken = await _userServiceClient.MeAsync(new MeRequest { }, await CreateAuthMetadata(newAccessTokenRes.Token));
             Assert.Equal(_randomUser.Username, meResWithNewAccessToken.Me.Username);
             Assert.Equal(_randomUser.Email, meResWithNewAccessToken.Me.Email);
-            Assert.Equal(_randomUser.FirstName, meResWithNewAccessToken.Me.FirstName);
-            Assert.Equal(_randomUser.LastName, meResWithNewAccessToken.Me.LastName);
+            Assert.Equal(_randomUser.Name, meResWithNewAccessToken.Me.Name);
         }
 
         [Fact]
-        public async Task SignInFailsWithBadCredentialsAfterRegisterSuccessful()
+        public async Task SignInFailsWithBadCredentialsAfterSignUpSuccessful()
         {
-            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
+            var payload = new SignUpRequest {User = CreateNewUser(_randomUser)};
 
-            await _authServiceClient.RegisterAsync(payload);
+            await _authServiceClient.SignUpAsync(payload);
 
             var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignInAsync(new SignInRequest
             {
@@ -124,26 +121,26 @@ namespace Padel.Identity.Test.Functional
         [Fact]
         public async Task ThrowsErrorWhenUsernameIsTaken()
         {
-            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
+            var payload = new SignUpRequest {User = CreateNewUser(_randomUser)};
 
-            await _authServiceClient.RegisterAsync(payload);
+            await _authServiceClient.SignUpAsync(payload);
 
             payload.User.Email = "someOtherEmail";
 
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.RegisterAsync(payload));
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignUpAsync(payload));
             Assert.Equal("username-already-taken", ex.Trailers.GetValue("x-custom-error"));
         }
 
         [Fact]
         public async Task ThrowsErrorWhenEmailIsTaken()
         {
-            var payload = new RegisterRequest {User = CreateNewUser(_randomUser)};
+            var payload = new SignUpRequest {User = CreateNewUser(_randomUser)};
 
-            await _authServiceClient.RegisterAsync(payload);
+            await _authServiceClient.SignUpAsync(payload);
 
             payload.User.Username = "someNewUsername";
 
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.RegisterAsync(payload));
+            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignUpAsync(payload));
             Assert.Equal("email-already-taken", ex.Trailers.GetValue("x-custom-error"));
         }
     }

@@ -56,15 +56,14 @@ namespace Padel.Identity.Runner.Controllers
             }
         }
 
-        public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
+        public override async Task<SignUpResponse> SignUp(SignUpRequest request, ServerCallContext context)
         {
             var user = new NewUser()
             {
                 Email = request.User.Email,
                 Password = request.User.Password,
                 Username = request.User.Username,
-                FirstName = request.User.FirstName,
-                LastName = request.User.LastName,
+                Name = request.User.Name,
                 DateOfBirth = DateTime.Parse($"{request.User.DateOfBirth.Year}-{request.User.DateOfBirth.Month}-{request.User.DateOfBirth.Day}")
             };
             try
@@ -89,7 +88,7 @@ namespace Padel.Identity.Runner.Controllers
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Already taken username"), metadata);
             }
 
-            return new RegisterResponse();
+            return new SignUpResponse();
         }
 
 

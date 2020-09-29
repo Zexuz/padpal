@@ -18,8 +18,7 @@ namespace Padel.Identity.Test.Unit.Controllers
             {
                 Email = "robin@email.com",
                 Username = "myUsername",
-                FirstName = "robin",
-                LastName = "edbom"
+                Name = "robin edbom",
             }));
 
             var ctx = CreateServerCallContextWithUserId(10);
@@ -30,8 +29,7 @@ namespace Padel.Identity.Test.Unit.Controllers
 
             Assert.Equal("robin@email.com", res.Me.Email);
             Assert.Equal("myUsername", res.Me.Username);
-            Assert.Equal("robin", res.Me.FirstName);
-            Assert.Equal("edbom", res.Me.LastName);
+            Assert.Equal("robin edbom", res.Me.Name);
         }
 
         [Theory]

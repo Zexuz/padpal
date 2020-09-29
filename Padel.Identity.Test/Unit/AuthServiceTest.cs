@@ -111,13 +111,12 @@ namespace Padel.Identity.Test.Unit
         // [X] Hash the password.
         // [ ] And publish a new event that says a new user has been created.
         [Theory]
-        [InlineData("zexyz", "PlainTextPassword", "Robin", "Edbom", "myEmail@mkdir.se", "7", "11", "1996", "$10000.salt.hash")]
-        [InlineData("username", "passWord", "Jane", "Doe", "jane@doe.org", "1", "1", "1900", "$10000.salt.someOtherhash")]
+        [InlineData("zexyz", "PlainTextPassword", "Robin Edbom", "myEmail@mkdir.se", "7", "11", "1996", "$10000.salt.hash")]
+        [InlineData("username", "passWord", "Jane Doe", "jane@doe.org", "1", "1", "1900", "$10000.salt.someOtherhash")]
         public async Task Should_add_new_user_to_table(
             string username,
             string plainPassword,
-            string firstName,
-            string lastName,
+            string name,
             string email,
             string day,
             string month,
@@ -133,8 +132,7 @@ namespace Padel.Identity.Test.Unit
             {
                 Username = username,
                 Password = plainPassword,
-                FirstName = firstName,
-                LastName = lastName,
+                Name = name,
                 Email = email,
                 DateOfBirth = new DateTime(int.Parse(year), int.Parse(month), int.Parse(day))
             };
@@ -146,8 +144,7 @@ namespace Padel.Identity.Test.Unit
             A.CallTo(() => _fakeUserRepo.Insert(A<User>.That.Matches(u =>
                 u.Email                  == email            &&
                 u.Username               == username         &&
-                u.FirstName              == firstName        &&
-                u.LastName               == lastName         &&
+                u.Name                   == name             &&
                 u.PasswordHash           == hashedPassword   &&
                 u.DateOfBirth.Date.Day   == int.Parse(day)   &&
                 u.DateOfBirth.Date.Month == int.Parse(month) &&

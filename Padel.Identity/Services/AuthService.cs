@@ -16,10 +16,10 @@ namespace Padel.Identity.Services
         private readonly IOAuthTokenService   _oAuthTokenService;
 
         public AuthService(
-            IUserRepository userRepository,
-            IPasswordService passwordService,
+            IUserRepository      userRepository,
+            IPasswordService     passwordService,
             ILogger<AuthService> logger,
-            IOAuthTokenService oAuthTokenService
+            IOAuthTokenService   oAuthTokenService
         )
         {
             _userRepository = userRepository;
@@ -51,8 +51,7 @@ namespace Padel.Identity.Services
                 Username = user.Username,
                 Email = user.Email,
                 PasswordHash = hashedPassword,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                Name = user.Name,
                 DateOfBirth = user.DateOfBirth,
                 Created = DateTimeOffset.UtcNow
             });
@@ -61,8 +60,8 @@ namespace Padel.Identity.Services
 
         public async Task<OAuthToken> SignIn(SignInRequest request, ConnectionInfo connectionInfo)
         {
-            if(string.IsNullOrWhiteSpace(request.Email))throw new ArgumentException();
-            if(string.IsNullOrWhiteSpace(request.Password))throw new ArgumentException();
+            if (string.IsNullOrWhiteSpace(request.Email)) throw new ArgumentException();
+            if (string.IsNullOrWhiteSpace(request.Password)) throw new ArgumentException();
 
             var user = await _userRepository.FindByEmail(request.Email)!;
             if (user == null)

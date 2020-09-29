@@ -6,9 +6,8 @@ namespace Padel.Test.Core
     {
         public string   Username      { get; private set; }
         public string   Email         { get; private set; }
+        public string   Name          { get; private set; }
         public string   Password      { get; private set; }
-        public string   FirstName     { get; private set; }
-        public string   LastName      { get; private set; }
         public DateTime DateOfBirth   { get; private set; }
         public string   FirebaseToken { get; private set; }
 
@@ -21,6 +20,7 @@ namespace Padel.Test.Core
             var firebaseToken = StringGenerator.RandomString(20);
             var firstName = StringGenerator.RandomString(10, StringGenerator.Letters);
             var lastName = StringGenerator.RandomString(10, StringGenerator.Letters);
+            var name = $"{firstName} {lastName}";
             var dateOfBirth = new DateTime(1996, 11, 07);
             return new UserGeneratedData
             {
@@ -28,8 +28,7 @@ namespace Padel.Test.Core
                 Password = password,
                 Username = username,
                 FirebaseToken = firebaseToken,
-                FirstName = firstName,
-                LastName = lastName,
+                Name = name,
                 DateOfBirth = dateOfBirth,
             };
         }
