@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
+        <ProjectReference Include="..\..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
         <ProjectReference Include="..\Padel.Identity\Padel.Identity.csproj" />
     </ItemGroup>
 

@@ -22,8 +22,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" />
-        <Protobuf Include="..\protos\user_v1\user_service.proto" Link="protos\user_service.proto" />
+        <Protobuf Include="..\..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" />
+        <Protobuf Include="..\..\protos\user_v1\user_service.proto" Link="protos\user_service.proto" />
     </ItemGroup>
 
 </Project>
