@@ -11,7 +11,7 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('123: ${context.bloc<AuthenticationBloc>().state.username}'),
+          Text('Name: ${context.bloc<AuthenticationBloc>().state.name}'),
           RaisedButton(
             child: const Text('Logout'),
             onPressed: () {

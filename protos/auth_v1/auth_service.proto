@@ -46,11 +46,10 @@ message SignInResponse {
 }
 
 message NewUser {
-    string username = 1;
+    string email = 1;
     string password = 2;
     string name = 3;
     Date dateOfBirth = 4;
-    string email = 5;
 
     message Date {
         int32 year = 1;

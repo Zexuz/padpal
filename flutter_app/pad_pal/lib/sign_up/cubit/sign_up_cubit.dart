@@ -30,14 +30,6 @@ class SignUpCubit extends Cubit<SignUpState> {
     ));
   }
 
-  void usernameChanged(String value) {
-    final username = Username.dirty(value);
-    emit(state.copyWith(
-      username: username,
-      status: Formz.validate([state.email, username]),
-    ));
-  }
-
   void nameChanged(String value) {
     final name = Name.dirty(value);
     emit(state.copyWith(
@@ -51,7 +43,6 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     try {
       await _authenticationRepository.signUp(
-        username: state.username.value,
         email: state.email.value,
         password: state.password.value,
         name: state.name.value,

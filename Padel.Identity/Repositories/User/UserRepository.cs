@@ -10,17 +10,6 @@ namespace Padel.Identity.Repositories.User
         {
         }
 
-        public async Task<User> FindByUsername(string username)
-        {
-            var dictionary = new Dictionary<string, object>
-            {
-                {"@Username", username}
-            };
-
-            using var conn = await ConnectionFactory.GetNewOpenConnection();
-            return await conn.QuerySingleOrDefaultAsync<User>("SELECT * from [User] where Username = @Username", dictionary);
-        }
-
         public async Task<User> FindByEmail(string email)
         {
             var dictionary = new Dictionary<string, object>

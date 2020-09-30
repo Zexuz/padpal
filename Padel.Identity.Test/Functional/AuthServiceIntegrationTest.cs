@@ -40,7 +40,6 @@ namespace Padel.Identity.Test.Functional
         {
             return new NewUser
             {
-                Username = user.Username,
                 Email = user.Email,
                 Password = user.Password,
                 Name = user.Name,
@@ -76,7 +75,6 @@ namespace Padel.Identity.Test.Functional
             Assert.True(timeRange < TimeSpan.FromSeconds(10));
 
             var meRes = await _userServiceClient.MeAsync(new MeRequest { }, await CreateAuthMetadata(signInResponse.Token));
-            Assert.Equal(_randomUser.Username, meRes.Me.Username);
             Assert.Equal(_randomUser.Email, meRes.Me.Email);
             Assert.Equal(_randomUser.Name, meRes.Me.Name);
 
@@ -89,7 +87,6 @@ namespace Padel.Identity.Test.Functional
             Assert.Equal(newAccessTokenRes.Token.RefreshToken, signInResponse.Token.RefreshToken);
 
             var meResWithNewAccessToken = await _userServiceClient.MeAsync(new MeRequest { }, await CreateAuthMetadata(newAccessTokenRes.Token));
-            Assert.Equal(_randomUser.Username, meResWithNewAccessToken.Me.Username);
             Assert.Equal(_randomUser.Email, meResWithNewAccessToken.Me.Email);
             Assert.Equal(_randomUser.Name, meResWithNewAccessToken.Me.Name);
         }
@@ -119,26 +116,11 @@ namespace Padel.Identity.Test.Functional
         }
 
         [Fact]
-        public async Task ThrowsErrorWhenUsernameIsTaken()
-        {
-            var payload = new SignUpRequest {User = CreateNewUser(_randomUser)};
-
-            await _authServiceClient.SignUpAsync(payload);
-
-            payload.User.Email = "someOtherEmail";
-
-            var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignUpAsync(payload));
-            Assert.Equal("username-already-taken", ex.Trailers.GetValue("x-custom-error"));
-        }
-
-        [Fact]
         public async Task ThrowsErrorWhenEmailIsTaken()
         {
             var payload = new SignUpRequest {User = CreateNewUser(_randomUser)};
 
             await _authServiceClient.SignUpAsync(payload);
-
-            payload.User.Username = "someNewUsername";
 
             var ex = await Assert.ThrowsAsync<RpcException>(async () => await _authServiceClient.SignUpAsync(payload));
             Assert.Equal("email-already-taken", ex.Trailers.GetValue("x-custom-error"));

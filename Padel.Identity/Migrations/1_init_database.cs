@@ -9,7 +9,6 @@ namespace Padel.Identity.Migrations
         {
             Create.Table("User")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable().Unique()
-                .WithColumn("Username").AsString(50).NotNullable().Unique()
                 .WithColumn("PasswordHash").AsString(200).NotNullable()
                 .WithColumn("Name").AsString(200).NotNullable()
                 .WithColumn("DateOfBirth").AsDate().NotNullable()

@@ -40,7 +40,6 @@ void main() {
         when(userServiceClient.me(any, options: anyNamed('options'))).thenAnswer(
           (_) => MockResponseFuture<MeResponse>(MeResponse()
             ..me = (pb.Me()
-              ..username = "zexuz"
               ..email = "robin@mkdir.se"
               ..name = "robin edbom")),
         );
@@ -50,7 +49,6 @@ void main() {
 
         var res = await userRepository.me();
 
-        expect(res.username, "zexuz");
         expect(res.email, "robin@mkdir.se");
         expect(res.name, "robin edbom");
 

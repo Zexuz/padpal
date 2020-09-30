@@ -27,7 +27,6 @@ namespace Padel.Identity.Runner.Controllers
                 Me = new Me
                 {
                     Email = user.Email,
-                    Username = user.Username,
                     Name = user.Name,
                 }
             };

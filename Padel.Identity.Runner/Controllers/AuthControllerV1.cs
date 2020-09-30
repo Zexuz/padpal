@@ -62,7 +62,6 @@ namespace Padel.Identity.Runner.Controllers
             {
                 Email = request.User.Email,
                 Password = request.User.Password,
-                Username = request.User.Username,
                 Name = request.User.Name,
                 DateOfBirth = DateTime.Parse($"{request.User.DateOfBirth.Year}-{request.User.DateOfBirth.Month}-{request.User.DateOfBirth.Day}")
             };
@@ -78,14 +77,6 @@ namespace Padel.Identity.Runner.Controllers
                 metadata.Add(entry);
                 metadata.Add("x-custom-error", "email-already-taken");
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Already taken email"), metadata);
-            }
-            catch (UsernameIsAlreadyTakenException)
-            {
-                var entry = new Metadata.Entry(nameof(request.User.Username), "the value is already taken");
-                var metadata = new Metadata();
-                metadata.Add(entry);
-                metadata.Add("x-custom-error", "username-already-taken");
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Already taken username"), metadata);
             }
 
             return new SignUpResponse();

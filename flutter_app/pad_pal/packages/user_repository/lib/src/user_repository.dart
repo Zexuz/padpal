@@ -3,7 +3,6 @@ import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:user_repository/generated/user_v1/user_service.pbgrpc.dart';
 
 class Me {
-  String username;
   String email;
   String name;
 }
@@ -23,7 +22,6 @@ class UserRepository {
     final protoRes = await call;
     return Me()
       ..email = protoRes.me.email
-      ..username = protoRes.me.username
       ..name = protoRes.me.name;
   }
 }

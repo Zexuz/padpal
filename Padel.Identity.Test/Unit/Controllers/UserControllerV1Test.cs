@@ -17,7 +17,6 @@ namespace Padel.Identity.Test.Unit.Controllers
             A.CallTo(() => fakeUserRepository.Get(10)).Returns(Task.FromResult(new User
             {
                 Email = "robin@email.com",
-                Username = "myUsername",
                 Name = "robin edbom",
             }));
 
@@ -28,7 +27,6 @@ namespace Padel.Identity.Test.Unit.Controllers
             var res = await controller.Me(new MeRequest(), ctx);
 
             Assert.Equal("robin@email.com", res.Me.Email);
-            Assert.Equal("myUsername", res.Me.Username);
             Assert.Equal("robin edbom", res.Me.Name);
         }
 

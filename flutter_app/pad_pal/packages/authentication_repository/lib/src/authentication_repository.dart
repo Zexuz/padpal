@@ -83,7 +83,6 @@ class AuthenticationRepository {
   Future<void> signUp({
     @required String email,
     @required String password,
-    @required String username,
     @required String name,
   }) async {
     assert(email != null);
@@ -92,7 +91,6 @@ class AuthenticationRepository {
     var call = _authServiceClient.signUp(SignUpRequest()
       ..user = (NewUser()
         ..email = email
-        ..username = username
         ..password = password
         ..name = name
         ..dateOfBirth = (NewUser_Date()

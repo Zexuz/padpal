@@ -12,9 +12,8 @@ service UserService {
 }
 
 message Me {
-  string username = 1;
-  string name = 2;
-  string email = 3;
+  string name = 1;
+  string email = 2;
 }
 
 message MeRequest {

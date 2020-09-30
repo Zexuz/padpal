@@ -59,8 +59,6 @@ class SignUpForm extends StatelessWidget {
                     ),
                     _NameInput(),
                     divider,
-                    _UsernameInput(),
-                    divider,
                     _EmailInput(),
                     divider,
                     _PasswordInput(),
@@ -120,27 +118,6 @@ class _PasswordInput extends StatelessWidget {
             errorText: state.password.invalid ? 'invalid password' : null,
             border: OutlineInputBorder(),
             labelText: "Password",
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _UsernameInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignUpCubit, SignUpState>(
-      buildWhen: (previous, current) => previous.username != current.username,
-      builder: (context, state) {
-        return TextField(
-          key: const Key('signUpForm_usernameInput_textField'),
-          onChanged: (password) => context.bloc<SignUpCubit>().usernameChanged(password),
-          decoration: InputDecoration(
-            suffixIcon: Icon(Icons.find_replace),
-            errorText: state.password.invalid ? 'invalid username' : null,
-            border: OutlineInputBorder(),
-            labelText: "Username",
           ),
         );
       },

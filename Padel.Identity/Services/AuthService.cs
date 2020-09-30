@@ -37,18 +37,10 @@ namespace Padel.Identity.Services
                 throw new EmailIsAlreadyTakenException(user.Email);
             }
 
-            var resultByUsername = await _userRepository.FindByUsername(user.Username)!;
-            if (resultByUsername != null)
-            {
-                _logger.LogError($"User with username {user.Username} already exists");
-                throw new UsernameIsAlreadyTakenException(user.Username);
-            }
-
             var hashedPassword = _passwordService.GenerateHashFromPlanText(user.Password);
 
             var userId = await _userRepository.Insert(new User
             {
-                Username = user.Username,
                 Email = user.Email,
                 PasswordHash = hashedPassword,
                 Name = user.Name,

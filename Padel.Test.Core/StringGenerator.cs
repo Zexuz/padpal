@@ -15,11 +15,6 @@ namespace Padel.Test.Core
             return RandomString(10, Letters) + "@gmail.com";
         }
 
-        public static string RandomUsername()
-        {
-            return RandomString(10);
-        }
-
         public static string RandomPassword()
         {
             return RandomString(10);

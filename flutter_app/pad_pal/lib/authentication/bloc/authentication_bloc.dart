@@ -55,18 +55,18 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       case AuthenticationStatus.unauthenticated:
         return const AuthenticationState.unauthenticated();
       case AuthenticationStatus.authenticated:
-        final user = await _tryGetUsername();
+        final user = await _tryGetName();
         return user != null ? AuthenticationState.authenticated(user) : const AuthenticationState.unauthenticated();
       default:
         return const AuthenticationState.unknown();
     }
   }
 
-  Future<String> _tryGetUsername() async {
+  Future<String> _tryGetName() async {
     try {
-      return (await _userRepository.me()).username;
+      return (await _userRepository.me()).name;
     } catch (e) {
-      return "debug";
+      return "UNKNOWN NAME";
     }
   }
 }
