@@ -17,6 +17,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Padel.Notification.Runner\Padel.Notification.Runner.csproj" />
-        <ProjectReference Include="..\Padel.Test.Core\Padel.Test.Core.csproj" />
+        <ProjectReference Include="..\..\Padel.Test.Core\Padel.Test.Core.csproj" />
     </ItemGroup>
 </Project>

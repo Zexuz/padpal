@@ -6,12 +6,18 @@ services:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/gateway"
     environment:
       CHAT_ADDRESS: "chat:5001"
+      IDENTITY_ADDRESS: "identity:5002"
+      NOTIFICATION_ADDRESS: "notification:5003"
     ports:
       - target: 50051
         published: 50051
 
   chat:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/chat"
-    environment:
-      GODEBUG: "${GODEBUG_ENV}"
+
+  identity:
+    image: "docker.pkg.github.com/mkdir-sweden/padpal/identity"
+
+  notification:
+    image: "docker.pkg.github.com/mkdir-sweden/padpal/notification"
 
