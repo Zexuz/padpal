@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.31.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
+        <ProjectReference Include="..\Padel.Identity\Padel.Identity.csproj" />
+    </ItemGroup>
+
+</Project>
