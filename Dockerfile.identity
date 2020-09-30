@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
+WORKDIR /app/identity
+
+# Copy csproj and restore as distinct layers
+COPY ./identity/Padel.Identity/*.csproj ./identity/Padel.Identity/
+COPY ./identity/Padel.Identity.Runner/*.csproj ./identity/Padel.Identity.Runner/
+COPY ./Padel.Grpc.Core/Padel.Grpc.Core.csproj ./Padel.Grpc.Core/
+COPY ./Padel.Queue/Padel.Queue.csproj ./Padel.Queue/
+COPY ./Padel.Repository.Core/Padel.Repository.Core.csproj ./Padel.Repository.Core/
+
+RUN dotnet restore ./identity/Padel.Identity.Runner/
+
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish ./identity/Padel.Identity.Runner -c Release -o out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+WORKDIR /app
+COPY --from=build-env /app/identity/out .
+ENTRYPOINT ["dotnet", "Padel.Identity.Runner.dll"]
