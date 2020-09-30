@@ -1,0 +1,1 @@
+docker build -f Dockerfile.chat . -t docker.pkg.github.com/mkdir-sweden/padpal/chat:latest
