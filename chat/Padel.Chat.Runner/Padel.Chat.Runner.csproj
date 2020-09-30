@@ -11,7 +11,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Padel.Chat\Padel.Chat.csproj" />
-      <ProjectReference Include="..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
+      <ProjectReference Include="..\..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
     </ItemGroup>
 
 </Project>
