@@ -1,12 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
+import 'package:pad_pal/components/button/light/button_small_light.dart';
 import 'package:pad_pal/components/button/primary/button_large_primary.dart';
 import 'package:pad_pal/components/button/texbt_button/text_button.dart';
 import 'package:pad_pal/sign_in/cubit/sign_in_cubit.dart';
 import 'package:pad_pal/sign_up/sign_up.dart';
+import 'package:pad_pal/theme.dart';
 
 class SignInForm extends StatelessWidget {
+  static const double minHeight = 12.0;
+  static const Widget divider = const SizedBox(height: minHeight);
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignInCubit, SignInState>(
@@ -19,38 +24,58 @@ class SignInForm extends StatelessWidget {
             );
         }
       },
-      child: ListView(
-        children: [
-          const SizedBox(height: 48.0),
-          Center(
-            child: const Text("<LOGO GOES HERE>"),
-          ),
-          const SizedBox(height: 48.0),
-          Center(
-            child: const Text(
-              "Sign in",
-              style: TextStyle(color: Color(0xFF172331), fontSize: 36, fontWeight: FontWeight.w700),
+      child: LayoutBuilder(
+        builder: (context, constraint) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraint.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Center(
+                      child: Text("PadelPal", style: AppTheme.logo),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Center(
+                      child: const Text(
+                        "Sign in",
+                        style: TextStyle(color: Color(0xFF172331), fontSize: 36, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    divider,
+                    Center(
+                      child: const Text(
+                        "Find new padel pals and\njoin games nearby",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Color(0xFF959DA6), fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    _EmailInput(),
+                    divider,
+                    _PasswordInput(),
+                    divider,
+                    _ForgotPassword(),
+                    divider,
+                    _LoginButton(),
+                    Expanded(
+                      flex: 2,
+                      child: Container(),
+                    ),
+                    _SwitchToSignUp(),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 12.0),
-          Center(
-            child: const Text(
-              "Find new padel pals and\njoin games nearby",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF959DA6), fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          _EmailInput(),
-          const SizedBox(height: 8.0),
-          _PasswordInput(),
-          const SizedBox(height: 8.0),
-          _LoginButton(),
-          const SizedBox(height: 8.0),
-          _LoginDebugButton(),
-          const SizedBox(height: 4.0),
-          _SwitchToSignUp(),
-        ],
+          );
+        },
       ),
     );
   }
@@ -108,34 +133,16 @@ class _LoginButton extends StatelessWidget {
       builder: (context, state) {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
-            : ButtonLargePrimary(
-                key: const Key('loginForm_continue_raisedButton'),
-                text: 'Sign in',
-                isDisabled: false,
-                stretch: false,
-                onPressed: state.status.isValidated ? () => context.bloc<SignInCubit>().SignInWithCredentials() : null,
-              );
-      },
-    );
-  }
-}
-
-class _LoginDebugButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignInCubit, SignInState>(
-      buildWhen: (previous, current) => previous.status != current.status,
-      builder: (context, state) {
-        return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
-            : RaisedButton(
-                key: const Key('loginDebugForm_continue_raisedButton'),
-                child: const Text('LOGIN DEBUG'),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+            : SizedBox(
+                width: double.infinity,
+                child: ButtonLargePrimary(
+                  key: const Key('loginForm_continue_raisedButton'),
+                  text: 'Sign in',
+                  isDisabled: false,
+                  stretch: false,
+                  onPressed:
+                      state.status.isValidated ? () => context.bloc<SignInCubit>().SignInWithCredentials() : null,
                 ),
-                color: const Color(0xFFFFD600),
-                onPressed: () => context.bloc<SignInCubit>().SignInDebug(),
               );
       },
     );
@@ -154,9 +161,23 @@ class _SwitchToSignUp extends StatelessWidget {
         ),
         TextButton(
           onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
-          text: "Sign in",
+          text: "Sign up",
         ),
       ],
+    );
+  }
+}
+
+class _ForgotPassword extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: TextButton(
+        key: const Key('loginForm_forgot_password_raisedButton'),
+        text: 'Forgot password?',
+        onPressed: () => {},
+      ),
     );
   }
 }

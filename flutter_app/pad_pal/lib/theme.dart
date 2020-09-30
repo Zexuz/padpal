@@ -13,6 +13,8 @@ class AppTheme {
   static Color secondaryColorOrange = Color.fromRGBO(255, 158, 0, 1);
   static Color secondaryColorOrangeWithOpacity = Color.fromRGBO(255, 158, 0, 0.12);
 
+  static TextStyle logo = TextStyle(color: primary, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, fontSize: 21);
+
   static ThemeData Current = ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.light,

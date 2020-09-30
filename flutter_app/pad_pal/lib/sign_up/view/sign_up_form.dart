@@ -5,8 +5,12 @@ import 'package:pad_pal/components/button/primary/button_large_primary.dart';
 import 'package:pad_pal/components/button/texbt_button/text_button.dart';
 import 'package:pad_pal/sign_in/signIn.dart';
 import 'package:pad_pal/sign_up/cubit/sign_up_cubit.dart';
+import 'package:pad_pal/theme.dart';
 
 class SignUpForm extends StatelessWidget {
+  static const double minHeight = 12.0;
+  static const Widget divider = const SizedBox(height: minHeight);
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpCubit, SignUpState>(
@@ -19,40 +23,61 @@ class SignUpForm extends StatelessWidget {
             );
         }
       },
-      child: ListView(
-        children: [
-          const SizedBox(height: 48.0),
-          Center(
-            child: const Text("<LOGO GOES HERE>"),
-          ),
-          const SizedBox(height: 48.0),
-          Center(
-            child: const Text(
-              "Sign up",
-              style: TextStyle(color: Color(0xFF172331), fontSize: 36, fontWeight: FontWeight.w700),
+      child: LayoutBuilder(
+        builder: (context, constraint) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraint.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Center(
+                      child: Text("PadelPal", style: AppTheme.logo),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Center(
+                      child: const Text(
+                        "Sign in",
+                        style: TextStyle(color: Color(0xFF172331), fontSize: 36, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    divider,
+                    Center(
+                      child: const Text(
+                        "Find new padel pals and\njoin games nearby",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Color(0xFF959DA6), fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    _NameInput(),
+                    divider,
+                    _UsernameInput(),
+                    divider,
+                    _EmailInput(),
+                    divider,
+                    _PasswordInput(),
+                    divider,
+                    divider,
+                    _SignUpButton(),
+                    Expanded(
+                      flex: 2,
+                      child: Container(),
+                    ),
+                    _SwitchToSignIn(),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 12.0),
-          Center(
-            child: const Text(
-              "Find new padel pals and\njoin games nearby",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF959DA6), fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          const SizedBox(height: 38.0),
-          _NameInput(),
-          const SizedBox(height: 12.0),
-          _UsernameInput(),
-          const SizedBox(height: 12.0),
-          _EmailInput(),
-          const SizedBox(height: 12.0),
-          _PasswordInput(),
-          const SizedBox(height: 24.0),
-          _SignUpButton(),
-          const SizedBox(height: 12.0),
-          _SwitchToSignIn(),
-        ],
+          );
+        },
       ),
     );
   }
@@ -152,12 +177,15 @@ class _SignUpButton extends StatelessWidget {
       builder: (context, state) {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
-            : ButtonLargePrimary(
-                key: const Key('signUpForm_continue_raisedButton'),
-                text: 'Sign up',
-                isDisabled: false,
-                stretch: false,
-                onPressed: state.status.isValidated ? () => context.bloc<SignUpCubit>().signUpFormSubmitted() : null,
+            : SizedBox(
+                width: double.infinity,
+                child: ButtonLargePrimary(
+                  key: const Key('signUpForm_continue_raisedButton'),
+                  text: 'Sign up',
+                  isDisabled: false,
+                  stretch: false,
+                  onPressed: state.status.isValidated ? () => context.bloc<SignUpCubit>().signUpFormSubmitted() : null,
+                ),
               );
       },
     );

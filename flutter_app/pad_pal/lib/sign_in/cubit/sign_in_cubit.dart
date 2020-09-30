@@ -34,6 +34,7 @@ class SignInCubit extends Cubit<SignInState> {
     }
   }
 
+  // TODO REMOVE
   Future<void> SignInDebug() async {
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
     _authenticationRepository.loginDebug();
