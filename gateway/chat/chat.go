@@ -2,6 +2,7 @@ package chat
 
 import (
 	"context"
+	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/protos/chat_v1"
 	"google.golang.org/grpc"
 )
@@ -9,6 +10,11 @@ import (
 func NewChatService(conn *grpc.ClientConn) *chatpb.ChatServiceService {
 	client := &chatService{
 		pbClient: chatpb.NewChatServiceClient(conn),
+	}
+
+	err := hc.AddChecker("chat", conn)
+	if err != nil {
+		panic(err)
 	}
 
 	service := &chatpb.ChatServiceService{

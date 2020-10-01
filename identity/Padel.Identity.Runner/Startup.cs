@@ -1,10 +1,12 @@
 ﻿using Autofac;
+using Grpc.HealthCheck;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Padel.Identity.Runner.Controllers;
+using Padel.Identity.Runner.HealthCheck;
 
 namespace Padel.Identity.Runner
 {
@@ -27,6 +29,10 @@ namespace Padel.Identity.Runner
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            
+            services.AddHealthChecks();
+            services.AddSingleton<HealthServiceImpl>();
+            services.AddHostedService<StatusService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +47,7 @@ namespace Padel.Identity.Runner
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<HealthServiceImpl>();
                 endpoints.MapGrpcService<AuthControllerV1>();
                 endpoints.MapGrpcService<UserControllerV1>();
             });

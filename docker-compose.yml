@@ -14,10 +14,34 @@ services:
 
   chat:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/chat"
+    environment:
+      CHAT_Connections__MongoDb__padel__url: "mongodb://localhost:27017"
+      CHAT_Connections__MongoDb__padel__database: "padel"
+      CHAT_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
+      CHAT_AWS__SecretKey: "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"
+      CHAT_AWS__Region: "eu-north-1"
+      CHAT_AWS__Queue__Name: "chat-service"
 
   identity:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/identity"
+    environment:
+      CHAT_Connections__Sql__padel: "Server=127.0.0.1,1433;Database=padel;User=sa;Password=yourStrong(!)Password;"
+      CHAT_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
+      CHAT_AWS__SecretKey: "XRlwiULA747KLVutN/lF+mRMYPvMUmcHffR3EfIl"
+      CHAT_AWS__Region: "eu-north-1"
+      CHAT_AWS__Queue__Name: "chat-service"
 
   notification:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/notification"
+    volumes:
+      - "/home/robin/Downloads/padpal-firebase-adminsdk.json:/config/padpal-firebase-adminsdk.json:"
+    environment:
+      NOTIFICATION_Connections__MongoDb__padel__url: "mongodb://localhost:27017"
+      NOTIFICATION_Connections__MongoDb__padel__database: "padel"
+      NOTIFICATION_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
+      NOTIFICATION_AWS__SecretKey: "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"
+      NOTIFICATION_AWS__Region: "eu-north-1"
+      NOTIFICATION_AWS__Queue__Name: "notification-service"
+      NOTIFICATION_AWS__Topics__0: "chat_v1_ChatMessageReceived"
+      GOOGLE_APPLICATION_CREDENTIALS: "/config/padpal-firebase-adminsdk.json"
 

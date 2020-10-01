@@ -2,6 +2,7 @@ package notification
 
 import (
 	"context"
+	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/protos/notification_v1"
 	"google.golang.org/grpc"
 )
@@ -9,6 +10,11 @@ import (
 func NewNotificationService(conn *grpc.ClientConn) *noticitaionpb.NotificationService {
 	client := &authService{
 		client: noticitaionpb.NewNotificationClient(conn),
+	}
+
+	err := hc.AddChecker("notification", conn)
+	if err != nil {
+		panic(err)
 	}
 
 	service := &noticitaionpb.NotificationService{

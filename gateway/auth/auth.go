@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/protos/auth_v1"
 	"google.golang.org/grpc"
 )
@@ -9,6 +10,11 @@ import (
 func NewAuthService(conn *grpc.ClientConn) *authpb.AuthServiceService {
 	client := &authService{
 		client: authpb.NewAuthServiceClient(conn),
+	}
+
+	err := hc.AddChecker("identity", conn)
+	if err != nil {
+		panic(err)
 	}
 
 	service := &authpb.AuthServiceService{
