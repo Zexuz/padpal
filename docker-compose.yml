@@ -2,8 +2,28 @@ version: '3.5'
 
 services:
 
+  mongo:
+    image: "mongo"
+    restart: always
+    ports:
+      - target: 27017
+        published: 27017
+
+  mssql:
+    image: "mcmoe/mssqldocker"
+    restart: always
+    ports:
+      - target: 1433
+        published: 1433
+    environment:
+      MSSQL_DB: "padel"
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "yourStrong(!)Password"
+      MSSQL_PID: "Express"
+
   gateway:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/gateway"
+    restart: always
     environment:
       CHAT_ADDRESS: "chat:5001"
       IDENTITY_ADDRESS: "identity:5002"
@@ -14,6 +34,7 @@ services:
 
   chat:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/chat"
+    restart: always
     environment:
       CHAT_Connections__MongoDb__padel__url: "mongodb://localhost:27017"
       CHAT_Connections__MongoDb__padel__database: "padel"
@@ -24,15 +45,17 @@ services:
 
   identity:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/identity"
+    restart: always
     environment:
-      CHAT_Connections__Sql__padel: "Server=127.0.0.1,1433;Database=padel;User=sa;Password=yourStrong(!)Password;"
-      CHAT_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
-      CHAT_AWS__SecretKey: "XRlwiULA747KLVutN/lF+mRMYPvMUmcHffR3EfIl"
-      CHAT_AWS__Region: "eu-north-1"
-      CHAT_AWS__Queue__Name: "chat-service"
+      IDENTITY_Connections__Sql__padel: "Server=mssql,1433;Database=padel;User=sa;Password=yourStrong(!)Password;"
+      IDENTITY_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
+      IDENTITY_AWS__SecretKey: "XRlwiULA747KLVutN/lF+mRMYPvMUmcHffR3EfIl"
+      IDENTITY_AWS__Region: "eu-north-1"
+      IDENTITY_AWS__Queue__Name: "chat-service"
 
   notification:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/notification"
+    restart: always
     volumes:
       - "/home/robin/Downloads/padpal-firebase-adminsdk.json:/config/padpal-firebase-adminsdk.json:"
     environment:
