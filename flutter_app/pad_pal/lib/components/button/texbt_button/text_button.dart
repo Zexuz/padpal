@@ -9,14 +9,10 @@ class TextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    return InkWell(
-      onTap: onPressed,
-      child: RichText(
-        text: TextSpan(
-          style: theme.textTheme.bodyText1.copyWith(color: theme.primaryColor),
-          text: text,
-        ),
-      ),
+    return FlatButton(
+      textColor: theme.primaryColor,
+      child: Text(text),
+      onPressed: onPressed,
     );
   }
 }

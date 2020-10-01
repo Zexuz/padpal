@@ -19,7 +19,7 @@ class CredentialPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 6),
         child: BlocProvider<CredentialCubit>(
           create: (_) => CredentialCubit(
             context.repository<AuthenticationRepository>(),
@@ -76,7 +76,7 @@ class _CredentialPage extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(
-                      child: Container(),
+                    child: Container(),
                   ),
                   Center(
                     child: Text("PadelPal", style: AppTheme.logo),
