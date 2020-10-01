@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-IMAGE_NAME=docker.pkg.github.com/mkdir-sweden/padpal/gateway:latest
+GIT_HASH=$(git rev-parse --short HEAD)
 
-docker build . -t $IMAGE_NAME
-docker push $IMAGE_NAME
+IMAGE_NAME=docker.pkg.github.com/mkdir-sweden/padpal/gateway
+
+docker build . -t $IMAGE_NAME:latest
+docker push $IMAGE_NAME:latest
+docker push $IMAGE_NAME:"$GIT_HASH"
