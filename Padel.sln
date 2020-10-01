@@ -1,20 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity", "Padel.Identity\Padel.Identity.csproj", "{31DFD7CB-E143-4894-9B6E-47C3BF723A63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity", "identity\Padel.Identity\Padel.Identity.csproj", "{31DFD7CB-E143-4894-9B6E-47C3BF723A63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity.Test", "Padel.Identity.Test\Padel.Identity.Test.csproj", "{ABB6C984-EA8D-4571-B74D-51D19D98AA91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity.Test", "identity\Padel.Identity.Test\Padel.Identity.Test.csproj", "{ABB6C984-EA8D-4571-B74D-51D19D98AA91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat", "Padel.Chat\Padel.Chat.csproj", "{727CB04D-32A1-498D-B737-3E6564DCB809}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat", "chat\Padel.Chat\Padel.Chat.csproj", "{727CB04D-32A1-498D-B737-3E6564DCB809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat.Test", "Padel.Chat.Test\Padel.Chat.Test.csproj", "{AD5597A2-4083-4B9F-B0BA-7254B2ED03E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat.Test", "chat\Padel.Chat.Test\Padel.Chat.Test.csproj", "{AD5597A2-4083-4B9F-B0BA-7254B2ED03E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{6698BE56-6D83-48AF-A824-AD614721A81F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Queue", "Padel.Queue\Padel.Queue.csproj", "{ABD5DEBE-D87A-4F45-9306-F8B2A36E7D62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat.Runner", "Padel.Chat.Runner\Padel.Chat.Runner.csproj", "{A221725A-1A57-4F20-BB62-89F2DC3ACF07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Chat.Runner", "chat\Padel.Chat.Runner\Padel.Chat.Runner.csproj", "{A221725A-1A57-4F20-BB62-89F2DC3ACF07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity.Runner", "Padel.Identity.Runner\Padel.Identity.Runner.csproj", "{F1578E88-63D1-4AD6-BA9D-B7B031B9AF71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Identity.Runner", "identity\Padel.Identity.Runner\Padel.Identity.Runner.csproj", "{F1578E88-63D1-4AD6-BA9D-B7B031B9AF71}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Test.Core", "Padel.Test.Core\Padel.Test.Core.csproj", "{8A31ADCD-A8DE-4AFD-963D-A797D46B5100}"
 EndProject
@@ -24,11 +24,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notification", "Notification", "{307ABDD5-5228-4706-B061-50E35D2EC9D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Notification.Runner", "Padel.Notification.Runner\Padel.Notification.Runner.csproj", "{F0848478-DC95-43D1-93BC-7A10E167CBE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Notification.Runner", "notification\Padel.Notification.Runner\Padel.Notification.Runner.csproj", "{F0848478-DC95-43D1-93BC-7A10E167CBE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Notification.Test", "Padel.Notification.Test\Padel.Notification.Test.csproj", "{4E51D8DB-E761-4C6C-8D80-00AF17FAF904}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Notification.Test", "notification\Padel.Notification.Test\Padel.Notification.Test.csproj", "{4E51D8DB-E761-4C6C-8D80-00AF17FAF904}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Notification", "Padel.Notification\Padel.Notification.csproj", "{2061A611-F208-4D3A-8E63-9458C899BC19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Notification", "notification\Padel.Notification\Padel.Notification.csproj", "{2061A611-F208-4D3A-8E63-9458C899BC19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Padel.Grpc.Core", "Padel.Grpc.Core\Padel.Grpc.Core.csproj", "{D86C3631-3AF5-49FC-AA02-3C05271EC714}"
 EndProject

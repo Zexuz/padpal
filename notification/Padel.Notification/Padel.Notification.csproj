@@ -18,13 +18,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\protos\notification_v1\notification_service.proto" Link="protos\notification_service.proto" ProtoRoot="..\protos\" />
-        <Protobuf Include="..\protos\chat_v1\chat_service.proto" Link="protos\chat_service.proto" ProtoRoot="..\protos\" />
-        <Protobuf Include="..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
+        <Protobuf Include="..\..\protos\notification_v1\notification_service.proto" Link="protos\notification_service.proto" ProtoRoot="..\..\protos\" />
+        <Protobuf Include="..\..\protos\chat_v1\chat_service.proto" Link="protos\chat_service.proto" ProtoRoot="..\..\protos\" />
+        <Protobuf Include="..\..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Padel.Queue\Padel.Queue.csproj" />
-      <ProjectReference Include="..\Padel.Repository.Core\Padel.Repository.Core.csproj" />
+      <ProjectReference Include="..\..\Padel.Queue\Padel.Queue.csproj" />
+      <ProjectReference Include="..\..\Padel.Repository.Core\Padel.Repository.Core.csproj" />
     </ItemGroup>
 </Project>

@@ -12,9 +12,8 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
+      <ProjectReference Include="..\..\Padel.Grpc.Core\Padel.Grpc.Core.csproj" />
       <ProjectReference Include="..\Padel.Notification\Padel.Notification.csproj" />
-      <ProjectReference Include="..\Padel.Queue.Interface\Padel.Queue.Interface.csproj" />
     </ItemGroup>
 
 </Project>

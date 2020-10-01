@@ -153,3 +153,6 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 
 appsettings.Development.json
+
+/gateway/protos/**/*
+flutter_app/pad_pal/packages/**/lib/generated
