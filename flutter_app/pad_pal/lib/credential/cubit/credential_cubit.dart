@@ -3,16 +3,23 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:pad_pal/authentication/models/models.dart';
-import 'package:pad_pal/authentication/models/name.dart';
 
-part 'sign_up_state.dart';
+part 'credential_state.dart';
 
-class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit(this._authenticationRepository)
+class CredentialCubit extends Cubit<CredentialState> {
+  CredentialCubit(this._authenticationRepository)
       : assert(_authenticationRepository != null),
-        super(const SignUpState());
+        super(const CredentialState(view: View.SignUp));
 
   final AuthenticationRepository _authenticationRepository;
+
+  ToggleView() {
+    if (state.view == View.SignIn) {
+      emit(state.copyWith(view: View.SignUp));
+    } else {
+      emit(state.copyWith(view: View.SignIn));
+    }
+  }
 
   void emailChanged(String value) {
     final email = Email.dirty(value);
@@ -46,6 +53,20 @@ class SignUpCubit extends Cubit<SignUpState> {
         email: state.email.value,
         password: state.password.value,
         name: state.name.value,
+      );
+      emit(state.copyWith(status: FormzStatus.submissionSuccess));
+    } on Exception {
+      emit(state.copyWith(status: FormzStatus.submissionFailure));
+    }
+  }
+
+  Future<void> SignInWithCredentials() async {
+    if (!state.status.isValidated) return;
+    emit(state.copyWith(status: FormzStatus.submissionInProgress));
+    try {
+      await _authenticationRepository.signIn(
+        email: state.email.value,
+        password: state.password.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {

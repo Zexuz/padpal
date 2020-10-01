@@ -12,6 +12,3 @@ export 'avatar/dotted_avatar.dart';
 export 'avatar/leader_avatar.dart';
 
 export 'card/card.dart';
-
-export 'input/password_input.dart';
-export 'input/text_input.dart';

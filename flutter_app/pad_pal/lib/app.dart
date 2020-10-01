@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/authentication/authentication.dart';
 import 'package:pad_pal/home/view/home_page.dart';
-import 'package:pad_pal/sign_up/view/sign_up_page.dart';
 import 'package:pad_pal/splash/splash.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:user_repository/user_repository.dart';
+
+import 'credential/view/credential_page.dart';
 
 class App extends StatelessWidget {
   @override
@@ -62,7 +63,7 @@ class _AppViewState extends State<AppView> {
                 break;
               case AuthenticationStatus.unauthenticated:
                 _navigator.pushAndRemoveUntil<void>(
-                  SignUpPage.route(),
+                  CredentialPage.route(),
                   (route) => false,
                 );
                 break;
