@@ -2,43 +2,20 @@ package chat
 
 import (
 	"context"
+	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/protos/chat_v1"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/health"
-	"google.golang.org/grpc/health/grpc_health_v1"
-	"google.golang.org/grpc/status"
-	"log"
-	"time"
 )
 
-const serviceName = "chat"
-const interval = 1 * time.Second
-
-func NewChatService(conn *grpc.ClientConn, hs *health.Server) *chatpb.ChatServiceService {
+func NewChatService(conn *grpc.ClientConn) *chatpb.ChatServiceService {
 	client := &chatService{
 		pbClient: chatpb.NewChatServiceClient(conn),
 	}
 
-	healthClient := grpc_health_v1.NewHealthClient(conn)
-	go func() {
-		for {
-			res, err := healthClient.Check(context.Background(), &grpc_health_v1.HealthCheckRequest{
-				Service: "",
-			})
-			if err != nil {
-				if stat, ok := status.FromError(err); ok && stat.Code() == codes.Unimplemented {
-					log.Printf("the service %s doesn't implement the grpc health protocol\n", serviceName)
-				} else {
-					log.Printf("rpc failed %s", err)
-					hs.SetServingStatus(serviceName, grpc_health_v1.HealthCheckResponse_NOT_SERVING)
-				}
-			} else {
-				hs.SetServingStatus(serviceName, res.Status)
-			}
-			time.Sleep(interval)
-		}
-	}()
+	err := hc.AddChecker("chat", conn)
+	if err != nil {
+		panic(err)
+	}
 
 	service := &chatpb.ChatServiceService{
 		SendMessage:                      client.SendMessage,
