@@ -5,6 +5,8 @@ services:
   mongo:
     image: "mongo"
     restart: always
+    volumes:
+      - mongodb-server-linux-data:/data/db
     ports:
       - target: 27017
         published: 27017
@@ -12,6 +14,8 @@ services:
   mssql:
     image: "mcmoe/mssqldocker"
     restart: always
+    volumes:
+      - mssql-server-linux-data:/var/opt/mssql/data
     ports:
       - target: 1433
         published: 1433
@@ -67,4 +71,8 @@ services:
       NOTIFICATION_AWS__Queue__Name: "notification-service"
       NOTIFICATION_AWS__Topics__0: "chat_v1_ChatMessageReceived"
       GOOGLE_APPLICATION_CREDENTIALS: "/config/padpal-firebase-adminsdk.json"
+
+volumes:
+  mssql-server-linux-data:
+  mongodb-server-linux-data:
 
