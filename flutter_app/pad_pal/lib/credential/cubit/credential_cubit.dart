@@ -13,7 +13,7 @@ class CredentialCubit extends Cubit<CredentialState> {
 
   final AuthenticationRepository _authenticationRepository;
 
-  ToggleView() {
+  toggleView() {
     if (state.view == View.SignIn) {
       emit(state.copyWith(view: View.SignUp));
     } else {
@@ -55,6 +55,8 @@ class CredentialCubit extends Cubit<CredentialState> {
         name: state.name.value,
       );
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
+      toggleView();
+      await SignInWithCredentials();
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
     }

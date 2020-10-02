@@ -139,7 +139,7 @@ class _ToggleView extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12.0, color: Color(0xFF959DA6)),
         ),
         TextButton(
-          onPressed: () => context.bloc<CredentialCubit>().ToggleView(),
+          onPressed: () => context.bloc<CredentialCubit>().toggleView(),
           text: this.btnText,
         ),
       ],
