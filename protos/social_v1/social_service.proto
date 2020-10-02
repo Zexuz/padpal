@@ -37,6 +37,24 @@ service Social {
       shouldValidate:true,
     };
   }
+
+  rpc SearchForProfile (SearchForProfileRequest) returns (SearchForProfileResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message SearchForProfileRequest {
+  string searchTerm = 1;
+}
+
+message SearchForProfileResponse {
+  repeated Profile profiles = 1;
+}
+
+message Profile{
+  string name = 1;
 }
 
 message SendMessageRequest {

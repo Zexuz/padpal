@@ -1,7 +1,9 @@
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Padel.Queue;
 using Padel.Repository.Core.MongoDb;
 using Padel.Social.Factories;
+using Padel.Social.MessageProcessors;
 using Padel.Social.Repositories;
 using Padel.Social.Services.Impl;
 using Padel.Social.Services.Interface;
@@ -26,6 +28,7 @@ namespace Padel.Social
             }).As<IMongoDbSettings>();
             builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
 
+            builder.RegisterType<UserSignUpMessageProcessor>().As<IMessageProcessor>();
             builder.RegisterType<MessageFactory>().As<IMessageFactory>();
             builder.RegisterType<RoomFactory>().As<IRoomFactory>();
             builder.RegisterType<RoomService>().As<IRoomService>();

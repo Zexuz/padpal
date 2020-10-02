@@ -8,7 +8,6 @@ using Padel.Identity.Services;
 using Padel.Identity.Services.JsonWebToken;
 using Padel.Identity.Test.Functional.Helpers;
 using Padel.Proto.Auth.V1;
-using Padel.Proto.User.V1;
 using Padel.Test.Core;
 using Xunit;
 using AuthService = Padel.Proto.Auth.V1.AuthService;
@@ -51,14 +50,12 @@ namespace Padel.Identity.Test.Functional
     public class AuthServiceIntegrationTest : GrpcIntegrationTestBase, IClassFixture<SqlWebApplicationFactory<Startup>>
     {
         private readonly AuthService.AuthServiceClient _authServiceClient;
-        private readonly UserService.UserServiceClient _userServiceClient;
         private readonly UserGeneratedData             _randomUser;
 
         public AuthServiceIntegrationTest(SqlWebApplicationFactory<Startup> factory)
         {
             var channel = factory.CreateGrpcChannel();
             _authServiceClient = new AuthService.AuthServiceClient(channel);
-            _userServiceClient = new UserService.UserServiceClient(channel);
             _randomUser = UserGeneratedData.Random();
         }
 
@@ -74,10 +71,6 @@ namespace Padel.Identity.Test.Functional
             var timeRange = DateTimeOffset.FromUnixTimeSeconds(signInResponse.Token.Expires) - DateTimeOffset.UtcNow - expectedTokenLength;
             Assert.True(timeRange < TimeSpan.FromSeconds(10));
 
-            var meRes = await _userServiceClient.MeAsync(new MeRequest { }, await CreateAuthMetadata(signInResponse.Token));
-            Assert.Equal(_randomUser.Email, meRes.Me.Email);
-            Assert.Equal(_randomUser.Name, meRes.Me.Name);
-
             // The JWT genreator will generate the same token twice sine there are no time between call
             await Task.Delay(1000);
 
@@ -85,10 +78,6 @@ namespace Padel.Identity.Test.Functional
                 {RefreshToken = signInResponse.Token.RefreshToken}, await CreateAuthMetadata(signInResponse.Token));
             Assert.NotEqual(newAccessTokenRes.Token.AccessToken, signInResponse.Token.AccessToken);
             Assert.Equal(newAccessTokenRes.Token.RefreshToken, signInResponse.Token.RefreshToken);
-
-            var meResWithNewAccessToken = await _userServiceClient.MeAsync(new MeRequest { }, await CreateAuthMetadata(newAccessTokenRes.Token));
-            Assert.Equal(_randomUser.Email, meResWithNewAccessToken.Me.Email);
-            Assert.Equal(_randomUser.Name, meResWithNewAccessToken.Me.Name);
         }
 
         [Fact]

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
@@ -22,8 +22,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" />
-        <Protobuf Include="..\..\protos\user_v1\user_service.proto" Link="protos\user_service.proto" />
+        <Protobuf Include="..\..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" ProtoRoot="..\..\protos\"/>
+        <Protobuf Include="..\..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Padel.Queue\Padel.Queue.csproj" />
     </ItemGroup>
 
 </Project>

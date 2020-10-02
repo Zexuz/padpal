@@ -3,11 +3,15 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Padel.Identity.Exceptions;
-using Padel.Identity.Models;
 using Padel.Identity.Repositories.User;
 using Padel.Identity.Services;
-using Padel.Identity.Services.JsonWebToken;
+using Padel.Proto.Auth.V1;
+using Padel.Queue;
 using Xunit;
+using AuthService = Padel.Identity.Services.AuthService;
+using NewUser = Padel.Identity.Models.NewUser;
+using OAuthToken = Padel.Identity.Services.JsonWebToken.OAuthToken;
+using SignInRequest = Padel.Identity.Models.SignInRequest;
 
 namespace Padel.Identity.Test.Unit
 {
@@ -17,7 +21,7 @@ namespace Padel.Identity.Test.Unit
         private readonly IUserRepository      _fakeUserRepo;
         private readonly IPasswordService     _fakePasswordService;
         private readonly IOAuthTokenService   _fakeAuthTokenService;
-
+        private readonly IPublisher           _fakePublisher;
 
         private readonly AuthService _sut;
 
@@ -27,8 +31,9 @@ namespace Padel.Identity.Test.Unit
             _fakeUserRepo = A.Fake<IUserRepository>();
             _fakePasswordService = A.Fake<IPasswordService>();
             _fakeAuthTokenService = A.Fake<IOAuthTokenService>();
+            _fakePublisher = A.Fake<IPublisher>();
 
-            _sut = new AuthService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService);
+            _sut = new AuthService(_fakeUserRepo, _fakePasswordService, _fakeLogger, _fakeAuthTokenService, _fakePublisher);
         }
 
         [Fact]
@@ -104,12 +109,6 @@ namespace Padel.Identity.Test.Unit
             )).MustHaveHappenedOnceExactly();
         }
 
-        // TODO
-        // [X] Creat a user service, that the GRPC registerUser calls.
-        // [X] In that, verifies that the users email does not already exist
-        // [X] If it does not, Add the new user.
-        // [X] Hash the password.
-        // [ ] And publish a new event that says a new user has been created.
         [Theory]
         [InlineData("PlainTextPassword", "Robin Edbom", "myEmail@mkdir.se", "7", "11", "1996", "$10000.salt.hash")]
         [InlineData("passWord", "Jane Doe", "jane@doe.org", "1", "1", "1900", "$10000.salt.someOtherhash")]
@@ -136,7 +135,7 @@ namespace Padel.Identity.Test.Unit
 
             await _sut.RegisterNewUser(user);
 
-            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s    == email))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeUserRepo.FindByEmail(A<string>.That.Matches(s => s == email))).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakeUserRepo.Insert(A<User>.That.Matches(u =>
                 u.Email                  == email            &&
                 u.Name                   == name             &&
@@ -145,6 +144,8 @@ namespace Padel.Identity.Test.Unit
                 u.DateOfBirth.Date.Month == int.Parse(month) &&
                 u.DateOfBirth.Date.Year  == int.Parse(year)
             ))).MustHaveHappenedOnceExactly();
+
+            A.CallTo(() => _fakePublisher.PublishMessage(A<UserSignUp>.That.Matches(up => up.Name == name))).MustHaveHappenedOnceExactly();
         }
 
         [Theory]

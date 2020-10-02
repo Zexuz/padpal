@@ -62,7 +62,7 @@ services:
       IDENTITY_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
       IDENTITY_AWS__SecretKey: "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"
       IDENTITY_AWS__Region: "eu-north-1"
-      IDENTITY_AWS__Queue__Name: "chat-service"
+      IDENTITY_AWS__Queue__Name: "identity-service"
 
   notification:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/notification"

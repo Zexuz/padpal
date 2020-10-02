@@ -1,7 +1,7 @@
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace Padel.Social.Runner.Extensions
+namespace Padel.Social.Exceptions
 {
     public static class MessageDescriptorExtensions
     {
