@@ -21,6 +21,10 @@ class NotificationRepository {
 
     var call = _notificationClient.appendFcmTokenToUser(request, options: callOptions);
 
-    await call;
+    try{
+      await call;
+    }catch (e){
+      print("call to sendFmcToken failed ${e}");
+    }
   }
 }

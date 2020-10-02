@@ -2,6 +2,8 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notification_repository/notification_repository.dart';
+import 'package:pad_pal/app_push.dart';
 import 'package:pad_pal/authentication/authentication.dart';
 import 'package:pad_pal/home/view/home_page.dart';
 import 'package:pad_pal/splash/splash.dart';
@@ -23,6 +25,9 @@ class App extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (_) => ChatRepository(),
+        ),
+        RepositoryProvider(
+          create: (_) => NotificationRepository(),
         ),
       ],
       child: BlocProvider(
@@ -56,6 +61,8 @@ class _AppViewState extends State<AppView> {
           listener: (context, state) {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
+                final notificationRepo = RepositoryProvider.of<NotificationRepository>(context);
+                notificationRepo.sendFmcToken(token: FirebaseTokenContainer.of(context).fcmToken);
                 _navigator.pushAndRemoveUntil<void>(
                   HomePage.route(),
                   (route) => false,
