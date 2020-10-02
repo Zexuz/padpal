@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Proto.Auth.V1;
-using Padel.Proto.Social.V1;
 using Padel.Queue;
-using Padel.Repository.Core.MongoDb;
 using Padel.Social.Exceptions;
 using Message = Amazon.SQS.Model.Message;
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using DnsClient.Internal;
 using FakeItEasy;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
