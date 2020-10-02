@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DnsClient.Internal;
 using FakeItEasy;
 using Grpc.Core;
+using Microsoft.Extensions.Logging;
 using Padel.Notification.Runner.Controllers;
 using Padel.Proto.Notification.V1;
 using Padel.Repository.Core.MongoDb;
@@ -14,13 +16,13 @@ namespace Padel.Notification.Test.Unit
 {
     public class NotificationControllerV1Test : TestControllerBase
     {
-        private readonly NotificationControllerV1                       _sut;
+        private readonly NotificationControllerV1                  _sut;
         private readonly IMongoRepository<UserNotificationSetting> _fakeMongoRepo;
 
         public NotificationControllerV1Test()
         {
             _fakeMongoRepo = A.Fake<IMongoRepository<UserNotificationSetting>>();
-            _sut = new NotificationControllerV1(_fakeMongoRepo);
+            _sut = new NotificationControllerV1(_fakeMongoRepo, A.Fake<ILogger<NotificationControllerV1>>());
         }
 
         [Fact]
@@ -75,11 +77,33 @@ namespace Padel.Notification.Test.Unit
             await _sut.AppendFcmTokenToUser(request, ctx);
 
             A.CallTo(() => _fakeMongoRepo.ReplaceOneAsync(A<UserNotificationSetting>.That.Matches(model =>
-                model.UserId          == 2 &&
-                model.FCMTokens.Count == 2 &&
+                model.UserId          == 2            &&
+                model.FCMTokens.Count == 2            &&
                 model.FCMTokens[0]    == "myOldToken" &&
                 model.FCMTokens[1]    == "myFCMToken"
             ))).MustHaveHappened();
+        }
+
+        [Fact]
+        public async Task Should_not_add_duplicates()
+        {
+            var userId = 2;
+            var ctx = CreateServerCallContextWithUserId(userId);
+            var request = new AppendFcmTokenToUserRequest
+            {
+                FcmToken = "myFCMToken"
+            };
+
+            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._)).Returns(
+                new UserNotificationSetting
+                {
+                    UserId = 2,
+                    FCMTokens = new List<string> {"myFCMToken"}
+                });
+
+            await _sut.AppendFcmTokenToUser(request, ctx);
+
+            A.CallTo(() => _fakeMongoRepo.ReplaceOneAsync(A<UserNotificationSetting>._)).MustNotHaveHappened();
         }
     }
 }

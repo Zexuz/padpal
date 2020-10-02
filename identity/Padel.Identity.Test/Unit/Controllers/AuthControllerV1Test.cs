@@ -35,7 +35,7 @@ namespace Padel.Identity.Test.Unit.Controllers
         public async Task Should_return_public_key()
         {
             var keys = (RSA.Create(), RSA.Create());
-            var jwtKey = Convert.ToBase64String(keys.Item1.ExportRSAPublicKey());
+            var jwtKey = Convert.ToBase64String(keys.Item1.ExportSubjectPublicKeyInfo());
             A.CallTo(() => _fakeKeyLoader.Load()).Returns(Task.FromResult(keys));
 
             var res = await _sut.GetPublicJwtKey(new GetPublicJwtKeyRequest(), CreateServerCallContextWithNo());
