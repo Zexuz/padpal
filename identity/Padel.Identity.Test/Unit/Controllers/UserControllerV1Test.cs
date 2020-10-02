@@ -10,11 +10,19 @@ namespace Padel.Identity.Test.Unit.Controllers
 {
     public class UserControllerV1Test : TestControllerBase
     {
+        private          UserControllerV1 _sut;
+        private readonly IUserRepository  _fakeUserRepository;
+
+        public UserControllerV1Test()
+        {
+            _fakeUserRepository = A.Fake<IUserRepository>();
+            _sut = new UserControllerV1(_fakeUserRepository);
+        }
+
         [Fact]
         public async Task Me_should_return_currentUser_data()
         {
-            var fakeUserRepository = A.Fake<IUserRepository>();
-            A.CallTo(() => fakeUserRepository.Get(10)).Returns(Task.FromResult(new User
+            A.CallTo(() => _fakeUserRepository.Get(10)).Returns(Task.FromResult(new User
             {
                 Email = "robin@email.com",
                 Name = "robin edbom",
@@ -22,9 +30,9 @@ namespace Padel.Identity.Test.Unit.Controllers
 
             var ctx = CreateServerCallContextWithUserId(10);
 
-            var controller = new UserControllerV1(fakeUserRepository);
+            _sut = new UserControllerV1(_fakeUserRepository);
 
-            var res = await controller.Me(new MeRequest(), ctx);
+            var res = await _sut.Me(new MeRequest(), ctx);
 
             Assert.Equal("robin@email.com", res.Me.Email);
             Assert.Equal("robin edbom", res.Me.Name);

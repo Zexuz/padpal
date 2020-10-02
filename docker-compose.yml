@@ -47,7 +47,7 @@ services:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/chat"
     restart: always
     environment:
-      CHAT_Connections__MongoDb__padel__url: "mongodb://localhost:27017"
+      CHAT_Connections__MongoDb__padel__url: "mongodb://mongo:27017"
       CHAT_Connections__MongoDb__padel__database: "padel"
       CHAT_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
       CHAT_AWS__SecretKey: "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"
@@ -70,7 +70,7 @@ services:
     volumes:
       - "/home/robin/Downloads/padpal-firebase-adminsdk.json:/config/padpal-firebase-adminsdk.json:"
     environment:
-      NOTIFICATION_Connections__MongoDb__padel__url: "mongodb://localhost:27017"
+      NOTIFICATION_Connections__MongoDb__padel__url: "mongodb://mongo:27017"
       NOTIFICATION_Connections__MongoDb__padel__database: "padel"
       NOTIFICATION_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
       NOTIFICATION_AWS__SecretKey: "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"

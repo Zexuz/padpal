@@ -13,6 +13,7 @@ service AuthService {
     }
     rpc GetNewAccessToken (GetNewAccessTokenRequest) returns (GetNewAccessTokenResponse) {
     }
+    rpc GetPublicJwtKey (GetPublicJwtKeyRequest) returns (GetPublicJwtKeyResponse) { }
 }
 
 message SignInRequest {
@@ -66,3 +67,10 @@ message SignUpResponse {
 
 }
 
+message GetPublicJwtKeyRequest {
+
+}
+
+message GetPublicJwtKeyResponse {
+    string publicRsaKey = 1;
+}

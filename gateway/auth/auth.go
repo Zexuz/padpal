@@ -21,6 +21,7 @@ func NewAuthService(conn *grpc.ClientConn) *authpb.AuthServiceService {
 		SignUp:            client.SignUp,
 		SignIn:            client.SignIn,
 		GetNewAccessToken: client.GetNewAccessToken,
+		GetPublicJwtKey:   client.GetPublicJwtKey,
 	}
 
 	return service
@@ -38,4 +39,8 @@ func (c *authService) SignIn(ctx context.Context, request *authpb.SignInRequest)
 }
 func (c *authService) GetNewAccessToken(ctx context.Context, request *authpb.GetNewAccessTokenRequest) (*authpb.GetNewAccessTokenResponse, error) {
 	return c.client.GetNewAccessToken(ctx, request)
+}
+
+func (c *authService) GetPublicJwtKey(ctx context.Context, request *authpb.GetPublicJwtKeyRequest) (*authpb.GetPublicJwtKeyResponse, error) {
+	return c.client.GetPublicJwtKey(ctx, request)
 }

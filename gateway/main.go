@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -24,6 +25,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 )
 
 const (
@@ -75,7 +77,6 @@ func grpcServe(lis net.Listener) error {
 	var opts []grpc.DialOption
 	var serverOps []grpc.ServerOption
 	opts = append(opts, grpc.WithInsecure())
-	serverOps = append(serverOps, interceptors.WithJwtValidationUnaryInterceptor())
 
 	log.Println("starting...")
 	chatConn, err := grpc.Dial(getEnvOrDefault("CHAT_ADDRESS", "localhost:5001"), opts...)
@@ -96,12 +97,28 @@ func grpcServe(lis net.Listener) error {
 	}
 	defer notifiConn.Close()
 
+	authClient := auth.NewAuthService(authConn)
+
+	key := ""
+	for  {
+		res ,err := authClient.GetPublicJwtKey(context.Background(), &authpb.GetPublicJwtKeyRequest{})
+		if err != nil{
+			log.Printf("Can't get public key, error:%s\n", err)
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		key = res.PublicRsaKey
+		break
+	}
+
+
+	serverOps = append(serverOps, interceptors.WithJwtValidationUnaryInterceptor(key))
 	s := grpc.NewServer(serverOps...)
 
 	reflection.Register(s)
 	grpc_health_v1.RegisterHealthServer(s, hc.HealthServer)
 	chatpb.RegisterChatServiceService(s, chat.NewChatService(chatConn))
-	authpb.RegisterAuthServiceService(s, auth.NewAuthService(authConn))
+	authpb.RegisterAuthServiceService(s, authClient)
 	noticitaionpb.RegisterNotificationService(s, notification.NewNotificationService(notifiConn))
 	log.Println("Servning...")
 	return s.Serve(lis)

@@ -16,6 +16,16 @@ namespace Padel.Test.Core
                 {"padpal-user-id", userId.ToString()}
             };
 
+            return CreateServerCallContextWithMetadata(md);
+        }
+
+        protected static ServerCallContext CreateServerCallContextWithNo()
+        {
+            return CreateServerCallContextWithMetadata(Metadata.Empty);
+        }
+
+        private static ServerCallContext CreateServerCallContextWithMetadata(Metadata md)
+        {
             var ctx = TestServerCallContext.Create(
                 "",
                 "",

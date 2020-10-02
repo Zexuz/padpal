@@ -6,17 +6,20 @@ using Padel.Proto.Auth.V1;
 using AuthService = Padel.Proto.Auth.V1.AuthService;
 using NewUser = Padel.Identity.Models.NewUser;
 using Padel.Grpc.Core;
+using Padel.Identity.Services;
 
 namespace Padel.Identity.Runner.Controllers
 {
     // TODO Should be UserAuthController since we are auth the user here.
     public class AuthControllerV1 : AuthService.AuthServiceBase
     {
-        private readonly Identity.Services.IAuthService _authService;
+        private readonly IAuthService _authService;
+        private readonly IKeyLoader   _keyLoader;
 
-        public AuthControllerV1(Identity.Services.IAuthService authService)
+        public AuthControllerV1(IAuthService authService, IKeyLoader keyLoader)
         {
             _authService = authService;
+            _keyLoader = keyLoader;
         }
 
         public override async Task<SignInResponse> SignIn(SignInRequest request, ServerCallContext context)
@@ -106,6 +109,12 @@ namespace Padel.Identity.Runner.Controllers
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public override async Task<GetPublicJwtKeyResponse> GetPublicJwtKey(GetPublicJwtKeyRequest request, ServerCallContext context)
+        {
+            var (pub, pri) = await _keyLoader.Load();
+            return new GetPublicJwtKeyResponse {PublicRsaKey = Convert.ToBase64String(pub.ExportSubjectPublicKeyInfo())};
         }
     }
 }
