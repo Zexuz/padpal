@@ -6,7 +6,7 @@ using Grpc.Core;
 using Padel.Proto.Social.V1;
 using Padel.Queue;
 using Padel.Social.Runner;
-using Padel.Social.Test.Functional.Helpers;
+using Padel.Test.Core;
 using Xunit;
 
 namespace Padel.Social.Test.Functional
@@ -14,15 +14,14 @@ namespace Padel.Social.Test.Functional
     public class SocialServiceIntegrationTest : IClassFixture<MongoWebApplicationFactory<Startup>>
     {
         private readonly Proto.Social.V1.Social.SocialClient _socialClient;
-        private readonly IPublisher                          _fakePublisher;
 
         public SocialServiceIntegrationTest(MongoWebApplicationFactory<Startup> factoryBase)
         {
-            _fakePublisher = A.Fake<IPublisher>();
-
             var overrides = new Dictionary<object, Type>
             {
-                {_fakePublisher, typeof(IPublisher)}
+                {A.Fake<IPublisher>(), typeof(IPublisher)},
+                {A.Fake<IConsumerService>(), typeof(IConsumerService)},
+                {A.Fake<ISubscriptionService>(), typeof(ISubscriptionService)},
             };
 
             var channel = factoryBase.CreateGrpcChannel(overrides);

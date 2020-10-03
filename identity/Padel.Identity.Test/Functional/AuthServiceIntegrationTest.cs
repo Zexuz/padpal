@@ -6,7 +6,6 @@ using Padel.Grpc.Core;
 using Padel.Identity.Runner;
 using Padel.Identity.Services;
 using Padel.Identity.Services.JsonWebToken;
-using Padel.Identity.Test.Functional.Helpers;
 using Padel.Proto.Auth.V1;
 using Padel.Test.Core;
 using Xunit;

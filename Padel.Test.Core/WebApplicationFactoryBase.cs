@@ -6,8 +6,8 @@ namespace Padel.Test.Core
 {
     public class WebApplicationFactoryBase<TStartup> : AutofacWebApplicationFactory<TStartup> where TStartup : class
     {
-        protected const string DbTestPrefix = "padpal_test_";
-        protected       string RandomSuffix { get; set; }
+        public readonly string DbTestPrefix = "padpal_test_";
+        public       string RandomSuffix { get; set; }
 
         protected WebApplicationFactoryBase()
         {

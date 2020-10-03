@@ -3,9 +3,8 @@ using System.Data.SqlClient;
 using Dapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Padel.Test.Core;
 
-namespace Padel.Identity.Test.Functional.Helpers
+namespace Padel.Test.Core
 {
     public class SqlWebApplicationFactory<TStartup> : WebApplicationFactoryBase<TStartup> where TStartup : class
     {

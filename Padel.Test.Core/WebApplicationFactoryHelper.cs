@@ -5,14 +5,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Grpc.Net.Client;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Padel.Notification.Runner;
 
-namespace Padel.Notification.Test.Functional.Helpers
+namespace Padel.Test.Core
 {
     public static class WebApplicationFactoryHelper
     {
-        public static GrpcChannel CreateGrpcChannel(this MongoWebApplicationFactory<Startup> factory, Dictionary<object, Type> overrides = default)
+        public static GrpcChannel CreateGrpcChannel<TStartup>(this WebApplicationFactory<TStartup> factory,
+            Dictionary<object, Type>                                                               overrides = default) where TStartup : class
         {
             void ConfigureTestContainer(ContainerBuilder builder)
             {
@@ -24,12 +25,10 @@ namespace Padel.Notification.Test.Functional.Helpers
                 }
             }
 
-
-            var client = factory.WithWebHostBuilder(builder =>
-                {
-                    builder.ConfigureTestContainer<Autofac.ContainerBuilder>(ConfigureTestContainer);
-                })
+            var client = factory
+                .WithWebHostBuilder(builder => { builder.ConfigureTestContainer<ContainerBuilder>(ConfigureTestContainer); })
                 .CreateDefaultClient(new ResponseVersionHandler());
+
             return GrpcChannel.ForAddress(client.BaseAddress, new GrpcChannelOptions
             {
                 HttpClient = client
