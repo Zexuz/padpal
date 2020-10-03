@@ -6,13 +6,13 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/mkdir-sweden/padpal/gateway/auth"
-	"github.com/mkdir-sweden/padpal/gateway/chat"
 	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/interceptors"
 	"github.com/mkdir-sweden/padpal/gateway/notification"
 	authpb "github.com/mkdir-sweden/padpal/gateway/protos/auth_v1"
-	chatpb "github.com/mkdir-sweden/padpal/gateway/protos/chat_v1"
 	noticitaionpb "github.com/mkdir-sweden/padpal/gateway/protos/notification_v1"
+	socialpb "github.com/mkdir-sweden/padpal/gateway/protos/social_v1"
+	"github.com/mkdir-sweden/padpal/gateway/social"
 	"github.com/soheilhy/cmux"
 	"github.com/unrolled/render"
 	"golang.org/x/sync/errgroup"
@@ -100,9 +100,9 @@ func grpcServe(lis net.Listener) error {
 	authClient := auth.NewAuthService(authConn)
 
 	key := ""
-	for  {
-		res ,err := authClient.GetPublicJwtKey(context.Background(), &authpb.GetPublicJwtKeyRequest{})
-		if err != nil{
+	for {
+		res, err := authClient.GetPublicJwtKey(context.Background(), &authpb.GetPublicJwtKeyRequest{})
+		if err != nil {
 			log.Printf("Can't get public key, error:%s\n", err)
 			time.Sleep(1 * time.Second)
 			continue
@@ -111,13 +111,12 @@ func grpcServe(lis net.Listener) error {
 		break
 	}
 
-
 	serverOps = append(serverOps, interceptors.WithJwtValidationUnaryInterceptor(key))
 	s := grpc.NewServer(serverOps...)
 
 	reflection.Register(s)
 	grpc_health_v1.RegisterHealthServer(s, hc.HealthServer)
-	chatpb.RegisterChatServiceService(s, chat.NewChatService(chatConn))
+	socialpb.RegisterSocialService(s, social.NewSocialService(chatConn))
 	authpb.RegisterAuthServiceService(s, authClient)
 	noticitaionpb.RegisterNotificationService(s, notification.NewNotificationService(notifiConn))
 	log.Println("Servning...")
