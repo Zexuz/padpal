@@ -8,7 +8,7 @@ using FirebaseAdmin.Messaging;
 using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 using Padel.Notification.MessageProcessors;
-using Padel.Proto.Chat.V1;
+using Padel.Proto.Social.V1;
 using Padel.Repository.Core.MongoDb;
 using Xunit;
 using Message = Amazon.SQS.Model.Message;

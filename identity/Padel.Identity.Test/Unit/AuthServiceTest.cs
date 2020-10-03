@@ -145,7 +145,7 @@ namespace Padel.Identity.Test.Unit
                 u.DateOfBirth.Date.Year  == int.Parse(year)
             ))).MustHaveHappenedOnceExactly();
 
-            A.CallTo(() => _fakePublisher.PublishMessage(A<UserSignUp>.That.Matches(up => up.Name == name))).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<UserSignUpMessage>.That.Matches(up => up.Name == name))).MustHaveHappenedOnceExactly();
         }
 
         [Theory]

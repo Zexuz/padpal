@@ -8,7 +8,7 @@ import "descriptors/rule.proto";
 
 package auth.v1;
 
-message UserSignUp{
+message UserSignUpMessage {
     option (descriptors.messageType) = "auth_v1_UserSignUp";
     int32 userId = 1;
     string name = 2;

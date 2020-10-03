@@ -53,7 +53,7 @@ namespace Padel.Identity.Services
                 DateOfBirth = user.DateOfBirth,
                 Created = DateTimeOffset.UtcNow
             });
-            await _publisher.PublishMessage(new UserSignUp {UserId = userId, Name = user.Name});
+            await _publisher.PublishMessage(new UserSignUpMessage() {UserId = userId, Name = user.Name});
             _logger.LogDebug($"Created new user, UserId: {userId}");
         }
 

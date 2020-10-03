@@ -62,8 +62,8 @@ namespace Padel.Identity.Runner
             var container = app.ApplicationServices.GetAutofacRoot();
             var publisher = container.Resolve<IPublisher>();
 
-            var messageType = UserSignUp.Descriptor.GetMessageName();
-            publisher.RegisterEvent(messageType, typeof(UserSignUp)).Wait();
+            var messageType = UserSignUpMessage.Descriptor.GetMessageName();
+            publisher.RegisterEvent(messageType, typeof(UserSignUpMessage)).Wait();
         }
     }
 }
