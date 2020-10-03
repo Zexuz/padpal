@@ -16,11 +16,11 @@ namespace Padel.Social.Test.Unit.MessageProcessors
     public class UserSignUpMessageProcessorTest
     {
         private readonly UserSignUpMessageProcessor _sut;
-        private          IMongoRepository<User>     _fakeMongoRepository;
+        private          IMongoRepository<Profile>     _fakeMongoRepository;
 
         public UserSignUpMessageProcessorTest()
         {
-            _fakeMongoRepository = A.Fake<IMongoRepository<User>>();
+            _fakeMongoRepository = A.Fake<IMongoRepository<Profile>>();
             var fakeLogger = A.Fake<ILogger<UserSignUpMessageProcessor>>();
             _sut = new UserSignUpMessageProcessor(_fakeMongoRepository, fakeLogger);
         }
@@ -37,12 +37,12 @@ namespace Padel.Social.Test.Unit.MessageProcessors
                 }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
             };
             
-            A.CallTo(() => _fakeMongoRepository.FindOneAsync(A<Expression<Func<User, bool>>>._)).Returns(Task.FromResult<User>(null));
+            A.CallTo(() => _fakeMongoRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(Task.FromResult<Profile>(null));
 
 
             await _sut.ProcessAsync(message);
 
-            A.CallTo(() => _fakeMongoRepository.InsertOneAsync(A<User>.That.Matches(user =>
+            A.CallTo(() => _fakeMongoRepository.InsertOneAsync(A<Profile>.That.Matches(user =>
                     user.Name   == "Robin Edbom" &&
                     user.UserId == 1337
                 )
@@ -61,7 +61,7 @@ namespace Padel.Social.Test.Unit.MessageProcessors
                 }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
             };
 
-            A.CallTo(() => _fakeMongoRepository.FindOneAsync(A<Expression<Func<User, bool>>>._)).Returns(new User());
+            A.CallTo(() => _fakeMongoRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(new Profile());
 
             var ex = await Assert.ThrowsAsync<Exception>(() => _sut.ProcessAsync(message));
         }

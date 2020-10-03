@@ -12,13 +12,13 @@ namespace Padel.Social.MessageProcessors
 {
     public class UserSignUpMessageProcessor : IMessageProcessor
     {
-        private readonly IMongoRepository<User>              _userRepository;
+        private readonly IMongoRepository<Profile>              _userRepository;
         private readonly ILogger<UserSignUpMessageProcessor> _logger;
 
         public string EventName => UserSignUpMessage.Descriptor.GetMessageName();
 
         public UserSignUpMessageProcessor(
-            IMongoRepository<User>              userRepository,
+            IMongoRepository<Profile>              userRepository,
             ILogger<UserSignUpMessageProcessor> logger
         )
         {
@@ -41,7 +41,7 @@ namespace Padel.Social.MessageProcessors
                 throw new Exception($"User with id {parsed.UserId} already exists");
             }
 
-            await _userRepository.InsertOneAsync(new User
+            await _userRepository.InsertOneAsync(new Profile
             {
                 Name = parsed.Name,
                 UserId = parsed.UserId,

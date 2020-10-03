@@ -3,8 +3,8 @@ using Padel.Repository.Core.MongoDb;
 
 namespace Padel.Social.Models
 {
-    [BsonCollection("user")]
-    public class User : IDocument
+    [BsonCollection("profile")]
+    public class Profile : IDocument
     {
         public ObjectId Id     { get; set; }
         public int      UserId { get; set; }

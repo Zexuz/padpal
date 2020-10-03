@@ -13,11 +13,13 @@ namespace Padel.Social.Runner.Controllers
     {
         private readonly IMessageSenderService _messageSenderService;
         private readonly IRoomService          _roomService;
+        private readonly IProfileSearchService _profileSearchService;
 
-        public SocialControllerV1(IMessageSenderService messageSenderService, IRoomService roomService)
+        public SocialControllerV1(IMessageSenderService messageSenderService, IRoomService roomService, IProfileSearchService profileSearchService)
         {
             _messageSenderService = messageSenderService;
             _roomService = roomService;
+            _profileSearchService = profileSearchService;
         }
 
         public override async Task<CreateRoomResponse> CreateRoom(CreateRoomRequest request, ServerCallContext context)
@@ -74,6 +76,21 @@ namespace Padel.Social.Runner.Controllers
             var response = new GetRoomsWhereUserIsParticipatingResponse();
             response.RoomIds.AddRange(rooms.Select(room => room.RoomId.Value));
             return response;
+        }
+
+        public override async Task<SearchForProfileResponse> SearchForProfile(SearchForProfileRequest request, ServerCallContext context)
+        {
+            var profiles = await _profileSearchService.Search(request.SearchTerm);
+            return new SearchForProfileResponse
+            {
+                Profiles =
+                {
+                    profiles.Select(user => new Profile
+                    {
+                        Name = user.Name
+                    })
+                }
+            };
         }
     }
 }
