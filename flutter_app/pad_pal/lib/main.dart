@@ -6,7 +6,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:pad_pal/app.dart';
 import 'package:pad_pal/app_push.dart';
 
-import 'SimpleBlocObserver.dart';
+import 'simple_bloc_observer.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

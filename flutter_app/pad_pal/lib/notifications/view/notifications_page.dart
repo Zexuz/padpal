@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/notifications/cubit/notification_cubit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class NotificationsPage extends StatelessWidget {
@@ -18,50 +21,41 @@ class NotificationsPage extends StatelessWidget {
   }
 }
 
-// TODO implement
-// https://pub.dev/packages/pull_to_refresh
 class NotificationView extends StatelessWidget {
   final _refreshController = RefreshController(initialRefresh: false);
-
-  void _onRefresh() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-    _refreshController.refreshCompleted();
-  }
-
-  void _onLoading() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-    _refreshController.loadComplete();
-  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      children: [
-        Padding(
-          child: Notification(
-            title: "Chioke Okonkwo",
-            label: "Wants to be your PadelPal",
-            onPrimaryPressed: () {},
+    return BlocBuilder<NotificationCubit, NotificationState>(
+      buildWhen: (previous, current) => previous.notifications.length != current.notifications.length,
+      builder: (context, state) {
+        return SmartRefresher(
+          enablePullDown: true,
+          header: WaterDropHeader(waterDropColor: theme.primaryColor),
+          controller: _refreshController,
+          onRefresh: () async {
+            await _onRefresh(context);
+          },
+          child: ListView.builder(
+            itemBuilder: (c, i) => Card(
+              child: Notification(
+                title: "Chioke Okonkwo",
+                label: "Wants to be your PadelPal",
+                onPrimaryPressed: () {},
+              ),
+            ),
+            itemCount: state.notifications.length,
           ),
-          padding: EdgeInsets.only(bottom: 24),
-        ),
-        Padding(
-          child: Notification(
-            title: "Chioke Okonkwo",
-            label: "Wants to be your PadelPal",
-            onPrimaryPressed: () {},
-            onSecondaryPressed: () {},
-          ),
-          padding: EdgeInsets.only(bottom: 24),
-        ),
-      ],
+        );
+      },
     );
+  }
+
+  Future _onRefresh(BuildContext context) async {
+    await context.bloc<NotificationCubit>().loadNotifications();
+    _refreshController.refreshCompleted();
   }
 }
 

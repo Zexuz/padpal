@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/event/view/event_page.dart';
 import 'package:pad_pal/messages/messages.dart';
+import 'package:pad_pal/notifications/cubit/notification_cubit.dart';
 import 'package:pad_pal/notifications/notifications.dart';
 import 'package:pad_pal/profile/view/profile_page.dart';
 import 'package:pad_pal/theme.dart';
@@ -60,8 +63,14 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
       ),
       body: SafeArea(
-        // child: _pages(_selectedIndex),
-        child: _p[_selectedIndex],
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
+            )
+          ],
+          child: _p[_selectedIndex],
+        ),
       ),
     );
   }

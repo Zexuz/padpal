@@ -1,7 +1,9 @@
 part of 'notification_cubit.dart';
 
 class NotificationState extends Equatable {
-  const NotificationState({this.notifications});
+   NotificationState({this.notifications}){
+    print("length ${notifications.length}");
+   }
 
   final List<PushNotification> notifications;
 

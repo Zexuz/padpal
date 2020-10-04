@@ -1,9 +1,17 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:grpc/grpc.dart';
 import 'package:meta/meta.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:notification_repository/generated/notification_v1/notification_service.pbgrpc.dart';
+
+// Model to represented in the Notifications view
+class Notification {
+  String Type;
+  String title;
+  String body;
+}
 
 class NotificationRepository {
   NotificationRepository({NotificationClient notificationClient, TokenManager tokenManager})
