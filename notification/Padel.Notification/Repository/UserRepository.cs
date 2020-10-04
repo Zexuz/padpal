@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Padel.Notification.Models;
 using Padel.Repository.Core.MongoDb;
 
@@ -11,9 +10,9 @@ namespace Padel.Notification.Repository
         {
         }
 
-        public Task<User> FindByUserId(int userId)
+        public User? FindByUserId(int userId)
         {
-            return Task.FromResult(FilterBy(user => user.UserId == userId).SingleOrDefault());
+            return FilterBy(user => user.UserId == userId)?.SingleOrDefault();
         }
     }
 }

@@ -36,8 +36,7 @@ namespace Padel.Repository.Core.MongoDb
             return _collection.AsQueryable();
         }
 
-        public virtual IEnumerable<TDocument> FilterBy(
-            Expression<Func<TDocument, bool>> filterExpression)
+        public virtual IEnumerable<TDocument> FilterBy(Expression<Func<TDocument, bool>> filterExpression)
         {
             return _collection.Find(filterExpression).ToEnumerable();
         }
@@ -108,7 +107,7 @@ namespace Padel.Repository.Core.MongoDb
         public virtual async Task ReplaceOneAsync(TDocument document)
         {
             var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, document.Id);
-            await _collection.ReplaceOneAsync(filter, document,new ReplaceOptions());
+            await _collection.ReplaceOneAsync(filter, document, new ReplaceOptions());
         }
 
         public void DeleteOne(Expression<Func<TDocument, bool>> filterExpression)

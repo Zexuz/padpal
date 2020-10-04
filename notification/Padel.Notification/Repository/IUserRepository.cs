@@ -6,6 +6,6 @@ namespace Padel.Notification.Repository
 {
     public interface IUserRepository : IMongoRepository<User>
     {
-        Task<User> FindByUserId(int userId);
+        User? FindByUserId(int userId);
     }
 }

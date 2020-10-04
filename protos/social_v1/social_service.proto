@@ -17,6 +17,8 @@ message ChatMessageReceived{
 }
 
 service Social {
+  // TODO how to mark in the app what rooms have "unread messages" for me?
+  // if Chatroom.lastActivity is newer than ChatRoom.participants.me.lastSeen, then this should be marked as "new" 
   rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {
     option (descriptors.authorization) = {
       shouldValidate:true,

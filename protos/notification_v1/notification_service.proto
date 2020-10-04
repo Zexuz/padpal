@@ -8,6 +8,22 @@ import "descriptors/rule.proto";
 
 package notification.v1;
 
+message PushNotification{
+  int64 utcTimestamp = 1; // When the notification was processed, not when the underlying message was published 
+  oneof notification {
+    ChatMessageReceived chatMessageReceived = 10;
+    FriendRequestReceived friendRequestReceived = 11;
+  }
+
+  message ChatMessageReceived{
+    option (descriptors.messageType) = "notification_v1_ChatMessageReceived";
+    string roomId = 1;
+  }
+  message FriendRequestReceived{
+    option (descriptors.messageType) = "notification_v1_FriendRequestReceived";
+  }
+}
+
 service Notification {
   // TODO maybe let the app query this service and fetch a list of all possible subscriptions, and have a "updateSubscription" method that changes what notication we push to the device? 
   rpc AppendFcmTokenToUser (AppendFcmTokenToUserRequest) returns (AppendFcmTokenToUserResponse) {
@@ -15,6 +31,30 @@ service Notification {
       shouldValidate:true,
     };
   }
+  rpc GetNotification (GetNotificationRequest) returns (GetNotificationResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc RemoveNotification (RemoveNotificationRequest) returns (RemoveNotificationResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  // Todo, maybe add support to remove all notifications?
+}
+message RemoveNotificationRequest {
+}
+
+message RemoveNotificationResponse {
+}
+
+message GetNotificationRequest {
+
+}
+
+message GetNotificationResponse {
+  repeated PushNotification notifications = 1;
 }
 
 message AppendFcmTokenToUserRequest {
