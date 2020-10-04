@@ -11,7 +11,7 @@ namespace Padel.Test.Core
 
         protected WebApplicationFactoryBase()
         {
-            RandomSuffix = StringGenerator.RandomString(15);
+            RandomSuffix = TestHelper.RandomString(15);
         }
 
         protected override IHostBuilder CreateHostBuilder()

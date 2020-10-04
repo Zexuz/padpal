@@ -13,11 +13,11 @@ namespace Padel.Test.Core
 
         public static UserGeneratedData Random()
         {
-            var email = StringGenerator.RandomEmail();
-            var password = StringGenerator.RandomPassword();
-            var firebaseToken = StringGenerator.RandomString(20);
-            var firstName = StringGenerator.RandomString(10, StringGenerator.Letters);
-            var lastName = StringGenerator.RandomString(10, StringGenerator.Letters);
+            var email = TestHelper.RandomEmail();
+            var password = TestHelper.RandomPassword();
+            var firebaseToken = TestHelper.RandomString(20);
+            var firstName = TestHelper.RandomString(10, TestHelper.Letters);
+            var lastName = TestHelper.RandomString(10, TestHelper.Letters);
             var name = $"{firstName} {lastName}";
             var dateOfBirth = new DateTime(1996, 11, 07);
             return new UserGeneratedData

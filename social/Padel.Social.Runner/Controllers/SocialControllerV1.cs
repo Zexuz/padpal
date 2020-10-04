@@ -8,7 +8,6 @@ using Padel.Social.ValueTypes;
 
 namespace Padel.Social.Runner.Controllers
 {
-    // TODO CREATE UNIT TEST FOR ChatController
     public class SocialControllerV1 : Proto.Social.V1.Social.SocialBase
     {
         private readonly IMessageSenderService _messageSenderService;
@@ -80,7 +79,18 @@ namespace Padel.Social.Runner.Controllers
 
         public override async Task<SearchForProfileResponse> SearchForProfile(SearchForProfileRequest request, ServerCallContext context)
         {
-            var profiles = await _profileSearchService.Search(request.SearchTerm);
+            if (string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                return new SearchForProfileResponse();
+            }
+
+            var term = request.SearchTerm.Trim();
+            if (term.Length < 3)
+            {
+                return new SearchForProfileResponse();
+            }
+
+            var profiles = await _profileSearchService.Search(term);
             return new SearchForProfileResponse
             {
                 Profiles =

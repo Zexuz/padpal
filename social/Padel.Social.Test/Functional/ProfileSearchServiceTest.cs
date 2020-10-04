@@ -19,13 +19,17 @@ namespace Padel.Social.Test.Functional
             _mongoRepository = new MongoRepository<Profile>(new MongoDbSettings
             {
                 ConnectionString = factoryBase.ConnectionString,
-                DatabaseName = factoryBase.DbTestPrefix + StringGenerator.RandomString(15)
+                DatabaseName = factoryBase.DbTestPrefix + TestHelper.RandomString(15)
             });
 
             _sut = new ProfileSearchService(_mongoRepository);
         }
 
 
+        
+        // Trim whitespaces! (In controller)
+        // Ignore case
+        
         [Theory]
         [InlineData("Robin")]
         [InlineData("Oliver")]

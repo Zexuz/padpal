@@ -19,7 +19,7 @@ namespace Padel.Test.Core
             return CreateServerCallContextWithMetadata(md);
         }
 
-        protected static ServerCallContext CreateServerCallContextWithNo()
+        protected static ServerCallContext CreateServerCallContextWithNoMetadata()
         {
             return CreateServerCallContextWithMetadata(Metadata.Empty);
         }
