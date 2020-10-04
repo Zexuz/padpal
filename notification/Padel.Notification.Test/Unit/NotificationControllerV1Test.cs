@@ -4,12 +4,10 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FakeItEasy;
 using Grpc.Core;
-using Microsoft.Extensions.Logging;
 using Padel.Notification.Models;
 using Padel.Notification.Repository;
 using Padel.Notification.Runner.Controllers;
 using Padel.Proto.Notification.V1;
-using Padel.Repository.Core.MongoDb;
 using Padel.Test.Core;
 using Xunit;
 

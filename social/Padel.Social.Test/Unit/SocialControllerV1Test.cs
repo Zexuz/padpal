@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using FakeItEasy;
-using FakeItEasy.Sdk;
 using Grpc.Core;
 using Padel.Proto.Social.V1;
 using Padel.Social.Runner.Controllers;

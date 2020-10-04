@@ -6,16 +6,13 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using FirebaseAdmin.Messaging;
 using Google.Protobuf;
-using Microsoft.Extensions.Logging;
 using Padel.Notification.MessageProcessors;
 using Padel.Notification.Models;
 using Padel.Notification.Repository;
 using Padel.Proto.Notification.V1;
 using Padel.Proto.Social.V1;
-using Padel.Repository.Core.MongoDb;
 using Padel.Test.Core;
 using Xunit;
-using Action = System.Action;
 using Message = Amazon.SQS.Model.Message;
 
 namespace Padel.Notification.Test.Unit

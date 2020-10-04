@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Bson.Serialization.Conventions;
 using Padel.Notification.Runner.Controllers;
 using Padel.Notification.Runner.HealthCheck;
+using Padel.Proto.Notification.V1;
 using Padel.Queue;
 
 namespace Padel.Notification.Runner
@@ -59,6 +61,8 @@ namespace Padel.Notification.Runner
                 endpoints.MapGrpcService<HealthServiceImpl>();
                 endpoints.MapGrpcService<NotificationControllerV1>();
             });
+
+            ConventionRegistry.Register("IgnoreIfDefault", new ConventionPack {new IgnoreIfNullConvention(true)}, t => t == typeof(PushNotification));
 
             var container = app.ApplicationServices.GetAutofacRoot();
             var subscriptionService = container.Resolve<ISubscriptionService>();
