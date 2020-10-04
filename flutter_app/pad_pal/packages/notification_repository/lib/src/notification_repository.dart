@@ -21,10 +21,24 @@ class NotificationRepository {
 
     var call = _notificationClient.appendFcmTokenToUser(request, options: callOptions);
 
-    try{
+    try {
       await call;
-    }catch (e){
+    } catch (e) {
       print("call to sendFmcToken failed ${e}");
+    }
+  }
+
+  Future<List<PushNotification>> getNotifications() async {
+    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final request = GetNotificationRequest();
+
+    var call = _notificationClient.getNotification(request, options: callOptions);
+
+    try {
+      var res = await call;
+      return res.notifications;
+    } catch (e) {
+      print("call to getNotifications failed ${e}");
     }
   }
 }
