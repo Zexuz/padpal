@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Padel.Grpc.Core;
+using Padel.Notification.Models;
+using Padel.Notification.Repository;
 using Padel.Proto.Notification.V1;
 using Padel.Repository.Core.MongoDb;
 
@@ -10,12 +12,12 @@ namespace Padel.Notification.Runner.Controllers
 {
     public class NotificationControllerV1 : Proto.Notification.V1.Notification.NotificationBase
     {
-        private readonly IMongoRepository<UserNotificationSetting> _mongoRepository;
-        private readonly ILogger<NotificationControllerV1>         _logger;
+        private readonly IUserRepository                   _userRepository;
+        private readonly ILogger<NotificationControllerV1> _logger;
 
-        public NotificationControllerV1(IMongoRepository<UserNotificationSetting> mongoRepository, ILogger<NotificationControllerV1> logger)
+        public NotificationControllerV1(IUserRepository userRepository, ILogger<NotificationControllerV1> logger)
         {
-            _mongoRepository = mongoRepository;
+            _userRepository = userRepository;
             _logger = logger;
         }
 
@@ -29,10 +31,10 @@ namespace Padel.Notification.Runner.Controllers
                 throw new RpcException(new Status(StatusCode.InvalidArgument, nameof(request.FcmToken)), metadata);
             }
 
-            var repoModel = await _mongoRepository.FindOneAsync(model => model.UserId == userId);
+            var repoModel = await _userRepository.FindOneAsync(model => model.UserId == userId);
             if (repoModel == null)
             {
-                await _mongoRepository.InsertOneAsync(new UserNotificationSetting
+                await _userRepository.InsertOneAsync(new User
                 {
                     UserId = userId,
                     FCMTokens = new List<string> {request.FcmToken}
@@ -43,7 +45,7 @@ namespace Padel.Notification.Runner.Controllers
                 if (!repoModel.FCMTokens.Contains(request.FcmToken))
                 {
                     repoModel.FCMTokens.Add(request.FcmToken);
-                    await _mongoRepository.ReplaceOneAsync(repoModel);
+                    await _userRepository.ReplaceOneAsync(repoModel);
                 }
                 else
                 {

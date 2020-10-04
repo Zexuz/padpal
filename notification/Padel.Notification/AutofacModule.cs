@@ -1,6 +1,7 @@
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Padel.Notification.MessageProcessors;
+using Padel.Notification.Repository;
 using Padel.Queue;
 using Padel.Repository.Core.MongoDb;
 
@@ -22,7 +23,8 @@ namespace Padel.Notification
                 ConnectionString = _configuration["Connections:MongoDb:padel:url"],
                 DatabaseName = _configuration["Connections:MongoDb:padel:database"]
             }).As<IMongoDbSettings>();
-            builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
+
+            builder.RegisterType<UserRepository>().As<IUserRepository>();
             builder.RegisterType<ChatMessageReceivedProcessor>().As<IMessageProcessor>();
             builder.RegisterType<FirebaseCloudMessagingWrapper>().As<IFirebaseCloudMessaging>();
         }

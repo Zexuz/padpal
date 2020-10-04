@@ -8,8 +8,11 @@ using FirebaseAdmin.Messaging;
 using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 using Padel.Notification.MessageProcessors;
+using Padel.Notification.Models;
+using Padel.Notification.Repository;
 using Padel.Proto.Social.V1;
 using Padel.Repository.Core.MongoDb;
+using Padel.Test.Core;
 using Xunit;
 using Message = Amazon.SQS.Model.Message;
 
@@ -17,19 +20,17 @@ namespace Padel.Notification.Test.Unit
 {
     public class ChatMessageReceivedProcessorTest
     {
-        private readonly ChatMessageReceivedProcessor              _sut;
-        private readonly IFirebaseCloudMessaging                   _fakeFirebaseCloudMessaging;
-        private readonly IMongoRepository<UserNotificationSetting> _fakeRepo;
-        private          ILogger<ChatMessageReceivedProcessor>     logger;
+        private readonly ChatMessageReceivedProcessor _sut;
+        private readonly IFirebaseCloudMessaging      _fakeFirebaseCloudMessaging;
+        private readonly IUserRepository              _fakeRepo;
 
         public ChatMessageReceivedProcessorTest()
         {
-            logger = A.Fake<ILogger<ChatMessageReceivedProcessor>>();
             _fakeFirebaseCloudMessaging = A.Fake<IFirebaseCloudMessaging>();
-            _fakeRepo = A.Fake<IMongoRepository<UserNotificationSetting>>();
-            _sut = new ChatMessageReceivedProcessor(_fakeFirebaseCloudMessaging, _fakeRepo, logger);
-        }
+            _fakeRepo = A.Fake<IUserRepository>();
 
+            _sut = TestHelper.ActivateWithFakes<ChatMessageReceivedProcessor>(_fakeFirebaseCloudMessaging, _fakeRepo);
+        }
 
         [Theory]
         [InlineData("")]
@@ -53,12 +54,12 @@ namespace Padel.Notification.Test.Unit
 
             var findResults = new[]
             {
-                new UserNotificationSetting {UserId = 10, FCMTokens = new List<string> {"a", "b"}},
-                new UserNotificationSetting {UserId = 10, FCMTokens = new List<string> {"c"}},
+                new User {UserId = 10, FCMTokens = new List<string> {"a", "b"}},
+                new User {UserId = 10, FCMTokens = new List<string> {"c"}},
                 null,
             };
 
-            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._)).ReturnsNextFromSequence(findResults);
+            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<User, bool>>>._)).ReturnsNextFromSequence(findResults);
 
             await _sut.ProcessAsync(message);
 
@@ -79,8 +80,8 @@ namespace Padel.Notification.Test.Unit
                 }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
             };
 
-            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._))
-                .Returns(Task.FromResult<UserNotificationSetting>(null));
+            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<User, bool>>>._))
+                .Returns(Task.FromResult<User>(null));
 
             await _sut.ProcessAsync(message);
 

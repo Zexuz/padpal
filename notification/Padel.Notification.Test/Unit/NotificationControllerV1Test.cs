@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using Padel.Notification.Models;
+using Padel.Notification.Repository;
 using Padel.Notification.Runner.Controllers;
 using Padel.Proto.Notification.V1;
 using Padel.Repository.Core.MongoDb;
@@ -15,13 +17,14 @@ namespace Padel.Notification.Test.Unit
 {
     public class NotificationControllerV1Test : TestControllerBase
     {
-        private readonly NotificationControllerV1                  _sut;
-        private readonly IMongoRepository<UserNotificationSetting> _fakeMongoRepo;
+        private readonly NotificationControllerV1 _sut;
+        private readonly IUserRepository   _fakeUserRepository;
 
         public NotificationControllerV1Test()
         {
-            _fakeMongoRepo = A.Fake<IMongoRepository<UserNotificationSetting>>();
-            _sut = new NotificationControllerV1(_fakeMongoRepo, A.Fake<ILogger<NotificationControllerV1>>());
+            _fakeUserRepository = A.Fake<IUserRepository>();
+
+            _sut = TestHelper.ActivateWithFakes<NotificationControllerV1>(_fakeUserRepository);
         }
 
         [Fact]
@@ -44,12 +47,12 @@ namespace Padel.Notification.Test.Unit
                 FcmToken = "myFCMToken"
             };
 
-            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._))
-                .Returns(Task.FromResult<UserNotificationSetting>(null));
+            A.CallTo(() => _fakeUserRepository.FindOneAsync(A<Expression<Func<User, bool>>>._))
+                .Returns(Task.FromResult<User>(null));
 
             await _sut.AppendFcmTokenToUser(request, ctx);
 
-            A.CallTo(() => _fakeMongoRepo.InsertOneAsync(A<UserNotificationSetting>.That.Matches(model =>
+            A.CallTo(() => _fakeUserRepository.InsertOneAsync(A<User>.That.Matches(model =>
                 model.UserId          == 2 &&
                 model.FCMTokens.Count == 1 &&
                 model.FCMTokens[0]    == "myFCMToken"
@@ -66,8 +69,8 @@ namespace Padel.Notification.Test.Unit
                 FcmToken = "myFCMToken"
             };
 
-            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._)).Returns(
-                new UserNotificationSetting
+            A.CallTo(() => _fakeUserRepository.FindOneAsync(A<Expression<Func<User, bool>>>._)).Returns(
+                new User
                 {
                     UserId = 2,
                     FCMTokens = new List<string> {"myOldToken"}
@@ -75,7 +78,7 @@ namespace Padel.Notification.Test.Unit
 
             await _sut.AppendFcmTokenToUser(request, ctx);
 
-            A.CallTo(() => _fakeMongoRepo.ReplaceOneAsync(A<UserNotificationSetting>.That.Matches(model =>
+            A.CallTo(() => _fakeUserRepository.ReplaceOneAsync(A<User>.That.Matches(model =>
                 model.UserId          == 2            &&
                 model.FCMTokens.Count == 2            &&
                 model.FCMTokens[0]    == "myOldToken" &&
@@ -93,8 +96,8 @@ namespace Padel.Notification.Test.Unit
                 FcmToken = "myFCMToken"
             };
 
-            A.CallTo(() => _fakeMongoRepo.FindOneAsync(A<Expression<Func<UserNotificationSetting, bool>>>._)).Returns(
-                new UserNotificationSetting
+            A.CallTo(() => _fakeUserRepository.FindOneAsync(A<Expression<Func<User, bool>>>._)).Returns(
+                new User
                 {
                     UserId = 2,
                     FCMTokens = new List<string> {"myFCMToken"}
@@ -102,7 +105,7 @@ namespace Padel.Notification.Test.Unit
 
             await _sut.AppendFcmTokenToUser(request, ctx);
 
-            A.CallTo(() => _fakeMongoRepo.ReplaceOneAsync(A<UserNotificationSetting>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakeUserRepository.ReplaceOneAsync(A<User>._)).MustNotHaveHappened();
         }
     }
 }
