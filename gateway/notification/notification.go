@@ -19,6 +19,8 @@ func NewNotificationService(conn *grpc.ClientConn) *noticitaionpb.NotificationSe
 
 	service := &noticitaionpb.NotificationService{
 		AppendFcmTokenToUser: client.AppendFcmTokenToUser,
+		GetNotification:      client.GetNotification,
+		RemoveNotification:   client.RemoveNotification,
 	}
 
 	return service
@@ -30,4 +32,12 @@ type authService struct {
 
 func (c *authService) AppendFcmTokenToUser(ctx context.Context, request *noticitaionpb.AppendFcmTokenToUserRequest) (*noticitaionpb.AppendFcmTokenToUserResponse, error) {
 	return c.client.AppendFcmTokenToUser(ctx, request)
+}
+
+func (c *authService) GetNotification(ctx context.Context, request *noticitaionpb.GetNotificationRequest) (*noticitaionpb.GetNotificationResponse, error) {
+	return c.client.GetNotification(ctx, request)
+}
+
+func (c *authService) RemoveNotification(ctx context.Context, request *noticitaionpb.RemoveNotificationRequest) (*noticitaionpb.RemoveNotificationResponse, error) {
+	return c.client.RemoveNotification(ctx, request)
 }
