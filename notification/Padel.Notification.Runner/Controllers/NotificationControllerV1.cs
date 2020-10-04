@@ -6,7 +6,6 @@ using Padel.Grpc.Core;
 using Padel.Notification.Models;
 using Padel.Notification.Repository;
 using Padel.Proto.Notification.V1;
-using Padel.Repository.Core.MongoDb;
 
 namespace Padel.Notification.Runner.Controllers
 {
@@ -54,6 +53,24 @@ namespace Padel.Notification.Runner.Controllers
             }
 
             return new AppendFcmTokenToUserResponse();
+        }
+
+        public override Task<GetNotificationResponse> GetNotification(GetNotificationRequest request, ServerCallContext context)
+        {
+            var userId = context.GetUserId();
+            var user = _userRepository.FindByUserId(userId);
+            if (user == null)
+            {
+                return Task.FromResult(new GetNotificationResponse());
+            }
+
+            return Task.FromResult(new GetNotificationResponse
+            {
+                Notifications =
+                {
+                    user.Notifications
+                }
+            });
         }
     }
 }
