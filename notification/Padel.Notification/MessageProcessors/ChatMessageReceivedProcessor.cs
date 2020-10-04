@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Logging;
 using Padel.Notification.Extensions;
-using Padel.Proto.Chat.V1;
+using Padel.Proto.Social.V1;
 using Padel.Queue;
 using Padel.Repository.Core.MongoDb;
 using Message = Amazon.SQS.Model.Message;

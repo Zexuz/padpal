@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+option csharp_namespace = "Padel.Proto.Social.V1";
+
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/socialpb";
+
+import "google/protobuf/descriptor.proto";
+import "descriptors/rule.proto";
+
+package social.v1;
+
+message ChatMessageReceived{
+  option (descriptors.messageType) = "social_v1_ChatMessageReceived";
+  string roomId = 1;
+  repeated int32 participants = 2;
+  //  repeated Message messages = 3;
+}
+
+service Social {
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc GetRoomsWhereUserIsParticipating (GetRoomsWhereUserIsParticipatingRequest) returns (GetRoomsWhereUserIsParticipatingResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc GetRoom (GetRoomRequest) returns (GetRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+
+  rpc SearchForProfile (SearchForProfileRequest) returns (SearchForProfileResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message SearchForProfileRequest {
+  string searchTerm = 1;
+}
+
+message SearchForProfileResponse {
+  repeated Profile profiles = 1;
+}
+
+message Profile{
+  string name = 1;
+}
+
+message SendMessageRequest {
+  string roomId = 1;
+  string content = 2;
+}
+
+message SendMessageResponse {
+}
+
+message CreateRoomRequest {
+  string content = 1;
+  repeated int32 participants = 2;
+}
+
+message CreateRoomResponse {
+  string roomId = 1;
+}
+
+message GetRoomsWhereUserIsParticipatingRequest {
+
+}
+
+message GetRoomsWhereUserIsParticipatingResponse {
+  repeated string roomIds = 1;
+}
+
+message GetRoomRequest {
+  string roomId = 1;
+}
+
+message GetRoomResponse {
+  ChatRoom room = 1;
+}
+
+
+message ChatRoom{
+  string id = 1;
+  int32 admin = 2;
+  repeated int32 participants = 3;
+  repeated Message messages = 4;
+}
+
+
+message GetMessagesRequest {
+  int64 afterTimestamp = 1;
+}
+
+message GetMessagesResponse {
+  repeated Message messages = 1;
+}
+
+message Message{
+  string content = 1;
+  int32 author = 2;
+  int64 utcTimestamp = 3;
+}

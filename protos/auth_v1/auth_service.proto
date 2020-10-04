@@ -4,7 +4,16 @@ option csharp_namespace = "Padel.Proto.Auth.V1";
 
 option go_package = "gateway/authpb";
 
+import "descriptors/rule.proto";
+
 package auth.v1;
+
+message UserSignUpMessage {
+    option (descriptors.messageType) = "auth_v1_UserSignUp";
+    int32 userId = 1;
+    string name = 2;
+}
+
 
 service AuthService {
     rpc SignUp (SignUpRequest) returns (SignUpResponse) {

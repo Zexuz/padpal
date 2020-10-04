@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Grpc.HealthCheck;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,7 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Padel.Identity.Runner.Controllers;
+using Padel.Identity.Runner.Extensions;
 using Padel.Identity.Runner.HealthCheck;
+using Padel.Proto.Auth.V1;
+using Padel.Queue;
 
 namespace Padel.Identity.Runner
 {
@@ -21,6 +25,7 @@ namespace Padel.Identity.Runner
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            builder.RegisterModule(new Queue.AutofacModule(_configuration));
             builder.RegisterModule(new AutofacModule(_configuration));
         }
 
@@ -29,7 +34,7 @@ namespace Padel.Identity.Runner
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
-            
+
             services.AddHealthChecks();
             services.AddSingleton<HealthServiceImpl>();
             services.AddHostedService<StatusService>();
@@ -49,10 +54,16 @@ namespace Padel.Identity.Runner
             {
                 endpoints.MapGrpcService<HealthServiceImpl>();
                 endpoints.MapGrpcService<AuthControllerV1>();
-                endpoints.MapGrpcService<UserControllerV1>();
+                // endpoints.MapGrpcService<UserControllerV1>();
             });
 
             new Main(_configuration.GetSection("Connections:Sql:padel").Value).Migrate();
+
+            var container = app.ApplicationServices.GetAutofacRoot();
+            var publisher = container.Resolve<IPublisher>();
+
+            var messageType = UserSignUpMessage.Descriptor.GetMessageName();
+            publisher.RegisterEvent(messageType, typeof(UserSignUpMessage)).Wait();
         }
     }
 }

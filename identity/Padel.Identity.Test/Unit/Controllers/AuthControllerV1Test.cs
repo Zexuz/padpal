@@ -38,7 +38,7 @@ namespace Padel.Identity.Test.Unit.Controllers
             var jwtKey = Convert.ToBase64String(keys.Item1.ExportSubjectPublicKeyInfo());
             A.CallTo(() => _fakeKeyLoader.Load()).Returns(Task.FromResult(keys));
 
-            var res = await _sut.GetPublicJwtKey(new GetPublicJwtKeyRequest(), CreateServerCallContextWithNo());
+            var res = await _sut.GetPublicJwtKey(new GetPublicJwtKeyRequest(), CreateServerCallContextWithNoMetadata());
             
             Assert.Equal(jwtKey, res.PublicRsaKey);
             A.CallTo(() => _fakeKeyLoader.Load()).MustHaveHappenedOnceExactly();

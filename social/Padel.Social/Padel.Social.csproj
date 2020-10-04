@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="5.2.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.13.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.31.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.31.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.7" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.7" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\..\protos\social_v1\social_service.proto" Link="protos\social_service.proto" ProtoRoot="..\..\protos\" />
+        <Protobuf Include="..\..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" ProtoRoot="..\..\protos\" />
+        <Protobuf Include="..\..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Padel.Queue\Padel.Queue.csproj" />
+        <ProjectReference Include="..\..\Padel.Repository.Core\Padel.Repository.Core.csproj" />
+    </ItemGroup>
+
+</Project>

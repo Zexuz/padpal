@@ -5,9 +5,9 @@ using FakeItEasy;
 using Grpc.Core;
 using Padel.Grpc.Core;
 using Padel.Notification.Runner;
-using Padel.Notification.Test.Functional.Helpers;
 using Padel.Proto.Notification.V1;
 using Padel.Queue;
+using Padel.Test.Core;
 using Xunit;
 
 namespace Padel.Notification.Test.Functional
