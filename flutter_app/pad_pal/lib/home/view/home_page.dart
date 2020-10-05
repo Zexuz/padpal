@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
     EventPage(),
     MessagesPage(),
     NotificationsPage(),
-    ProfilePage(),
+    MyProfilePage(),
     SettingsPage(),
   ];
 
