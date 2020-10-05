@@ -4,6 +4,7 @@ import 'package:pad_pal/demo/view/button_demo.dart';
 import 'package:pad_pal/demo/view/card_demo.dart';
 import 'package:pad_pal/demo/view/flare_demo.dart';
 import 'package:pad_pal/demo/view/input_demo.dart';
+import 'package:pad_pal/demo/view/text_demo.dart';
 
 class ComponentsPage extends StatelessWidget {
   static Route route() {
@@ -16,6 +17,7 @@ class ComponentsPage extends StatelessWidget {
     AvatarDemo(),
     CardDemo(),
     FlareDemo(),
+    TextDemo(),
   ];
 
   @override
