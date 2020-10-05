@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:pad_pal/theme.dart';
 
 class DottedAvatar extends StatelessWidget {
-  const DottedAvatar();
+  const DottedAvatar({@required this.radius});
 
-  static const size = 24.0;
+  final double radius;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class DottedAvatar extends StatelessWidget {
       children: [
         Center(
           child: CircleAvatar(
-            radius: size + 2,
+            radius: radius + 2,
             backgroundColor: AppTheme.secondaryColorOrange.withOpacity(0.12),
           ),
         ),
@@ -25,7 +25,7 @@ class DottedAvatar extends StatelessWidget {
             strokeCap: StrokeCap.butt,
             dashPattern: [4],
             child: CircleAvatar(
-              radius: size,
+              radius: radius,
               backgroundColor: Colors.transparent,
             ),
           ),

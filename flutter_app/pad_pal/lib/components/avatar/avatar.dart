@@ -1,23 +1,42 @@
 import 'package:flutter/material.dart';
 
 class Avatar extends StatelessWidget {
-  const Avatar();
+  Avatar({
+    @required this.url,
+    @required this.radius,
+    @required this.borderWidth,
+    this.color,
+  })  : assert(url != null),
+        assert(radius != null),
+        assert(borderWidth != null);
 
-  static const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
-  static const size = 24.0;
+  final double borderWidth;
+  final String url;
+  final double radius;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      minRadius: size,
-      child: CircleAvatar(
-        radius: size,
-        backgroundColor: Colors.black,
-        child: ClipOval(
-            child: Image.network(
-          url,
-          fit: BoxFit.cover,
-        )),
+    final theme = Theme.of(context);
+    final color = this.color ?? theme.primaryColor;
+
+    return Material(
+      elevation: 4.0,
+      shape: CircleBorder(),
+      clipBehavior: Clip.hardEdge,
+      color: color,
+      child: Padding(
+        padding: EdgeInsets.all(borderWidth),
+        child: Material(
+          elevation: 0.0,
+          shape: CircleBorder(),
+          clipBehavior: Clip.hardEdge,
+          color: Colors.transparent,
+          child: Image.network(
+            url,
+            width: radius * 2,
+          ),
+        ),
       ),
     );
   }

@@ -94,9 +94,16 @@ class Notification extends StatelessWidget {
 
     final primFillColor = onlyOneAction ? Colors.transparent : theme.primaryColor;
 
+    const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
+    const radius = 24.0;
+
     return Row(
       children: [
-        Avatar(),
+        Avatar(
+          radius: radius,
+          url: url,
+          borderWidth: 0,
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Column(

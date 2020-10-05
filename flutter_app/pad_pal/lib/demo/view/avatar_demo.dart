@@ -4,12 +4,29 @@ import 'package:pad_pal/components/components.dart';
 class AvatarDemo extends StatelessWidget {
   const AvatarDemo();
 
+  static const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
+  static const size = 58.0;
+  static const padding = 6.0;
+
   @override
   Widget build(BuildContext context) {
     final entries = [
-      LeaderAvatar(),
-      Avatar(),
-      DottedAvatar(),
+      Center(
+        child: Avatar(
+          radius: size,
+          borderWidth: padding,
+          url: url,
+        ),
+      ),
+      Center(
+        child: Avatar(
+          radius: size,
+          borderWidth: padding,
+          url: url,
+          color: Colors.white,
+        ),
+      ),
+      DottedAvatar(radius: size),
     ];
 
     return Scaffold(

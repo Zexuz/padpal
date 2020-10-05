@@ -48,17 +48,30 @@ class CustomCard extends StatelessWidget {
       ],
     );
 
+    const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
+    const radius = 24.0;
+    const padding = 3.0;
+
     final players = Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        LeaderAvatar(),
+        Avatar(
+          radius: radius,
+          borderWidth: padding,
+          url: url,
+        ),
         const SizedBox(width: 16),
-        Avatar(),
+        Avatar(
+          radius: radius,
+          borderWidth: 0,
+          url: url,
+          color: Colors.white,
+        ),
         const SizedBox(width: 16),
-        DottedAvatar(),
+        DottedAvatar(radius: radius ),
         const SizedBox(width: 16),
-        DottedAvatar(),
+        DottedAvatar(radius: radius),
       ],
     );
 
