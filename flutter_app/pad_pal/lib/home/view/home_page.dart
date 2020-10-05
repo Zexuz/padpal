@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
+import 'package:pad_pal/authentication/authentication.dart';
+import 'package:pad_pal/demo/view.dart';
 import 'package:pad_pal/event/view/event_page.dart';
 import 'package:pad_pal/messages/messages.dart';
 import 'package:pad_pal/notifications/cubit/notification_cubit.dart';
@@ -31,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     MessagesPage(),
     NotificationsPage(),
     ProfilePage(),
+    SettingsPage(),
   ];
 
   static const List<BottomNavigationBarItem> _items = <BottomNavigationBarItem>[
@@ -50,6 +53,7 @@ class _HomePageState extends State<HomePage> {
       icon: Icon(Icons.account_box),
       title: Text('Profile'),
     ),
+    BottomNavigationBarItem(icon: Icon(Icons.more_horiz), title: Text("more")),
   ];
 
   @override
@@ -72,6 +76,27 @@ class _HomePageState extends State<HomePage> {
           child: _p[_selectedIndex],
         ),
       ),
+    );
+  }
+}
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final nav = Navigator.of(context);
+    return Column(
+      children: [
+        RaisedButton(child: Text("Components"), onPressed: () => nav.push(ComponentsPage.route())),
+        Text('Name: ${context.bloc<AuthenticationBloc>().state.name}'),
+        RaisedButton(
+          child: const Text('Logout'),
+          onPressed: () {
+            context.bloc<AuthenticationBloc>().add(AuthenticationLogoutRequested());
+          },
+        ),
+      ],
     );
   }
 }
