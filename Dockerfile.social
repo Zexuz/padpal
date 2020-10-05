@@ -1,21 +1,21 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
-WORKDIR /app/chat
+WORKDIR /app/social
 
 # Copy csproj and restore as distinct layers
-COPY ./chat/Padel.Chat/*.csproj ./chat/Padel.Chat/
-COPY ./chat/Padel.Chat.Runner/*.csproj ./chat/Padel.Chat.Runner/
+COPY ./social/Padel.Social/*.csproj ./social/Padel.Social/
+COPY ./social/Padel.Social.Runner/*.csproj ./social/Padel.Social.Runner/
 COPY ./Padel.Grpc.Core/Padel.Grpc.Core.csproj ./Padel.Grpc.Core/
 COPY ./Padel.Queue/Padel.Queue.csproj ./Padel.Queue/
 COPY ./Padel.Repository.Core/Padel.Repository.Core.csproj ./Padel.Repository.Core/
 
-RUN dotnet restore ./chat/Padel.Chat.Runner/
+RUN dotnet restore ./social/Padel.Social.Runner/
 
 # Copy everything else and build
 COPY . ./
-RUN dotnet publish ./chat/Padel.Chat.Runner -c Release -o out
+RUN dotnet publish ./social/Padel.Social.Runner -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
-COPY --from=build-env /app/chat/out .
-ENTRYPOINT ["dotnet", "Padel.Chat.Runner.dll"]
+COPY --from=build-env /app/social/out .
+ENTRYPOINT ["dotnet", "Padel.Social.Runner.dll"]
