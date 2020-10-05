@@ -1,5 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:chat_repository/chat_repository.dart';
+import 'package:social_repository/social_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
@@ -24,7 +24,7 @@ class App extends StatelessWidget {
           create: (_) => UserRepository(),
         ),
         RepositoryProvider(
-          create: (_) => ChatRepository(),
+          create: (_) => SocialRepository(),
         ),
         RepositoryProvider(
           create: (_) => NotificationRepository(),

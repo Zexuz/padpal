@@ -41,8 +41,8 @@ dependencies:
     path: packages/authentication_repository
   user_repository:
     path: packages/user_repository
-  chat_repository:
-    path: packages/chat_repository
+  social_repository:
+    path: packages/social_repository
   notification_repository:
     path: packages/notification_repository
 

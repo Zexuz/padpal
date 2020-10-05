@@ -1,4 +1,4 @@
-import 'package:chat_repository/chat_repository.dart';
+import 'package:social_repository/social_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/messages/bloc/message_cubit.dart';
@@ -17,7 +17,7 @@ class MessagesPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
           create: (_) => MessageCubit(
-            context.repository<ChatRepository>(),
+            context.repository<SocialRepository>(),
           ),
           child: MessageForm(),
         ),

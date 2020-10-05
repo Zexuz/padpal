@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:chat_repository/src/chat_repository.dart';
+import 'package:social_repository/social_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/services/notification/notification_service.dart';
 
 class MessageCubit extends Cubit<MessageState> {
   MessageCubit(this.repository) : super(MessageState()..messages = []);
 
-  final ChatRepository repository;
+  final SocialRepository repository;
   final _notificationStream = NotificationManager().notification;
   StreamSubscription _streamSub;
 

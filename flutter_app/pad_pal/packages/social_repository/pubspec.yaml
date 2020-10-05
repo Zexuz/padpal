@@ -1,4 +1,4 @@
-name: chat_repository
+name: social_repository
 description: Dart package which manages the chat domain.
 version: 1.0.0
 
