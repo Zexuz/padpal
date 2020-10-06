@@ -4,7 +4,7 @@ services:
 
   mongo:
     image: "mongo"
-    restart: always
+    restart: unless-stopped
     volumes:
       - mongodb-server-linux-data:/data/db
     ports:
@@ -20,7 +20,7 @@ services:
 
   mssql:
     image: "mcmoe/mssqldocker"
-    restart: always
+    restart: unless-stopped
     volumes:
       - mssql-server-linux-data:/var/opt/mssql/data
     ports:
@@ -34,7 +34,7 @@ services:
 
   gateway:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/gateway"
-    restart: always
+    restart: unless-stopped
     environment:
       CHAT_ADDRESS: "social:5001"
       IDENTITY_ADDRESS: "identity:5002"
@@ -45,7 +45,7 @@ services:
 
   social:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/social"
-    restart: always
+    restart: unless-stopped
     environment:
       CHAT_Connections__MongoDb__padel__url: "mongodb://mongo:27017"
       CHAT_Connections__MongoDb__padel__database: "padel"
@@ -56,7 +56,7 @@ services:
 
   identity:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/identity"
-    restart: always
+    restart: unless-stopped
     environment:
       IDENTITY_Connections__Sql__padel: "Server=mssql,1433;Database=padel;User=sa;Password=yourStrong(!)Password;"
       IDENTITY_AWS__AccessKey: "AKIARZV2LEFOZ6LF2IPW"
@@ -66,7 +66,7 @@ services:
 
   notification:
     image: "docker.pkg.github.com/mkdir-sweden/padpal/notification"
-    restart: always
+    restart: unless-stopped
     volumes:
       - "/home/robin/Downloads/padpal-firebase-adminsdk.json:/config/padpal-firebase-adminsdk.json:"
     environment:
@@ -76,7 +76,9 @@ services:
       NOTIFICATION_AWS__SecretKey: "XRlwiULA747KLVutN/lF+mRMYPvMUmcHffR3EfIl"
       NOTIFICATION_AWS__Region: "eu-north-1"
       NOTIFICATION_AWS__Queue__Name: "notification-service"
-      NOTIFICATION_AWS__Topics__0: "chat_v1_ChatMessageReceived"
+      NOTIFICATION_AWS__Topics__0: "social_v1_ChatMessageReceived"
+      NOTIFICATION_AWS__Topics__1: "social_v1_FriendRequestAccepted"
+      NOTIFICATION_AWS__Topics__2: "social_v1_FriendRequestReceived"
       GOOGLE_APPLICATION_CREDENTIALS: "/config/padpal-firebase-adminsdk.json"
 
 volumes:

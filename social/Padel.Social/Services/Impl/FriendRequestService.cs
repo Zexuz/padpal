@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Padel.Proto.Social.V1;
 using Padel.Queue;
-using Padel.Repository.Core.MongoDb;
 using Padel.Social.Exceptions;
 using Padel.Social.Models;
+using Padel.Social.Repositories;
 using Padel.Social.Services.Interface;
 using Profile = Padel.Social.Models.Profile;
 
@@ -14,11 +14,11 @@ namespace Padel.Social.Services.Impl
 {
     public class FriendRequestService : IFriendRequestService
     {
-        private readonly IMongoRepository<Profile>     _profileRepository;
+        private readonly IProfileRepository            _profileRepository;
         private readonly IPublisher                    _publisher;
         private readonly ILogger<FriendRequestService> _logger;
 
-        public FriendRequestService(IMongoRepository<Profile> profileRepository, IPublisher publisher, ILogger<FriendRequestService> logger)
+        public FriendRequestService(IProfileRepository profileRepository, IPublisher publisher, ILogger<FriendRequestService> logger)
         {
             _profileRepository = profileRepository;
             _publisher = publisher;
@@ -27,7 +27,13 @@ namespace Padel.Social.Services.Impl
 
         public async Task SendFriendRequest(int fromUserId, int toUserId)
         {
-            var toUser = await _profileRepository.FindOneAsync(profile => profile.UserId == toUserId);
+            if (fromUserId == toUserId)
+            {
+                throw new ArgumentException("from and to can't have the same value");
+            }
+
+            var toUser = _profileRepository.FindByUserId(toUserId);
+            var fromUser = _profileRepository.FindByUserId(fromUserId);
 
             if (toUser == null)
             {
@@ -51,9 +57,14 @@ namespace Padel.Social.Services.Impl
 
             try
             {
+                // TODO Add test that we are reverting the insert!
                 await _publisher.PublishMessage(new FriendRequestReceived
                 {
-                    FromUser = fromUserId,
+                    FromUser = new FriendRequestReceived.Types.User
+                    {
+                        Id = fromUserId,
+                        Name = fromUser.Name
+                    },
                     ToUser = toUserId,
                 });
             }
@@ -62,6 +73,7 @@ namespace Padel.Social.Services.Impl
                 _logger.LogError(e, $"Can't create friend request, from:{fromUserId}, to:{toUserId}");
                 toUser.FriendRequests.Remove(friendRequest);
                 await _profileRepository.ReplaceOneAsync(toUser);
+                throw;
             }
         }
 

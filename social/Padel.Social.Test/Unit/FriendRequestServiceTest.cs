@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Padel.Proto.Social.V1;
 using Padel.Queue;
-using Padel.Repository.Core.MongoDb;
 using Padel.Social.Exceptions;
 using Padel.Social.Models;
+using Padel.Social.Repositories;
 using Padel.Social.Services.Impl;
 using Padel.Test.Core;
 using Xunit;
@@ -17,19 +17,27 @@ namespace Padel.Social.Test.Unit
 {
     public class FriendRequestServiceTest
     {
-        private readonly FriendRequestService      _sut;
-        private readonly IMongoRepository<Profile> _fakeProfileRepository;
-        private readonly IPublisher                _fakePublisher;
+        private readonly FriendRequestService _sut;
+        private readonly IProfileRepository   _fakeProfileRepository;
+        private readonly IPublisher           _fakePublisher;
 
         public FriendRequestServiceTest()
         {
-            _fakeProfileRepository = A.Fake<IMongoRepository<Profile>>();
+            _fakeProfileRepository = A.Fake<IProfileRepository>();
             _fakePublisher = A.Fake<IPublisher>();
 
             _sut = TestHelper.ActivateWithFakes<FriendRequestService>(_fakeProfileRepository, _fakePublisher);
         }
 
+        [Fact]
+        public async Task Should_throw_trying_to_add_myself()
+        {
+            var fromUser = 5;
+            var toUser = 5;
 
+            await Assert.ThrowsAsync<ArgumentException>(() => _sut.SendFriendRequest(fromUser, toUser));
+        }
+     
         [Fact]
         public async Task Should_throw_if_friendRequest_already_exists()
         {
@@ -41,7 +49,7 @@ namespace Padel.Social.Test.Unit
                 FriendRequests = new List<FriendRequest> {new FriendRequest {UserId = fromUser}}
             };
 
-            A.CallTo(() => _fakeProfileRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(profile);
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(A<int>._)).Returns(profile);
 
             var ex = await Assert.ThrowsAsync<FriendRequestAlreadyExistsException>(() => _sut.SendFriendRequest(fromUser, toUser));
             Assert.Equal(fromUser, ex.FromUser);
@@ -57,7 +65,7 @@ namespace Padel.Social.Test.Unit
             var fromUser = 5;
             var toUser = 1337;
 
-            A.CallTo(() => _fakeProfileRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(Task.FromResult<Profile>(null));
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(A<int>._)).Returns(null);
 
             var ex = await Assert.ThrowsAsync<UserDoesNotExistsException>(() => _sut.SendFriendRequest(fromUser, toUser));
             Assert.Equal(toUser, ex.User);
@@ -77,7 +85,7 @@ namespace Padel.Social.Test.Unit
                 Friends = new List<Friend> {new Friend {UserId = fromUser}}
             };
 
-            A.CallTo(() => _fakeProfileRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(profile);
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(A<int>._)).Returns(profile);
 
             var ex = await Assert.ThrowsAsync<AlreadyFriendsException>(() => _sut.SendFriendRequest(fromUser, toUser));
             Assert.Equal(fromUser, ex.FromUser);
@@ -87,20 +95,28 @@ namespace Padel.Social.Test.Unit
         [Fact]
         public async Task Should_create_friend_request()
         {
-            var fromUser = 5;
+            var fromUserId = 5;
+            var fromUserName = "kalle";
             var toUser = 1337;
+            
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(5)).Returns(new Profile
+            {
+                Name = fromUserName
+            });
 
-            await _sut.SendFriendRequest(fromUser, toUser);
+            await _sut.SendFriendRequest(fromUserId, toUser);
 
             A.CallTo(() => _fakeProfileRepository.ReplaceOneAsync(A<Profile>.That.Matches(profile =>
                     profile.FriendRequests.Count     == 1 &&
-                    profile.FriendRequests[0].UserId == fromUser
+                    profile.FriendRequests[0].UserId == fromUserId
                 )
             )).MustHaveHappenedOnceExactly();
 
             A.CallTo(() => _fakePublisher.PublishMessage(
                 A<FriendRequestReceived>.That.Matches(received =>
-                    received.FromUser == fromUser && received.ToUser == toUser
+                    received.FromUser.Id == fromUserId && 
+                    received.FromUser.Name == fromUserName 
+                    && received.ToUser == toUser
                 )
             )).MustHaveHappenedOnceExactly();
         }

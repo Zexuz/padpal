@@ -19,13 +19,18 @@ message ChatMessageReceived{
 message FriendRequestReceived{
   option (descriptors.messageType) = "social_v1_FriendRequestReceived";
   int32 toUser = 1;
-  int32 fromUser = 2;
+  User fromUser = 2;
+
+  message User{
+    int32 id = 1;
+    string name = 2;
+  }
 }
 
 message FriendRequestAccepted{
   option (descriptors.messageType) = "social_v1_FriendRequestAccepted";
   string userThatAccepted = 1;
-  int32 userThatRequested = 2; 
+  int32 userThatRequested = 2;
 }
 
 service Social {
@@ -68,7 +73,8 @@ service Social {
     };
   }
 }
-
+// TODO user should get a notification when a friendRequest is created, and when a friendRequest is accpected
+// TODO implement method to get my profile. MyProfile (the object) might be different than the SearchForProfile message  
 
 message RespondToFriendRequestRequest {
   int32 userId = 1; // The user that requests we be friends

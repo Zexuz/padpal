@@ -26,7 +26,9 @@ namespace Padel.Notification
             }).As<IMongoDbSettings>();
 
             builder.RegisterType<UserRepository>().As<IUserRepository>();
-            builder.RegisterType<ChatMessageReceivedProcessor>().As<IMessageProcessor>();
+            builder.RegisterType<ChatMessageReceivedProcessor>().As<IMessageProcessor>().PreserveExistingDefaults();
+            builder.RegisterType<FriendRequestReceivedProcessor>().As<IMessageProcessor>().PreserveExistingDefaults();
+            builder.RegisterType<FriendRequestAcceptedProcessor>().As<IMessageProcessor>().PreserveExistingDefaults();
             builder.RegisterType<FirebaseCloudMessagingWrapper>().As<IFirebaseCloudMessaging>();
             builder.RegisterType<NotificationService>().As<INotificationService>();
         }

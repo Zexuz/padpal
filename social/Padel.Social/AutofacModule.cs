@@ -37,6 +37,7 @@ namespace Padel.Social
             builder.RegisterType<MessageSenderService>().As<IMessageSenderService>();
             builder.RegisterType<ProfileSearchService>().As<IProfileSearchService>();
             builder.RegisterType<FriendRequestService>().As<IFriendRequestService>();
+            builder.RegisterType<ProfileRepository>().As<IProfileRepository>();
         }
     }
 }
