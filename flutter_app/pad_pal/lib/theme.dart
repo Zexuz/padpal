@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
+// TODO Use theese icons https://pub.dev/packages/cupertino_icons
+// https://medium.com/flutter/announcing-flutter-1-22-44f146009e5f
+
 class AppTheme {
   static Color primary = const Color(0xff0076FF);
   static Color light = Color.fromRGBO(224, 239, 255, 1.0);

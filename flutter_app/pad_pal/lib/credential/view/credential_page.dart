@@ -1,7 +1,6 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/components/button/texbt_button/text_button.dart';
 import 'package:pad_pal/credential/cubit/credential_cubit.dart';
 import 'package:pad_pal/theme.dart';
 
@@ -140,7 +139,7 @@ class _ToggleView extends StatelessWidget {
         ),
         TextButton(
           onPressed: () => context.bloc<CredentialCubit>().toggleView(),
-          text: this.btnText,
+          child: Text(this.btnText),
         ),
       ],
     );

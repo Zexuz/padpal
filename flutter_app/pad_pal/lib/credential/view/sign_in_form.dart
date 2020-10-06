@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pad_pal/credential/components/EmailInput.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/components/button/texbt_button/text_button.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/credential/components/PasswordInput.dart';
 import 'package:pad_pal/credential/cubit/credential_cubit.dart';
@@ -58,7 +57,7 @@ class _ForgotPassword extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: TextButton(
         key: const Key('loginForm_forgot_password_raisedButton'),
-        text: 'Forgot password?',
+        child: Text('Forgot password?'),
         onPressed: () => {},
       ),
     );
