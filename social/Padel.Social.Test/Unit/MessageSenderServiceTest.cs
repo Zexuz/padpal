@@ -74,9 +74,8 @@ namespace Padel.Social.Test.Unit
                 A<UserId>.That.Matches(s => s.Value == message.Author.Value),
                 A<string>.That.Matches(s => s       == message.Content)
             )).MustHaveHappened();
-            A.CallTo(() => _fakePublisher.PublishMessage(A<object>.That.Matches(o =>
-                o is ChatMessageReceived &&
-                ((ChatMessageReceived) o).Participants.Count == 3
+            A.CallTo(() => _fakePublisher.PublishMessage(A<ChatMessageReceived>.That.Matches(o =>
+                o.Participants.Count == 3
             ))).MustHaveHappened();
         }
     }

@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Padel.Proto.Social.V1;
 using Padel.Queue;
-using Padel.Social.Exceptions;
 using Padel.Social.Runner.Controllers;
 using Padel.Social.Runner.HealthCheck;
 
@@ -57,11 +55,7 @@ namespace Padel.Social.Runner
             });
 
             var container = app.ApplicationServices.GetAutofacRoot();
-            var publisher = container.Resolve<IPublisher>();
             
-            var messageType = ChatMessageReceived.Descriptor.GetMessageName();
-            publisher.RegisterEvent(messageType, typeof(ChatMessageReceived)).Wait();
-
             var subscriptionService = container.Resolve<ISubscriptionService>();
             var consumerService = container.Resolve<IConsumerService>();
             subscriptionService.CreateQueueAndSubscribeToTopic().Wait();

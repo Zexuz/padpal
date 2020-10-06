@@ -13,12 +13,20 @@ namespace Padel.Social.Runner.Controllers
         private readonly IMessageSenderService _messageSenderService;
         private readonly IRoomService          _roomService;
         private readonly IProfileSearchService _profileSearchService;
+        private readonly IFriendRequestService _friendRequestService;
 
-        public SocialControllerV1(IMessageSenderService messageSenderService, IRoomService roomService, IProfileSearchService profileSearchService)
+        public SocialControllerV1
+        (
+            IMessageSenderService messageSenderService,
+            IRoomService          roomService,
+            IProfileSearchService profileSearchService,
+            IFriendRequestService friendRequestService
+        )
         {
             _messageSenderService = messageSenderService;
             _roomService = roomService;
             _profileSearchService = profileSearchService;
+            _friendRequestService = friendRequestService;
         }
 
         public override async Task<CreateRoomResponse> CreateRoom(CreateRoomRequest request, ServerCallContext context)
@@ -101,6 +109,13 @@ namespace Padel.Social.Runner.Controllers
                     })
                 }
             };
+        }
+
+        public override async Task<SendFriendRequestResponse> SendFriendRequest(SendFriendRequestRequest request, ServerCallContext context)
+        {
+            var userId = context.GetUserId();
+            await _friendRequestService.MakeFriendRequest(userId, request.UserId);
+            return new SendFriendRequestResponse();
         }
     }
 }

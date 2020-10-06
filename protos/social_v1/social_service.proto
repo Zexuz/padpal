@@ -16,6 +16,12 @@ message ChatMessageReceived{
   //  repeated Message messages = 3;
 }
 
+message FriendRequestReceived{
+  option (descriptors.messageType) = "social_v1_FriendRequestReceived";
+  int32 toUser = 1;
+  int32 fromUser = 2;
+}
+
 service Social {
   // TODO how to mark in the app what rooms have "unread messages" for me?
   // if Chatroom.lastActivity is newer than ChatRoom.participants.me.lastSeen, then this should be marked as "new" 
@@ -45,6 +51,39 @@ service Social {
       shouldValidate:true,
     };
   }
+  rpc SendFriendRequest (SendFriendRequestRequest) returns (SendFriendRequestResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc RespondToFriendRequest (RespondToFriendRequestRequest) returns (RespondToFriendRequestResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+
+message RespondToFriendRequestRequest {
+  int32 userId = 1; // The user that requests we be friends
+  Action action = 2;
+
+  enum Action{
+    UNKNOWN = 0;
+    ACCEPT = 1;
+    DECLINE = 2;
+  }
+}
+
+message RespondToFriendRequestResponse {
+}
+
+message SendFriendRequestRequest {
+  int32 userId = 1; // The user that I want to befriend
+  // Todo, expand to also have to option to send a message
+}
+
+message SendFriendRequestResponse {
 }
 
 message SearchForProfileRequest {
