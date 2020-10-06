@@ -36,28 +36,6 @@ namespace Padel.Notification.Test.Unit
         }
 
         [Fact]
-        public async Task Should_create_new_item_if_one_does_not_already_exists()
-        {
-            var userId = 2;
-            var ctx = CreateServerCallContextWithUserId(userId);
-            var request = new AppendFcmTokenToUserRequest
-            {
-                FcmToken = "myFCMToken"
-            };
-
-            A.CallTo(() => _fakeUserRepository.FindOneAsync(A<Expression<Func<User, bool>>>._))
-                .Returns(Task.FromResult<User>(null));
-
-            await _sut.AppendFcmTokenToUser(request, ctx);
-
-            A.CallTo(() => _fakeUserRepository.InsertOneAsync(A<User>.That.Matches(model =>
-                model.UserId          == 2 &&
-                model.FCMTokens.Count == 1 &&
-                model.FCMTokens[0]    == "myFCMToken"
-            ))).MustHaveHappened();
-        }
-
-        [Fact]
         public async Task Should_append_to_item_if_one_already_exists()
         {
             var userId = 2;
@@ -67,7 +45,7 @@ namespace Padel.Notification.Test.Unit
                 FcmToken = "myFCMToken"
             };
 
-            A.CallTo(() => _fakeUserRepository.FindOneAsync(A<Expression<Func<User, bool>>>._)).Returns(
+            A.CallTo(() => _fakeUserRepository.FindOrCreateByUserId(2)).Returns(
                 new User
                 {
                     UserId = 2,
@@ -94,7 +72,7 @@ namespace Padel.Notification.Test.Unit
                 FcmToken = "myFCMToken"
             };
 
-            A.CallTo(() => _fakeUserRepository.FindOneAsync(A<Expression<Func<User, bool>>>._)).Returns(
+            A.CallTo(() => _fakeUserRepository.FindOrCreateByUserId(userId)).Returns(
                 new User
                 {
                     UserId = 2,

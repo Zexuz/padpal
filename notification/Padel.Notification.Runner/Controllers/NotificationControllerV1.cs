@@ -30,26 +30,15 @@ namespace Padel.Notification.Runner.Controllers
                 throw new RpcException(new Status(StatusCode.InvalidArgument, nameof(request.FcmToken)), metadata);
             }
 
-            var repoModel = await _userRepository.FindOneAsync(model => model.UserId == userId);
-            if (repoModel == null)
+            var repoModel = await _userRepository.FindOrCreateByUserId(userId);
+            if (!repoModel.FCMTokens.Contains(request.FcmToken))
             {
-                await _userRepository.InsertOneAsync(new User
-                {
-                    UserId = userId,
-                    FCMTokens = new List<string> {request.FcmToken}
-                });
+                repoModel.FCMTokens.Add(request.FcmToken);
+                await _userRepository.ReplaceOneAsync(repoModel);
             }
             else
             {
-                if (!repoModel.FCMTokens.Contains(request.FcmToken))
-                {
-                    repoModel.FCMTokens.Add(request.FcmToken);
-                    await _userRepository.ReplaceOneAsync(repoModel);
-                }
-                else
-                {
-                    _logger.LogDebug($"Fmc token already exists {request.FcmToken}");
-                }
+                _logger.LogDebug($"Fmc token already exists {request.FcmToken}");
             }
 
             return new AppendFcmTokenToUserResponse();

@@ -40,53 +40,6 @@ namespace Padel.Notification.Test.Unit
         }
 
         [Fact]
-        public async Task Should_insert_new_user_if_one_does_not_already_exists()
-        {
-            var message = new Message
-            {
-                Body = JsonSerializer.Serialize(new ChatMessageReceived
-                {
-                    Participants = {10, 1337},
-                    RoomId = "this is a roomid"
-                }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
-            };
-
-            var findResults = new User[]
-            {
-                null,
-                new User
-                {
-                    UserId = 1337, FCMTokens = new List<string> {"token1"}, Notifications = new List<PushNotification>
-                    {
-                        new PushNotification
-                        {
-                            ChatMessageReceived = new PushNotification.Types.ChatMessageReceived()
-                        }
-                    }
-                },
-            };
-
-            A.CallTo(() => _fakeRepo.FindByUserId(A<int>._)).ReturnsNextFromSequence(findResults);
-
-            await _sut.ProcessAsync(message);
-
-            A.CallTo(() => _fakeRepo.InsertOneAsync(A<User>.That.Matches(user =>
-                    user.UserId                                      == 10 &&
-                    user.FCMTokens.Count                             == 0  &&
-                    user.Notifications.Count                         == 1  &&
-                    user.Notifications[0].ChatMessageReceived.RoomId == "this is a roomid"
-                )
-            )).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _fakeRepo.ReplaceOneAsync(A<User>.That.Matches(user =>
-                    user.UserId                                      == 1337 &&
-                    user.FCMTokens.Count                             == 1    &&
-                    user.Notifications.Count                         == 2    &&
-                    user.Notifications[1].ChatMessageReceived.RoomId == "this is a roomid"
-                )
-            )).MustHaveHappenedOnceExactly();
-        }
-
-        [Fact]
         public async Task Should_send_notification_to_users()
         {
             var message = new Message
@@ -101,11 +54,11 @@ namespace Padel.Notification.Test.Unit
             var findResults = new[]
             {
                 new User {UserId = 10, FCMTokens = new List<string> {"a", "b"}},
-                new User {UserId = 10, FCMTokens = new List<string> {"c"}},
-                null,
+                new User {UserId = 9, FCMTokens = new List<string> {"c"}},
+                new User {UserId = 8},
             };
 
-            A.CallTo(() => _fakeRepo.FindByUserId(A<int>._)).ReturnsNextFromSequence(findResults);
+            A.CallTo(() => _fakeRepo.FindOrCreateByUserId(A<int>._)).ReturnsNextFromSequence(findResults);
 
             await _sut.ProcessAsync(message);
 

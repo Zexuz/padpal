@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Logging;
 using Padel.Notification.Extensions;
-using Padel.Notification.Models;
 using Padel.Notification.Repository;
 using Padel.Proto.Notification.V1;
 using Padel.Proto.Social.V1;
@@ -46,37 +45,22 @@ namespace Padel.Notification.MessageProcessors
 
             var tokens = new List<string>();
 
+            var pushNotification = new PushNotification
+            {
+                UtcTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                ChatMessageReceived = new PushNotification.Types.ChatMessageReceived
+                {
+                    RoomId = parsed.RoomId
+                }
+            };
+
             foreach (var userId in userIds)
             {
-                var pushNotification = new PushNotification
-                {
-                    UtcTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    ChatMessageReceived = new PushNotification.Types.ChatMessageReceived
-                    {
-                        RoomId = parsed.RoomId
-                    }
-                };
-
-
-                var res = _userRepository.FindByUserId(userId);
-                if (res == null)
-                {
-                    await _userRepository.InsertOneAsync(new User
-                    {
-                        UserId = userId,
-                        Notifications = new List<PushNotification>()
-                        {
-                            pushNotification
-                        },
-                    });
-                    _logger.LogWarning($"We don't have a user with id '{userId}' in the collection");
-                    continue;
-                }
-
+                var res = await _userRepository.FindOrCreateByUserId(userId);
                 res.Notifications.Add(pushNotification);
                 await _userRepository.ReplaceOneAsync(res);
-
-                // TODO Check if the user wan't to be notified 
+                
+                // TODO Check if the user wants to be notified 
                 tokens.AddRange(res.FCMTokens);
             }
 
