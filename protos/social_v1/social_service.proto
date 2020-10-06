@@ -22,6 +22,12 @@ message FriendRequestReceived{
   int32 fromUser = 2;
 }
 
+message FriendRequestAccepted{
+  option (descriptors.messageType) = "social_v1_FriendRequestAccepted";
+  string userThatAccepted = 1;
+  int32 userThatRequested = 2; 
+}
+
 service Social {
   // TODO how to mark in the app what rooms have "unread messages" for me?
   // if Chatroom.lastActivity is newer than ChatRoom.participants.me.lastSeen, then this should be marked as "new" 

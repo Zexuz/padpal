@@ -114,6 +114,7 @@ namespace Padel.Social.Test.Unit
 
             var profile = new Profile
             {
+                Name = "kalle anka",
                 UserId = toUser,
                 FriendRequests = new List<FriendRequest> {new FriendRequest {UserId = fromUser}}
             };
@@ -129,7 +130,11 @@ namespace Padel.Social.Test.Unit
                     p.Friends[0].UserId    == fromUser
                 ))
             ).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _fakePublisher.PublishMessage(A<object>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<FriendRequestAccepted>.That.Matches(request => 
+                    request.UserThatAccepted  == profile.Name &&
+                    request.UserThatRequested == fromUser
+                )
+            )).MustHaveHappenedOnceExactly();
         }
 
         [Fact]

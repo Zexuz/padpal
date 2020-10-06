@@ -98,7 +98,11 @@ namespace Padel.Social.Services.Impl
             toUser.Friends.Add(new Friend {UserId = friendRequest.UserId});
             await _profileRepository.ReplaceOneAsync(toUser);
 
-            await _publisher.PublishMessage(new object());
+            await _publisher.PublishMessage(new FriendRequestAccepted
+            {
+                UserThatRequested = friendRequest.UserId,
+                UserThatAccepted = toUser.Name
+            });
         }
 
         private async Task DeclineFriendRequest(Profile toUser, FriendRequest friendRequest)
