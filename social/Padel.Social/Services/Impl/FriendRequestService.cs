@@ -25,7 +25,7 @@ namespace Padel.Social.Services.Impl
             _logger = logger;
         }
 
-        public async Task MakeFriendRequest(int fromUserId, int toUserId)
+        public async Task SendFriendRequest(int fromUserId, int toUserId)
         {
             var toUser = await _profileRepository.FindOneAsync(profile => profile.UserId == toUserId);
 
@@ -63,6 +63,48 @@ namespace Padel.Social.Services.Impl
                 toUser.FriendRequests.Remove(friendRequest);
                 await _profileRepository.ReplaceOneAsync(toUser);
             }
+        }
+
+        public async Task RespondToFriendRequest(int fromUserId, int toUserId, RespondToFriendRequestRequest.Types.Action action)
+        {
+            if (action == RespondToFriendRequestRequest.Types.Action.Unknown)
+            {
+                throw new ArgumentException($"Action can't be {RespondToFriendRequestRequest.Types.Action.Unknown} ", nameof(action));
+            }
+
+            var toUser = await _profileRepository.FindOneAsync(profile => profile.UserId == toUserId);
+            var friendRequest = toUser.FriendRequests.SingleOrDefault(friend => friend.UserId == fromUserId);
+            if (friendRequest == null)
+            {
+                throw new NoMatchingFriendRequestFoundException(fromUserId, toUserId);
+            }
+
+            switch (action)
+            {
+                case RespondToFriendRequestRequest.Types.Action.Accept:
+                    await AcceptFriendRequest(toUser, friendRequest);
+                    break;
+                case RespondToFriendRequestRequest.Types.Action.Decline:
+                    await DeclineFriendRequest(toUser, friendRequest);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
+            }
+        }
+
+        private async Task AcceptFriendRequest(Profile toUser, FriendRequest friendRequest)
+        {
+            toUser.FriendRequests.Remove(friendRequest);
+            toUser.Friends.Add(new Friend {UserId = friendRequest.UserId});
+            await _profileRepository.ReplaceOneAsync(toUser);
+
+            await _publisher.PublishMessage(new object());
+        }
+
+        private async Task DeclineFriendRequest(Profile toUser, FriendRequest friendRequest)
+        {
+            toUser.FriendRequests.Remove(friendRequest);
+            await _profileRepository.ReplaceOneAsync(toUser);
         }
     }
 }

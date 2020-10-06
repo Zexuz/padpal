@@ -114,8 +114,16 @@ namespace Padel.Social.Runner.Controllers
         public override async Task<SendFriendRequestResponse> SendFriendRequest(SendFriendRequestRequest request, ServerCallContext context)
         {
             var userId = context.GetUserId();
-            await _friendRequestService.MakeFriendRequest(userId, request.UserId);
+            await _friendRequestService.SendFriendRequest(userId, request.UserId);
             return new SendFriendRequestResponse();
+        }
+
+        public override async Task<RespondToFriendRequestResponse> RespondToFriendRequest(RespondToFriendRequestRequest request,
+            ServerCallContext                                                                                           context)
+        {
+            var userId = context.GetUserId();
+            await _friendRequestService.RespondToFriendRequest(userId, request.UserId, request.Action);
+            return new RespondToFriendRequestResponse();
         }
     }
 }
