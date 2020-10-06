@@ -134,8 +134,15 @@ namespace Padel.Social.Test.Unit
                 UserId = toUser,
                 FriendRequests = new List<FriendRequest> {new FriendRequest {UserId = fromUser}}
             };
+         
+            var fromProfile = new Profile
+            {
+                Name = "donald duck",
+                UserId = fromUser,
+            };
 
-            A.CallTo(() => _fakeProfileRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(profile);
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(toUser)).Returns(profile);
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(fromUser)).Returns(fromProfile);
 
             await _sut.RespondToFriendRequest(fromUser, toUser, action);
 
@@ -144,6 +151,13 @@ namespace Padel.Social.Test.Unit
                     p.Friends.Count        == 1      &&
                     p.FriendRequests.Count == 0      &&
                     p.Friends[0].UserId    == fromUser
+                ))
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _fakeProfileRepository.ReplaceOneAsync(A<Profile>.That.Matches(p =>
+                    p.UserId               == fromUser &&
+                    p.Friends.Count        == 1      &&
+                    p.FriendRequests.Count == 0      &&
+                    p.Friends[0].UserId    == toUser
                 ))
             ).MustHaveHappenedOnceExactly();
             A.CallTo(() => _fakePublisher.PublishMessage(A<FriendRequestAccepted>.That.Matches(request => 
@@ -166,7 +180,7 @@ namespace Padel.Social.Test.Unit
                 FriendRequests = new List<FriendRequest> {new FriendRequest {UserId = fromUser}}
             };
 
-            A.CallTo(() => _fakeProfileRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(profile);
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(toUser)).Returns(profile);
 
             await _sut.RespondToFriendRequest(fromUser, toUser, action);
 

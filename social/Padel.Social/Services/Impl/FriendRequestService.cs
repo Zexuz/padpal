@@ -84,7 +84,7 @@ namespace Padel.Social.Services.Impl
                 throw new ArgumentException($"Action can't be {RespondToFriendRequestRequest.Types.Action.Unknown} ", nameof(action));
             }
 
-            var toUser = await _profileRepository.FindOneAsync(profile => profile.UserId == toUserId);
+            var toUser = _profileRepository.FindByUserId(toUserId);
             var friendRequest = toUser.FriendRequests.SingleOrDefault(friend => friend.UserId == fromUserId);
             if (friendRequest == null)
             {
@@ -94,7 +94,7 @@ namespace Padel.Social.Services.Impl
             switch (action)
             {
                 case RespondToFriendRequestRequest.Types.Action.Accept:
-                    await AcceptFriendRequest(toUser, friendRequest);
+                    await AcceptFriendRequest(toUser, fromUserId, friendRequest);
                     break;
                 case RespondToFriendRequestRequest.Types.Action.Decline:
                     await DeclineFriendRequest(toUser, friendRequest);
@@ -104,8 +104,12 @@ namespace Padel.Social.Services.Impl
             }
         }
 
-        private async Task AcceptFriendRequest(Profile toUser, FriendRequest friendRequest)
+        private async Task AcceptFriendRequest(Profile toUser, int fromUserId, FriendRequest friendRequest)
         {
+            var fromUser = _profileRepository.FindByUserId(fromUserId);
+            fromUser.Friends.Add(new Friend{UserId = toUser.UserId});
+            await _profileRepository.ReplaceOneAsync(fromUser);
+            
             toUser.FriendRequests.Remove(friendRequest);
             toUser.Friends.Add(new Friend {UserId = friendRequest.UserId});
             await _profileRepository.ReplaceOneAsync(toUser);
