@@ -23,6 +23,9 @@ func NewSocialService(conn *grpc.ClientConn) *socialpb.SocialService {
 		GetRoomsWhereUserIsParticipating: client.GetRoomsWhereUserIsParticipating,
 		GetRoom:                          client.GetRoom,
 		SearchForProfile:                 client.SearchForProfile,
+		SendFriendRequest:                client.SendFriendRequest,
+		RespondToFriendRequest:           client.RespondToFriendRequest,
+		MyProfile:                        client.MyProfile,
 	}
 
 	return service
@@ -50,4 +53,16 @@ func (s *chatService) GetRoom(ctx context.Context, request *socialpb.GetRoomRequ
 
 func (s *chatService) SearchForProfile(ctx context.Context, request *socialpb.SearchForProfileRequest) (*socialpb.SearchForProfileResponse, error) {
 	return s.pbClient.SearchForProfile(ctx, request)
+}
+
+func (s *chatService) RespondToFriendRequest(ctx context.Context, request *socialpb.RespondToFriendRequestRequest) (*socialpb.RespondToFriendRequestResponse, error) {
+	return s.pbClient.RespondToFriendRequest(ctx, request)
+}
+
+func (s *chatService) SendFriendRequest(ctx context.Context, request *socialpb.SendFriendRequestRequest) (*socialpb.SendFriendRequestResponse, error) {
+	return s.pbClient.SendFriendRequest(ctx, request)
+}
+
+func (s *chatService) MyProfile(ctx context.Context, request *socialpb.MyProfileRequest) (*socialpb.MyProfileResponse, error) {
+	return s.pbClient.MyProfile(ctx, request)
 }

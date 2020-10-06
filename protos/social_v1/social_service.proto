@@ -72,9 +72,21 @@ service Social {
       shouldValidate:true,
     };
   }
+  rpc MyProfile (MyProfileRequest) returns (MyProfileResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
 }
-// TODO user should get a notification when a friendRequest is created, and when a friendRequest is accpected
-// TODO implement method to get my profile. MyProfile (the object) might be different than the SearchForProfile message  
+
+message MyProfileRequest {
+
+}
+
+message MyProfileResponse {
+  MyProfile me = 1;
+}
+
 
 message RespondToFriendRequestRequest {
   int32 userId = 1; // The user that requests we be friends
@@ -107,7 +119,18 @@ message SearchForProfileResponse {
 }
 
 message Profile{
-  string name = 1;
+  int32 userId = 1;
+  string name = 2;
+  string imgUrl = 3;
+  repeated int32 friends = 4;
+}
+
+message MyProfile{
+  int32 userId = 1;
+  string name = 2;
+  string imgUrl = 3;
+  repeated int32 friends = 4;
+  repeated int32 friendRequests = 5;
 }
 
 message SendMessageRequest {
