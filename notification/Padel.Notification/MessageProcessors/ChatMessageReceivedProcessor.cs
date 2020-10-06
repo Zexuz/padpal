@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using FirebaseAdmin.Messaging;
-using Microsoft.Extensions.Logging;
 using Padel.Notification.Extensions;
-using Padel.Notification.Repository;
+using Padel.Notification.Service;
 using Padel.Proto.Notification.V1;
 using Padel.Proto.Social.V1;
 using Padel.Queue;
@@ -14,22 +11,13 @@ namespace Padel.Notification.MessageProcessors
 {
     public class ChatMessageReceivedProcessor : IMessageProcessor
     {
-        private readonly IFirebaseCloudMessaging               _firebaseCloudMessaging;
-        private readonly IUserRepository                       _userRepository;
-        private readonly ILogger<ChatMessageReceivedProcessor> _logger;
+        private readonly INotificationService _notificationService;
 
         public string EventName => ChatMessageReceived.Descriptor.GetMessageName();
 
-        public ChatMessageReceivedProcessor
-        (
-            IFirebaseCloudMessaging               firebaseCloudMessaging,
-            IUserRepository                       userRepository,
-            ILogger<ChatMessageReceivedProcessor> logger
-        )
+        public ChatMessageReceivedProcessor(INotificationService notificationService)
         {
-            _firebaseCloudMessaging = firebaseCloudMessaging;
-            _userRepository = userRepository;
-            _logger = logger;
+            _notificationService = notificationService;
         }
 
         public bool CanProcess(string eventName)
@@ -39,11 +27,8 @@ namespace Padel.Notification.MessageProcessors
 
         public async Task ProcessAsync(Message message)
         {
-            // TODO This will be the same for all messages the we process in "Notification Service"
             var parsed = ChatMessageReceived.Parser.ParseJson(message.Body);
             var userIds = parsed.Participants;
-
-            var tokens = new List<string>();
 
             var pushNotification = new PushNotification
             {
@@ -54,32 +39,7 @@ namespace Padel.Notification.MessageProcessors
                 }
             };
 
-            foreach (var userId in userIds)
-            {
-                var res = await _userRepository.FindOrCreateByUserId(userId);
-                res.Notifications.Add(pushNotification);
-                await _userRepository.ReplaceOneAsync(res);
-                
-                // TODO Check if the user wants to be notified 
-                tokens.AddRange(res.FCMTokens);
-            }
-
-            // SendNotification
-            if (tokens.Count == 0)
-            {
-                return;
-            }
-
-            await _firebaseCloudMessaging.SendMulticastAsync(new MulticastMessage
-            {
-                Data = new Dictionary<string, string>
-                {
-                    {"type", "<TODO NOTIFICATION NAME>"},
-                    // The event name eg social_v1_ChatMessageReceived is NOT the same as the Notification type name bc they might not have the same data
-                    {"content", "<TODO NOTIFICATION>"},
-                },
-                Tokens = tokens
-            });
+            await _notificationService.AddAndSendNotification(userIds, pushNotification);
         }
     }
 }

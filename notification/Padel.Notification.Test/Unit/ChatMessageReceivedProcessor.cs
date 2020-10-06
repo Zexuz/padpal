@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FakeItEasy;
-using FirebaseAdmin.Messaging;
-using Google.Protobuf;
+using Padel.Notification.Extensions;
 using Padel.Notification.MessageProcessors;
-using Padel.Notification.Models;
-using Padel.Notification.Repository;
+using Padel.Notification.Service;
 using Padel.Proto.Notification.V1;
 using Padel.Proto.Social.V1;
 using Padel.Test.Core;
@@ -20,71 +17,36 @@ namespace Padel.Notification.Test.Unit
     public class ChatMessageReceivedProcessorTest
     {
         private readonly ChatMessageReceivedProcessor _sut;
-        private readonly IFirebaseCloudMessaging      _fakeFirebaseCloudMessaging;
-        private readonly IUserRepository              _fakeRepo;
+        private readonly INotificationService         _fakeNotificationService;
 
         public ChatMessageReceivedProcessorTest()
         {
-            _fakeFirebaseCloudMessaging = A.Fake<IFirebaseCloudMessaging>();
-            _fakeRepo = A.Fake<IUserRepository>();
-
-            _sut = TestHelper.ActivateWithFakes<ChatMessageReceivedProcessor>(_fakeFirebaseCloudMessaging, _fakeRepo);
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData("{someOther:\"json Object\"}")]
-        public async Task Should_throw_error_is_message_body_is_invalid(string body)
-        {
-            await Assert.ThrowsAsync<InvalidJsonException>(() => _sut.ProcessAsync(new Message {Body = body}));
+            _fakeNotificationService = A.Fake<INotificationService>();
+            _sut = TestHelper.ActivateWithFakes<ChatMessageReceivedProcessor>(_fakeNotificationService);
         }
 
         [Fact]
-        public async Task Should_send_notification_to_users()
+        public void Should_return_true()
         {
-            var message = new Message
-            {
-                Body = JsonSerializer.Serialize(new ChatMessageReceived
-                {
-                    Participants = {10, 5, 1337},
-                    RoomId = "this is a roomid"
-                }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
-            };
-
-            var findResults = new[]
-            {
-                new User {UserId = 10, FCMTokens = new List<string> {"a", "b"}},
-                new User {UserId = 9, FCMTokens = new List<string> {"c"}},
-                new User {UserId = 8},
-            };
-
-            A.CallTo(() => _fakeRepo.FindOrCreateByUserId(A<int>._)).ReturnsNextFromSequence(findResults);
-
-            await _sut.ProcessAsync(message);
-
-            A.CallTo(() => _fakeFirebaseCloudMessaging.SendMulticastAsync(A<MulticastMessage>.That.Matches(m =>
-                m.Tokens.Count == 3
-            ))).MustHaveHappenedOnceExactly();
+            var res = _sut.CanProcess(ChatMessageReceived.Descriptor.GetMessageName());
+            Assert.True(res);
         }
 
         [Fact]
-        public async Task Should_NOT_send_notification_to_users_when_there_are_no_FCMTokens()
+        public async Task Should_create_pushNotification()
         {
-            var message = new Message
+            var json = JsonSerializer.Serialize(new ChatMessageReceived
             {
-                Body = JsonSerializer.Serialize(new ChatMessageReceived
-                {
-                    Participants = {10, 5, 1337},
-                    RoomId = "this is a roomid"
-                }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
-            };
+                Participants = {1337, 4, 5},
+                RoomId = "myRoom"
+            }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
 
-            A.CallTo(() => _fakeRepo.FindOneAsync(A<Expression<Func<User, bool>>>._))
-                .Returns(Task.FromResult<User>(null));
+            await _sut.ProcessAsync(new Message {Body = json});
 
-            await _sut.ProcessAsync(message);
-
-            A.CallTo(() => _fakeFirebaseCloudMessaging.SendMulticastAsync(A<MulticastMessage>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakeNotificationService.AddAndSendNotification(
+                A<IEnumerable<int>>.That.Matches(i => i.Count()                        == 3),
+                A<PushNotification>.That.Matches(not => not.ChatMessageReceived.RoomId == "myRoom")
+            )).MustHaveHappenedOnceExactly();
         }
     }
 }

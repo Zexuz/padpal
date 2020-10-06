@@ -2,6 +2,7 @@ using Autofac;
 using Microsoft.Extensions.Configuration;
 using Padel.Notification.MessageProcessors;
 using Padel.Notification.Repository;
+using Padel.Notification.Service;
 using Padel.Queue;
 using Padel.Repository.Core.MongoDb;
 
@@ -27,6 +28,7 @@ namespace Padel.Notification
             builder.RegisterType<UserRepository>().As<IUserRepository>();
             builder.RegisterType<ChatMessageReceivedProcessor>().As<IMessageProcessor>();
             builder.RegisterType<FirebaseCloudMessagingWrapper>().As<IFirebaseCloudMessaging>();
+            builder.RegisterType<NotificationService>().As<INotificationService>();
         }
     }
 }
