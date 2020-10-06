@@ -34,7 +34,6 @@ class ProfileSearchView extends StatelessWidget {
           body: BlocBuilder<ProfileSearchCubit, ProfileSearchState>(
             buildWhen: (prev, cur) => prev.isLoading != cur.isLoading,
             builder: (context, state) {
-              const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
               const radius = 24.0;
 
               return Column(
@@ -50,11 +49,13 @@ class ProfileSearchView extends StatelessWidget {
                       itemCount: state.profiles.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          leading: Avatar(borderWidth: 0, url: url, radius: radius),
+                          leading: Avatar(borderWidth: 0, url: state.profiles[index].imageUrl, radius: radius),
                           trailing: Icon(Icons.arrow_forward_ios),
                           title: Text(state.profiles[index].name),
                           subtitle: Text('My new post'),
-                          onTap: () => {nav.push(ProfilePage.route())},
+                          onTap: () {
+                            nav.push(ProfilePage.route(state.profiles[index]));
+                          },
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) => const Divider(),

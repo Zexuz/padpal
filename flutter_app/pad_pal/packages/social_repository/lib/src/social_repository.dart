@@ -7,9 +7,10 @@ import 'package:social_repository/generated/social_v1/social_service.pbgrpc.dart
 class Profile {
   String name;
   String rank;
+  int userId;
   int wins;
   int losses;
-  int friends;
+  List<int> friends;
   String imageUrl;
   String location;
 }
@@ -43,11 +44,29 @@ class SocialRepository {
     return response.profiles
         .map((e) => Profile()
           ..name = e.name
+          ..userId = e.userId
           ..rank = "Beginner + + +"
-          ..friends = 1337
+          ..friends = e.friends
+          ..location = "Göteborg"
           ..imageUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg"
           ..losses = 25
           ..wins = 75)
         .toList();
+  }
+
+  Future<Profile> getMyProfile() async {
+    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final request = MyProfileRequest();
+
+    final call = _chatServiceClient.myProfile(request, options: callOptions);
+    var response = await call;
+    return Profile()
+      ..name = response.me.name
+      ..rank = "Beginner + + +"
+      ..location = "Göteborg"
+      ..friends = List.empty()
+      ..imageUrl = response.me.imgUrl
+      ..losses = 25
+      ..wins = 75;
   }
 }

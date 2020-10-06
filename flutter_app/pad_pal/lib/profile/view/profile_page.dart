@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/profile/view/profile_search_view.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:social_repository/social_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage();
@@ -10,58 +12,74 @@ class MyProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final nav = Navigator.of(context);
-    final profile = getMyProfile();
 
-    return Scaffold(
-      appBar: CustomAppBar(title: profile.name, actions: [
-        IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            nav.push(PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => ProfileSearchView(),
-            ));
-          },
-        )
-      ]),
-      backgroundColor: Colors.white,
-      body: ProfileView(
-        profile: profile,
-        isMe: true,
-        areWeFriends: false,
+    return BlocProvider(
+      create: (_) => MeCubit(
+        socialRepository: context.repository<SocialRepository>(),
+      ),
+      child: BlocBuilder<MeCubit, MeState>(
+        buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+        builder: (context, state) {
+          return state.isLoading
+              ? CircularProgressIndicator(
+                  backgroundColor: Colors.blue,
+                )
+              : Scaffold(
+                  appBar: CustomAppBar(title: state.me.name, actions: [
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        nav.push(PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) => ProfileSearchView(),
+                        ));
+                      },
+                    )
+                  ]),
+                  backgroundColor: Colors.white,
+                  body: ProfileView(
+                    profile: state.me,
+                    isMe: true,
+                    areWeFriends: false,
+                  ),
+                );
+        },
       ),
     );
-  }
-
-  Profile getMyProfile() {
-    return Profile()
-      ..name = "Robin Oliver Edbom"
-      ..rank = "Beginner + + +"
-      ..friends = 1337
-      ..imageUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg"
-      ..losses = 25
-      ..wins = 75
-      ..location = "Göteborg";
   }
 }
 
 class ProfilePage extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => ProfilePage());
+  static Route route(Profile profile) {
+    return MaterialPageRoute<void>(builder: (_) => ProfilePage(profile));
   }
 
-  const ProfilePage();
+  const ProfilePage(this.profile);
+
+  final Profile profile;
 
   @override
   Widget build(BuildContext context) {
-    final profile = getUsersProfile();
-
-    return Scaffold(
-      appBar: CustomAppBar(title: profile.name),
-      backgroundColor: Colors.white,
-      body: ProfileView(
-        profile: profile,
-        isMe: false,
-        areWeFriends: true,
+    return BlocProvider(
+      create: (_) => MeCubit(
+        socialRepository: context.repository<SocialRepository>(),
+      ),
+      child: BlocBuilder<MeCubit, MeState>(
+        buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+        builder: (context, state) {
+          return state.isLoading
+              ? CircularProgressIndicator(
+                  backgroundColor: Colors.blue,
+                )
+              : Scaffold(
+                  appBar: CustomAppBar(title: profile.name),
+                  backgroundColor: Colors.white,
+                  body: ProfileView(
+                    profile: profile,
+                    isMe: false,
+                    areWeFriends: profile.friends.contains(state.me),
+                  ),
+                );
+        },
       ),
     );
   }
@@ -70,7 +88,7 @@ class ProfilePage extends StatelessWidget {
     return Profile()
       ..name = "LOOKUP USER"
       ..rank = "Beginner + + +"
-      ..friends = 1337
+      ..friends = List.empty()
       ..imageUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg"
       ..losses = 25
       ..wins = 75
@@ -104,13 +122,17 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    print("profile ${profile?.name}");
+
     final row = Row(children: []);
     if (!this.isMe) {
       if (this.areWeFriends) {
         row.children.add(Expanded(
           child: ButtonSmallLight(onPressed: () {}, text: "Friends", stretch: false, isDisabled: false),
         ));
-        row.children.add(const SizedBox(width: 8,));
+        row.children.add(const SizedBox(
+          width: 8,
+        ));
         row.children.add(Expanded(
           child: ButtonSmallPrimary(onPressed: () {}, text: "Chat", stretch: false, isDisabled: false),
         ));
@@ -175,7 +197,7 @@ class ProfileView extends StatelessWidget {
               children: [
                 _StatsCountWithLabel(count: this.profile.wins, label: "Wins"),
                 _StatsCountWithLabel(count: this.profile.losses, label: "Losses"),
-                _StatsCountWithLabel(count: this.profile.friends, label: "Friends"),
+                _StatsCountWithLabel(count: this.profile.friends.length, label: "Friends"),
               ],
             ),
           ),
