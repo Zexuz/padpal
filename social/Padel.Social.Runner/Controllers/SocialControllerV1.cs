@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Grpc.Core;
 using Padel.Proto.Social.V1;
+using Padel.Repository.Core.MongoDb;
 using Padel.Social.Services.Interface;
 using Padel.Social.ValueTypes;
 
@@ -10,23 +11,26 @@ namespace Padel.Social.Runner.Controllers
 {
     public class SocialControllerV1 : Proto.Social.V1.Social.SocialBase
     {
-        private readonly IMessageSenderService _messageSenderService;
-        private readonly IRoomService          _roomService;
-        private readonly IProfileSearchService _profileSearchService;
-        private readonly IFriendRequestService _friendRequestService;
+        private readonly IMessageSenderService            _messageSenderService;
+        private readonly IRoomService                     _roomService;
+        private readonly IProfileSearchService            _profileSearchService;
+        private readonly IFriendRequestService            _friendRequestService;
+        private readonly IMongoRepository<Models.Profile> _profileMongoRepository;
 
         public SocialControllerV1
         (
-            IMessageSenderService messageSenderService,
-            IRoomService          roomService,
-            IProfileSearchService profileSearchService,
-            IFriendRequestService friendRequestService
+            IMessageSenderService            messageSenderService,
+            IRoomService                     roomService,
+            IProfileSearchService            profileSearchService,
+            IFriendRequestService            friendRequestService,
+            IMongoRepository<Models.Profile> profileMongoRepository
         )
         {
             _messageSenderService = messageSenderService;
             _roomService = roomService;
             _profileSearchService = profileSearchService;
             _friendRequestService = friendRequestService;
+            _profileMongoRepository = profileMongoRepository;
         }
 
         public override async Task<CreateRoomResponse> CreateRoom(CreateRoomRequest request, ServerCallContext context)
@@ -105,8 +109,29 @@ namespace Padel.Social.Runner.Controllers
                 {
                     profiles.Select(user => new Profile
                     {
-                        Name = user.Name
+                        Name = user.Name,
+                        Friends = { user.Friends.Select(friendRequest => friendRequest.UserId)},
+                        ImgUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                        UserId = user.UserId
                     })
+                }
+            };
+        }
+
+        public override async Task<MyProfileResponse> MyProfile(MyProfileRequest request, ServerCallContext context)
+        {
+            var userId = context.GetUserId();
+
+            var me = await _profileMongoRepository.FindOneAsync(profile => profile.UserId == userId);
+            return new MyProfileResponse
+            {
+                Me = new MyProfile
+                {
+                    Name = me.Name,
+                    Friends = { me.Friends.Select(friendRequest => friendRequest.UserId)},
+                    ImgUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                    UserId = me.UserId,
+                    FriendRequests = { me.FriendRequests.Select(friendRequest => friendRequest.UserId)}
                 }
             };
         }
