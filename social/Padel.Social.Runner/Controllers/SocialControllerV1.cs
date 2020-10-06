@@ -122,7 +122,7 @@ namespace Padel.Social.Runner.Controllers
             ServerCallContext                                                                                           context)
         {
             var userId = context.GetUserId();
-            await _friendRequestService.RespondToFriendRequest(userId, request.UserId, request.Action);
+            await _friendRequestService.RespondToFriendRequest(request.UserId,userId , request.Action);
             return new RespondToFriendRequestResponse();
         }
     }
