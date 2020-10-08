@@ -14,36 +14,31 @@ class MyProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final nav = Navigator.of(context);
 
-    return BlocProvider(
-      create: (_) => MeCubit(
-        socialRepository: context.repository<SocialRepository>(),
-      ),
-      child: BlocBuilder<MeCubit, MeState>(
-        buildWhen: (previous, current) => previous.isLoading != current.isLoading,
-        builder: (context, state) {
-          return state.isLoading
-              ? CircularProgressIndicator(
-                  backgroundColor: Colors.blue,
-                )
-              : Scaffold(
-                  appBar: CustomAppBar(title: state.me.name, actions: [
-                    IconButton(
-                      icon: Icon(Icons.search),
-                      onPressed: () {
-                        nav.push(PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => ProfileSearchView(),
-                        ));
-                      },
-                    )
-                  ]),
-                  backgroundColor: Colors.white,
-                  body: ProfileView(
-                    profile: state.me,
-                    friendStatus: FriendStatus.isMe,
-                  ),
-                );
-        },
-      ),
+    return BlocBuilder<MeCubit, MeState>(
+      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+      builder: (context, state) {
+        return state.isLoading
+            ? CircularProgressIndicator(
+                backgroundColor: Colors.blue,
+              )
+            : Scaffold(
+                appBar: CustomAppBar(title: state.me.name, actions: [
+                  IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      nav.push(PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) => ProfileSearchView(),
+                      ));
+                    },
+                  )
+                ]),
+                backgroundColor: Colors.white,
+                body: ProfileView(
+                  profile: state.me,
+                  friendStatus: FriendStatus.isMe,
+                ),
+              );
+      },
     );
   }
 }

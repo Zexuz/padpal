@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 4;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -94,7 +94,13 @@ class SettingsPage extends StatelessWidget {
     return Column(
       children: [
         RaisedButton(child: Text("Components"), onPressed: () => nav.push(ComponentsPage.route())),
-        Text('Name: ${context.bloc<AuthenticationBloc>().state.name}'),
+        BlocBuilder<MeCubit, MeState>(
+          buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+          builder: (context, state) {
+            if (state.isLoading) return CircularProgressIndicator();
+            return Text('Name: ${context.bloc<MeCubit>().state.me.name}');
+          },
+        ),
         RaisedButton(
           child: const Text('Logout'),
           onPressed: () {

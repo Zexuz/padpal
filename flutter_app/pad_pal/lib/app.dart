@@ -9,9 +9,9 @@ import 'package:pad_pal/theme.dart';
 import 'package:user_repository/user_repository.dart';
 
 import 'bloc/authentication/bloc/authentication_bloc.dart';
+import 'bloc/me/me_cubit.dart';
 import 'screens/credential/view/credential_page.dart';
 import 'screens/home/home.dart';
-
 
 class App extends StatelessWidget {
   @override
@@ -31,11 +31,18 @@ class App extends StatelessWidget {
           create: (_) => NotificationRepository(),
         ),
       ],
-      child: BlocProvider(
-        create: (context) => AuthenticationBloc(
-          userRepository: RepositoryProvider.of<UserRepository>(context),
-          authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
-        ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => MeCubit(socialRepository: context.repository<SocialRepository>()),
+          ),
+          BlocProvider(
+            create: (context) => AuthenticationBloc(
+              userRepository: RepositoryProvider.of<UserRepository>(context),
+              authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
+            ),
+          )
+        ],
         child: AppView(),
       ),
     );
