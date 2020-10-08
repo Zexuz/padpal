@@ -23,7 +23,8 @@ class NotificationRepository {
   Future<void> sendFmcToken({@required String token}) async {
     assert(token != null);
 
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final request = AppendFcmTokenToUserRequest()..fcmToken = token;
 
     var call = _notificationClient.appendFcmTokenToUser(request, options: callOptions);
@@ -36,7 +37,8 @@ class NotificationRepository {
   }
 
   Future<List<PushNotification>> getNotifications() async {
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final request = GetNotificationRequest();
 
     var call = _notificationClient.getNotification(request, options: callOptions);

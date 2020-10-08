@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pad_pal/theme.dart';
 
 class SplashPage extends StatelessWidget {
   static Route route() {
@@ -12,9 +13,13 @@ class SplashPage extends StatelessWidget {
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text("SPLASH SCREEN"), CircularProgressIndicator()],
+        children: [
+          Center(
+            child: Text("PadelPal", style: AppTheme.logo.copyWith(fontSize: 31)),
+          ),
+          CircularProgressIndicator(backgroundColor: AppTheme.primary)
+        ],
       )),
     );
   }
 }
-

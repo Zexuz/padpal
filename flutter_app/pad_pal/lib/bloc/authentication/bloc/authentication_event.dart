@@ -14,6 +14,11 @@ class AuthenticationStatusChanged extends AuthenticationEvent {
 
   @override
   List<Object> get props => [status];
+
+  @override
+  String toString() {
+    return status.toString();
+  }
 }
 
 class AuthenticationLogoutRequested extends AuthenticationEvent {}

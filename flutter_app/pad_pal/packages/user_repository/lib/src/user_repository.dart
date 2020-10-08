@@ -16,7 +16,8 @@ class UserRepository {
   final TokenManager _tokenManager;
 
   Future<Me> me() async {
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final call = _userServiceClient.me(MeRequest(), options: callOptions);
 
     final protoRes = await call;

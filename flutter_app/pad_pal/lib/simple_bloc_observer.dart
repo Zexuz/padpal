@@ -10,7 +10,7 @@ class SimpleBlocObserver extends BlocObserver {
 
   @override
   onTransition(Bloc bloc, Transition transition) {
-    print('onTransition $transition');
+    print('onTransition, currentState: ${transition.currentState}, event: ${transition.event}, nextState: ${transition.nextState}');
     super.onTransition(bloc, transition);
   }
 

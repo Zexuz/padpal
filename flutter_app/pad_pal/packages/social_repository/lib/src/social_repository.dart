@@ -37,7 +37,8 @@ class SocialRepository {
       return List.empty();
     }
 
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final request = SearchForProfileRequest()..searchTerm = searchTerm;
 
     final call = _chatServiceClient.searchForProfile(request, options: callOptions);
@@ -57,7 +58,8 @@ class SocialRepository {
   }
 
   Future<Profile> getMyProfile() async {
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final request = MyProfileRequest();
 
     final call = _chatServiceClient.myProfile(request, options: callOptions);
@@ -74,7 +76,8 @@ class SocialRepository {
   }
 
   Future<void> sendFriendRequest(int toUserId) async {
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final request = SendFriendRequestRequest()..userId = toUserId;
 
     final call = _chatServiceClient.sendFriendRequest(request, options: callOptions);
@@ -86,7 +89,8 @@ class SocialRepository {
       throw Exception("Action can't be UNKNOWN");
     }
 
-    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final request = RespondToFriendRequestRequest()
       ..userId = fromUserId
       ..action = action;
