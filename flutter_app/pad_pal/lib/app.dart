@@ -1,16 +1,17 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:pad_pal/screens/splash/view/splash_page.dart';
 import 'package:social_repository/social_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/app_push.dart';
-import 'package:pad_pal/authentication/authentication.dart';
-import 'package:pad_pal/home/view/home_page.dart';
-import 'package:pad_pal/splash/splash.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:user_repository/user_repository.dart';
 
-import 'credential/view/credential_page.dart';
+import 'bloc/authentication/bloc/authentication_bloc.dart';
+import 'screens/credential/view/credential_page.dart';
+import 'screens/home/home.dart';
+
 
 class App extends StatelessWidget {
   @override

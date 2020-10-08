@@ -1,8 +1,9 @@
 import 'package:social_repository/social_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/messages/bloc/message_cubit.dart';
-import 'package:pad_pal/messages/view/message_form.dart';
+
+import '../bloc/message_cubit.dart';
+import 'message_form.dart';
 
 class MessagesPage extends StatelessWidget {
   const MessagesPage();

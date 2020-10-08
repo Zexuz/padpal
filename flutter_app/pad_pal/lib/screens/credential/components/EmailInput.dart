@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/credential/cubit/credential_cubit.dart';
+
+import '../cubit/credential_cubit.dart';
 
 class EmailInput extends StatelessWidget {
   @override

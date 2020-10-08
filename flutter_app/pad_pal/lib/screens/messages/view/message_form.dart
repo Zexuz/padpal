@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/button/light/button_small_light.dart';
 import 'package:pad_pal/components/components.dart';
-import 'package:pad_pal/messages/bloc/message_cubit.dart';
+
+import '../bloc/message_cubit.dart';
 
 class MessageForm extends StatelessWidget {
   final _controller = ScrollController();
@@ -14,8 +15,7 @@ class MessageForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessageCubit, MessageState>(
-      buildWhen: (previous, current) =>
-          previous.messages.length != current.messages.length,
+      buildWhen: (previous, current) => previous.messages.length != current.messages.length,
       builder: (context, state) {
         Timer(
           Duration(seconds: 1),
@@ -45,8 +45,7 @@ class MessageForm extends StatelessWidget {
                   flex: 1,
                   child: TextFormField(
                     controller: _textController,
-                    decoration: InputDecoration(
-                        border: InputBorder.none, hintText: 'Enter a message'),
+                    decoration: InputDecoration(border: InputBorder.none, hintText: 'Enter a message'),
                   ),
                 ),
                 ButtonSmallLight(

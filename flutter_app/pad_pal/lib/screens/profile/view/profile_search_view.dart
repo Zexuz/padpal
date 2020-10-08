@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/avatar/avatar.dart';
-import 'package:pad_pal/profile/view/profile_page.dart';
 import 'package:social_repository/social_repository.dart';
+
+import 'profile_page.dart';
 
 class ProfileSearchView extends StatelessWidget {
   static Route route() {

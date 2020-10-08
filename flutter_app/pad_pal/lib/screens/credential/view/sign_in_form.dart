@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pad_pal/credential/components/EmailInput.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/components.dart';
-import 'package:pad_pal/credential/components/PasswordInput.dart';
-import 'package:pad_pal/credential/cubit/credential_cubit.dart';
 import 'package:formz/formz.dart';
+
+import '../components/EmailInput.dart';
+import '../components/PasswordInput.dart';
+import '../cubit/credential_cubit.dart';
 
 class SignInForm extends StatelessWidget {
   static const double minHeight = 12.0;

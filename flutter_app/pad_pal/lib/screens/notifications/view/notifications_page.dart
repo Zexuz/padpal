@@ -4,11 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/generated/notification_v1/notification_service.pb.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
-import 'package:pad_pal/notifications/components/notification.dart';
-import 'package:pad_pal/notifications/cubit/notification_cubit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:social_repository/generated/social_v1/social_service.pb.dart';
 import 'package:social_repository/social_repository.dart';
+
+import '../cubit/notification_cubit.dart';
+import '../components/notification.dart';
 
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage();

@@ -2,7 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
-import 'package:pad_pal/authentication/models/models.dart';
+import 'package:pad_pal/models/models.dart';
 
 part 'credential_state.dart';
 

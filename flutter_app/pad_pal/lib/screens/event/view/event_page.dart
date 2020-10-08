@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/components.dart';
-import 'package:pad_pal/create_event/view/create_event_page.dart';
+import 'package:pad_pal/screens/create_event/create_event.dart';
 import 'package:pad_pal/theme.dart';
 
 class EventPage extends StatelessWidget {

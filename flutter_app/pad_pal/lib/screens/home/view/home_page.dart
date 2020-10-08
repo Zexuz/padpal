@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
-import 'package:pad_pal/authentication/authentication.dart';
+import 'package:pad_pal/bloc/authentication/authentication.dart';
 import 'package:pad_pal/bloc/bloc.dart';
-import 'package:pad_pal/demo/view.dart';
-import 'package:pad_pal/event/view/event_page.dart';
-import 'package:pad_pal/messages/messages.dart';
-import 'package:pad_pal/notifications/cubit/notification_cubit.dart';
-import 'package:pad_pal/notifications/notifications.dart';
-import 'package:pad_pal/profile/view/profile_page.dart';
+import 'package:pad_pal/screens/demo/view.dart';
+import 'package:pad_pal/screens/event/event.dart';
+import 'package:pad_pal/screens/messages/messages.dart';
+import 'package:pad_pal/screens/notifications/cubit/notification_cubit.dart';
+import 'package:pad_pal/screens/notifications/notifications.dart';
+import 'package:pad_pal/screens/profile/profile.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:social_repository/social_repository.dart';
 

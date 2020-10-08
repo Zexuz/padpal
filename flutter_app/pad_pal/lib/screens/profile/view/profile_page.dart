@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/components.dart';
-import 'package:pad_pal/profile/view/profile_search_view.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:social_repository/social_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'profile_search_view.dart';
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage();

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pad_pal/demo/view/avatar_demo.dart';
-import 'package:pad_pal/demo/view/button_demo.dart';
-import 'package:pad_pal/demo/view/card_demo.dart';
-import 'package:pad_pal/demo/view/flare_demo.dart';
-import 'package:pad_pal/demo/view/input_demo.dart';
-import 'package:pad_pal/demo/view/text_demo.dart';
+
+import 'avatar_demo.dart';
+import 'button_demo.dart';
+import 'card_demo.dart';
+import 'flare_demo.dart';
+import 'input_demo.dart';
+import 'text_demo.dart';
 
 class ComponentsPage extends StatelessWidget {
   static Route route() {

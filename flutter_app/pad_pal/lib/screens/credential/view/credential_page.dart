@@ -1,9 +1,9 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/credential/cubit/credential_cubit.dart';
 import 'package:pad_pal/theme.dart';
 
+import '../cubit/credential_cubit.dart';
 import 'sign_in_form.dart';
 import 'sign_up_form.dart';
 
