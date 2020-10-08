@@ -54,45 +54,29 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => MeCubit(
-        socialRepository: context.repository<SocialRepository>(),
-      ),
-      child: BlocBuilder<MeCubit, MeState>(
-        buildWhen: (previous, current) => previous.isLoading != current.isLoading,
-        builder: (context, state) {
-          if (state.isLoading)
-            return CircularProgressIndicator(
-              backgroundColor: Colors.blue,
-            );
-
-          FriendStatus friendStatus = FriendStatus.notFriends;
-
-          if (profile.friendsRequests.contains(state.me.userId)) friendStatus = FriendStatus.pending;
-          if (profile.friends.contains(state.me.userId)) friendStatus = FriendStatus.friends;
-
-          return Scaffold(
-            appBar: CustomAppBar(title: profile.name),
-            backgroundColor: Colors.white,
-            body: ProfileView(
-              profile: profile,
-              friendStatus: friendStatus,
-            ),
+    return BlocBuilder<MeCubit, MeState>(
+      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+      builder: (context, state) {
+        if (state.isLoading)
+          return CircularProgressIndicator(
+            backgroundColor: Colors.blue,
           );
-        },
-      ),
-    );
-  }
 
-  Profile getUsersProfile() {
-    return Profile()
-      ..name = "LOOKUP USER"
-      ..rank = "Beginner + + +"
-      ..friends = List.empty()
-      ..imageUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg"
-      ..losses = 25
-      ..wins = 75
-      ..location = "Göteborg";
+        FriendStatus friendStatus = FriendStatus.notFriends;
+
+        if (profile.friendsRequests.contains(state.me.userId)) friendStatus = FriendStatus.pending;
+        if (profile.friends.contains(state.me.userId)) friendStatus = FriendStatus.friends;
+
+        return Scaffold(
+          appBar: CustomAppBar(title: profile.name),
+          backgroundColor: Colors.white,
+          body: ProfileView(
+            profile: profile,
+            friendStatus: friendStatus,
+          ),
+        );
+      },
+    );
   }
 }
 
