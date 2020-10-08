@@ -60,4 +60,8 @@ class TokenManager {
       return null;
     }
   }
+
+  Future<void> destroy() async {
+    await _storage.deleteAll();
+  }
 }

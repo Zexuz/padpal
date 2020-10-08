@@ -27,15 +27,18 @@ class AuthenticationRepository {
   }
 
   Future<void> init() async {
-    try {
-      final token = await _tokenManager.getAccessToken();
-      if (token != null && DateTime.now().toUtc().isBefore(token.expires)) {
-        _controller.sink.add(AuthenticationStatus.authenticated);
-      }
+    final token = await _tokenManager.getAccessToken();
+
+    if (token == null) {
+      _controller.sink.add(AuthenticationStatus.unauthenticated);
       return;
-    } catch (e) {
-      print("Could not validate token, err:$e");
     }
+
+    if (DateTime.now().toUtc().isBefore(token.expires)) {
+      _controller.sink.add(AuthenticationStatus.authenticated);
+      return;
+    }
+
     _controller.sink.add(AuthenticationStatus.unauthenticated);
   }
 
@@ -91,10 +94,9 @@ class AuthenticationRepository {
     }
   }
 
-  Future<void> logOut() {
-    // TODO IMPLEMENT
+  Future<void> logOut() async {
+    await _tokenManager.destroy();
     _controller.sink.add(AuthenticationStatus.unauthenticated);
-    // throw Exception("NOT IMPLEMENTED");
   }
 
   Future<void> dispose() async {
