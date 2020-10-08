@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notification_repository/generated/notification_v1/notification_service.pb.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/notifications/cubit/notification_cubit.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:social_repository/generated/social_v1/social_service.pb.dart';
+import 'package:social_repository/social_repository.dart';
 
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage();
@@ -39,13 +42,78 @@ class NotificationView extends StatelessWidget {
             await _onRefresh(context);
           },
           child: ListView.builder(
-            itemBuilder: (c, i) => Card(
-              child: Notification(
-                title: "Chioke Okonkwo",
-                label: "Wants to be your PadelPal",
-                onPrimaryPressed: () {},
-              ),
-            ),
+            itemBuilder: (c, i) {
+              final pushNotification = state.notifications[i];
+
+              switch (pushNotification.whichNotification()) {
+                case PushNotification_Notification.chatMessageReceived:
+                  return Card(
+                    child: Notification(
+                      title: "ChatMessage Received",
+                      label: "TODO",
+                      imgUrl: "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                      onPrimaryPressed: () {
+                        final snackBar = SnackBar(content: Text('Not implemented'));
+                        Scaffold.of(context).showSnackBar(snackBar);
+                      },
+                    ),
+                  );
+                case PushNotification_Notification.friendRequestReceived:
+                  final event = pushNotification.friendRequestReceived;
+                  return Card(
+                    child: Notification(
+                      title: event.name,
+                      label: "Wants to be your PadelPal",
+                      imgUrl: "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                      // TODO fetch users image
+                      onPrimaryPressed: () async {
+                        try {
+                          await context
+                              .repository<SocialRepository>()
+                              .responseToFriendRequest(event.userId, RespondToFriendRequestRequest_Action.ACCEPT);
+                          final snackBar = SnackBar(content: Text('Yay! You are now friends!'));
+                          Scaffold.of(context).showSnackBar(snackBar);
+                        } catch (e) {
+                          final snackBar = SnackBar(content: Text('Failed to accept friend request'));
+                          Scaffold.of(context).showSnackBar(snackBar);
+                          print(e);
+                        }
+                      },
+                      onSecondaryPressed: () async {
+                        try {
+                          await context
+                              .repository<SocialRepository>()
+                              .responseToFriendRequest(event.userId, RespondToFriendRequestRequest_Action.DECLINE);
+                          final snackBar = SnackBar(content: Text('You have declined the friend request'));
+                          Scaffold.of(context).showSnackBar(snackBar);
+                        } catch (e) {
+                          final snackBar = SnackBar(content: Text('Failed to accept friend request'));
+                          Scaffold.of(context).showSnackBar(snackBar);
+                          print(e);
+                        }
+                      },
+                    ),
+                  );
+                case PushNotification_Notification.friendRequestAccepted:
+                  final event = pushNotification.friendRequestAccepted;
+                  return Card(
+                    child: Notification(
+                      title: event.name,
+                      label: "Has accepted your friend request. Say hi!",
+                      imgUrl: "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                      // TODO fetch users image
+                      onPrimaryPressed: () async {
+                        final snackBar = SnackBar(content: Text('Todo not implemented'));
+                        Scaffold.of(context).showSnackBar(snackBar);
+                      },
+                    ),
+                  );
+                case PushNotification_Notification.notSet:
+                  throw Exception("Notification type not set, notification: ${pushNotification}");
+              }
+
+              throw Exception("No matching cases was found for notification: ${pushNotification}");
+            },
             itemCount: state.notifications.length,
           ),
         );
@@ -62,6 +130,7 @@ class NotificationView extends StatelessWidget {
 class Notification extends StatelessWidget {
   const Notification({
     @required this.title,
+    @required this.imgUrl,
     @required this.label,
     @required this.onPrimaryPressed,
     this.onSecondaryPressed,
@@ -71,8 +140,11 @@ class Notification extends StatelessWidget {
 
   final String title;
   final String label;
+  final String imgUrl;
   final VoidCallback onPrimaryPressed;
   final VoidCallback onSecondaryPressed;
+
+  static const radius = 24.0;
 
   @override
   Widget build(BuildContext context) {
@@ -94,14 +166,11 @@ class Notification extends StatelessWidget {
 
     final primFillColor = onlyOneAction ? Colors.transparent : theme.primaryColor;
 
-    const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
-    const radius = 24.0;
-
     return Row(
       children: [
         Avatar(
           radius: radius,
-          url: url,
+          url: imgUrl,
           borderWidth: 0,
         ),
         const SizedBox(width: 10),
