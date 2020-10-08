@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/authentication/authentication.dart';
+import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/demo/view.dart';
 import 'package:pad_pal/event/view/event_page.dart';
 import 'package:pad_pal/messages/messages.dart';
@@ -9,6 +10,7 @@ import 'package:pad_pal/notifications/cubit/notification_cubit.dart';
 import 'package:pad_pal/notifications/notifications.dart';
 import 'package:pad_pal/profile/view/profile_page.dart';
 import 'package:pad_pal/theme.dart';
+import 'package:social_repository/social_repository.dart';
 
 class HomePage extends StatefulWidget {
   static Route<void> route() {
@@ -71,6 +73,9 @@ class _HomePageState extends State<HomePage> {
           providers: [
             BlocProvider(
               create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
+            ),
+            BlocProvider(
+              create: (_) => MeCubit(socialRepository: context.repository<SocialRepository>()),
             )
           ],
           child: _p[_selectedIndex],

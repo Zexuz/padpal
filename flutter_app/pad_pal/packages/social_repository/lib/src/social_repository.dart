@@ -11,6 +11,7 @@ class Profile {
   int wins;
   int losses;
   List<int> friends;
+  List<int> friendsRequests;
   String imageUrl;
   String location;
 }
@@ -47,6 +48,7 @@ class SocialRepository {
           ..userId = e.userId
           ..rank = "Beginner + + +"
           ..friends = e.friends
+          ..friendsRequests = e.friendRequests
           ..location = "Göteborg"
           ..imageUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg"
           ..losses = 25
@@ -62,11 +64,34 @@ class SocialRepository {
     var response = await call;
     return Profile()
       ..name = response.me.name
+      ..userId = response.me.userId
       ..rank = "Beginner + + +"
       ..location = "Göteborg"
       ..friends = List.empty()
       ..imageUrl = response.me.imgUrl
       ..losses = 25
       ..wins = 75;
+  }
+
+  Future<void> sendFriendRequest(int toUserId) async {
+    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final request = SendFriendRequestRequest()..userId = toUserId;
+
+    final call = _chatServiceClient.sendFriendRequest(request, options: callOptions);
+    await call;
+  }
+
+  Future<void> responseToFriendRequest(int fromUserId, RespondToFriendRequestRequest_Action action) async {
+    if (action == RespondToFriendRequestRequest_Action.UNKNOWN) {
+      throw Exception("Action can't be UNKNOWN");
+    }
+
+    final callOptions = CallOptions(metadata: {'Authorization': "Bearer ${_tokenManager.accessToken.token}"});
+    final request = RespondToFriendRequestRequest()
+      ..userId = fromUserId
+      ..action = action;
+
+    final call = _chatServiceClient.respondToFriendRequest(request, options: callOptions);
+    await call;
   }
 }

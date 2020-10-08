@@ -38,8 +38,7 @@ class MyProfilePage extends StatelessWidget {
                   backgroundColor: Colors.white,
                   body: ProfileView(
                     profile: state.me,
-                    isMe: true,
-                    areWeFriends: false,
+                    friendStatus: FriendStatus.isMe,
                   ),
                 );
         },
@@ -66,19 +65,24 @@ class ProfilePage extends StatelessWidget {
       child: BlocBuilder<MeCubit, MeState>(
         buildWhen: (previous, current) => previous.isLoading != current.isLoading,
         builder: (context, state) {
-          return state.isLoading
-              ? CircularProgressIndicator(
-                  backgroundColor: Colors.blue,
-                )
-              : Scaffold(
-                  appBar: CustomAppBar(title: profile.name),
-                  backgroundColor: Colors.white,
-                  body: ProfileView(
-                    profile: profile,
-                    isMe: false,
-                    areWeFriends: profile.friends.contains(state.me),
-                  ),
-                );
+          if (state.isLoading)
+            return CircularProgressIndicator(
+              backgroundColor: Colors.blue,
+            );
+
+          FriendStatus friendStatus = FriendStatus.notFriends;
+
+          if (profile.friendsRequests.contains(state.me.userId)) friendStatus = FriendStatus.pending;
+          if (profile.friends.contains(state.me.userId)) friendStatus = FriendStatus.friends;
+
+          return Scaffold(
+            appBar: CustomAppBar(title: profile.name),
+            backgroundColor: Colors.white,
+            body: ProfileView(
+              profile: profile,
+              friendStatus: friendStatus,
+            ),
+          );
         },
       ),
     );
@@ -96,25 +100,23 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+enum FriendStatus { notFriends, pending, friends, isMe }
+
 class ProfileView extends StatelessWidget {
-  const ProfileView({this.profile, this.isMe, this.areWeFriends});
+  const ProfileView({this.profile, this.friendStatus});
 
   final Profile profile;
-  final bool isMe;
-  final bool areWeFriends;
+  final FriendStatus friendStatus;
 
   Size displaySize(BuildContext context) {
-    debugPrint('Size = ' + MediaQuery.of(context).size.toString());
     return MediaQuery.of(context).size;
   }
 
   double displayHeight(BuildContext context) {
-    debugPrint('Height = ' + displaySize(context).height.toString());
     return displaySize(context).height;
   }
 
   double displayWidth(BuildContext context) {
-    debugPrint('Width = ' + displaySize(context).width.toString());
     return displaySize(context).width;
   }
 
@@ -125,8 +127,32 @@ class ProfileView extends StatelessWidget {
     print("profile ${profile?.name}");
 
     final row = Row(children: []);
-    if (!this.isMe) {
-      if (this.areWeFriends) {
+    switch (friendStatus) {
+      case FriendStatus.notFriends:
+        row.children.add(Expanded(
+          child: ButtonSmallPrimary(
+              onPressed: () async {
+                try {
+                  await context.repository<SocialRepository>().sendFriendRequest(profile.userId);
+                  final snackBar = SnackBar(content: Text('Friend request sent'));
+                  Scaffold.of(context).showSnackBar(snackBar);
+                } catch (e) {
+                  final snackBar = SnackBar(content: Text('Failed to send friend request'));
+                  Scaffold.of(context).showSnackBar(snackBar);
+                  print(e);
+                }
+              },
+              text: "Add friend",
+              stretch: false,
+              isDisabled: false),
+        ));
+        break;
+      case FriendStatus.pending:
+        row.children.add(Expanded(
+          child: ButtonSmallLight(onPressed: null, text: "Pending friend request", stretch: false, isDisabled: false),
+        ));
+        break;
+      case FriendStatus.friends:
         row.children.add(Expanded(
           child: ButtonSmallLight(onPressed: () {}, text: "Friends", stretch: false, isDisabled: false),
         ));
@@ -136,11 +162,9 @@ class ProfileView extends StatelessWidget {
         row.children.add(Expanded(
           child: ButtonSmallPrimary(onPressed: () {}, text: "Chat", stretch: false, isDisabled: false),
         ));
-      } else {
-        row.children.add(Expanded(
-          child: ButtonSmallPrimary(onPressed: () {}, text: "Add friend", stretch: false, isDisabled: false),
-        ));
-      }
+        break;
+      case FriendStatus.isMe:
+        break;
     }
 
     return Center(
