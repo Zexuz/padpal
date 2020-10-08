@@ -37,6 +37,7 @@ dependencies:
   firebase_messaging: ^7.0.0
   flutter_local_notifications: ^1.4.4+4
   pull_to_refresh: ^1.6.1
+  flutter_secure_storage: ^3.3.4
   authentication_repository:
     path: packages/authentication_repository
   user_repository:
