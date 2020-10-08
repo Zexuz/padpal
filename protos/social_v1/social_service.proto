@@ -84,7 +84,7 @@ message MyProfileRequest {
 }
 
 message MyProfileResponse {
-  MyProfile me = 1;
+  Profile me = 1;
 }
 
 
@@ -119,13 +119,6 @@ message SearchForProfileResponse {
 }
 
 message Profile{
-  int32 userId = 1;
-  string name = 2;
-  string imgUrl = 3;
-  repeated int32 friends = 4;
-}
-
-message MyProfile{
   int32 userId = 1;
   string name = 2;
   string imgUrl = 3;

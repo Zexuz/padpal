@@ -110,7 +110,8 @@ namespace Padel.Social.Runner.Controllers
                     profiles.Select(user => new Profile
                     {
                         Name = user.Name,
-                        Friends = { user.Friends.Select(friendRequest => friendRequest.UserId)},
+                        Friends = {user.Friends.Select(friendRequest => friendRequest.UserId)},
+                        FriendRequests = {user.FriendRequests.Select(friendRequest => friendRequest.UserId)},
                         ImgUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
                         UserId = user.UserId
                     })
@@ -125,13 +126,13 @@ namespace Padel.Social.Runner.Controllers
             var me = await _profileMongoRepository.FindOneAsync(profile => profile.UserId == userId);
             return new MyProfileResponse
             {
-                Me = new MyProfile
+                Me = new Profile()
                 {
                     Name = me.Name,
-                    Friends = { me.Friends.Select(friendRequest => friendRequest.UserId)},
+                    Friends = {me.Friends.Select(friendRequest => friendRequest.UserId)},
                     ImgUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
                     UserId = me.UserId,
-                    FriendRequests = { me.FriendRequests.Select(friendRequest => friendRequest.UserId)}
+                    FriendRequests = {me.FriendRequests.Select(friendRequest => friendRequest.UserId)},
                 }
             };
         }
@@ -147,7 +148,7 @@ namespace Padel.Social.Runner.Controllers
             ServerCallContext                                                                                           context)
         {
             var userId = context.GetUserId();
-            await _friendRequestService.RespondToFriendRequest(request.UserId,userId , request.Action);
+            await _friendRequestService.RespondToFriendRequest(request.UserId, userId, request.Action);
             return new RespondToFriendRequestResponse();
         }
     }
