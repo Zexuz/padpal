@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:protobuf/protobuf.dart';
 
 class AuthToken extends Equatable {
   final String token;

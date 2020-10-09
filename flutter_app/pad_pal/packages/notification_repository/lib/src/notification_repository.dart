@@ -48,6 +48,7 @@ class NotificationRepository {
       return res.notifications;
     } catch (e) {
       print("call to getNotifications failed ${e}");
+      return List.empty();
     }
   }
 }

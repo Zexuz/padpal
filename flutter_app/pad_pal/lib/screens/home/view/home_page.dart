@@ -21,8 +21,27 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _HomePageState();
 }
 
+class _BuildProfilePage extends StatelessWidget {
+  const _BuildProfilePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MeCubit, MeState>(
+      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+      builder: (context, state) {
+        if (state.isLoading)
+          return CircularProgressIndicator(
+            backgroundColor: Colors.blue,
+          );
+
+        return ProfilePage(state.me);
+      },
+    );
+  }
+}
+
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 4;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -34,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     EventPage(),
     MessagesPage(),
     NotificationsPage(),
-    MyProfilePage(),
+    _BuildProfilePage(),
     SettingsPage(),
   ];
 
