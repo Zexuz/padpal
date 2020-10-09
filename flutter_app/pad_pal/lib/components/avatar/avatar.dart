@@ -5,6 +5,8 @@ class Avatar extends StatelessWidget {
     @required this.url,
     @required this.radius,
     @required this.borderWidth,
+    this.innerBorderWidth = 0,
+    this.elevation = 4.0,
     this.color,
   })  : assert(url != null),
         assert(radius != null),
@@ -14,6 +16,8 @@ class Avatar extends StatelessWidget {
   final String url;
   final double radius;
   final Color color;
+  final double elevation;
+  final double innerBorderWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,7 @@ class Avatar extends StatelessWidget {
     final color = this.color ?? theme.primaryColor;
 
     return Material(
-      elevation: 4.0,
+      elevation: elevation,
       shape: CircleBorder(),
       clipBehavior: Clip.hardEdge,
       color: color,
@@ -31,10 +35,19 @@ class Avatar extends StatelessWidget {
           elevation: 0.0,
           shape: CircleBorder(),
           clipBehavior: Clip.hardEdge,
-          color: Colors.transparent,
-          child: Image.network(
-            url,
-            width: radius * 2,
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(innerBorderWidth),
+            child: Material(
+              elevation: 0.0,
+              shape: CircleBorder(),
+              clipBehavior: Clip.hardEdge,
+              color: Colors.transparent,
+              child: Image.network(
+                url,
+                width: (radius * 2) - (innerBorderWidth + borderWidth) ,
+              ),
+            ),
           ),
         ),
       ),

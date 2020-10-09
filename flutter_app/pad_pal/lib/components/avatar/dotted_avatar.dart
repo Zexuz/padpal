@@ -13,7 +13,7 @@ class DottedAvatar extends StatelessWidget {
       children: [
         Center(
           child: CircleAvatar(
-            radius: radius + 2,
+            radius: radius,
             backgroundColor: AppTheme.secondaryColorOrange.withOpacity(0.12),
           ),
         ),
@@ -25,7 +25,7 @@ class DottedAvatar extends StatelessWidget {
             strokeCap: StrokeCap.butt,
             dashPattern: [4],
             child: CircleAvatar(
-              radius: radius,
+              radius: radius - 2,
               backgroundColor: Colors.transparent,
             ),
           ),
