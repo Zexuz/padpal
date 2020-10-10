@@ -33,8 +33,8 @@ namespace Padel.Social.Test.Unit
                     Name = "Padel Center Delsjön",
                     Point = new Point
                     {
-                        Longitude = 57694470,
-                        Latitude = 12035027
+                        Longitude = 12035027,
+                        Latitude = 57694470,
                     },
                 },
                 StartTime = DateTimeOffset.Parse("2020-10-12 20:52").ToUnixTimeSeconds(),
