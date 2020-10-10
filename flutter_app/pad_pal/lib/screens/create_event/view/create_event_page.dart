@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/theme.dart';
+import 'package:intl/intl.dart';
 
 class CreateEventPage extends StatefulWidget {
   static Route route() {
@@ -18,7 +19,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
   Widget build(BuildContext context) {
     final steps = [
       CreateEventAddPlayers(),
-      Text("NR 2"),
+      CreateEventTimeAndLocation(),
       Text("NR 3"),
     ];
 
@@ -31,6 +32,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
         return Future.value(true);
       },
       child: Scaffold(
+        resizeToAvoidBottomPadding: true,
         appBar: CustomAppBar(
           title: "Create event",
           leading: currentPage > 0
@@ -119,6 +121,175 @@ class _Progress extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CreateEventTimeAndLocation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView(
+        children: [
+          _DateAndTimeInput(),
+          _LocationInput(),
+          _CourtInput(),
+          _PriceInput(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.roofing),
+              Switch(
+                value: true,
+                activeTrackColor: AppTheme.primary,
+                inactiveTrackColor: AppTheme.primary,
+                onChanged: (value) {},
+              ),
+              Icon(Icons.ac_unit),
+
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _LocationInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Location',
+      ),
+    );
+  }
+}
+
+class _PriceInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        suffixText: "kr",
+        border: OutlineInputBorder(),
+        labelText: 'Price per per',
+      ),
+    );
+  }
+}
+
+class _CourtInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Court',
+      ),
+    );
+  }
+}
+
+class MatchTime {
+  DateTime start;
+  Duration duration;
+}
+
+class _DateAndTimeInput extends StatefulWidget {
+  static const maxTimeSpan = Duration(days: 14);
+
+  @override
+  __DateAndTimeInputState createState() => __DateAndTimeInputState();
+}
+
+class __DateAndTimeInputState extends State<_DateAndTimeInput> {
+  final formatDateTime = DateFormat("EEE, MMM d, HH.mm");
+
+  final formatEndTime = DateFormat("-HH.mm");
+
+  MatchTime time;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: <Widget>[
+      FlatButton(
+          color: Colors.red,
+          onPressed: () async {
+            var time = await getStartDateTimeAndDuration(context);
+            if (time != null) {
+              setState(() {
+                this.time = time;
+              });
+            }
+          },
+          child: Text("SetDateTime")),
+      if (time != null)
+        Text("${formatDateTime.format(time.start)}${formatEndTime.format(time.start.add(time.duration))}"),
+    ]);
+  }
+
+  Future<MatchTime> getStartDateTimeAndDuration(BuildContext context) async {
+    final currentValue = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      initialDate: currentValue ?? DateTime.now(),
+      lastDate: DateTime.now().add(_DateAndTimeInput.maxTimeSpan),
+    );
+    if (date == null) return null;
+    final baseTime = currentValue ?? DateTime.now();
+
+    final startTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(baseTime),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child,
+        );
+      },
+    );
+    if (startTime == null) return null;
+
+    final duration = await showDurationDialog(context);
+    return MatchTime()
+      ..start = date.add(Duration(hours: startTime.hour, minutes: startTime.minute))
+      ..duration = duration;
+  }
+
+  Future<Duration> showDurationDialog(BuildContext context) async {
+    return await showDialog<Duration>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('How long how you booked?'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, Duration(minutes: 60));
+                      },
+                      child: Text("60 min")),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, Duration(minutes: 90));
+                      },
+                      child: Text("90 min"))
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
