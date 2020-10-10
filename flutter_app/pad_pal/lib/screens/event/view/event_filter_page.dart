@@ -7,6 +7,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 
+import 'GoogleSearchInput.dart';
+
 class EventFilterPage extends StatelessWidget {
   static Route<void> route() {
     return MaterialPageRoute<void>(builder: (_) => const EventFilterPage());
@@ -18,10 +20,7 @@ class EventFilterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocProvider(
-          create: (_) => EventFilterCubit(),
-          child: MapSample(),
-        ),
+        child: MapSample(),
       ),
     );
   }
@@ -59,12 +58,7 @@ class MapSample extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Search by town/city, area or postcode',
-              ),
-            ),
+            child: GoogleSearchInput(),
           ),
           Expanded(
             child: GoogleMap(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/bloc/authentication/authentication.dart';
 import 'package:pad_pal/bloc/bloc.dart';
+import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/screens/demo/view.dart';
 import 'package:pad_pal/screens/event/event.dart';
 import 'package:pad_pal/screens/messages/messages.dart';
@@ -90,6 +91,9 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: MultiBlocProvider(
           providers: [
+            BlocProvider(
+              create: (_) => EventFilterCubit(),
+            ),
             BlocProvider(
               create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
             ),
