@@ -5,8 +5,8 @@ class ButtonLargePrimary extends StatelessWidget {
       {Key key,
       @required this.onPressed,
       @required this.text,
-      @required this.stretch,
-      @required this.isDisabled})
+      this.stretch,
+      this.isDisabled})
       : super(key: key);
 
   final String text;
@@ -21,7 +21,7 @@ class ButtonLargePrimary extends StatelessWidget {
     return RaisedButton(
       padding: EdgeInsets.all(padding),
       child: Text(text),
-      onPressed: isDisabled ? null : onPressed,
+      onPressed: onPressed,
     );
   }
 }
