@@ -1,14 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
-import 'package:pad_pal/theme.dart';
+
+import 'GoogleSearchInput.dart';
 
 class EventFilterPage extends StatelessWidget {
-  static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const EventFilterPage());
+  static Route<void> route(BuildContext context) {
+    return MaterialPageRoute<void>(
+      builder: (_) => BlocProvider.value(
+        value: context.bloc<EventFilterCubit>(),
+        child: const EventFilterPage(),
+      ),
+    );
   }
 
   const EventFilterPage();
@@ -23,20 +31,8 @@ class EventFilterPage extends StatelessWidget {
   }
 }
 
-class MapSample extends StatefulWidget {
-  @override
-  State<MapSample> createState() => MapSampleState();
-}
-
-class MapSampleState extends State<MapSample> {
-  Completer<GoogleMapController> _controller = Completer();
-
-  Set<Circle> _circles = Set();
-
-  double _currentSliderValue = 10.0;
-  RangeValues _currentRangeValues = RangeValues(1, 3);
-
-  LatLng position;
+class MapSample extends StatelessWidget {
+  static final Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _swedenCameraPosistion = CameraPosition(
     target: LatLng(58.21, 14.53),
@@ -57,16 +53,6 @@ class MapSampleState extends State<MapSample> {
     )));
   }
 
-  Future<void> _updateMapPositionWithCurrentLocation() async {
-    // print("asdkjasd");
-    // final pos = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    // setState(() {
-    //   print("robin $pos");
-    //   position = LatLng(pos.latitude, pos.longitude);
-    //   print(position);
-    // });
-  }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -77,12 +63,7 @@ class MapSampleState extends State<MapSample> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
-            child: TextFormField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Search by town/city, area or postcode',
-              ),
-            ),
+            child: GoogleSearchInput(),
           ),
           Expanded(
             child: GoogleMap(
@@ -90,76 +71,92 @@ class MapSampleState extends State<MapSample> {
               mapType: MapType.normal,
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
-              circles: _circles,
               initialCameraPosition: _swedenCameraPosistion,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
-                _updateMapPositionWithCurrentLocation();
                 _setCameraToMyLocation();
               },
             ),
           ),
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Distance"),
-                  Text("${_currentSliderValue.round()} km"),
-                ],
-              ),
-              Slider(
-                value: _currentSliderValue,
-                min: 1,
-                max: 100,
-                divisions: 100,
-                label: "${_currentSliderValue.round()} km",
-                onChanged: (double value) {
-                  setState(() {
-                    print(position);
-                    if(position != null){
-                      print(position);
-                      _circles.add(Circle(
-                        circleId: CircleId("1"),
-                        center: position,
-                        fillColor: AppTheme.secondaryColorOrange.withOpacity(0.12),
-                        strokeColor: AppTheme.secondaryColorOrange,
-                        strokeWidth: 1,
-                        radius: value,
-                      ));
-                    }
-                    _currentSliderValue = value;
-                  });
-                },
-              )
-            ],
-          ),
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Timespan"),
-                  Text("${_currentRangeValues.start.round()}-${_currentRangeValues.end.round()} days"),
-                ],
-              ),
-              RangeSlider(
-                values: _currentRangeValues,
-                min: 0,
-                max: 14,
-                divisions: 14,
-                labels: RangeLabels(
-                    _currentRangeValues.start.round().toString(), _currentRangeValues.end.round().toString()),
-                onChanged: (value) {
-                  setState(() {
-                    _currentRangeValues = value;
-                  });
-                },
-              )
-            ],
-          )
+          _Distance(),
+          _Timespan(),
         ],
       ),
+    );
+  }
+}
+
+class _Distance extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<EventFilterCubit, EventFilterState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Distance"),
+                Text("${state.distance} km"),
+              ],
+            ),
+            Slider(
+              value: state.distance.toDouble(),
+              min: 1,
+              max: 100,
+              divisions: 100,
+              label: "${state.distance.round()} km",
+              onChanged: (value) => context.bloc<EventFilterCubit>().onDistanceChanged(value.round()),
+              // onChanged: (double value) {
+              //   setState(() {
+              //     print(position);
+              //     if (position != null) {
+              //       print(position);
+              //       _circles.add(Circle(
+              //         circleId: CircleId("1"),
+              //         center: position,
+              //         fillColor: AppTheme.secondaryColorOrange.withOpacity(0.12),
+              //         strokeColor: AppTheme.secondaryColorOrange,
+              //         strokeWidth: 1,
+              //         radius: value,
+              //       ));
+              //     }
+              //     _currentSliderValue = value;
+              //   });
+              // },
+            )
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _Timespan extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<EventFilterCubit, EventFilterState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Timespan"),
+                Text("${state.timeSpan.start.round()}-${state.timeSpan.end.round()} days"),
+              ],
+            ),
+            RangeSlider(
+              values: state.timeSpan,
+              min: 0,
+              max: 14,
+              divisions: 14,
+              labels: RangeLabels(state.timeSpan.start.round().toString(), state.timeSpan.end.round().toString()),
+              onChanged: (values) => context.bloc<EventFilterCubit>().onTimeSpanChanged(values),
+            )
+          ],
+        );
+      },
     );
   }
 }
