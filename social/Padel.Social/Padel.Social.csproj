@@ -20,6 +20,7 @@
     <ItemGroup>
         <Protobuf Include="..\..\protos\social_v1\social_service.proto" Link="protos\social_service.proto" ProtoRoot="..\..\protos\" />
         <Protobuf Include="..\..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" ProtoRoot="..\..\protos\" />
+        <Protobuf Include="..\..\protos\game_v1\game_service.proto" Link="protos\game_service.proto" ProtoRoot="..\..\protos\" />
         <Protobuf Include="..\..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
     </ItemGroup>
 

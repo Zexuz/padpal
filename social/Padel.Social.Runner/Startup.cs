@@ -54,15 +54,16 @@ namespace Padel.Social.Runner
             {
                 endpoints.MapGrpcService<HealthServiceImpl>();
                 endpoints.MapGrpcService<SocialControllerV1>();
+                endpoints.MapGrpcService<GameControllerV1>();
             });
 
             var container = app.ApplicationServices.GetAutofacRoot();
             var publisher = container.Resolve<IPublisher>();
-            
+
             publisher.RegisterEvent(ChatMessageReceived.Descriptor.GetMessageName(), typeof(ChatMessageReceived)).Wait();
             publisher.RegisterEvent(FriendRequestAccepted.Descriptor.GetMessageName(), typeof(FriendRequestAccepted)).Wait();
             publisher.RegisterEvent(FriendRequestReceived.Descriptor.GetMessageName(), typeof(FriendRequestReceived)).Wait();
-            
+
             var subscriptionService = container.Resolve<ISubscriptionService>();
             var consumerService = container.Resolve<IConsumerService>();
             subscriptionService.CreateQueueAndSubscribeToTopic().Wait();
