@@ -10,6 +10,9 @@
         android:name=".Application"
         android:label="pad_pal"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDgALxXX0-oI52s_iCxywB03lhjenKfiXg" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
