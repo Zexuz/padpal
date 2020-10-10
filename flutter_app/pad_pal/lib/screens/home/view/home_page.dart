@@ -61,21 +61,24 @@ class _HomePageState extends State<HomePage> {
   static const List<BottomNavigationBarItem> _items = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
       icon: Icon(Icons.home),
-      title: Text('Events'),
+      label: 'Events',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.message),
-      title: Text('Messages'),
+      label: 'Messages',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.notifications),
-      title: Text('Notifications'),
+      label: 'Notifications',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.account_box),
-      title: Text('Profile'),
+      label: 'Profile',
     ),
-    BottomNavigationBarItem(icon: Icon(Icons.more_horiz), title: Text("more")),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.more_horiz),
+      label: "more",
+    ),
   ];
 
   @override

@@ -10,8 +10,13 @@ import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'GoogleSearchInput.dart';
 
 class EventFilterPage extends StatelessWidget {
-  static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const EventFilterPage());
+  static Route<void> route(BuildContext context) {
+    return MaterialPageRoute<void>(
+      builder: (_) => BlocProvider.value(
+        value: context.bloc<EventFilterCubit>(),
+        child: const EventFilterPage(),
+      ),
+    );
   }
 
   const EventFilterPage();

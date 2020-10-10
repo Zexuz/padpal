@@ -9,10 +9,6 @@ import 'event_filter_page.dart';
 class EventPage extends StatelessWidget {
   const EventPage();
 
-  static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const EventPage());
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +16,7 @@ class EventPage extends StatelessWidget {
         title: 'Events nearby',
         leading: IconButton(
           icon: Icon(Icons.filter_alt, color: Colors.black),
-          onPressed: () => Navigator.push(context, EventFilterPage.route()),
+          onPressed: () => Navigator.of(context).push(EventFilterPage.route(context)),
         ),
         actions: [
           FlatButton(
