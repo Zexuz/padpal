@@ -54,8 +54,8 @@ namespace Padel.Social.Test.Unit
                     game.Creator == userId                                                    &&
                     (game.Created - DateTimeOffset.Now < TimeSpan.FromSeconds(10))            &&
                     game.Location.Name            == "Padel Center Delsjön"                   &&
-                    game.Location.Point.Longitude == 57694470                                 &&
-                    game.Location.Point.Latitude  == 12035027                                 &&
+                    game.Location.Point.Longitude == 12035027                                 &&
+                    game.Location.Point.Latitude  == 57694470                                 &&
                     game.StartDateTime            == DateTimeOffset.Parse("2020-10-12 20:52") &&
                     game.Duration                 == TimeSpan.FromMinutes(90)                 &&
                     game.PricePerPerson           == 120                                      &&
