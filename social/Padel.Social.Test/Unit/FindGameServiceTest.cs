@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Padel.Proto.Game.V1;
 using Padel.Social.Repositories;
+using Padel.Social.Services.Impl;
 using Padel.Test.Core;
 using Xunit;
 using Game = Padel.Social.Models.Game;
@@ -55,18 +56,4 @@ namespace Padel.Social.Test.Unit
     }
 
     // TODO This needs to be able to handle pagination in some way!
-    public class FindGameService
-    {
-        private readonly IGameRepository _gameRepository;
-
-        public FindGameService(IGameRepository gameRepository)
-        {
-            _gameRepository = gameRepository;
-        }
-
-        public async Task<IReadOnlyList<Game>> FindGames(GameFilter filter)
-        {
-            return await _gameRepository.FindWithFilter(filter);
-        }
-    }
 }

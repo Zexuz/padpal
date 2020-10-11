@@ -25,11 +25,11 @@ service Game {
 message GameFilter{
   Point center = 1;
   int32 distance = 2;
-  TimeSpan timeSpan = 3;
+  TimeOffset timeOffset = 3;
 
-  message TimeSpan{
-    double start = 1; // Unix time in seconds
-    double end = 2; // Unix time in seconds
+  message TimeOffset{
+    int64 start = 1; // Unix time in seconds
+    int64 end = 2; // Unix time in seconds
   }
 }
 
@@ -41,13 +41,13 @@ message FindGamesResponse {
   repeated PublicGameInfo games = 1;
 }
 
-// We should return the same object to the user, but remove all the "sensetive" information if the user has no right to access them
+// TODO We should return the same object to the user, but remove all the "sensetive" information if the user has no right to access them
 // See FindGameService.FindGames
 message PublicGameInfo{
   string id = 1;
   PadelCenter location = 2;
   int64 start_time = 3;
-  int64 duration_in_minutes = 4;
+  int32 duration_in_minutes = 4;
   int32 price_per_person = 5;
   CourtType court_type = 6;
 }
