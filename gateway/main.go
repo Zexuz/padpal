@@ -6,10 +6,12 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/mkdir-sweden/padpal/gateway/auth"
+	"github.com/mkdir-sweden/padpal/gateway/game"
 	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/interceptors"
 	"github.com/mkdir-sweden/padpal/gateway/notification"
 	authpb "github.com/mkdir-sweden/padpal/gateway/protos/auth_v1"
+	gamepb "github.com/mkdir-sweden/padpal/gateway/protos/game_v1"
 	noticitaionpb "github.com/mkdir-sweden/padpal/gateway/protos/notification_v1"
 	socialpb "github.com/mkdir-sweden/padpal/gateway/protos/social_v1"
 	"github.com/mkdir-sweden/padpal/gateway/social"
@@ -119,6 +121,7 @@ func grpcServe(lis net.Listener) error {
 	socialpb.RegisterSocialService(s, social.NewSocialService(chatConn))
 	authpb.RegisterAuthServiceService(s, authClient)
 	noticitaionpb.RegisterNotificationService(s, notification.NewNotificationService(notifiConn))
+	gamepb.RegisterGameService(s, game.NewGameService(chatConn))
 	log.Println("Servning...")
 	return s.Serve(lis)
 }
