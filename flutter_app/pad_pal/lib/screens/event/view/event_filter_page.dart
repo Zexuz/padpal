@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 
-import 'GoogleSearchInput.dart';
+import 'google_search_input.dart';
 
 class EventFilterPage extends StatelessWidget {
   static Route<void> route(BuildContext context) {

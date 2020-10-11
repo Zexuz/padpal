@@ -17,7 +17,7 @@ class Location {
 }
 
 class EventFilterCubit extends Cubit<EventFilterState> {
-  EventFilterCubit() : super(EventFilterState(distance: 10, timeSpan: RangeValues(1, 3)));
+  EventFilterCubit() : super(EventFilterState(distance: 10, timeSpan: RangeValues(1, 3), location: Location(lat: 0, lng: 0, description: "UNKNOWN")));
 
   void onTimeSpanChanged(RangeValues timeSpan) {
     emit(state.copyWith(timeSpan: timeSpan));

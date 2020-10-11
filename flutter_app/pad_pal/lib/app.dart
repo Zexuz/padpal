@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/screens/splash/view/splash_page.dart';
 import 'package:social_repository/social_repository.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,9 @@ class App extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (_) => NotificationRepository(),
+        ),
+        RepositoryProvider(
+          create: (_) => GameRepository(),
         ),
       ],
       child: MultiBlocProvider(
