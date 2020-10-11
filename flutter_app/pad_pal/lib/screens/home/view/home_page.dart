@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/bloc/authentication/authentication.dart';
 import 'package:pad_pal/bloc/bloc.dart';
+import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/screens/demo/view.dart';
 import 'package:pad_pal/screens/event/event.dart';
 import 'package:pad_pal/screens/messages/messages.dart';
@@ -60,21 +61,24 @@ class _HomePageState extends State<HomePage> {
   static const List<BottomNavigationBarItem> _items = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
       icon: Icon(Icons.home),
-      title: Text('Events'),
+      label: 'Events',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.message),
-      title: Text('Messages'),
+      label: 'Messages',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.notifications),
-      title: Text('Notifications'),
+      label: 'Notifications',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.account_box),
-      title: Text('Profile'),
+      label: 'Profile',
     ),
-    BottomNavigationBarItem(icon: Icon(Icons.more_horiz), title: Text("more")),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.more_horiz),
+      label: "more",
+    ),
   ];
 
   @override
@@ -90,6 +94,9 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: MultiBlocProvider(
           providers: [
+            BlocProvider(
+              create: (_) => EventFilterCubit(),
+            ),
             BlocProvider(
               create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
             ),

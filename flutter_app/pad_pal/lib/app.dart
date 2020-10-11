@@ -34,9 +34,6 @@ class App extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => MeCubit(socialRepository: context.repository<SocialRepository>()),
-          ),
-          BlocProvider(
             create: (context) => AuthenticationBloc(
               userRepository: RepositoryProvider.of<UserRepository>(context),
               authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
