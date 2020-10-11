@@ -33,8 +33,8 @@ namespace Padel.Social.Test.Unit
                     Name = "Padel Center Delsjön",
                     Point = new Point
                     {
-                        Longitude = 12035027,
-                        Latitude = 57694470,
+                        Longitude = 12.035027,
+                        Latitude = 57.694470,
                     },
                 },
                 StartTime = DateTimeOffset.Parse("2020-10-12 20:52").ToUnixTimeSeconds(),
@@ -45,23 +45,24 @@ namespace Padel.Social.Test.Unit
                 AdditionalInformation = "SomeText"
             };
 
-            A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Models.Game>._)).Invokes(call => ((Models.Game) call.Arguments[0]).Id = ObjectId.GenerateNewId());
+            A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Models.Game>._))
+                .Invokes(call => ((Models.Game) call.Arguments[0]).Id = ObjectId.GenerateNewId());
 
             var id = await _sut.CreateGame(userId, request);
 
             Assert.NotEqual(ObjectId.Empty, id);
             A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Game>.That.Matches(game =>
-                    game.Creator == userId                                                    &&
-                    (game.Created - DateTimeOffset.Now < TimeSpan.FromSeconds(10))            &&
-                    game.Location.Name            == "Padel Center Delsjön"                   &&
-                    game.Location.Point.Longitude == 12035027                                 &&
-                    game.Location.Point.Latitude  == 57694470                                 &&
-                    game.StartDateTime            == DateTimeOffset.Parse("2020-10-12 20:52") &&
-                    game.Duration                 == TimeSpan.FromMinutes(90)                 &&
-                    game.PricePerPerson           == 120                                      &&
-                    game.CourtName                == "A24"                                    &&
-                    game.CourtType                == CourtType.Indoors                        &&
-                    game.AdditionalInformation    == "SomeText"
+                    game.Creator == userId                                                                          &&
+                    (game.Created - DateTimeOffset.Now < TimeSpan.FromSeconds(10))                                  &&
+                    game.Location.Name                                  == "Padel Center Delsjön"                   &&
+                    Math.Abs(game.Location.Point.Longitude - 12.035027) < 0.001                                     &&
+                    Math.Abs(game.Location.Point.Latitude  - 57.694470) < 0.001                                     &&
+                    game.StartDateTime                                  == DateTimeOffset.Parse("2020-10-12 20:52") &&
+                    game.Duration                                       == TimeSpan.FromMinutes(90)                 &&
+                    game.PricePerPerson                                 == 120                                      &&
+                    game.CourtName                                      == "A24"                                    &&
+                    game.CourtType                                      == CourtType.Indoors                        &&
+                    game.AdditionalInformation                          == "SomeText"
                 )
             )).MustHaveHappened();
         }

@@ -28,8 +28,8 @@ message GameFilter{
   TimeSpan timeSpan = 3;
 
   message TimeSpan{
-    int64 start = 1; // Unix time in seconds
-    int64 end = 2; // Unix time in seconds
+    double start = 1; // Unix time in seconds
+    double end = 2; // Unix time in seconds
   }
 }
 
@@ -63,8 +63,8 @@ enum CourtType{
 // Latitudes should be in the range +/- 90 degrees and longitude should be in
 // the range +/- 180 degrees (inclusive).
 message Point {
-  int32 latitude = 1;
-  int32 longitude = 2;
+  double latitude = 1;
+  double longitude = 2;
 }
 
 message PadelCenter{
