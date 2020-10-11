@@ -43,8 +43,8 @@ dependencies:
   flutter_google_places: ^0.2.6
   authentication_repository:
     path: packages/authentication_repository
-  user_repository:
-    path: packages/user_repository
+  game_repository:
+    path: packages/game_repository
   social_repository:
     path: packages/social_repository
   notification_repository:

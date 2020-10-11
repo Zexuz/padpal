@@ -6,10 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/app_push.dart';
 import 'package:pad_pal/theme.dart';
-import 'package:user_repository/user_repository.dart';
 
 import 'bloc/authentication/bloc/authentication_bloc.dart';
-import 'bloc/me/me_cubit.dart';
 import 'screens/credential/view/credential_page.dart';
 import 'screens/home/home.dart';
 
@@ -22,9 +20,6 @@ class App extends StatelessWidget {
           create: (_) => AuthenticationRepository(),
         ),
         RepositoryProvider(
-          create: (_) => UserRepository(),
-        ),
-        RepositoryProvider(
           create: (_) => SocialRepository(),
         ),
         RepositoryProvider(
@@ -35,7 +30,6 @@ class App extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => AuthenticationBloc(
-              userRepository: RepositoryProvider.of<UserRepository>(context),
               authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
             ),
           )

@@ -4,7 +4,6 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:user_repository/user_repository.dart';
 
 part 'authentication_event.dart';
 
@@ -13,11 +12,8 @@ part 'authentication_state.dart';
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
     @required AuthenticationRepository authenticationRepository,
-    @required UserRepository userRepository,
   })  : assert(authenticationRepository != null),
-        assert(userRepository != null),
         _authenticationRepository = authenticationRepository,
-        _userRepository = userRepository,
         super(const AuthenticationState.unknown()) {
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
       (status) => add(AuthenticationStatusChanged(status)),
@@ -27,7 +23,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   }
 
   final AuthenticationRepository _authenticationRepository;
-  final UserRepository _userRepository;
   StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
 
   @override
@@ -63,10 +58,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   }
 
   Future<String> _tryGetName() async {
-    try {
-      return (await _userRepository.me()).name;
-    } catch (e) {
-      return "UNKNOWN NAME";
-    }
+    return "UNKNOWN NAME";
   }
 }
