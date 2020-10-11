@@ -40,6 +40,7 @@ namespace Padel.Social
             builder.RegisterType<ProfileRepository>().As<IProfileRepository>();
             builder.RegisterType<GameRepository>().As<IGameRepository>();
             builder.RegisterType<CreateGameService>().As<ICreateGameService>();
+            builder.RegisterType<FindGameService>().As<IFindGameService>();
         }
     }
 }
