@@ -28,7 +28,7 @@ namespace Padel.Test.Core
         {
             return new string(Enumerable.Repeat(chars, length).Select(s => s[_random.Next(s.Length)]).ToArray());
         }
-        
+
         public static T ActivateWithFakes<T>(params object[] overrides)
         {
             var dict = new Dictionary<Type, object>();

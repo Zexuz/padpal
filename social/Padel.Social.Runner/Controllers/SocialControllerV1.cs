@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Padel.Grpc.Core;
@@ -16,6 +18,7 @@ namespace Padel.Social.Runner.Controllers
         private readonly IProfileSearchService            _profileSearchService;
         private readonly IFriendRequestService            _friendRequestService;
         private readonly IMongoRepository<Models.Profile> _profileMongoRepository;
+        private readonly IProfilePictureService           _profilePictureService;
 
         public SocialControllerV1
         (
@@ -23,7 +26,8 @@ namespace Padel.Social.Runner.Controllers
             IRoomService                     roomService,
             IProfileSearchService            profileSearchService,
             IFriendRequestService            friendRequestService,
-            IMongoRepository<Models.Profile> profileMongoRepository
+            IMongoRepository<Models.Profile> profileMongoRepository,
+            IProfilePictureService profilePictureService
         )
         {
             _messageSenderService = messageSenderService;
@@ -31,6 +35,7 @@ namespace Padel.Social.Runner.Controllers
             _profileSearchService = profileSearchService;
             _friendRequestService = friendRequestService;
             _profileMongoRepository = profileMongoRepository;
+            _profilePictureService = profilePictureService;
         }
 
         public override async Task<CreateRoomResponse> CreateRoom(CreateRoomRequest request, ServerCallContext context)
@@ -150,6 +155,15 @@ namespace Padel.Social.Runner.Controllers
             var userId = context.GetUserId();
             await _friendRequestService.RespondToFriendRequest(request.UserId, userId, request.Action);
             return new RespondToFriendRequestResponse();
+        }
+
+        public override async Task<ChangeProfilePictureResponse> ChangeProfilePicture(ChangeProfilePictureRequest request, ServerCallContext context)
+        {
+            var userId = context.GetUserId();
+
+            var url = await _profilePictureService.Update(userId, new MemoryStream(request.ImgData.ToByteArray()));
+            Console.WriteLine(url);
+            return new ChangeProfilePictureResponse();
         }
     }
 }
