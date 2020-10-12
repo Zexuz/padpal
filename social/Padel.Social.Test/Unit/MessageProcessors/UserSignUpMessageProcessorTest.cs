@@ -16,7 +16,7 @@ namespace Padel.Social.Test.Unit.MessageProcessors
     public class UserSignUpMessageProcessorTest
     {
         private readonly UserSignUpMessageProcessor _sut;
-        private          IMongoRepository<Profile>     _fakeMongoRepository;
+        private          IMongoRepository<Profile>  _fakeMongoRepository;
 
         public UserSignUpMessageProcessorTest()
         {
@@ -36,15 +36,16 @@ namespace Padel.Social.Test.Unit.MessageProcessors
                     UserId = 1337,
                 }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase})
             };
-            
+
             A.CallTo(() => _fakeMongoRepository.FindOneAsync(A<Expression<Func<Profile, bool>>>._)).Returns(Task.FromResult<Profile>(null));
 
 
             await _sut.ProcessAsync(message);
 
             A.CallTo(() => _fakeMongoRepository.InsertOneAsync(A<Profile>.That.Matches(user =>
-                    user.Name   == "Robin Edbom" &&
-                    user.UserId == 1337
+                    user.Name       == "Robin Edbom" &&
+                    user.UserId     == 1337          &&
+                    user.PictureUrl == ""
                 )
             )).MustHaveHappenedOnceExactly();
         }
