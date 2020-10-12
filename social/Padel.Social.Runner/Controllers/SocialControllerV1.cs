@@ -117,7 +117,7 @@ namespace Padel.Social.Runner.Controllers
                         Name = user.Name,
                         Friends = {user.Friends.Select(friendRequest => friendRequest.UserId)},
                         FriendRequests = {user.FriendRequests.Select(friendRequest => friendRequest.UserId)},
-                        ImgUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                        ImgUrl = user.PictureUrl,
                         UserId = user.UserId
                     })
                 }
@@ -135,7 +135,7 @@ namespace Padel.Social.Runner.Controllers
                 {
                     Name = me.Name,
                     Friends = {me.Friends.Select(friendRequest => friendRequest.UserId)},
-                    ImgUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                    ImgUrl = me.PictureUrl,
                     UserId = me.UserId,
                     FriendRequests = {me.FriendRequests.Select(friendRequest => friendRequest.UserId)},
                 }
