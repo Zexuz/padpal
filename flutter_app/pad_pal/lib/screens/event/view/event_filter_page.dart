@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 
-import 'GoogleSearchInput.dart';
+import 'google_search_input.dart';
 
 class EventFilterPage extends StatelessWidget {
   static Route<void> route(BuildContext context) {
@@ -32,11 +32,11 @@ class EventFilterPage extends StatelessWidget {
 }
 
 class MapSample extends StatelessWidget {
-  static final Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _swedenCameraPosistion = CameraPosition(
     target: LatLng(58.21, 14.53),
-    zoom: 3.0,
+    zoom: 4.0,
   );
 
   Future<void> _setCameraToMyLocation() async {
@@ -55,32 +55,46 @@ class MapSample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    final state = context.bloc<EventFilterCubit>().state;
+    return Scaffold(
       appBar: CustomAppBar(
         title: "Settings",
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
-            child: GoogleSearchInput(),
-          ),
-          Expanded(
-            child: GoogleMap(
-              zoomControlsEnabled: false,
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              initialCameraPosition: _swedenCameraPosistion,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-                _setCameraToMyLocation();
-              },
+      body: BlocListener<EventFilterCubit, EventFilterState>(
+        listenWhen: (previous, current) => previous.location != current.location,
+        listener: (context, state) async {
+          final controller = await _controller.future;
+          controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+            target: LatLng(state.location.lat, state.location.lng),
+            zoom: 14.0,
+          )));
+        },
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
+              child: GoogleSearchInput(),
             ),
-          ),
-          _Distance(),
-          _Timespan(),
-        ],
+            Expanded(
+              child: GoogleMap(
+                zoomControlsEnabled: false,
+                mapType: MapType.normal,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(state.location.lat, state.location.lng),
+                  zoom: 4.0,
+                ),
+                onMapCreated: (GoogleMapController controller) {
+                  if (!_controller.isCompleted) _controller.complete(controller);
+                  _setCameraToMyLocation();
+                },
+              ),
+            ),
+            _Distance(),
+            _Timespan(),
+          ],
+        ),
       ),
     );
   }

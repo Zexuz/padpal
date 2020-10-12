@@ -1,5 +1,5 @@
-name: user_repository
-description: Dart package which manages the user domain.
+name: game_repository
+description: Dart package which manages the game domain.
 version: 1.0.0
 
 environment:
