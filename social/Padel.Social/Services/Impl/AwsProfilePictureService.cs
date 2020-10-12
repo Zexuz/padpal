@@ -5,18 +5,21 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Configuration;
+using Padel.Social.Repositories;
 using Padel.Social.Services.Interface;
 
 namespace Padel.Social.Services.Impl
 {
     public class AwsProfilePictureService : IProfilePictureService
     {
-        private readonly IAmazonS3 _s3;
-        private          string    _bucketName;
+        private readonly IAmazonS3          _s3;
+        private readonly IProfileRepository _profileRepository;
+        private          string             _bucketName;
 
-        public AwsProfilePictureService(IAmazonS3 s3, IConfiguration configuration)
+        public AwsProfilePictureService(IAmazonS3 s3, IProfileRepository profileRepository, IConfiguration configuration)
         {
             _s3 = s3;
+            _profileRepository = profileRepository;
             _bucketName = configuration["AWS:ProfileBucket"];
         }
 
@@ -74,6 +77,10 @@ namespace Padel.Social.Services.Impl
             {
                 throw new Exception($"update for id: {id} returned none 200 stauts code, actual: ({res.HttpStatusCode})");
             }
+
+            var profile = _profileRepository.FindByUserId(userId);
+            profile.PictureUrl = id;
+            await _profileRepository.ReplaceOneAsync(profile);
 
             return id;
         }

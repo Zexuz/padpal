@@ -6,6 +6,8 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using FakeItEasy;
 using Microsoft.Extensions.Configuration;
+using Padel.Social.Models;
+using Padel.Social.Repositories;
 using Padel.Social.Services.Impl;
 using Padel.Test.Core;
 using Xunit;
@@ -15,17 +17,18 @@ namespace Padel.Social.Test.Unit
     public class ProfilePictureServiceTest
     {
         private readonly AwsProfilePictureService _sut;
-        private readonly IAmazonS3         _fakeAmazonS3;
-        private          IConfiguration    _fakeConfig;
+        private readonly IAmazonS3                _fakeAmazonS3;
+        private readonly IProfileRepository       _fakeProfileRepository;
 
         public ProfilePictureServiceTest()
         {
             _fakeAmazonS3 = A.Fake<IAmazonS3>();
-            _fakeConfig = A.Fake<IConfiguration>();
+            var fakeConfig = A.Fake<IConfiguration>();
+            _fakeProfileRepository = A.Fake<IProfileRepository>();
 
-            A.CallTo(() => _fakeConfig["AWS:ProfileBucket"]).Returns("mkdir.se.padpals.profile-pictures");
+            A.CallTo(() => fakeConfig["AWS:ProfileBucket"]).Returns("mkdir.se.padpals.profile-pictures");
 
-            _sut = TestHelper.ActivateWithFakes<AwsProfilePictureService>(_fakeAmazonS3, _fakeConfig);
+            _sut = TestHelper.ActivateWithFakes<AwsProfilePictureService>(_fakeAmazonS3, fakeConfig, _fakeProfileRepository);
         }
 
 
@@ -41,6 +44,7 @@ namespace Padel.Social.Test.Unit
 
             var result = await _sut.Update(userId, stream);
 
+            A.CallTo(() => _fakeProfileRepository.ReplaceOneAsync(A<Profile>.That.Matches(profile => profile.PictureUrl == result))).MustHaveHappened();
             Assert.Equal("https://s3.eu-north-1.amazonaws.com/mkdir.se.padpals.profile-pictures/1337", result);
             A.CallTo(() => _fakeAmazonS3.PutObjectAsync(A<PutObjectRequest>.That.Matches(request =>
                 request.Key        == "1337"                              &&
