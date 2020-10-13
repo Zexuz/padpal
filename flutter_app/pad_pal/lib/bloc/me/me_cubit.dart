@@ -27,7 +27,8 @@ class MeCubit extends Cubit<MeState> {
 
   Future<void> updateProfilePicture(Uint8List uint8list) async {
     final bytes = List<int>.from(uint8list);
+    emit(state.copyWith(isLoading: true));
     final imgUrl = await _socialRepo.updateProfilePicture(bytes);
-    print("my new imgUrl: $imgUrl");
+    emit(state.copyWith(me: state.me.copyWith(imageUrl: imgUrl), isLoading: false));
   }
 }
