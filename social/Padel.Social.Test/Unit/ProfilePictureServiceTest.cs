@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace Padel.Social.Test.Unit
         [Fact]
         public async Task Should_set_public_access_on_image()
         {
+            var currentUnixTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString().Substring(0, 8);
             var userId = 1337;
             A.CallTo(() => _fakeAmazonS3.Config).Returns(new AmazonS3Config {RegionEndpoint = RegionEndpoint.EUNorth1});
             A.CallTo(() => _fakeAmazonS3.PutObjectAsync(A<PutObjectRequest>._, default))
@@ -44,8 +46,9 @@ namespace Padel.Social.Test.Unit
 
             var result = await _sut.Update(userId, stream);
 
-            A.CallTo(() => _fakeProfileRepository.ReplaceOneAsync(A<Profile>.That.Matches(profile => profile.PictureUrl == result))).MustHaveHappened();
-            Assert.Equal("https://s3.eu-north-1.amazonaws.com/mkdir.se.padpals.profile-pictures/1337", result);
+            A.CallTo(() => _fakeProfileRepository.ReplaceOneAsync(A<Profile>.That.Matches(profile => profile.PictureUrl == result)))
+                .MustHaveHappened();
+            Assert.Contains($"https://s3.eu-north-1.amazonaws.com/mkdir.se.padpals.profile-pictures/1337-{currentUnixTimestamp}", result);
             A.CallTo(() => _fakeAmazonS3.PutObjectAsync(A<PutObjectRequest>.That.Matches(request =>
                 request.Key        == "1337"                              &&
                 request.BucketName == "mkdir.se.padpals.profile-pictures" &&
