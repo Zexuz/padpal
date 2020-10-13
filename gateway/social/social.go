@@ -26,6 +26,7 @@ func NewSocialService(conn *grpc.ClientConn) *socialpb.SocialService {
 		SendFriendRequest:                client.SendFriendRequest,
 		RespondToFriendRequest:           client.RespondToFriendRequest,
 		MyProfile:                        client.MyProfile,
+		ChangeProfilePicture:             client.ChangeProfilePicture,
 	}
 
 	return service
@@ -65,4 +66,8 @@ func (s *chatService) SendFriendRequest(ctx context.Context, request *socialpb.S
 
 func (s *chatService) MyProfile(ctx context.Context, request *socialpb.MyProfileRequest) (*socialpb.MyProfileResponse, error) {
 	return s.pbClient.MyProfile(ctx, request)
+}
+
+func (s *chatService) ChangeProfilePicture(ctx context.Context, request *socialpb.ChangeProfilePictureRequest) (*socialpb.ChangeProfilePictureResponse, error) {
+	return s.pbClient.ChangeProfilePicture(ctx, request)
 }

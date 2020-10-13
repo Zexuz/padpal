@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Padel.Grpc.Core;
-using Padel.Notification.Models;
 using Padel.Notification.Repository;
 using Padel.Proto.Notification.V1;
 
