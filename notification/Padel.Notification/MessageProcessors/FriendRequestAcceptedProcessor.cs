@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using FirebaseAdmin.Messaging;
-using Microsoft.Extensions.Logging;
 using Padel.Notification.Extensions;
-using Padel.Notification.Models;
-using Padel.Notification.Repository;
 using Padel.Notification.Service;
 using Padel.Proto.Notification.V1;
 using Padel.Proto.Social.V1;

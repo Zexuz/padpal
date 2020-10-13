@@ -60,6 +60,7 @@ class CustomCard extends StatelessWidget {
           radius: radius,
           borderWidth: padding,
           url: url,
+          fallback: "P1",
         ),
         const SizedBox(width: 16),
         Avatar(
@@ -67,6 +68,7 @@ class CustomCard extends StatelessWidget {
           borderWidth: 0,
           url: url,
           color: Colors.white,
+          fallback: "P2",
         ),
         const SizedBox(width: 16),
         DottedAvatar(radius: radius ),

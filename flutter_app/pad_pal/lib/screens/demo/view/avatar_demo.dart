@@ -16,6 +16,15 @@ class AvatarDemo extends StatelessWidget {
           radius: size,
           borderWidth: padding,
           url: url,
+          fallback: "FB",
+        ),
+      ),
+      Center(
+        child: Avatar(
+          radius: size,
+          borderWidth: padding,
+          url: "",
+          fallback: "FB",
         ),
       ),
       Center(
@@ -24,6 +33,16 @@ class AvatarDemo extends StatelessWidget {
           borderWidth: padding,
           url: url,
           color: Colors.white,
+          fallback: "FB",
+        ),
+      ),
+      Center(
+        child: Avatar(
+          radius: size,
+          borderWidth: padding,
+          color: Colors.white,
+          url: "",
+          fallback: "FB",
         ),
       ),
       DottedAvatar(radius: size),

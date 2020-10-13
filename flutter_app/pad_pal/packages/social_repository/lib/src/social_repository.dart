@@ -5,15 +5,51 @@ import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:social_repository/generated/social_v1/social_service.pbgrpc.dart';
 
 class Profile {
-  String name;
-  String rank;
-  int userId;
-  int wins;
-  int losses;
-  List<int> friends;
-  List<int> friendsRequests;
-  String imageUrl;
-  String location;
+  const Profile({
+    this.name,
+    this.rank,
+    this.userId,
+    this.wins,
+    this.losses,
+    this.friends,
+    this.friendsRequests,
+    this.imageUrl,
+    this.location,
+  });
+
+  final String name;
+  final String rank;
+  final int userId;
+  final int wins;
+  final int losses;
+  final List<int> friends;
+  final List<int> friendsRequests;
+  final String imageUrl;
+  final String location;
+
+  Profile copyWith({
+    String name,
+    String rank,
+    int userId,
+    int wins,
+    int losses,
+    List<int> friends,
+    List<int> friendsRequests,
+    String imageUrl,
+    String location,
+  }) {
+    return Profile(
+      name: name ?? this.name,
+      rank: rank ?? this.rank,
+      userId: userId ?? this.userId,
+      wins: wins ?? this.wins,
+      losses: losses ?? this.losses,
+      friends: friends ?? this.friends,
+      friendsRequests: friendsRequests ?? this.friendsRequests,
+      imageUrl: imageUrl ?? this.imageUrl,
+      location: location ?? this.location,
+    );
+  }
 }
 
 class SocialRepository {
@@ -44,16 +80,17 @@ class SocialRepository {
     final call = _chatServiceClient.searchForProfile(request, options: callOptions);
     var response = await call;
     return response.profiles
-        .map((e) => Profile()
-          ..name = e.name
-          ..userId = e.userId
-          ..rank = "Beginner + + +"
-          ..friends = e.friends
-          ..friendsRequests = e.friendRequests
-          ..location = "Göteborg"
-          ..imageUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg"
-          ..losses = 25
-          ..wins = 75)
+        .map((e) => Profile(
+              name: e.name,
+              userId: e.userId,
+              rank: "Beginner + + +",
+              friends: e.friends,
+              friendsRequests: e.friendRequests,
+              location: "Göteborg",
+              imageUrl: e.imgUrl,
+              losses: 25,
+              wins: 75,
+            ))
         .toList();
   }
 
@@ -73,6 +110,16 @@ class SocialRepository {
       ..imageUrl = response.me.imgUrl
       ..losses = 25
       ..wins = 75;
+  }
+
+  Future<String> updateProfilePicture(List<int> bytes) async {
+    final callOptions =
+    CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final request = ChangeProfilePictureRequest()..imgData = bytes;
+
+    final call = _chatServiceClient.changeProfilePicture(request, options: callOptions);
+    var response = await call;
+    return response.url;
   }
 
   Future<void> sendFriendRequest(int toUserId) async {
