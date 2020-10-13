@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -50,10 +51,41 @@ namespace Padel.Social.Test.Unit
                 .MustHaveHappened();
             Assert.Contains($"https://s3.eu-north-1.amazonaws.com/mkdir.se.padpals.profile-pictures/1337-{currentUnixTimestamp}", result);
             A.CallTo(() => _fakeAmazonS3.PutObjectAsync(A<PutObjectRequest>.That.Matches(request =>
-                request.Key        == "1337"                              &&
+                request.Key.Contains($"1337-{currentUnixTimestamp}")      &&
                 request.BucketName == "mkdir.se.padpals.profile-pictures" &&
                 request.CannedACL  == S3CannedACL.PublicRead
             ), default)).MustHaveHappened();
+        }
+
+        [Fact]
+        public async Task Should_remove_all_other_keys_belonging_to_user()
+        {
+            var userId = 1337;
+            A.CallTo(() => _fakeAmazonS3.Config).Returns(new AmazonS3Config {RegionEndpoint = RegionEndpoint.EUNorth1});
+            A.CallTo(() => _fakeAmazonS3.PutObjectAsync(A<PutObjectRequest>._, default))
+                .Returns(new PutObjectResponse {HttpStatusCode = HttpStatusCode.OK});
+
+            A.CallTo(() => _fakeAmazonS3.GetAllObjectKeysAsync(A<string>._, A<string>._, A<IDictionary<string, object>>._))
+                .Returns(new List<string>
+                {
+                    "1337-1",
+                    "1337-101454",
+                    "1337-9849",
+                    "1337-askjdasjkd",
+                });
+
+            var stream = new MemoryStream();
+
+            await _sut.Update(userId, stream);
+
+            A.CallTo(() => _fakeAmazonS3.DeleteObjectsAsync(A<DeleteObjectsRequest>.That.Matches(request =>
+                    request.BucketName    == "mkdir.se.padpals.profile-pictures" &&
+                    request.Objects.Count == 4
+                ), default)
+            ).MustHaveHappened();
+
+            A.CallTo(() => _fakeAmazonS3.GetAllObjectKeysAsync("mkdir.se.padpals.profile-pictures", "1337-", A<IDictionary<string, object>>._)).MustHaveHappened()
+                .Then(A.CallTo(() => _fakeProfileRepository.ReplaceOneAsync(A<Profile>._)).MustHaveHappened());
         }
     }
 }

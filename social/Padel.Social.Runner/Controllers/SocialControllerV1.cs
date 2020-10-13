@@ -162,8 +162,7 @@ namespace Padel.Social.Runner.Controllers
             var userId = context.GetUserId();
 
             var url = await _profilePictureService.Update(userId, new MemoryStream(request.ImgData.ToByteArray()));
-            Console.WriteLine(url);
-            return new ChangeProfilePictureResponse();
+            return new ChangeProfilePictureResponse{Url = url};
         }
     }
 }

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Amazon.S3;
@@ -63,20 +65,30 @@ namespace Padel.Social.Services.Impl
 
         public async Task<string> Update(int userId, MemoryStream stream)
         {
+            var key = $"{userId}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+
+            var keys = await _s3.GetAllObjectKeysAsync(_bucketName, $"{userId}-", new Dictionary<string, object>());
+
             var res = await _s3.PutObjectAsync(new PutObjectRequest
             {
-                Key = userId.ToString(),
+                Key = key,
                 BucketName = _bucketName,
                 InputStream = stream,
                 ContentType = "image/jpg",
                 CannedACL = S3CannedACL.PublicRead,
             });
 
-            var id = $"https://s3.{_s3.Config.RegionEndpoint.SystemName}.amazonaws.com/{_bucketName}/{userId}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+            var id = $"https://s3.{_s3.Config.RegionEndpoint.SystemName}.amazonaws.com/{_bucketName}/{key}";
             if (res.HttpStatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"update for id: {id} returned none 200 stauts code, actual: ({res.HttpStatusCode})");
             }
+
+            await _s3.DeleteObjectsAsync(new DeleteObjectsRequest
+            {
+                BucketName = _bucketName,
+                Objects = keys.Select(s => new KeyVersion {Key = s}).ToList()
+            });
 
             var profile = _profileRepository.FindByUserId(userId);
             profile.PictureUrl = id;
