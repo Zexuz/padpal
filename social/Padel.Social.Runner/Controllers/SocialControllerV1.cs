@@ -101,7 +101,7 @@ namespace Padel.Social.Runner.Controllers
                 return new SearchForProfileResponse();
             }
 
-            var term = request.SearchTerm.Trim();
+            var term = request.SearchTerm.Trim().ToLowerInvariant();
             if (term.Length < 3)
             {
                 return new SearchForProfileResponse();
