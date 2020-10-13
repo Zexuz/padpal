@@ -51,7 +51,7 @@ class SocialRepository {
           ..friends = e.friends
           ..friendsRequests = e.friendRequests
           ..location = "Göteborg"
-          ..imageUrl = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg"
+          ..imageUrl = e.imgUrl
           ..losses = 25
           ..wins = 75)
         .toList();
@@ -73,6 +73,17 @@ class SocialRepository {
       ..imageUrl = response.me.imgUrl
       ..losses = 25
       ..wins = 75;
+  }
+
+  Future<String> updateProfilePicture(List<int> bytes) async {
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final request = ChangeProfilePictureRequest()..imgData = bytes;
+
+
+    final call = _chatServiceClient.changeProfilePicture(request, options: callOptions);
+    var response = await call;
+    return response.url;
   }
 
   Future<void> sendFriendRequest(int toUserId) async {

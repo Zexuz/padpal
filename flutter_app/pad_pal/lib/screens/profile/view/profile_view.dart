@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/theme.dart';
@@ -37,6 +39,67 @@ class ProfileView extends StatelessWidget {
               borderWidth: displayWidth(context) * 0.015,
               url: this.profile.imageUrl,
               color: Colors.white,
+              onTap: () async {
+                final imageSource = await showModalBottomSheet<ImageSource>(
+                    context: context,
+                    builder: (_) => Container(
+                          height: 200,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(25),
+                                child: Center(child: Text("Where to import a image from?")),
+                              ),
+                              Divider(
+                                height: 0,
+                                thickness: 1,
+                              ),
+                              Expanded(
+                                child: ListView(
+                                  children: [
+                                    ListTile(
+                                      title: Text("Camera"),
+                                      onTap: () {
+                                        Navigator.pop(context, ImageSource.camera);
+                                      },
+                                    ),
+                                    ListTile(
+                                      title: Text("Gallery"),
+                                      onTap: () {
+                                        Navigator.pop(context, ImageSource.gallery);
+                                      },
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ));
+
+                if (imageSource == null) {
+                  return;
+                }
+
+                final image = await ImagePicker().getImage(source: imageSource);
+
+                final croppedFile = await ImageCropper.cropImage(
+                    sourcePath: image.path,
+                    cropStyle: CropStyle.circle,
+                    maxHeight: 300,
+                    maxWidth: 300,
+                    aspectRatio: CropAspectRatio(ratioX:1,ratioY:1),
+                    androidUiSettings: AndroidUiSettings(
+                      toolbarTitle: 'Cropper',
+                      toolbarColor: Colors.deepOrange,
+                      toolbarWidgetColor: Colors.white,
+                      lockAspectRatio: false,
+                    ),
+                    iosUiSettings: IOSUiSettings(
+                      minimumAspectRatio: 1.0,
+                    ));
+
+                context.bloc<MeCubit>().updateProfilePicture(await croppedFile.readAsBytes());
+              },
             ),
           ),
           Padding(
@@ -97,7 +160,7 @@ class ProfileView extends StatelessWidget {
                     backgroundColor: Colors.blue,
                   );
 
-                if(state.me.userId == profile.userId) return Container();
+                if (state.me.userId == profile.userId) return Container();
 
                 _FriendStatus friendStatus = _FriendStatus.notFriends;
 
