@@ -101,15 +101,17 @@ class SocialRepository {
 
     final call = _chatServiceClient.myProfile(request, options: callOptions);
     var response = await call;
-    return Profile()
-      ..name = response.me.name
-      ..userId = response.me.userId
-      ..rank = "Beginner + + +"
-      ..location = "Göteborg"
-      ..friends = response.me.friends
-      ..imageUrl = response.me.imgUrl
-      ..losses = 25
-      ..wins = 75;
+    return Profile(
+      name: response.me.name,
+      userId: response.me.userId,
+      rank: "Beginner + + +",
+      friends: response.me.friends,
+      friendsRequests: response.me.friendRequests,
+      location: "Göteborg",
+      imageUrl: response.me.imgUrl,
+      losses: 25,
+      wins: 75,
+    );
   }
 
   Future<String> updateProfilePicture(List<int> bytes) async {
