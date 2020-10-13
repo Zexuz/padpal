@@ -69,7 +69,7 @@ class SocialRepository {
       ..userId = response.me.userId
       ..rank = "Beginner + + +"
       ..location = "Göteborg"
-      ..friends = List.empty()
+      ..friends = response.me.friends
       ..imageUrl = response.me.imgUrl
       ..losses = 25
       ..wins = 75;

@@ -8,8 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'profile_search_view.dart';
 
 class ProfilePage extends StatelessWidget {
-  static Route route(Profile profile) {
-    return MaterialPageRoute<void>(builder: (_) => ProfilePage(profile));
+  static Route route(BuildContext context, Profile profile) {
+    return MaterialPageRoute<void>(
+      builder: (_) => BlocProvider.value(
+        value: context.bloc<MeCubit>(),
+        child: ProfilePage(profile),
+      ),
+    );
   }
 
   const ProfilePage(this.profile);
@@ -34,9 +39,14 @@ class ProfilePage extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.search),
                     onPressed: () {
-                      nav.push(PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) => ProfileSearchView(),
-                      ));
+                      nav.push(
+                        PageRouteBuilder(
+                          pageBuilder: (_, animation, secondaryAnimation) => BlocProvider.value(
+                            value: context.bloc<MeCubit>(),
+                            child: ProfileSearchView(),
+                          ),
+                        ),
+                      );
                     },
                   )
                 ])
@@ -143,7 +153,7 @@ class ProfileView extends StatelessWidget {
                     backgroundColor: Colors.blue,
                   );
 
-                if(state.me.userId == profile.userId) return Container();
+                if (state.me.userId == profile.userId) return Container();
 
                 _FriendStatus friendStatus = _FriendStatus.notFriends;
 
