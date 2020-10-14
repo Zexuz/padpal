@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/theme.dart';
+import 'package:social_repository/social_repository.dart';
 
 import 'create_event_add_players_step.dart';
 import 'create_event_other_information_step.dart';
 import 'create_event_time_and_location_step.dart';
 
+import '../bloc/create_event_bloc.dart';
+
 class CreateEventPage extends StatefulWidget {
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => CreateEventPage());
+    return MaterialPageRoute<void>(
+      builder: (_) => BlocProvider<CreateEventCubit>(
+        create: (context) => CreateEventCubit(
+          socialRepository: context.repository<SocialRepository>(),
+        ),
+        child: CreateEventPage(),
+      ),
+    );
   }
 
   @override
@@ -16,8 +27,6 @@ class CreateEventPage extends StatefulWidget {
 }
 
 class _CreateEventWizardState extends State<CreateEventPage> {
-  int currentPage = 0;
-
   @override
   Widget build(BuildContext context) {
     final steps = [
@@ -28,78 +37,74 @@ class _CreateEventWizardState extends State<CreateEventPage> {
 
     final theme = Theme.of(context);
 
-    return WillPopScope(
-      onWillPop: () {
-        if (currentPage >= 1) {
-          setState(() => currentPage--);
-          return Future.value(false);
-        }
-        return Future.value(true);
-      },
-      child: Scaffold(
-        resizeToAvoidBottomPadding: true,
-        appBar: CustomAppBar(
-          title: "Create event",
-          leading: currentPage > 0
-              ? IconButton(
-                  icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-                  onPressed: () => setState(() => currentPage--),
+    return BlocBuilder<CreateEventCubit, CreateEventState>(
+      buildWhen: (previous, current) => true,
+      builder: (context, state) {
+        final eventCubit = context.bloc<CreateEventCubit>();
+        final currentStep = state.currentStep;
+        return WillPopScope(
+          onWillPop: () {
+            return eventCubit.onBack();
+          },
+          child: Scaffold(
+            resizeToAvoidBottomPadding: true,
+            appBar: CustomAppBar(
+              title: "Create event",
+              leading: currentStep > 0
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+                      onPressed: () => eventCubit.onBack(),
+                    )
+                  : Container(),
+              actions: [
+                FlatButton(
+                  onPressed: () => {Navigator.of(context).pop<void>()},
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+                  ),
                 )
-              : Container(),
-          actions: [
-            FlatButton(
-              onPressed: () => {Navigator.of(context).pop<void>()},
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-              ),
-            )
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints viewportConstraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: viewportConstraints.maxHeight,
-                  ),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 12),
-                        Text("Lorem ipsom dolar sit amet",
-                            style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
-                        const SizedBox(height: 38),
-                        steps[currentPage],
-                        Expanded(child: Container()),
-                        const SizedBox(height: 24),
-                        _Progress(currentPage: currentPage),
-                        const SizedBox(height: 12),
-                        ButtonLargePrimary(
-                          text: "Next",
-                          onPressed: () => {setState(() => currentPage++)},
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: viewportConstraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+                            const SizedBox(height: 12),
+                            Text("Lorem ipsom dolar sit amet",
+                                style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
+                            const SizedBox(height: 38),
+                            steps[currentStep],
+                            Expanded(child: Container()),
+                            const SizedBox(height: 24),
+                            _Progress(currentPage: currentStep),
+                            const SizedBox(height: 12),
+                            ButtonLargePrimary(
+                              text: "Next",
+                              onPressed: state.isNextEnabled ? () => eventCubit.onNext() : null,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              );
-            },
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
-  }
-}
-
-class ProgressContainer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
 
