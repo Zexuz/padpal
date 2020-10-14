@@ -10,7 +10,7 @@ namespace Padel.Repository.Core.MongoDb
 {
     public class MongoRepository<TDocument> : IMongoRepository<TDocument> where TDocument : IDocument
     {
-        private readonly IMongoCollection<TDocument> _collection;
+        protected readonly IMongoCollection<TDocument> _collection;
 
         public MongoRepository(IMongoDbSettings settings)
         {

@@ -29,6 +29,7 @@ namespace Padel.Social.Test.Unit
         [InlineData("  robin    ", "robin")]
         [InlineData("robin edbom!23#    ", "robin edbom!23#")]
         [InlineData("robin    edbom    ", "robin    edbom")]
+        [InlineData("RoBiN    edbom    ", "robin    edbom")]
         public async Task Should_trim_search_term(string dirty, string expected)
         {
             await _sut.SearchForProfile(new SearchForProfileRequest {SearchTerm = dirty}, _ctx);

@@ -313,7 +313,8 @@ class CreateEventAddPlayers extends StatelessWidget {
         Container(
           child: _RawSpot(
             avatar: Avatar(
-              url: url,
+              url: "",
+              fallback: "AB",
               radius: radius,
               borderWidth: 3.0,
               color: theme.primaryColor,
@@ -335,6 +336,7 @@ class CreateEventAddPlayers extends StatelessWidget {
             color: theme.primaryColor,
             elevation: 0,
             innerBorderWidth: 0,
+            fallback: "AG",
           ),
           name: "Andries Grootoonk",
           label: "Beginner",

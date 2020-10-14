@@ -77,6 +77,19 @@ service Social {
       shouldValidate:true,
     };
   }
+  rpc ChangeProfilePicture (ChangeProfilePictureRequest) returns (ChangeProfilePictureResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message ChangeProfilePictureRequest {
+  bytes imgData = 1;
+}
+
+message ChangeProfilePictureResponse {
+  string url = 1;
 }
 
 message MyProfileRequest {

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:game_repository/game_repository.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/bloc/authentication/authentication.dart';
 import 'package:pad_pal/bloc/bloc.dart';
+import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/screens/demo/view.dart';
+import 'package:pad_pal/screens/event/cubit/event_cubit.dart';
 import 'package:pad_pal/screens/event/event.dart';
 import 'package:pad_pal/screens/messages/messages.dart';
 import 'package:pad_pal/screens/notifications/cubit/notification_cubit.dart';
@@ -50,7 +53,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   static List<Widget> _p = const <Widget>[
-    EventPage(),
+    _BuildEventPage(),
     MessagesPage(),
     NotificationsPage(),
     _BuildProfilePage(),
@@ -60,21 +63,24 @@ class _HomePageState extends State<HomePage> {
   static const List<BottomNavigationBarItem> _items = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
       icon: Icon(Icons.home),
-      title: Text('Events'),
+      label: 'Events',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.message),
-      title: Text('Messages'),
+      label: 'Messages',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.notifications),
-      title: Text('Notifications'),
+      label: 'Notifications',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.account_box),
-      title: Text('Profile'),
+      label: 'Profile',
     ),
-    BottomNavigationBarItem(icon: Icon(Icons.more_horiz), title: Text("more")),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.more_horiz),
+      label: "more",
+    ),
   ];
 
   @override
@@ -91,16 +97,31 @@ class _HomePageState extends State<HomePage> {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
+              create: (_) => EventFilterCubit(),
+            ),
+            BlocProvider(
               create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
             ),
             BlocProvider(
               create: (_) => MeCubit(socialRepository: context.repository<SocialRepository>()),
+            ),
+            BlocProvider(
+              create: (_) => EventCubit(gameRepository: context.repository<GameRepository>()),
             )
           ],
           child: _p[_selectedIndex],
         ),
       ),
     );
+  }
+}
+
+class _BuildEventPage extends StatelessWidget {
+  const _BuildEventPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return EventPage();
   }
 }
 

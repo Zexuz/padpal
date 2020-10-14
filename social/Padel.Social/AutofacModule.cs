@@ -1,3 +1,6 @@
+using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using Padel.Queue;
@@ -21,6 +24,12 @@ namespace Padel.Social
 
         protected override void Load(ContainerBuilder builder)
         {
+            AWSConfigs.AWSRegion = _configuration["AWS:Region"];
+
+            var auth = new BasicAWSCredentials(_configuration["AWS:AccessKey"], _configuration["AWS:SecretKey"]);
+
+            builder.RegisterInstance(new AmazonS3Client(auth)).As<IAmazonS3>();
+
             builder.RegisterInstance(new MongoDbSettings
             {
                 ConnectionString = _configuration["Connections:MongoDb:padel:url"],
@@ -38,6 +47,10 @@ namespace Padel.Social
             builder.RegisterType<ProfileSearchService>().As<IProfileSearchService>();
             builder.RegisterType<FriendRequestService>().As<IFriendRequestService>();
             builder.RegisterType<ProfileRepository>().As<IProfileRepository>();
+            builder.RegisterType<GameRepository>().As<IGameRepository>();
+            builder.RegisterType<CreateGameService>().As<ICreateGameService>();
+            builder.RegisterType<FindGameService>().As<IFindGameService>();
+            builder.RegisterType<AwsProfilePictureService>().As<IProfilePictureService>();
         }
     }
 }

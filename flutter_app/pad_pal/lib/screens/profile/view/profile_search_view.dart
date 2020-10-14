@@ -8,10 +8,6 @@ import 'package:social_repository/social_repository.dart';
 import 'profile_page.dart';
 
 class ProfileSearchView extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => ProfileSearchView());
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -55,7 +51,7 @@ class ProfileSearchView extends StatelessWidget {
                           title: Text(state.profiles[index].name),
                           subtitle: Text('My new post'),
                           onTap: () {
-                            nav.push(ProfilePage.route(state.profiles[index]));
+                            nav.push(ProfilePage.route(context, state.profiles[index]));
                           },
                         );
                       },

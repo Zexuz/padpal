@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+option csharp_namespace = "Padel.Proto.Game.V1";
+
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/gamepb";
+
+import "descriptors/rule.proto";
+
+package game.v1;
+
+service Game {
+  rpc CreateGame (CreateGameRequest) returns (CreateGameResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+  rpc FindGames (FindGamesRequest) returns (FindGamesResponse) {
+    // We might not need this?
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message GameFilter{
+  Point center = 1;
+  int32 distance = 2;
+  TimeOffset timeOffset = 3;
+
+  message TimeOffset{
+    int64 start = 1; // Unix time in seconds
+    int64 end = 2; // Unix time in seconds
+  }
+}
+
+message FindGamesRequest {
+  GameFilter filter = 1;
+}
+
+message FindGamesResponse {
+  repeated PublicGameInfo games = 1;
+}
+
+// TODO We should return the same object to the user, but remove all the "sensetive" information if the user has no right to access them
+// See FindGameService.FindGames
+message PublicGameInfo{
+  string id = 1;
+  PadelCenter location = 2;
+  int64 start_time = 3;
+  int32 duration_in_minutes = 4;
+  int32 price_per_person = 5;
+  CourtType court_type = 6;
+}
+
+enum CourtType{
+  UNKNOWN = 0;
+  INDOORS = 1;
+  OUTDOORS = 2;
+}
+
+// Points are represented as latitude-longitude pairs in the E7 representation
+// (degrees multiplied by 10**7 and rounded to the nearest integer).
+// Latitudes should be in the range +/- 90 degrees and longitude should be in
+// the range +/- 180 degrees (inclusive).
+message Point {
+  double latitude = 1;
+  double longitude = 2;
+}
+
+message PadelCenter{
+  string name = 1;
+  Point point = 2;
+}
+
+message CreateGameRequest {
+  PadelCenter location = 1;
+  int64 start_time = 2;
+  int64 duration_in_minutes = 3;
+  int32 price_per_person = 4;
+  string courtName = 5; // Should not be public to players that are not in this game.
+  CourtType court_type = 6;
+  string additional_information = 7; // Should not be public to players that are not in this game.
+}
+
+message CreateGameResponse {
+  string id = 1;
+}
+  
+

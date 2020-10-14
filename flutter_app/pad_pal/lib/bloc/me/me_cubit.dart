@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -21,5 +23,12 @@ class MeCubit extends Cubit<MeState> {
     emit(state.copyWith(isLoading: true));
     var me = await _socialRepo.getMyProfile();
     emit(state.copyWith(me: me, isLoading: false));
+  }
+
+  Future<void> updateProfilePicture(Uint8List uint8list) async {
+    final bytes = List<int>.from(uint8list);
+    emit(state.copyWith(isLoading: true));
+    final imgUrl = await _socialRepo.updateProfilePicture(bytes);
+    emit(state.copyWith(me: state.me.copyWith(imageUrl: imgUrl), isLoading: false));
   }
 }

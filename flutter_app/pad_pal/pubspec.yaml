@@ -38,11 +38,16 @@ dependencies:
   flutter_local_notifications: ^1.4.4+4
   pull_to_refresh: ^1.6.1
   flutter_secure_storage: ^3.3.4
-  datetime_picker_formfield: ^1.0.0
+  google_maps_flutter: ^1.0.2
+  geolocator: ^6.0.0
+  flutter_google_places: ^0.2.6
+  image_picker: ^0.6.7+11
+  image_cropper: ^1.3.1
+  cached_network_image: ^2.0.0
   authentication_repository:
     path: packages/authentication_repository
-  user_repository:
-    path: packages/user_repository
+  game_repository:
+    path: packages/game_repository
   social_repository:
     path: packages/social_repository
   notification_repository:

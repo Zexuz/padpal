@@ -11,6 +11,7 @@ using Padel.Queue;
 using Padel.Social.Exceptions;
 using Padel.Social.Runner.Controllers;
 using Padel.Social.Runner.HealthCheck;
+using Padel.Social.Services.Interface;
 
 namespace Padel.Social.Runner
 {
@@ -54,15 +55,19 @@ namespace Padel.Social.Runner
             {
                 endpoints.MapGrpcService<HealthServiceImpl>();
                 endpoints.MapGrpcService<SocialControllerV1>();
+                endpoints.MapGrpcService<GameControllerV1>();
             });
 
             var container = app.ApplicationServices.GetAutofacRoot();
+            var profilePictureService = container.Resolve<IProfilePictureService>();
+            profilePictureService.VerifyBucketExists();
+
             var publisher = container.Resolve<IPublisher>();
-            
+
             publisher.RegisterEvent(ChatMessageReceived.Descriptor.GetMessageName(), typeof(ChatMessageReceived)).Wait();
             publisher.RegisterEvent(FriendRequestAccepted.Descriptor.GetMessageName(), typeof(FriendRequestAccepted)).Wait();
             publisher.RegisterEvent(FriendRequestReceived.Descriptor.GetMessageName(), typeof(FriendRequestReceived)).Wait();
-            
+
             var subscriptionService = container.Resolve<ISubscriptionService>();
             var consumerService = container.Resolve<IConsumerService>();
             subscriptionService.CreateQueueAndSubscribeToTopic().Wait();
