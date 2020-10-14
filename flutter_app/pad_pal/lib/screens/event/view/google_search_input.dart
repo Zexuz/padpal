@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 const kGoogleApiKey = "AIzaSyDgALxXX0-oI52s_iCxywB03lhjenKfiXg";
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
+typedef LocationSelected = Function(double lat, double lng, String name);
+
 class GoogleSearchInput extends StatefulWidget {
   const GoogleSearchInput({
     Key key,
+    @required this.onLocationSelected,
+    this.initValue,
   }) : super(key: key);
+
+  final LocationSelected onLocationSelected;
+  final String initValue;
 
   @override
   _GoogleSearchInputState createState() => _GoogleSearchInputState();
@@ -26,6 +31,7 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
   void initState() {
     super.initState();
     _focus.addListener(_onFocusChange);
+    _controller.text = widget.initValue;
   }
 
   void _onFocusChange() {
@@ -38,16 +44,10 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventFilterCubit, EventFilterState>(
-      buildWhen: (previous, current) => previous.location != current.location,
-      builder: (context, state) {
-        _controller.text = state.location?.description;
-        return TextFormField(
-          controller: _controller,
-          decoration: InputDecoration.collapsed(hintText: "Search by town/city, area or postcode"),
-          focusNode: _focus,
-        );
-      },
+    return TextFormField(
+      controller: _controller,
+      decoration: InputDecoration.collapsed(hintText: "Search by town/city, area or postcode"),
+      focusNode: _focus,
     );
   }
 
@@ -68,6 +68,14 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
     final lat = detail.result.geometry.location.lat;
     final lng = detail.result.geometry.location.lng;
 
-    context.bloc<EventFilterCubit>().onLocationChanged(lat, lng, p.description);
+    _controller.text = p.description;
+    widget.onLocationSelected(lat, lng, p.description);
+  }
+
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

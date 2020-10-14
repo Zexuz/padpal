@@ -73,7 +73,11 @@ class MapSample extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
-              child: GoogleSearchInput(),
+              child: GoogleSearchInput(
+                initValue: state.location?.description,
+                onLocationSelected: (lat, lng, name) =>
+                    context.bloc<EventFilterCubit>().onLocationChanged(lat, lng, name),
+              ),
             ),
             Expanded(
               child: GoogleMap(
