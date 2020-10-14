@@ -29,21 +29,27 @@ namespace Padel.Social.Test.Unit
             const int userId = 4;
             var request = new CreateGameRequest
             {
-                Location = new PadelCenter()
+                PublicInfo = new PublicGameInfo
                 {
-                    Name = "Padel Center Delsjön",
-                    Point = new Point
+                    Location = new PadelCenter()
                     {
-                        Longitude = 12.035027,
-                        Latitude = 57.694470,
+                        Name = "Padel Center Delsjön",
+                        Point = new Point
+                        {
+                            Longitude = 12.035027,
+                            Latitude = 57.694470,
+                        },
                     },
+                    StartTime = DateTimeOffset.Parse("2020-10-12 20:52").ToUnixTimeSeconds(),
+                    DurationInMinutes = 90,
+                    PricePerPerson = 120,
+                    CourtType = CourtType.Indoors,
                 },
-                StartTime = DateTimeOffset.Parse("2020-10-12 20:52").ToUnixTimeSeconds(),
-                DurationInMinutes = 90,
-                PricePerPerson = 120,
-                CourtName = "A24",
-                CourtType = CourtType.Indoors,
-                AdditionalInformation = "SomeText"
+                PrivateInfo = new PrivateGameInfo
+                {
+                    CourtName = "A24",
+                    AdditionalInformation = "SomeText"
+                }
             };
 
             A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Models.Game>._))

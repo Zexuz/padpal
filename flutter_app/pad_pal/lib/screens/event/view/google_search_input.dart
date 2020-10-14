@@ -1,53 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 const kGoogleApiKey = "AIzaSyDgALxXX0-oI52s_iCxywB03lhjenKfiXg";
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
+typedef LocationSelected = Function(double lat, double lng, String name);
+
 class GoogleSearchInput extends StatefulWidget {
-  const GoogleSearchInput({
+  GoogleSearchInput({
     Key key,
-  }) : super(key: key);
+    @required this.onChanged,
+    this.initialValue,
+    FocusNode focus,
+    this.decoration,
+  })  : this.focus = focus ?? FocusNode(),
+        super(key: key);
+
+  final LocationSelected onChanged;
+  final String initialValue;
+  final FocusNode focus;
+  final InputDecoration decoration;
 
   @override
   _GoogleSearchInputState createState() => _GoogleSearchInputState();
 }
 
 class _GoogleSearchInputState extends State<GoogleSearchInput> {
-  FocusNode _focus = new FocusNode();
-
   TextEditingController _controller = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _focus.addListener(_onFocusChange);
-  }
-
-  void _onFocusChange() {
-    if (_focus.hasFocus) {
-      _handlePressButton(context);
-      _focus.unfocus();
-    }
-    debugPrint("Focus: " + _focus.hasFocus.toString());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventFilterCubit, EventFilterState>(
-      buildWhen: (previous, current) => previous.location != current.location,
-      builder: (context, state) {
-        _controller.text = state.location?.description;
-        return TextFormField(
-          controller: _controller,
-          decoration: InputDecoration.collapsed(hintText: "Search by town/city, area or postcode"),
-          focusNode: _focus,
-        );
-      },
+    return TextFormField(
+      readOnly: true,
+      focusNode: widget.focus,
+      onTap: () => _handlePressButton(context),
+      controller: _controller,
+      decoration: widget.decoration,
     );
   }
 
@@ -68,6 +63,13 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
     final lat = detail.result.geometry.location.lat;
     final lng = detail.result.geometry.location.lng;
 
-    context.bloc<EventFilterCubit>().onLocationChanged(lat, lng, p.description);
+    _controller.text = p.description;
+    widget.onChanged(lat, lng, p.description);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

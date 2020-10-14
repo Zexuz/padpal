@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
+import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/theme.dart';
+
+import 'create_event_add_players_step.dart';
+import 'create_event_other_information_step.dart';
+import 'create_event_time_and_location_step.dart';
+
+import '../bloc/create_event_bloc.dart';
 
 class CreateEventPage extends StatefulWidget {
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => CreateEventPage());
+    return MaterialPageRoute<void>(
+      builder: (_) => BlocProvider<CreateEventCubit>(
+        create: (context) => CreateEventCubit(
+          gameRepository: context.repository<GameRepository>(),
+        ),
+        child: CreateEventPage(),
+      ),
+    );
   }
 
   @override
@@ -12,64 +29,98 @@ class CreateEventPage extends StatefulWidget {
 }
 
 class _CreateEventWizardState extends State<CreateEventPage> {
-  int currentPage = 0;
-
   @override
   Widget build(BuildContext context) {
     final steps = [
       CreateEventAddPlayers(),
-      Text("NR 2"),
-      Text("NR 3"),
+      CreateEventTimeAndLocation(),
+      CreateEventOtherInformation(),
     ];
 
-    return WillPopScope(
-      onWillPop: () {
-        if (currentPage >= 1) {
-          setState(() => currentPage--);
-          return Future.value(false);
-        }
-        return Future.value(true);
-      },
-      child: Scaffold(
-        appBar: CustomAppBar(
-          title: "Create event",
-          leading: currentPage > 0
-              ? IconButton(
-                  icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-                  onPressed: () => setState(() => currentPage--),
-                )
-              : Container(),
-          actions: [
-            FlatButton(
-              onPressed: () => {Navigator.of(context).pop<void>()},
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-              ),
-            )
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              steps[currentPage],
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _Progress(currentPage: currentPage),
-                  const SizedBox(height: 12),
-                  ButtonLargePrimary(
-                    text: "Next",
-                    onPressed: () => {setState(() => currentPage++)},
+    final theme = Theme.of(context);
+
+    return BlocBuilder<CreateEventCubit, CreateEventState>(
+      builder: (context, state) {
+        final eventCubit = context.bloc<CreateEventCubit>();
+        final currentStep = state.currentStep;
+
+        return WillPopScope(
+          onWillPop: () {
+            return eventCubit.back();
+          },
+          child: Scaffold(
+            resizeToAvoidBottomPadding: true,
+            appBar: CustomAppBar(
+              title: "Create event",
+              leading: currentStep > 0
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+                      onPressed: () => eventCubit.back(),
+                    )
+                  : Container(),
+              actions: [
+                FlatButton(
+                  onPressed: () => {Navigator.of(context).pop<void>()},
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
                   ),
-                ],
-              )
-            ],
+                )
+              ],
+            ),
+            body: BlocListener<CreateEventCubit, CreateEventState>(
+              listenWhen: (previous, current) => previous.status != current.status,
+              listener: (context, state) {
+                // TODO, Use state.status to indicate if the match was created or not!
+                if (state.status == FormzStatus.submissionFailure) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBarFactory.buildSnackBar("Failed to create event!", SnackBarType.error),
+                  );
+                } else if (state.status == FormzStatus.submissionSuccess) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBarFactory.buildSnackBar("Event was created!", SnackBarType.success),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: viewportConstraints.maxHeight,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 12),
+                              Text("Lorem ipsom dolar sit amet",
+                                  style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
+                              const SizedBox(height: 38),
+                              steps[currentStep],
+                              Expanded(child: Container()),
+                              const SizedBox(height: 24),
+                              _Progress(currentPage: currentStep),
+                              const SizedBox(height: 12),
+                              ButtonLargePrimary(
+                                text: "Next",
+                                onPressed: state.isNextEnabled ? () => eventCubit.next() : null,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -118,156 +169,6 @@ class _Progress extends StatelessWidget {
             ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class CreateEventAddPlayers extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    const url = "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg";
-    const radius = 24.0;
-
-    const offset = (radius * 2);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 12),
-        Text("Lorem ipsom dolar sit amet", style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
-        const SizedBox(height: 38),
-        Container(
-          child: _RawSpot(
-            avatar: Avatar(
-              url: "",
-              fallback: "AB",
-              radius: radius,
-              borderWidth: 3.0,
-              color: theme.primaryColor,
-              elevation: 0,
-              innerBorderWidth: 2.0,
-            ),
-            name: "Anton Brownstein",
-            label: "Beginner",
-            offset: offset + 5.0,
-            addDivider: true,
-          ),
-          transform: Matrix4.translationValues(-5.0, 0, 0.0),
-        ),
-        _RawSpot(
-          avatar: Avatar(
-            url: url,
-            radius: radius,
-            borderWidth: 0,
-            color: theme.primaryColor,
-            elevation: 0,
-            innerBorderWidth: 0,
-            fallback: "AG",
-          ),
-          name: "Andries Grootoonk",
-          label: "Beginner",
-          action: ButtonSmallSecondary(
-            stretch: false,
-            onPressed: () => {},
-            text: "Remove",
-            isDisabled: false,
-          ),
-          addDivider: true,
-          offset: offset,
-        ),
-        _RawSpot(
-          avatar: DottedAvatar(
-            radius: radius,
-          ),
-          name: "Player 3",
-          label: "Free spot",
-          action: ButtonSmallPrimary(
-            stretch: false,
-            onPressed: () => {},
-            text: "Add friend",
-            isDisabled: false,
-          ),
-          addDivider: true,
-          offset: offset,
-        ),
-        _RawSpot(
-          avatar: DottedAvatar(
-            radius: radius,
-          ),
-          name: "Player 4",
-          label: "Free spot",
-          action: ButtonSmallPrimary(
-            stretch: false,
-            onPressed: () => {},
-            text: "Add friend",
-            isDisabled: false,
-          ),
-          addDivider: false,
-          offset: offset,
-        ),
-      ],
-    );
-  }
-}
-
-class _RawSpot extends StatelessWidget {
-  const _RawSpot({
-    Key key,
-    this.action,
-    @required this.avatar,
-    @required this.name,
-    @required this.label,
-    @required this.offset,
-    this.addDivider = false,
-  }) : super(key: key);
-
-  final Widget action;
-  final Widget avatar;
-  final String name;
-  final String label;
-  final bool addDivider;
-  final double offset;
-
-  static const rightPadding = 16.0;
-  static const orPadding = 16.0;
-  static const dividerHeight = 24.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(right: rightPadding),
-              child: avatar,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name),
-                  Text(label),
-                ],
-              ),
-            ),
-            if (action != null)
-              Padding(
-                padding: const EdgeInsets.only(left: orPadding, right: orPadding),
-                child: const Text("or"),
-              ),
-            if (action != null) action,
-          ],
-        ),
-        if (addDivider)
-          Divider(
-            thickness: 2,
-            height: dividerHeight,
-            indent: offset + rightPadding,
-          ),
       ],
     );
   }

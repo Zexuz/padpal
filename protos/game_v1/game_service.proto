@@ -52,6 +52,11 @@ message PublicGameInfo{
   CourtType court_type = 6;
 }
 
+message PrivateGameInfo{
+  string courtName = 1; // Should not be public to players that are not in this game.
+  string additional_information = 2; // Should not be public to players that are not in this game.
+}
+
 enum CourtType{
   UNKNOWN = 0;
   INDOORS = 1;
@@ -73,13 +78,8 @@ message PadelCenter{
 }
 
 message CreateGameRequest {
-  PadelCenter location = 1;
-  int64 start_time = 2;
-  int64 duration_in_minutes = 3;
-  int32 price_per_person = 4;
-  string courtName = 5; // Should not be public to players that are not in this game.
-  CourtType court_type = 6;
-  string additional_information = 7; // Should not be public to players that are not in this game.
+  PublicGameInfo publicInfo = 1;
+  PrivateGameInfo privateInfo = 2;
 }
 
 message CreateGameResponse {

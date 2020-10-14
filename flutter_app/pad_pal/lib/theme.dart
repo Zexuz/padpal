@@ -36,7 +36,6 @@ class AppTheme {
         textTheme: ButtonTextTheme.accent,
         disabledColor: Color.fromRGBO(246, 247, 249, 1),
       ),
-
       // Define the default TextTheme. Use this to specify the default
       // text styling for headlines, titles, bodies of text, and more.
       textTheme: GoogleFonts.poppinsTextTheme(),
