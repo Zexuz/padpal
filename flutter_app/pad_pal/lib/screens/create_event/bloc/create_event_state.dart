@@ -4,6 +4,7 @@ class CreateEventState extends Equatable {
   const CreateEventState({
     @required this.isNextEnabled,
     @required this.currentStep,
+    this.status = FormzStatus.pure,
     this.matchStartDate,
     this.matchDuration,
     this.locationName,
@@ -14,19 +15,7 @@ class CreateEventState extends Equatable {
     this.additionalInformation,
   });
 
-  // TODO, the steps will call the "container", not the other way around
-  /*
-  class AdditionalINformatiion
-  ...
-
-   return CreateEventContainer(
-      currentStep: 3,
-      topText: 'Now some information'
-      isEnabled: state.fieldA && !state.fieldB
-   )
-
-
-  */
+  final FormzStatus status;
   final bool isNextEnabled;
   final int currentStep;
   final DateTime matchStartDate;
@@ -40,6 +29,7 @@ class CreateEventState extends Equatable {
 
   @override
   List<Object> get props => [
+        status,
         isNextEnabled,
         currentStep,
         matchStartDate,
@@ -53,6 +43,7 @@ class CreateEventState extends Equatable {
       ];
 
   CreateEventState copyWith({
+    FormzStatus status,
     bool isNextEnabled,
     int currentStep,
     DateTime matchStartDate,
@@ -65,6 +56,7 @@ class CreateEventState extends Equatable {
     String additionalInformation,
   }) {
     return CreateEventState(
+      status: status ?? this.status,
       isNextEnabled: isNextEnabled ?? this.isNextEnabled,
       currentStep: currentStep ?? this.currentStep,
       matchStartDate: matchStartDate ?? this.matchStartDate,

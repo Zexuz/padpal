@@ -21,4 +21,17 @@ class GameRepository {
     final protoRes = await call;
     return protoRes.games;
   }
+
+  Future<void> createGame(PublicGameInfo publicGameInfo, PrivateGameInfo privateGameInfo) async {
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+
+    final request = CreateGameRequest()
+      ..publicInfo = publicGameInfo
+      ..privateInfo = privateGameInfo;
+
+    final call = _gameClient.createGame(request, options: callOptions);
+
+    await call;
+  }
 }

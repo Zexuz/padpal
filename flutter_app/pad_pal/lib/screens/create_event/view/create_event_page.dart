@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
+import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/theme.dart';
-import 'package:social_repository/social_repository.dart';
 
 import 'create_event_add_players_step.dart';
 import 'create_event_other_information_step.dart';
@@ -15,7 +17,7 @@ class CreateEventPage extends StatefulWidget {
     return MaterialPageRoute<void>(
       builder: (_) => BlocProvider<CreateEventCubit>(
         create: (context) => CreateEventCubit(
-          socialRepository: context.repository<SocialRepository>(),
+          gameRepository: context.repository<GameRepository>(),
         ),
         child: CreateEventPage(),
       ),
@@ -38,7 +40,6 @@ class _CreateEventWizardState extends State<CreateEventPage> {
     final theme = Theme.of(context);
 
     return BlocBuilder<CreateEventCubit, CreateEventState>(
-      buildWhen: (previous, current) => true,
       builder: (context, state) {
         final eventCubit = context.bloc<CreateEventCubit>();
         final currentStep = state.currentStep;
@@ -67,39 +68,54 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                 )
               ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints viewportConstraints) {
-                  return SingleChildScrollView(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: viewportConstraints.maxHeight,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-                            const SizedBox(height: 12),
-                            Text("Lorem ipsom dolar sit amet",
-                                style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
-                            const SizedBox(height: 38),
-                            steps[currentStep],
-                            Expanded(child: Container()),
-                            const SizedBox(height: 24),
-                            _Progress(currentPage: currentStep),
-                            const SizedBox(height: 12),
-                            ButtonLargePrimary(
-                              text: "Next",
-                              onPressed: state.isNextEnabled ? () => eventCubit.next() : null,
-                            ),
-                          ],
+            body: BlocListener<CreateEventCubit, CreateEventState>(
+              listenWhen: (previous, current) => previous.status != current.status,
+              listener: (context, state) {
+                // TODO, Use state.status to indicate if the match was created or not!
+                if (state.status == FormzStatus.submissionFailure) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBarFactory.buildSnackBar("Failed to create event!", SnackBarType.error),
+                  );
+                } else if (state.status == FormzStatus.submissionSuccess) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBarFactory.buildSnackBar("Event was created!", SnackBarType.success),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: viewportConstraints.maxHeight,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 12),
+                              Text("Lorem ipsom dolar sit amet",
+                                  style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
+                              const SizedBox(height: 38),
+                              steps[currentStep],
+                              Expanded(child: Container()),
+                              const SizedBox(height: 24),
+                              _Progress(currentPage: currentStep),
+                              const SizedBox(height: 12),
+                              ButtonLargePrimary(
+                                text: "Next",
+                                onPressed: state.isNextEnabled ? () => eventCubit.next() : null,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),

@@ -2,18 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:pad_pal/screens/event/view/google_search_input.dart';
 
 import '../bloc/create_event_bloc.dart';
 
 class CreateEventTimeAndLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _DateAndTimeInput(),
-        _LocationInput(),
-        _CourtInput(),
-      ],
+    return BlocListener<CreateEventCubit, CreateEventState>(
+      listener: (context, state) {
+        // print("HJEll");
+        // context.bloc<CreateEventCubit>().setIsNextEnable(state.matchStartDate != null &&
+        //     state.matchDuration != null &&
+        //     state.locationLatLng != null &&
+        //     state.courtNumber != null);
+      },
+      child: Column(
+        children: [
+          _DateAndTimeInput(),
+          _LocationInput(),
+          _CourtInput(),
+        ],
+      ),
     );
   }
 }
@@ -24,9 +34,9 @@ class _LocationInput extends StatelessWidget {
     return BlocBuilder<CreateEventCubit, CreateEventState>(
       buildWhen: (previous, current) => previous.locationName != current.locationName,
       builder: (context, state) {
-        return TextFormField(
+        return GoogleSearchInput(
           initialValue: state.locationName,
-          onChanged: (value) => context.bloc<CreateEventCubit>().locationChanged(value, LatLng(0, 0)),
+          onChanged: (lat, lng, name) => context.bloc<CreateEventCubit>().locationChanged(name, LatLng(lat, lng)),
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             labelText: 'Location',

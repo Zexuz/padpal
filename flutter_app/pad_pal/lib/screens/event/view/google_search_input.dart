@@ -9,45 +9,40 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 typedef LocationSelected = Function(double lat, double lng, String name);
 
 class GoogleSearchInput extends StatefulWidget {
-  const GoogleSearchInput({
+  GoogleSearchInput({
     Key key,
-    @required this.onLocationSelected,
-    this.initValue,
-  }) : super(key: key);
+    @required this.onChanged,
+    this.initialValue,
+    FocusNode focus,
+    this.decoration,
+  })  : this.focus = focus ?? FocusNode(),
+        super(key: key);
 
-  final LocationSelected onLocationSelected;
-  final String initValue;
+  final LocationSelected onChanged;
+  final String initialValue;
+  final FocusNode focus;
+  final InputDecoration decoration;
 
   @override
   _GoogleSearchInputState createState() => _GoogleSearchInputState();
 }
 
 class _GoogleSearchInputState extends State<GoogleSearchInput> {
-  FocusNode _focus = new FocusNode();
-
   TextEditingController _controller = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _focus.addListener(_onFocusChange);
-    _controller.text = widget.initValue;
-  }
-
-  void _onFocusChange() {
-    if (_focus.hasFocus) {
-      _handlePressButton(context);
-      _focus.unfocus();
-    }
-    debugPrint("Focus: " + _focus.hasFocus.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: true,
+      focusNode: widget.focus,
+      onTap: () => _handlePressButton(context),
       controller: _controller,
-      decoration: InputDecoration.collapsed(hintText: "Search by town/city, area or postcode"),
-      focusNode: _focus,
+      decoration: widget.decoration,
     );
   }
 
@@ -69,9 +64,8 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
     final lng = detail.result.geometry.location.lng;
 
     _controller.text = p.description;
-    widget.onLocationSelected(lat, lng, p.description);
+    widget.onChanged(lat, lng, p.description);
   }
-
 
   @override
   void dispose() {

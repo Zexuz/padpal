@@ -74,9 +74,9 @@ class MapSample extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
               child: GoogleSearchInput(
-                initValue: state.location?.description,
-                onLocationSelected: (lat, lng, name) =>
-                    context.bloc<EventFilterCubit>().onLocationChanged(lat, lng, name),
+                initialValue: state.location?.description,
+                decoration: InputDecoration.collapsed(hintText: "Search by town/city, area or postcode"),
+                onChanged: (lat, lng, name) => context.bloc<EventFilterCubit>().onLocationChanged(lat, lng, name),
               ),
             ),
             Expanded(
