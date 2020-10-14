@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:intl/intl.dart';
@@ -20,8 +21,10 @@ class _CreateEventWizardState extends State<CreateEventPage> {
     final steps = [
       CreateEventAddPlayers(),
       CreateEventTimeAndLocation(),
-      Text("NR 3"),
+      CreateEventOtherInformation(),
     ];
+
+    final theme = Theme.of(context);
 
     return WillPopScope(
       onWillPop: () {
@@ -53,26 +56,114 @@ class _CreateEventWizardState extends State<CreateEventPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              steps[currentPage],
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _Progress(currentPage: currentPage),
-                  const SizedBox(height: 12),
-                  ButtonLargePrimary(
-                    text: "Next",
-                    onPressed: () => {setState(() => currentPage++)},
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints viewportConstraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: viewportConstraints.maxHeight,
                   ),
-                ],
-              )
-            ],
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 12),
+                        Text("Lorem ipsom dolar sit amet",
+                            style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
+                        const SizedBox(height: 38),
+                        steps[currentPage],
+                        Expanded(child: Container()),
+                        const SizedBox(height: 24),
+                        _Progress(currentPage: currentPage),
+                        const SizedBox(height: 12),
+                        ButtonLargePrimary(
+                          text: "Next",
+                          onPressed: () => {setState(() => currentPage++)},
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
     );
+  }
+}
+
+class CreateEventOtherInformation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _CourtTypeInput(),
+        const SizedBox(
+          height: 48,
+        ),
+        _PriceInput(),
+        const SizedBox(
+          height: 48,
+        ),
+        TextFormField(
+          maxLines: 8, // TODO make some logging and check if this needs to be bigger!
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            labelText: 'Leave a message',
+            hintText: "This text will not be visible to people outside of this event"
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _CourtTypeInput extends StatefulWidget {
+  @override
+  __CourtTypeInputState createState() => __CourtTypeInputState();
+}
+
+class __CourtTypeInputState extends State<_CourtTypeInput> {
+  String groupValue = "";
+
+  bool someBooleanValue = false;
+
+  _onRadioButtonTap(String newValue) {
+    if (newValue == null) return;
+    setState(() {
+      groupValue = newValue;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        RadioButtonInput<String>(
+          text: "Indoors",
+          value: "indoors",
+          groupValue: groupValue,
+          onChanged: _onRadioButtonTap,
+        ),
+        const SizedBox(height: 12),
+        RadioButtonInput<String>(
+          text: "Outdoors",
+          value: "outdoors",
+          groupValue: groupValue,
+          onChanged: _onRadioButtonTap,
+        ),
+      ],
+    );
+  }
+}
+
+class ProgressContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 
@@ -128,29 +219,12 @@ class _Progress extends StatelessWidget {
 class CreateEventTimeAndLocation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView(
-        children: [
-          _DateAndTimeInput(),
-          _LocationInput(),
-          _CourtInput(),
-          _PriceInput(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.roofing),
-              Switch(
-                value: true,
-                activeTrackColor: AppTheme.primary,
-                inactiveTrackColor: AppTheme.primary,
-                onChanged: (value) {},
-              ),
-              Icon(Icons.ac_unit),
-
-            ],
-          )
-        ],
-      ),
+    return Column(
+      children: [
+        _DateAndTimeInput(),
+        _LocationInput(),
+        _CourtInput(),
+      ],
     );
   }
 }
@@ -173,9 +247,9 @@ class _PriceInput extends StatelessWidget {
     return TextFormField(
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        suffixText: "kr",
+        hintText: "kr",
         border: OutlineInputBorder(),
-        labelText: 'Price per per',
+        labelText: 'Price per person',
       ),
     );
   }
@@ -185,10 +259,7 @@ class _CourtInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'Court',
-      ),
+      decoration: InputDecoration(border: OutlineInputBorder(), labelText: 'Court number', hintText: "e.g. 9 (hall B)"),
     );
   }
 }
@@ -306,10 +377,6 @@ class CreateEventAddPlayers extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 12),
-        Text("Lorem ipsom dolar sit amet", style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
-        const SizedBox(height: 38),
         Container(
           child: _RawSpot(
             avatar: Avatar(
