@@ -1,7 +1,9 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../bloc/create_event_bloc.dart';
 
 class CreateEventTimeAndLocation extends StatelessWidget {
   @override
@@ -19,21 +21,38 @@ class CreateEventTimeAndLocation extends StatelessWidget {
 class _LocationInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'Location',
-      ),
+    return BlocBuilder<CreateEventCubit, CreateEventState>(
+      buildWhen: (previous, current) => previous.locationName != current.locationName,
+      builder: (context, state) {
+        return TextFormField(
+          initialValue: state.locationName,
+          onChanged: (value) => context.bloc<CreateEventCubit>().locationChanged(value, LatLng(0, 0)),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Location',
+          ),
+        );
+      },
     );
   }
 }
 
-
 class _CourtInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      decoration: InputDecoration(border: OutlineInputBorder(), labelText: 'Court number', hintText: "e.g. 9 (hall B)"),
+    return BlocBuilder<CreateEventCubit, CreateEventState>(
+      buildWhen: (previous, current) => previous.courtNumber != current.courtNumber,
+      builder: (context, state) {
+        return TextFormField(
+          initialValue: state.courtNumber,
+          onChanged: (value) => context.bloc<CreateEventCubit>().courtNumberChanged(value),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Court number',
+            hintText: "e.g. 9 (hall B)",
+          ),
+        );
+      },
     );
   }
 }
@@ -43,37 +62,36 @@ class MatchTime {
   Duration duration;
 }
 
-class _DateAndTimeInput extends StatefulWidget {
+class _DateAndTimeInput extends StatelessWidget {
   static const maxTimeSpan = Duration(days: 14);
-
-  @override
-  __DateAndTimeInputState createState() => __DateAndTimeInputState();
-}
-
-class __DateAndTimeInputState extends State<_DateAndTimeInput> {
   final formatDateTime = DateFormat("EEE, MMM d, HH.mm");
 
   final formatEndTime = DateFormat("-HH.mm");
 
-  MatchTime time;
-
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      FlatButton(
-          color: Colors.red,
-          onPressed: () async {
-            var time = await getStartDateTimeAndDuration(context);
-            if (time != null) {
-              setState(() {
-                this.time = time;
-              });
-            }
-          },
-          child: Text("SetDateTime")),
-      if (time != null)
-        Text("${formatDateTime.format(time.start)}${formatEndTime.format(time.start.add(time.duration))}"),
-    ]);
+    return BlocBuilder<CreateEventCubit, CreateEventState>(
+      buildWhen: (previous, current) => previous.matchStartDate != current.matchStartDate,
+      builder: (context, state) {
+        final eventCubit = context.bloc<CreateEventCubit>();
+        return Column(
+          children: <Widget>[
+            FlatButton(
+                color: Colors.red,
+                onPressed: () async {
+                  var time = await getStartDateTimeAndDuration(context);
+                  if (time != null) {
+                    eventCubit.startMatchTimeChanged(time.start, time.duration);
+                  }
+                },
+                child: Text("SetDateTime")),
+            if (state.matchStartDate != null)
+              Text(
+                  "${formatDateTime.format(state.matchStartDate)}${formatEndTime.format(state.matchStartDate.add(state.matchDuration))}"),
+          ],
+        );
+      },
+    );
   }
 
   Future<MatchTime> getStartDateTimeAndDuration(BuildContext context) async {

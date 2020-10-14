@@ -42,9 +42,10 @@ class _CreateEventWizardState extends State<CreateEventPage> {
       builder: (context, state) {
         final eventCubit = context.bloc<CreateEventCubit>();
         final currentStep = state.currentStep;
+
         return WillPopScope(
           onWillPop: () {
-            return eventCubit.onBack();
+            return eventCubit.back();
           },
           child: Scaffold(
             resizeToAvoidBottomPadding: true,
@@ -53,7 +54,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
               leading: currentStep > 0
                   ? IconButton(
                       icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-                      onPressed: () => eventCubit.onBack(),
+                      onPressed: () => eventCubit.back(),
                     )
                   : Container(),
               actions: [
@@ -91,7 +92,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                             const SizedBox(height: 12),
                             ButtonLargePrimary(
                               text: "Next",
-                              onPressed: state.isNextEnabled ? () => eventCubit.onNext() : null,
+                              onPressed: state.isNextEnabled ? () => eventCubit.next() : null,
                             ),
                           ],
                         ),
