@@ -31,18 +31,18 @@ namespace Padel.Social.Services.Impl
                 Created = DateTimeOffset.Now,
                 Location = new Location
                 {
-                    Name = request.Location.Name,
+                    Name = request.PublicInfo.Location.Name,
                     Coordinates = GeoJson.Point(new GeoJson2DCoordinates(
-                        request.Location.Point.Longitude,
-                        request.Location.Point.Latitude)
+                        request.PublicInfo.Location.Point.Longitude,
+                        request.PublicInfo.Location.Point.Latitude)
                     ).ToBsonDocument()
                 },
-                StartDateTime = DateTimeOffset.FromUnixTimeSeconds(request.StartTime),
-                Duration = TimeSpan.FromMinutes(request.DurationInMinutes),
-                PricePerPerson = request.PricePerPerson,
-                CourtName = request.CourtName,
-                CourtType = request.CourtType,
-                AdditionalInformation = request.AdditionalInformation
+                StartDateTime = DateTimeOffset.FromUnixTimeSeconds(request.PublicInfo.StartTime),
+                Duration = TimeSpan.FromMinutes(request.PublicInfo.DurationInMinutes),
+                PricePerPerson = request.PublicInfo.PricePerPerson,
+                CourtName = request.PrivateInfo.CourtName,
+                CourtType = request.PublicInfo.CourtType,
+                AdditionalInformation = request.PrivateInfo.AdditionalInformation
             };
             await _gameRepository.InsertOneAsync(game);
             return game.Id;
