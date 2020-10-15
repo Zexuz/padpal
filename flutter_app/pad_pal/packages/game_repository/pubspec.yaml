@@ -12,6 +12,8 @@ dependencies:
   equatable: ^1.2.3
   grpc_helpers:
     path: ../grpc_helpers
+  authentication_repository:
+    path: ../authentication_repository
 
 dev_dependencies:
   flutter_test:

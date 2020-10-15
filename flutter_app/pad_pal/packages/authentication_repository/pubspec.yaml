@@ -10,6 +10,7 @@ dependencies:
   grpc: ^2.2.0
   protobuf: ^1.0.1
   equatable: ^1.2.3
+  flutter_secure_storage: ^3.3.4
   grpc_helpers:
     path: ../grpc_helpers
 

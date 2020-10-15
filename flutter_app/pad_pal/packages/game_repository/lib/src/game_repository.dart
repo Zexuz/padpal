@@ -1,3 +1,4 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:game_repository/generated/game_v1/game_service.pbgrpc.dart';
