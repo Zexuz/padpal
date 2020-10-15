@@ -5,13 +5,13 @@ class EventState extends Equatable {
     print("length ${games.length}");
   }
 
-  final List<PublicGameInfo> games;
+  final List<GameInfo> games;
 
   @override
   List<Object> get props => [games];
 
   EventState copyWith({
-    List<PublicGameInfo> games,
+    List<GameInfo> games,
   }) {
     return EventState(games: games ?? this.games);
   }

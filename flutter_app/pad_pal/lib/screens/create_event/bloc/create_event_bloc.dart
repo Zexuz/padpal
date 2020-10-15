@@ -9,8 +9,6 @@ import 'package:game_repository/game_repository.dart';
 import 'package:game_repository/generated/game_v1/game_service.pb.dart';
 import 'package:game_repository/generated/game_v1/game_service.pbenum.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:social_repository/social_repository.dart';
-import 'package:social_repository/src/social_repository.dart';
 
 part 'create_event_state.dart';
 

@@ -83,7 +83,7 @@ class _EventView extends StatelessWidget {
           },
           child: ListView.builder(
             itemBuilder: (c, i) {
-              return CustomCard();
+              return CustomCard(gameInfo: state.games[i]);
             },
             itemCount: state.games.length,
           ),

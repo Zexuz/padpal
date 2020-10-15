@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/screens/event_details/view/event_details_view.dart';
 import 'package:pad_pal/theme.dart';
+import 'package:game_repository/src/game_repository.dart';
 
 class CustomCard extends StatelessWidget {
+  const CustomCard({GameInfo gameInfo}) : _gameInfo = gameInfo;
+
+  final GameInfo _gameInfo;
+
   @override
   Widget build(BuildContext context) {
     final top = Row(
@@ -71,7 +77,7 @@ class CustomCard extends StatelessWidget {
           fallback: "P2",
         ),
         const SizedBox(width: 16),
-        DottedAvatar(radius: radius ),
+        DottedAvatar(radius: radius),
         const SizedBox(width: 16),
         DottedAvatar(radius: radius),
       ],
@@ -88,7 +94,13 @@ class CustomCard extends StatelessWidget {
         ),
         Expanded(
           flex: 1,
-          child: ButtonSmallSecondary(onPressed: () => <void>{}, text: "Details", stretch: true, isDisabled: false),
+          child: ButtonSmallSecondary(
+              onPressed: () => {// Todo make card take a onDetailsClick as a ctor param
+                    Navigator.of(context).push(EventDetailsView.route(context, _gameInfo)),
+                  },
+              text: "Details",
+              stretch: true,
+              isDisabled: false),
         )
       ],
     );
