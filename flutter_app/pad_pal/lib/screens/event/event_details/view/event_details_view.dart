@@ -5,8 +5,8 @@ import 'package:pad_pal/bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/button/primary/button_large_primary.dart';
-import 'package:pad_pal/screens/create_event/components/components.dart';
-import 'package:pad_pal/screens/create_event/view/create_event_add_players_step.dart';
+import 'package:pad_pal/screens/event/components/components.dart';
+import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
 import 'package:pad_pal/theme.dart';
 
 class EventDetailsView extends StatelessWidget {

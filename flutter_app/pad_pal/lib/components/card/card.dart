@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pad_pal/components/components.dart';
-import 'package:pad_pal/screens/event_details/view/event_details_view.dart';
+import 'package:pad_pal/screens/event/event_details/view/event_details_view.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:game_repository/src/game_repository.dart';
 
