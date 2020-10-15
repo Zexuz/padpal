@@ -4,6 +4,8 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'authentication_repository.dart';
+
 class AuthToken extends Equatable {
   final String token;
   final DateTime expires;
@@ -53,8 +55,14 @@ class TokenManager {
 
   Future<AuthToken> getAccessToken() async {
     try {
-      var rawJson = await _storage.read(key: _accessTokenKey);
-      return AuthToken.fromJson(jsonDecode(rawJson));
+      final rawJson = await _storage.read(key: _accessTokenKey);
+      final authToken = AuthToken.fromJson(jsonDecode(rawJson));
+
+      if(DateTime.now().isAfter(authToken.expires)){
+        return await AuthenticationRepository().refreshAccessToken(authToken.refreshToken);
+      }
+
+      return authToken;
     } catch (e) {
       return null;
     }

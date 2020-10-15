@@ -1,4 +1,4 @@
 {
-  "authServiceGrpcAddress": "devdomain.xyz",
+  "authServiceGrpcAddress": "192.168.10.147",
   "authServiceGrpcPort": 50051
 }

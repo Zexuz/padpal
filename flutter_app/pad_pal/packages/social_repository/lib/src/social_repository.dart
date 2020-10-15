@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:social_repository/generated/social_v1/social_service.pbgrpc.dart';

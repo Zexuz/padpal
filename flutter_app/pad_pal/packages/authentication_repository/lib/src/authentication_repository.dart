@@ -5,6 +5,8 @@ import 'package:grpc/grpc.dart';
 import 'package:meta/meta.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
 
+import 'token_manager.dart';
+
 /// Thrown if during the sign up process if a failure occurs.
 class SignUpFailure implements Exception {
   // TODO implement error codes here
@@ -55,11 +57,7 @@ class AuthenticationRepository {
 
     try {
       var res = await call;
-      var accessToken = AuthToken(
-          token: res.token.accessToken,
-          refreshToken: res.token.refreshToken,
-          expires: DateTime.fromMillisecondsSinceEpoch(res.token.expires.toInt() * 1000, isUtc: true));
-
+      final accessToken = _parseAccessToken(res.token);
       await _tokenManager.updateAccessToken(accessToken);
       _controller.sink.add(AuthenticationStatus.authenticated);
     } on GrpcError catch (_) {
@@ -94,6 +92,21 @@ class AuthenticationRepository {
     }
   }
 
+  Future<AuthToken> refreshAccessToken(String refreshToken) async {
+    assert(refreshToken != null);
+
+    var call = _authServiceClient.getNewAccessToken(GetNewAccessTokenRequest()..refreshToken = refreshToken);
+
+    try {
+      final res = await call;
+      final accessToken = _parseAccessToken(res.token);
+      await _tokenManager.updateAccessToken(accessToken);
+      return accessToken;
+    } on GrpcError catch (_) {
+      throw SignUpFailure();
+    }
+  }
+
   Future<void> logOut() async {
     await _tokenManager.destroy();
     _controller.sink.add(AuthenticationStatus.unauthenticated);
@@ -101,5 +114,13 @@ class AuthenticationRepository {
 
   Future<void> dispose() async {
     await _controller.close();
+  }
+
+  AuthToken _parseAccessToken(OAuthToken token) {
+    var accessToken = AuthToken(
+        token: token.accessToken,
+        refreshToken: token.refreshToken,
+        expires: DateTime.fromMillisecondsSinceEpoch(token.expires.toInt() * 1000, isUtc: true));
+    return accessToken;
   }
 }
