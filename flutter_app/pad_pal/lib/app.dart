@@ -1,5 +1,6 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:game_repository/game_repository.dart';
+import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/screens/splash/view/splash_page.dart';
 import 'package:social_repository/social_repository.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,11 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (context) => AuthenticationBloc(
               authenticationRepository: RepositoryProvider.of<AuthenticationRepository>(context),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => MeCubit(
+              socialRepository: RepositoryProvider.of<SocialRepository>(context),
             ),
           )
         ],

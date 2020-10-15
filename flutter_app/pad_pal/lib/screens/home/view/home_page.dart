@@ -103,9 +103,6 @@ class _HomePageState extends State<HomePage> {
               create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
             ),
             BlocProvider(
-              create: (_) => MeCubit(socialRepository: context.repository<SocialRepository>()),
-            ),
-            BlocProvider(
               create: (_) => EventCubit(gameRepository: context.repository<GameRepository>()),
             )
           ],
