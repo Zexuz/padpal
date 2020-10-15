@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/components.dart';
-import 'package:pad_pal/screens/create_event/create_event.dart';
-import 'package:pad_pal/screens/event/cubit/event_cubit.dart';
+import 'package:pad_pal/screens/event/create_event/create_event.dart';
+import 'package:pad_pal/screens/event/event_list/cubit/event_cubit.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -83,7 +83,7 @@ class _EventView extends StatelessWidget {
           },
           child: ListView.builder(
             itemBuilder: (c, i) {
-              return CustomCard();
+              return CustomCard(gameInfo: state.games[i]);
             },
             itemCount: state.games.length,
           ),

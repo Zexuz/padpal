@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:game_repository/game_repository.dart';
+import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
-import 'package:pad_pal/theme.dart';
+import 'package:pad_pal/screens/event/components/components.dart';
 
 import 'create_event_add_players_step.dart';
 import 'create_event_other_information_step.dart';
@@ -31,8 +32,9 @@ class CreateEventPage extends StatefulWidget {
 class _CreateEventWizardState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
+    final meCubit = context.bloc<MeCubit>();
     final steps = [
-      CreateEventAddPlayers(),
+      CreateEventAddPlayers(players: [Player(profile: meCubit.state.me, state: PlayerState.Creator)],),
       CreateEventTimeAndLocation(),
       CreateEventOtherInformation(),
     ];
@@ -95,10 +97,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Text("Players", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-                              const SizedBox(height: 12),
-                              Text("Lorem ipsom dolar sit amet",
-                                  style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
+                              EventStepTitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
                               const SizedBox(height: 38),
                               steps[currentStep],
                               Expanded(child: Container()),

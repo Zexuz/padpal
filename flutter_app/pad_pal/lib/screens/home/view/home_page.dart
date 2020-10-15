@@ -6,14 +6,13 @@ import 'package:pad_pal/bloc/authentication/authentication.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/screens/demo/view.dart';
-import 'package:pad_pal/screens/event/cubit/event_cubit.dart';
-import 'package:pad_pal/screens/event/event.dart';
+import 'package:pad_pal/screens/event/event_list/cubit/event_cubit.dart';
+import 'package:pad_pal/screens/event/event_list/view/event_page.dart';
 import 'package:pad_pal/screens/messages/messages.dart';
 import 'package:pad_pal/screens/notifications/cubit/notification_cubit.dart';
 import 'package:pad_pal/screens/notifications/notifications.dart';
 import 'package:pad_pal/screens/profile/profile.dart';
 import 'package:pad_pal/theme.dart';
-import 'package:social_repository/social_repository.dart';
 
 class HomePage extends StatefulWidget {
   static Route<void> route() {
@@ -101,9 +100,6 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocProvider(
               create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
-            ),
-            BlocProvider(
-              create: (_) => MeCubit(socialRepository: context.repository<SocialRepository>()),
             ),
             BlocProvider(
               create: (_) => EventCubit(gameRepository: context.repository<GameRepository>()),
