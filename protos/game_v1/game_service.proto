@@ -41,8 +41,6 @@ message FindGamesResponse {
   repeated PublicGameInfo games = 1;
 }
 
-// TODO We should return the same object to the user, but remove all the "sensetive" information if the user has no right to access them
-// See FindGameService.FindGames
 message PublicGameInfo{
   string id = 1;
   PadelCenter location = 2;
@@ -80,6 +78,7 @@ message PadelCenter{
 message CreateGameRequest {
   PublicGameInfo publicInfo = 1;
   PrivateGameInfo privateInfo = 2;
+  repeated int32 players_to_invite = 3;
 }
 
 message CreateGameResponse {

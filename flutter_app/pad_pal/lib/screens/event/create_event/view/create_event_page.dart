@@ -6,6 +6,8 @@ import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/event/components/components.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:social_repository/social_repository.dart';
 
 import 'create_event_add_players_step.dart';
 import 'create_event_other_information_step.dart';
@@ -29,22 +31,140 @@ class CreateEventPage extends StatefulWidget {
   _CreateEventWizardState createState() => _CreateEventWizardState();
 }
 
-class _CreateEventWizardState extends State<CreateEventPage> {
+class InviteFriend extends StatelessWidget {
+  InviteFriend({@required this.onTap});
+
+  static const orPadding = 16.0;
+
+  final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
-    final meCubit = context.bloc<MeCubit>();
-    final steps = [
-      CreateEventAddPlayers(players: [Player(profile: meCubit.state.me, state: PlayerState.Creator)],),
-      CreateEventTimeAndLocation(),
-      CreateEventOtherInformation(),
-    ];
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: orPadding, right: orPadding),
+          child: const Text("or"),
+        ),
+        ButtonSmallPrimary(
+          stretch: false,
+          onPressed: onTap,
+          text: "Invite friend",
+          isDisabled: false,
+        ),
+      ],
+    );
+  }
+}
 
-    final theme = Theme.of(context);
+class _CreateEventWizardState extends State<CreateEventPage> {
+  _onInviteFriend(BuildContext context) async {
+    final selectedProfile = await showDialog<Profile>(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: BlocProvider(
+            create: (context) => ProfileSearchCubit(
+              socialRepository: RepositoryProvider.of<SocialRepository>(context),
+              onlySearchForFriends: true,
+            ),
+            child: Builder(
+              builder: (context) => ListView(
+                children: [
+                  TextFormField(
+                    onChanged: (value) async {
+                      await context.bloc<ProfileSearchCubit>().onSearchTermChange(value);
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Search for friends",
+                    ),
+                  ),
+                  BlocBuilder<ProfileSearchCubit, ProfileSearchState>(
+                    builder: (context, state) {
+                      if (state.isLoading) return CircularProgressIndicator(backgroundColor: Colors.red);
+
+                      return ListView.builder(
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: state.profiles.length,
+                        itemBuilder: (context, index) {
+                          const radius = 24.0;
+                          final profile = state.profiles[index];
+
+                          return ListTile(
+                            leading: Avatar(borderWidth: 0, url: profile.imageUrl, radius: radius),
+                            trailing: Icon(Icons.add),
+                            title: Text(profile.name),
+                            subtitle: Text("Beginner"),
+                            onTap: () => Navigator.of(context).pop(profile),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    if (selectedProfile == null) {
+      return;
+    }
+
+    context.bloc<CreateEventCubit>().addPlayerToInvite(selectedProfile);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const radius = 24.0;
+
+    const offset = (radius * 2);
 
     return BlocBuilder<CreateEventCubit, CreateEventState>(
       builder: (context, state) {
         final eventCubit = context.bloc<CreateEventCubit>();
         final currentStep = state.currentStep;
+
+        final steps = [
+          BlocBuilder<MeCubit, MeState>(
+            builder: (_, meState) {
+              final column = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [],
+              );
+
+              column.children.add(CreatorSpot(
+                profile: meState.me,
+                radius: radius,
+                offset: offset,
+              ));
+
+              for (var i = 0; i < state.invitedPlayers.length; i++) {
+                final profile = state.invitedPlayers[i];
+                column.children.add(InvitedSpot(
+                  profile: profile,
+                  radius: radius,
+                  offset: offset,
+                  onTap: () => context.bloc<CreateEventCubit>().removePlayerToInvite(profile),
+                ));
+              }
+              for (var i = column.children.length; i < 4; i++) {
+                column.children.add(FreeSpot(
+                  radius: radius,
+                  offset: offset,
+                  onTap: () => _onInviteFriend(context),
+                  playerNumber: i + 1,
+                ));
+              }
+
+              return column;
+            },
+          ),
+          CreateEventTimeAndLocation(),
+          CreateEventOtherInformation(),
+        ];
 
         return WillPopScope(
           onWillPop: () {

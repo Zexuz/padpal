@@ -9,6 +9,7 @@ import 'package:game_repository/game_repository.dart';
 import 'package:game_repository/generated/game_v1/game_service.pb.dart';
 import 'package:game_repository/generated/game_v1/game_service.pbenum.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:social_repository/social_repository.dart';
 
 part 'create_event_state.dart';
 
@@ -19,6 +20,7 @@ class CreateEventCubit extends Cubit<CreateEventState> {
         super(CreateEventState(
           isNextEnabled: true,
           currentStep: 0,
+          invitedPlayers: List.empty(),
         ));
 
   final GameRepository _gameRepo;
@@ -48,7 +50,12 @@ class CreateEventCubit extends Cubit<CreateEventState> {
           ..additionalInformation = state.additionalInformation
           ..courtName = state.courtNumber;
 
-        await _gameRepo.createGame(publicInfo, privateInfo);
+        final request = CreateGameRequest()
+          ..publicInfo = publicInfo
+          ..privateInfo = privateInfo
+          ..playersToInvite.addAll(state.invitedPlayers.map((e) => e.userId));
+
+        await _gameRepo.createGame(request);
         emit(state.copyWith(status: FormzStatus.submissionSuccess));
       } catch (e) {
         emit(state.copyWith(status: FormzStatus.submissionFailure));
@@ -99,5 +106,19 @@ class CreateEventCubit extends Cubit<CreateEventState> {
 
   void additionalInformationChanged(String info) {
     emit(state.copyWith(additionalInformation: info));
+  }
+
+  void addPlayerToInvite(Profile player) {
+    final list = List<Profile>.from([...state.invitedPlayers, player]);
+    emit(state.copyWith(invitedPlayers: list));
+  }
+
+  void removePlayerToInvite(Profile player) {
+    final list = List<Profile>.from([...state.invitedPlayers]);
+    if (!list.remove(player)) {
+      throw Exception("Could not remove player!");
+    }
+
+    emit(state.copyWith(invitedPlayers: list));
   }
 }
