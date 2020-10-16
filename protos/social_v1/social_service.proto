@@ -125,6 +125,11 @@ message SendFriendRequestResponse {
 
 message SearchForProfileRequest {
   string searchTerm = 1;
+  SearchOptions options = 2;
+  
+  message SearchOptions{
+    bool onlyMyFriends = 1;
+  }
 }
 
 message SearchForProfileResponse {

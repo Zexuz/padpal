@@ -1,25 +1,38 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Padel.Repository.Core.MongoDb;
-using Padel.Social.Models;
+using Padel.Proto.Social.V1;
+using Padel.Social.Repositories;
 using Padel.Social.Services.Interface;
+using Profile = Padel.Social.Models.Profile;
 
 namespace Padel.Social.Services.Impl
 {
     public class ProfileSearchService : IProfileSearchService
     {
-        private readonly IMongoRepository<Profile> _profileRepository;
+        private readonly IProfileRepository _profileRepository;
 
-        public ProfileSearchService(IMongoRepository<Profile> profileRepository)
+        public ProfileSearchService(IProfileRepository profileRepository)
         {
             _profileRepository = profileRepository;
         }
 
-        public Task<IReadOnlyCollection<Profile>> Search(string searchTerm)
+        public async Task<IReadOnlyCollection<Profile>> Search(int myUserId, string searchTerm,
+            SearchForProfileRequest.Types.SearchOptions            requestOptions)
         {
-            var res = _profileRepository.FilterBy(profile => profile.Name.Contains(searchTerm));
-            return Task.FromResult<IReadOnlyCollection<Profile>>(res.ToList());
+            
+            // TODO MOVE THIS INTO SEARCH SERVICE!
+            // if (string.IsNullOrWhiteSpace(request.SearchTerm))
+            // {
+                // return new SearchForProfileResponse();
+            // }
+
+            // var term = request.SearchTerm.Trim();
+            // if (term.Length < 3)
+            // {
+                // return new SearchForProfileResponse();
+            // }
+            
+            return await _profileRepository.Search(myUserId, searchTerm, requestOptions);
         }
     }
 }

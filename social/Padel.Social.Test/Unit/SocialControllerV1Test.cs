@@ -18,7 +18,7 @@ namespace Padel.Social.Test.Unit
         public SocialControllerV1Test()
         {
             _fakeProfileSearchService = A.Fake<IProfileSearchService>();
-            _ctx = CreateServerCallContextWithNoMetadata();
+            _ctx = CreateServerCallContextWithUserId(1337);
 
             _sut = TestHelper.ActivateWithFakes<SocialControllerV1>(_fakeProfileSearchService);
         }
@@ -29,12 +29,12 @@ namespace Padel.Social.Test.Unit
         [InlineData("  robin    ", "robin")]
         [InlineData("robin edbom!23#    ", "robin edbom!23#")]
         [InlineData("robin    edbom    ", "robin    edbom")]
-        [InlineData("RoBiN    edbom    ", "robin    edbom")]
+        [InlineData("RoBiN    edbom    ", "RoBiN    edbom")]
         public async Task Should_trim_search_term(string dirty, string expected)
         {
             await _sut.SearchForProfile(new SearchForProfileRequest {SearchTerm = dirty}, _ctx);
 
-            A.CallTo(() => _fakeProfileSearchService.Search(expected)).MustHaveHappened();
+            A.CallTo(() => _fakeProfileSearchService.Search(A<int>._, expected, A<SearchForProfileRequest.Types.SearchOptions>._)).MustHaveHappened();
         }
 
         [Theory]
@@ -49,7 +49,8 @@ namespace Padel.Social.Test.Unit
             var res = await _sut.SearchForProfile(new SearchForProfileRequest {SearchTerm = term}, _ctx);
 
             Assert.Empty(res.Profiles);
-            A.CallTo(() => _fakeProfileSearchService.Search(A<string>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakeProfileSearchService.Search(A<int>._, A<string>._, A<SearchForProfileRequest.Types.SearchOptions>._))
+                .MustNotHaveHappened();
         }
     }
 }
