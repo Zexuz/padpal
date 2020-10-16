@@ -1,142 +1,6 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:social_repository/social_repository.dart';
-
-enum PlayerState {
-  Creator,
-  Accepted,
-  Pending,
-  Free,
-}
-
-class Player {
-  const Player({this.profile, this.state, this.action});
-
-  final Profile profile;
-  final PlayerState state;
-  final Widget action;
-}
-
-class CreateEventAddPlayers extends StatelessWidget {
-  const CreateEventAddPlayers({
-    @required this.players,
-  });
-
-  final List<Player> players;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    const radius = 24.0;
-
-    const offset = (radius * 2);
-
-    final widgets = <Widget>[];
-
-    for (var value in players ?? <Player>[]) {
-      if (value.state == PlayerState.Creator) continue;
-      widgets.add(RawSpot(
-        avatar: Avatar(
-          url: value.profile.imageUrl,
-          radius: radius,
-          borderWidth: 0,
-          color: theme.primaryColor,
-          elevation: 0,
-          innerBorderWidth: 0,
-          fallback: "AG",
-        ),
-        name: value.profile.name,
-        label: "Beginner",
-        action: value.action,
-        addDivider: true,
-        offset: offset,
-      ));
-    }
-
-    for (var i = widgets.length; i < 4; i++) {
-      widgets.add(
-        RawSpot(
-          avatar: DottedAvatar(
-            radius: radius,
-          ),
-          name: "Player ${i + 1}",
-          label: "Free spot",
-          action: ButtonSmallPrimary(
-            stretch: false,
-            onPressed: () => {},
-            text: "Add friend",
-            isDisabled: false,
-          ),
-          addDivider: i != 3,
-          offset: offset,
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: widgets,
-    );
-    // return Column(
-    //   crossAxisAlignment: CrossAxisAlignment.start,
-    //   children: [
-    //     _RawSpot(
-    //       avatar: Avatar(
-    //         url: url,
-    //         radius: radius,
-    //         borderWidth: 0,
-    //         color: theme.primaryColor,
-    //         elevation: 0,
-    //         innerBorderWidth: 0,
-    //         fallback: "AG",
-    //       ),
-    //       name: "Andries Grootoonk",
-    //       label: "Beginner",
-    //       action: ButtonSmallSecondary(
-    //         stretch: false,
-    //         onPressed: () => {},
-    //         text: "Remove",
-    //         isDisabled: false,
-    //       ),
-    //       addDivider: true,
-    //       offset: offset,
-    //     ),
-    //     _RawSpot(
-    //       avatar: DottedAvatar(
-    //         radius: radius,
-    //       ),
-    //       name: "Player 3",
-    //       label: "Free spot",
-    //       action: ButtonSmallPrimary(
-    //         stretch: false,
-    //         onPressed: () => {},
-    //         text: "Add friend",
-    //         isDisabled: false,
-    //       ),
-    //       addDivider: true,
-    //       offset: offset,
-    //     ),
-    //     _RawSpot(
-    //       avatar: DottedAvatar(
-    //         radius: radius,
-    //       ),
-    //       name: "Player 4",
-    //       label: "Free spot",
-    //       action: ButtonSmallPrimary(
-    //         stretch: false,
-    //         onPressed: () => {},
-    //         text: "Add friend",
-    //         isDisabled: false,
-    //       ),
-    //       addDivider: false,
-    //       offset: offset,
-    //     ),
-    //   ],
-    // );
-  }
-}
 
 class CreatorSpot extends StatelessWidget {
   const CreatorSpot({
@@ -247,12 +111,13 @@ class PendingSpot extends StatelessWidget {
       ),
       name: profile.name,
       label: "Beginner",
-      action: TextButton(
-        onPressed: null,
+      action: Padding(
+        padding: const EdgeInsets.only(right: 16.0),
         child: Text("Pending..."),
       ),
       addDivider: true,
       offset: offset,
+      opacity: 0.5,
     );
   }
 }
@@ -325,6 +190,7 @@ class RawSpot extends StatelessWidget {
     @required this.name,
     @required this.label,
     @required this.offset,
+    this.opacity,
     this.addDivider = false,
   }) : super(key: key);
 
@@ -334,6 +200,7 @@ class RawSpot extends StatelessWidget {
   final String label;
   final bool addDivider;
   final double offset;
+  final double opacity;
 
   static const rightPadding = 16.0;
   static const orPadding = 16.0;
@@ -341,26 +208,33 @@ class RawSpot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final child = Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(right: rightPadding),
+          child: avatar,
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(name),
+              Text(label),
+            ],
+          ),
+        ),
+        if (action != null) action,
+      ],
+    );
+
     return Column(
       children: [
-        Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(right: rightPadding),
-              child: avatar,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name),
-                  Text(label),
-                ],
-              ),
-            ),
-            if (action != null) action,
-          ],
-        ),
+        opacity != null
+            ? Opacity(
+                opacity: opacity,
+                child: child,
+              )
+            : child,
         if (addDivider)
           Divider(
             thickness: 2,

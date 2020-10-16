@@ -34,11 +34,6 @@ class EventFilterPage extends StatelessWidget {
 class MapSample extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _swedenCameraPosistion = CameraPosition(
-    target: LatLng(58.21, 14.53),
-    zoom: 4.0,
-  );
-
   Future<void> _setCameraToMyLocation() async {
     const myZoom = 14.0;
     final position = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
