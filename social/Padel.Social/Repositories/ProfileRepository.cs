@@ -28,7 +28,7 @@ namespace Padel.Social.Repositories
         {
             var profiles = new List<Profile>();
             var fb = new FilterDefinitionBuilder<Profile>().Regex(profile => profile.Name, new BsonRegularExpression($".*{searchTerm}.*", "i"))
-                     & (requestOptions.OnlyMyFriends
+                     & (requestOptions != null && requestOptions.OnlyMyFriends
                          ? new FilterDefinitionBuilder<Profile>().ElemMatch(profile => profile.Friends, friend => friend.UserId == myUserId)
                          : new FilterDefinitionBuilder<Profile>().Empty);
 

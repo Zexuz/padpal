@@ -33,6 +33,19 @@ namespace Padel.Social.Test.Unit
         }
 
         [Theory]
+        [InlineData("  robin", "robin")]
+        [InlineData("  robin    ", "robin")]
+        [InlineData("robin edbom!23#    ", "robin edbom!23#")]
+        [InlineData("robin    edbom    ", "robin    edbom")]
+        [InlineData("RoBiN    edbom    ", "RoBiN    edbom")]
+        public async Task Should_not_throw_if_request_options_is_null(string dirty, string expected)
+        {
+            await _sut.Search(1337, dirty, null);
+
+            A.CallTo(() => _fakeProfileRepository.Search(A<int>._, expected, A<SearchForProfileRequest.Types.SearchOptions>._)).MustHaveHappened();
+        }
+
+        [Theory]
         [InlineData("")]
         [InlineData(" ")]
         [InlineData("    ")]
