@@ -71,11 +71,42 @@ class Players extends StatelessWidget {
   Widget build(BuildContext context) {
     final meCubit = context.bloc<MeCubit>();
 
+    const radius = 24.0;
+
+    const offset = (radius * 2);
+
     return Column(
       children: [
         Price(gameInfo: gameInfo),
         EventStepTitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
-        CreateEventAddPlayers(players: [Player(profile: meCubit.state.me, state: PlayerState.Creator)],),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CreatorSpot(
+              profile: meCubit.state.me,
+              radius: radius,
+              offset: offset,
+            ),
+            PendingSpot(
+              profile: meCubit.state.me,
+              radius: radius,
+              offset: offset,
+            ),
+            FreeSpot(
+              radius: radius,
+              offset: offset,
+              onTap: () => print("Tapped Invite"),
+              playerNumber: 3,
+            ),
+            FreeSpot(
+              radius: radius,
+              offset: offset,
+              onTap: () => print("Tapped Invite"),
+              playerNumber: 4,
+              addDivider: false,
+            ),
+          ],
+        ),
       ],
     );
   }

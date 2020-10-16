@@ -29,17 +29,74 @@ class CreateEventPage extends StatefulWidget {
   _CreateEventWizardState createState() => _CreateEventWizardState();
 }
 
+class InviteFriend extends StatelessWidget {
+  InviteFriend({@required this.onTap});
+
+  static const orPadding = 16.0;
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: orPadding, right: orPadding),
+          child: const Text("or"),
+        ),
+        ButtonSmallPrimary(
+          stretch: false,
+          onPressed: onTap,
+          text: "Invite friend",
+          isDisabled: false,
+        ),
+      ],
+    );
+  }
+}
+
 class _CreateEventWizardState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
+    const radius = 24.0;
+
+    const offset = (radius * 2);
+
+    // TODO THIS NEEDS TO BE INA BLOCK BUILDER!
     final meCubit = context.bloc<MeCubit>();
     final steps = [
-      CreateEventAddPlayers(players: [Player(profile: meCubit.state.me, state: PlayerState.Creator)],),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorSpot(
+            profile: meCubit.state.me,
+            radius: radius,
+            offset: offset,
+          ),
+          InvitedSpot(
+            profile: meCubit.state.me,
+            radius: radius,
+            offset: offset,
+            onTap: () => print("Tapped remove"),
+          ),
+          FreeSpot(
+            radius: radius,
+            offset: offset,
+            onTap: () => print("Tapped Invite"),
+            playerNumber: 3,
+          ),
+          FreeSpot(
+            radius: radius,
+            offset: offset,
+            onTap: () => print("Tapped Invite"),
+            playerNumber: 4,
+            addDivider: false,
+          ),
+        ],
+      ),
       CreateEventTimeAndLocation(),
       CreateEventOtherInformation(),
     ];
-
-    final theme = Theme.of(context);
 
     return BlocBuilder<CreateEventCubit, CreateEventState>(
       builder: (context, state) {

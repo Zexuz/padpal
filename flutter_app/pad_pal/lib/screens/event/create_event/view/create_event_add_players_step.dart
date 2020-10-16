@@ -12,10 +12,11 @@ enum PlayerState {
 }
 
 class Player {
-  const Player({this.profile, this.state});
+  const Player({this.profile, this.state, this.action});
 
   final Profile profile;
   final PlayerState state;
+  final Widget action;
 }
 
 class CreateEventAddPlayers extends StatelessWidget {
@@ -32,18 +33,11 @@ class CreateEventAddPlayers extends StatelessWidget {
 
     const offset = (radius * 2);
 
-    final widgets = <Widget>[
-      _Creator(
-        profile: players.firstWhere((element) => element.state == PlayerState.Creator).profile,
-        radius: radius,
-        theme: theme,
-        offset: offset,
-      ),
-    ];
+    final widgets = <Widget>[];
 
     for (var value in players ?? <Player>[]) {
-      if(value.state == PlayerState.Creator) continue;
-      widgets.add(_RawSpot(
+      if (value.state == PlayerState.Creator) continue;
+      widgets.add(RawSpot(
         avatar: Avatar(
           url: value.profile.imageUrl,
           radius: radius,
@@ -55,12 +49,7 @@ class CreateEventAddPlayers extends StatelessWidget {
         ),
         name: value.profile.name,
         label: "Beginner",
-        action: ButtonSmallSecondary(
-          stretch: false,
-          onPressed: () => {},
-          text: "Remove",
-          isDisabled: false,
-        ),
+        action: value.action,
         addDivider: true,
         offset: offset,
       ));
@@ -68,7 +57,7 @@ class CreateEventAddPlayers extends StatelessWidget {
 
     for (var i = widgets.length; i < 4; i++) {
       widgets.add(
-        _RawSpot(
+        RawSpot(
           avatar: DottedAvatar(
             radius: radius,
           ),
@@ -80,7 +69,7 @@ class CreateEventAddPlayers extends StatelessWidget {
             text: "Add friend",
             isDisabled: false,
           ),
-          addDivider: true,
+          addDivider: i != 3,
           offset: offset,
         ),
       );
@@ -149,24 +138,24 @@ class CreateEventAddPlayers extends StatelessWidget {
   }
 }
 
-class _Creator extends StatelessWidget {
-  const _Creator({
+class CreatorSpot extends StatelessWidget {
+  const CreatorSpot({
     Key key,
     @required this.profile,
     @required this.radius,
-    @required this.theme,
     @required this.offset,
   }) : super(key: key);
 
   final double radius;
-  final ThemeData theme;
   final double offset;
   final Profile profile;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
-      child: _RawSpot(
+      child: RawSpot(
         avatar: Avatar(
           url: profile.imageUrl,
           fallback: "AB",
@@ -186,8 +175,150 @@ class _Creator extends StatelessWidget {
   }
 }
 
-class _RawSpot extends StatelessWidget {
-  const _RawSpot({
+class InvitedSpot extends StatelessWidget {
+  const InvitedSpot({
+    Key key,
+    @required this.profile,
+    @required this.radius,
+    @required this.offset,
+    @required this.onTap,
+  }) : super(key: key);
+
+  final double radius;
+  final double offset;
+  final Profile profile;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return RawSpot(
+      avatar: Avatar(
+        url: profile.imageUrl,
+        radius: radius,
+        borderWidth: 0,
+        color: theme.primaryColor,
+        elevation: 0,
+        innerBorderWidth: 0,
+        fallback: "AG",
+      ),
+      name: profile.name,
+      label: "Beginner",
+      action: OrWrapper(
+        child: ButtonSmallSecondary(
+          stretch: false,
+          onPressed: onTap,
+          text: "Remove",
+          isDisabled: false,
+        ),
+      ),
+      addDivider: true,
+      offset: offset,
+    );
+  }
+}
+
+class PendingSpot extends StatelessWidget {
+  const PendingSpot({
+    Key key,
+    @required this.profile,
+    @required this.radius,
+    @required this.offset,
+  }) : super(key: key);
+
+  final double radius;
+  final double offset;
+  final Profile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return RawSpot(
+      avatar: Avatar(
+        url: profile.imageUrl,
+        radius: radius,
+        borderWidth: 0,
+        color: theme.primaryColor,
+        elevation: 0,
+        innerBorderWidth: 0,
+        fallback: "AG",
+      ),
+      name: profile.name,
+      label: "Beginner",
+      action: TextButton(
+        onPressed: null,
+        child: Text("Pending..."),
+      ),
+      addDivider: true,
+      offset: offset,
+    );
+  }
+}
+
+class FreeSpot extends StatelessWidget {
+  const FreeSpot({
+    Key key,
+    @required this.radius,
+    @required this.offset,
+    @required this.onTap,
+    @required this.playerNumber,
+    this.addDivider = true,
+  }) : super(key: key);
+
+  final double radius;
+  final double offset;
+  final VoidCallback onTap;
+  final int playerNumber;
+  final bool addDivider;
+
+  @override
+  Widget build(BuildContext context) {
+    return RawSpot(
+      avatar: DottedAvatar(
+        radius: radius,
+      ),
+      name: "Player $playerNumber",
+      label: "Free spot",
+      action: OrWrapper(
+        child: ButtonSmallPrimary(
+          stretch: false,
+          onPressed: onTap,
+          text: "Invite friend",
+          isDisabled: false,
+        ),
+      ),
+      addDivider: addDivider,
+      offset: offset,
+    );
+  }
+}
+
+class OrWrapper extends StatelessWidget {
+  const OrWrapper({Key, key, @required this.child}) : super(key: key);
+
+  final Widget child;
+
+  static const orPadding = 16.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: orPadding, right: orPadding),
+          child: const Text("or"),
+        ),
+        child
+      ],
+    );
+  }
+}
+
+// TODO Maybe user ListTile? BoxDecortaion lowerSide?
+class RawSpot extends StatelessWidget {
+  const RawSpot({
     Key key,
     this.action,
     @required this.avatar,
@@ -227,11 +358,6 @@ class _RawSpot extends StatelessWidget {
                 ],
               ),
             ),
-            if (action != null)
-              Padding(
-                padding: const EdgeInsets.only(left: orPadding, right: orPadding),
-                child: const Text("or"),
-              ),
             if (action != null) action,
           ],
         ),
