@@ -27,7 +27,7 @@ namespace Padel.Social.Runner.Controllers
             IProfileSearchService            profileSearchService,
             IFriendRequestService            friendRequestService,
             IMongoRepository<Models.Profile> profileMongoRepository,
-            IProfilePictureService profilePictureService
+            IProfilePictureService           profilePictureService
         )
         {
             _messageSenderService = messageSenderService;
@@ -96,18 +96,9 @@ namespace Padel.Social.Runner.Controllers
 
         public override async Task<SearchForProfileResponse> SearchForProfile(SearchForProfileRequest request, ServerCallContext context)
         {
-            if (string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                return new SearchForProfileResponse();
-            }
+            var userId = context.GetUserId();
 
-            var term = request.SearchTerm.Trim().ToLowerInvariant();
-            if (term.Length < 3)
-            {
-                return new SearchForProfileResponse();
-            }
-
-            var profiles = await _profileSearchService.Search(term);
+            var profiles = await _profileSearchService.Search(userId, request.SearchTerm, request.Options);
             return new SearchForProfileResponse
             {
                 Profiles =
@@ -162,7 +153,7 @@ namespace Padel.Social.Runner.Controllers
             var userId = context.GetUserId();
 
             var url = await _profilePictureService.Update(userId, new MemoryStream(request.ImgData.ToByteArray()));
-            return new ChangeProfilePictureResponse{Url = url};
+            return new ChangeProfilePictureResponse {Url = url};
         }
     }
 }
