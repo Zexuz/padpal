@@ -19,20 +19,18 @@ namespace Padel.Social.Services.Impl
         public async Task<IReadOnlyCollection<Profile>> Search(int myUserId, string searchTerm,
             SearchForProfileRequest.Types.SearchOptions            requestOptions)
         {
-            
-            // TODO MOVE THIS INTO SEARCH SERVICE!
-            // if (string.IsNullOrWhiteSpace(request.SearchTerm))
-            // {
-                // return new SearchForProfileResponse();
-            // }
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return new List<Profile>();
+            }
 
-            // var term = request.SearchTerm.Trim();
-            // if (term.Length < 3)
-            // {
-                // return new SearchForProfileResponse();
-            // }
-            
-            return await _profileRepository.Search(myUserId, searchTerm, requestOptions);
+            var term = searchTerm.Trim();
+            if (term.Length < 3)
+            {
+                return new List<Profile>();
+            }
+
+            return await _profileRepository.Search(myUserId, term, requestOptions);
         }
     }
 }

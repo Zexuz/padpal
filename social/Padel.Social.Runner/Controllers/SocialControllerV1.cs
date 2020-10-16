@@ -98,19 +98,7 @@ namespace Padel.Social.Runner.Controllers
         {
             var userId = context.GetUserId();
 
-            // TODO MOVE THIS INTO SEARCH SERVICE!
-            if (string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                return new SearchForProfileResponse();
-            }
-
-            var term = request.SearchTerm.Trim();
-            if (term.Length < 3)
-            {
-                return new SearchForProfileResponse();
-            }
-
-            var profiles = await _profileSearchService.Search(userId, term, request.Options);
+            var profiles = await _profileSearchService.Search(userId, request.SearchTerm, request.Options);
             return new SearchForProfileResponse
             {
                 Profiles =

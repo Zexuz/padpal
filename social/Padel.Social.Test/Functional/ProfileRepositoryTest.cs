@@ -12,13 +12,13 @@ using Profile = Padel.Social.Models.Profile;
 
 namespace Padel.Social.Test.Functional
 {
-    public class ProfileSearchServiceTest : IClassFixture<MongoWebApplicationFactory<Startup>>
+    public class ProfileRepositoryTest : IClassFixture<MongoWebApplicationFactory<Startup>>
     {
         private readonly ProfileSearchService _sut;
         private readonly ProfileRepository    _mongoRepository;
 
 
-        public ProfileSearchServiceTest(MongoWebApplicationFactory<Startup> factoryBase)
+        public ProfileRepositoryTest(MongoWebApplicationFactory<Startup> factoryBase)
         {
             _mongoRepository = new ProfileRepository(new MongoDbSettings
             {
