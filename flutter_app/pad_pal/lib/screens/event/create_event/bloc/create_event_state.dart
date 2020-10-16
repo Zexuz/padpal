@@ -13,6 +13,7 @@ class CreateEventState extends Equatable {
     this.courtType,
     this.pricePerPerson,
     this.additionalInformation,
+    this.invitedPlayers,
   });
 
   final FormzStatus status;
@@ -26,6 +27,7 @@ class CreateEventState extends Equatable {
   final CourtType courtType;
   final int pricePerPerson;
   final String additionalInformation;
+  final List<Profile> invitedPlayers;
 
   @override
   List<Object> get props => [
@@ -39,7 +41,8 @@ class CreateEventState extends Equatable {
         courtNumber,
         courtType,
         pricePerPerson,
-        additionalInformation
+        additionalInformation,
+        invitedPlayers
       ];
 
   CreateEventState copyWith({
@@ -54,6 +57,7 @@ class CreateEventState extends Equatable {
     CourtType courtType,
     int pricePerPerson,
     String additionalInformation,
+    List<Profile> invitedPlayers,
   }) {
     return CreateEventState(
       status: status ?? this.status,
@@ -67,6 +71,7 @@ class CreateEventState extends Equatable {
       courtType: courtType ?? this.courtType,
       pricePerPerson: pricePerPerson ?? this.pricePerPerson,
       additionalInformation: additionalInformation ?? this.additionalInformation,
+      invitedPlayers: invitedPlayers ?? this.invitedPlayers,
     );
   }
 }

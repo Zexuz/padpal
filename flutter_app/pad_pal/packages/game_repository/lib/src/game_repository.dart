@@ -28,13 +28,10 @@ class GameRepository {
     return protoRes.games.map((e) => GameInfo()..publicInfo = e).toList();
   }
 
-  Future<void> createGame(PublicGameInfo publicGameInfo, PrivateGameInfo privateGameInfo) async {
+  Future<void> createGame(CreateGameRequest request) async {
     final callOptions =
         CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
 
-    final request = CreateGameRequest()
-      ..publicInfo = publicGameInfo
-      ..privateInfo = privateGameInfo;
 
     final call = _gameClient.createGame(request, options: callOptions);
 

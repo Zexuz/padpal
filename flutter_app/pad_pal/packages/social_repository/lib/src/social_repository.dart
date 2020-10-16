@@ -68,7 +68,7 @@ class SocialRepository {
     await call;
   }
 
-  Future<List<Profile>> searchForProfile(String rawStr) async {
+  Future<List<Profile>> searchForProfile(String rawStr, bool onlySearchForFriends) async {
     final searchTerm = rawStr.trim();
     if (searchTerm.length < 3) {
       return List.empty();
@@ -76,7 +76,9 @@ class SocialRepository {
 
     final callOptions =
         CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
-    final request = SearchForProfileRequest()..searchTerm = searchTerm;
+    final request = SearchForProfileRequest()
+      ..searchTerm = searchTerm
+      ..options = (SearchForProfileRequest_SearchOptions()..onlyMyFriends = onlySearchForFriends);
 
     final call = _chatServiceClient.searchForProfile(request, options: callOptions);
     var response = await call;
@@ -117,7 +119,7 @@ class SocialRepository {
 
   Future<String> updateProfilePicture(List<int> bytes) async {
     final callOptions =
-    CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
     final request = ChangeProfilePictureRequest()..imgData = bytes;
 
     final call = _chatServiceClient.changeProfilePicture(request, options: callOptions);
