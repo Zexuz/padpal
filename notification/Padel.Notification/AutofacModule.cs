@@ -29,6 +29,7 @@ namespace Padel.Notification
             builder.RegisterType<ChatMessageReceivedProcessor>().As<IMessageProcessor>().PreserveExistingDefaults();
             builder.RegisterType<FriendRequestReceivedProcessor>().As<IMessageProcessor>().PreserveExistingDefaults();
             builder.RegisterType<FriendRequestAcceptedProcessor>().As<IMessageProcessor>().PreserveExistingDefaults();
+            builder.RegisterType<GameCreatedProcessor>().As<IMessageProcessor>().PreserveExistingDefaults();
             builder.RegisterType<FirebaseCloudMessagingWrapper>().As<IFirebaseCloudMessaging>();
             builder.RegisterType<NotificationService>().As<INotificationService>();
         }
