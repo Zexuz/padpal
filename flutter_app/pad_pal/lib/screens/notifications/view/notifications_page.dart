@@ -114,6 +114,21 @@ class NotificationView extends StatelessWidget {
                       },
                     ),
                   );
+                case PushNotification_Notification.invitedToGame:
+                  final event = pushNotification.invitedToGame;
+                  print(event.unixTime.toInt());
+                  return Card(
+                    child: Notification(
+                      title: event.creator,
+                      label: "Has invited you to play a game on ${DateTime.fromMillisecondsSinceEpoch(event.unixTime.toInt() * 1000)} @ ${event.place} for ${event.durationInMinutes} minutes",
+                      imgUrl: "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
+                      // TODO fetch users image
+                      onPrimaryPressed: () async {
+                        final snackBar = SnackBar(content: Text('Todo not implemented'));
+                        Scaffold.of(context).showSnackBar(snackBar);
+                      },
+                    ),
+                  );
                 case PushNotification_Notification.notSet:
                   throw Exception("Notification type not set, notification: ${pushNotification}");
               }
