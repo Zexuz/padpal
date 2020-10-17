@@ -9,7 +9,6 @@ using Padel.Notification.MessageProcessors;
 using Padel.Notification.Service;
 using Padel.Proto.Game.V1;
 using Padel.Proto.Notification.V1;
-using Padel.Proto.Social.V1;
 using Padel.Test.Core;
 using Xunit;
 using Message = Amazon.SQS.Model.Message;
