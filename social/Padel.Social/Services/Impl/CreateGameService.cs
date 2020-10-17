@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver.GeoJsonObjectModel;
 using Padel.Proto.Game.V1;
+using Padel.Queue;
 using Padel.Social.Exceptions;
 using Padel.Social.Models;
 using Padel.Social.Repositories;
@@ -16,11 +17,13 @@ namespace Padel.Social.Services.Impl
     {
         private readonly IGameRepository    _gameRepository;
         private readonly IProfileRepository _profileRepository;
+        private readonly IPublisher         _publisher;
 
-        public CreateGameService(IGameRepository gameRepository, IProfileRepository profileRepository)
+        public CreateGameService(IGameRepository gameRepository, IProfileRepository profileRepository, IPublisher publisher)
         {
             _gameRepository = gameRepository;
             _profileRepository = profileRepository;
+            _publisher = publisher;
         }
 
         public async Task<ObjectId> CreateGame(int userId, CreateGameRequest request)
@@ -32,7 +35,7 @@ namespace Padel.Social.Services.Impl
             {
                 throw new ArgumentException("can't invite myself", nameof(request.PlayersToInvite));
             }
-            
+
             if (request.PlayersToInvite.Count > 3)
             {
                 throw new ArgumentException("can't invite more than 3 people", nameof(request.PlayersToInvite));
@@ -73,6 +76,13 @@ namespace Padel.Social.Services.Impl
                 AdditionalInformation = request.PrivateInfo.AdditionalInformation
             };
             await _gameRepository.InsertOneAsync(game);
+
+            await _publisher.PublishMessage(new GameCreated
+            {
+                PublicGameInfo = new PublicGameInfo(request.PublicInfo) {Id = game.Id.ToString()},
+                InvitedPlayers = {request.PlayersToInvite}
+            });
+
             return game.Id;
         }
     }

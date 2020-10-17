@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Padel.Proto.Game.V1;
 using Padel.Proto.Social.V1;
 using Padel.Queue;
 using Padel.Social.Exceptions;
@@ -67,6 +68,7 @@ namespace Padel.Social.Runner
             publisher.RegisterEvent(ChatMessageReceived.Descriptor.GetMessageName(), typeof(ChatMessageReceived)).Wait();
             publisher.RegisterEvent(FriendRequestAccepted.Descriptor.GetMessageName(), typeof(FriendRequestAccepted)).Wait();
             publisher.RegisterEvent(FriendRequestReceived.Descriptor.GetMessageName(), typeof(FriendRequestReceived)).Wait();
+            publisher.RegisterEvent(GameCreated.Descriptor.GetMessageName(), typeof(GameCreated)).Wait();
 
             var subscriptionService = container.Resolve<ISubscriptionService>();
             var consumerService = container.Resolve<IConsumerService>();
