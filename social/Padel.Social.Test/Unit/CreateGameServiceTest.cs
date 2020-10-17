@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FakeItEasy;
 using MongoDB.Bson;
 using Padel.Proto.Game.V1;
+using Padel.Social.Exceptions;
 using Padel.Social.Extensions;
+using Padel.Social.Models;
 using Padel.Social.Repositories;
 using Padel.Social.Services.Impl;
 using Padel.Test.Core;
@@ -14,13 +18,15 @@ namespace Padel.Social.Test.Unit
 {
     public class CreateGameServiceTest
     {
-        private readonly CreateGameService _sut;
-        private readonly IGameRepository   _fakeGameRepo;
+        private readonly CreateGameService  _sut;
+        private readonly IGameRepository    _fakeGameRepo;
+        private readonly IProfileRepository _fakeProfileRepository;
 
         public CreateGameServiceTest()
         {
             _fakeGameRepo = A.Fake<IGameRepository>();
-            _sut = TestHelper.ActivateWithFakes<CreateGameService>(_fakeGameRepo);
+            _fakeProfileRepository = A.Fake<IProfileRepository>();
+            _sut = TestHelper.ActivateWithFakes<CreateGameService>(_fakeGameRepo, _fakeProfileRepository);
         }
 
         [Fact]
@@ -72,6 +78,115 @@ namespace Padel.Social.Test.Unit
                     game.AdditionalInformation                                      == "SomeText"
                 )
             )).MustHaveHappened();
+        }
+
+        [Theory]
+        [InlineData(8, 9, 5, 2, 1, 4)]
+        [InlineData(1, 4)]
+        [InlineData()]
+        [InlineData(1337)]
+        public async Task Should_throw_exception_if_inviting_none_friends_to_a_game(params int[] myFriends)
+        {
+            const int userId = 4;
+            var request = new CreateGameRequest
+            {
+                PublicInfo = new PublicGameInfo
+                {
+                    Location = new PadelCenter()
+                    {
+                        Name = "Padel Center Delsjön",
+                        Point = new Point
+                        {
+                            Longitude = 12.035027,
+                            Latitude = 57.694470,
+                        },
+                    },
+                    StartTime = DateTimeOffset.Parse("2020-10-12 20:52").ToUnixTimeSeconds(),
+                    DurationInMinutes = 90,
+                    PricePerPerson = 120,
+                    CourtType = CourtType.Indoors,
+                },
+                PrivateInfo = new PrivateGameInfo
+                {
+                    CourtName = "A24",
+                    AdditionalInformation = "SomeText"
+                },
+                PlayersToInvite = {8, 9, 6}
+            };
+
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(A<int>._))
+                .Returns(new Profile {Friends = myFriends.Select(i => new Friend {UserId = i}).ToList()});
+
+            await Assert.ThrowsAsync<NotFriendsException>(() => _sut.CreateGame(userId, request));
+        }
+        
+        [Theory]
+        [InlineData(8, 9, 5, 2, 1, 1335)]
+        [InlineData(8, 9, 5, 2)]
+        public async Task Should_throw_exception_if_inviting_more_than_3_friends(params int[] friendsToInvite)
+        {
+            const int userId = 4;
+            var request = new CreateGameRequest
+            {
+                PublicInfo = new PublicGameInfo
+                {
+                    Location = new PadelCenter()
+                    {
+                        Name = "Padel Center Delsjön",
+                        Point = new Point
+                        {
+                            Longitude = 12.035027,
+                            Latitude = 57.694470,
+                        },
+                    },
+                    StartTime = DateTimeOffset.Parse("2020-10-12 20:52").ToUnixTimeSeconds(),
+                    DurationInMinutes = 90,
+                    PricePerPerson = 120,
+                    CourtType = CourtType.Indoors,
+                },
+                PrivateInfo = new PrivateGameInfo
+                {
+                    CourtName = "A24",
+                    AdditionalInformation = "SomeText"
+                },
+                PlayersToInvite = {friendsToInvite}
+            };
+
+            await Assert.ThrowsAsync<ArgumentException>(() => _sut.CreateGame(userId, request));
+        }
+        
+        [Theory]
+        [InlineData(8, 9, 4)]
+        public async Task Should_throw_exception_if_inviting_myself(params int[] friendsToInvite)
+        {
+            const int userId = 4;
+            var request = new CreateGameRequest
+            {
+                PublicInfo = new PublicGameInfo
+                {
+                    Location = new PadelCenter()
+                    {
+                        Name = "Padel Center Delsjön",
+                        Point = new Point
+                        {
+                            Longitude = 12.035027,
+                            Latitude = 57.694470,
+                        },
+                    },
+                    StartTime = DateTimeOffset.Parse("2020-10-12 20:52").ToUnixTimeSeconds(),
+                    DurationInMinutes = 90,
+                    PricePerPerson = 120,
+                    CourtType = CourtType.Indoors,
+                },
+                PrivateInfo = new PrivateGameInfo
+                {
+                    CourtName = "A24",
+                    AdditionalInformation = "SomeText"
+                },
+                PlayersToInvite = {friendsToInvite}
+            };
+
+            await Assert.ThrowsAsync<ArgumentException>(() => _sut.CreateGame(userId, request));
         }
     }
 }
