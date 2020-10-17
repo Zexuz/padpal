@@ -42,6 +42,7 @@ namespace Padel.Notification.Test.Unit
                 InvitedPlayers = {1337, 5},
                 PublicGameInfo = new PublicGameInfo
                 {
+                    Id = "someId",
                     Location = new PadelCenter
                     {
                         Name = "Best Padel Center"
@@ -56,7 +57,8 @@ namespace Padel.Notification.Test.Unit
             A.CallTo(() => _fakeNotificationService.AddAndSendNotification(
                 A<IEnumerable<int>>.That.Matches(i => i.Count() == 2 && i.Contains(1337) && i.Contains(5)),
                 A<PushNotification>.That.Matches(push =>
-                    push.InvitedToGame.Name              == "Robin Edbom"       &&
+                    push.InvitedToGame.GameId            == "someId"            &&
+                    push.InvitedToGame.Creator           == "Robin Edbom"       &&
                     push.InvitedToGame.DurationInMinutes == 90                  &&
                     push.InvitedToGame.Place             == "Best Padel Center" &&
                     push.InvitedToGame.UnixTime          == DateTimeOffset.Parse("2020-11-07 00:00 +0000").ToUnixTimeSeconds()

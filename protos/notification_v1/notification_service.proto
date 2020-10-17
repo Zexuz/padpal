@@ -32,10 +32,11 @@ message PushNotification{
   }
   message InvitedToGame{
     option (descriptors.messageType) = "notification_v1_InvitedToGame";
-    string name = 1; // User that invited you
-    string place = 2;
-    int64 unix_time = 3;
-    int32 duration_in_minutes = 4;
+    string gameId = 1;
+    string creator = 2;
+    string place = 3;
+    int64 unix_time = 4;
+    int32 duration_in_minutes = 5;
   }
 }
 
