@@ -79,6 +79,7 @@ namespace Padel.Social.Services.Impl
 
             await _publisher.PublishMessage(new GameCreated
             {
+                Creator = profile.Name,
                 PublicGameInfo = new PublicGameInfo(request.PublicInfo) {Id = game.Id.ToString()},
                 InvitedPlayers = {request.PlayersToInvite}
             });

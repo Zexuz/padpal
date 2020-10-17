@@ -62,7 +62,7 @@ namespace Padel.Social.Test.Unit
             };
 
             A.CallTo(() => _fakeProfileRepository.FindByUserId(A<int>._))
-                .Returns(new Profile {Friends = request.PlayersToInvite.Select(i => new Friend {UserId = i}).ToList()});
+                .Returns(new Profile {Name = "Donald Duck", Friends = request.PlayersToInvite.Select(i => new Friend {UserId = i}).ToList()});
 
             A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Models.Game>._))
                 .Invokes(call => ((Models.Game) call.Arguments[0]).Id = ObjectId.GenerateNewId());
@@ -86,14 +86,15 @@ namespace Padel.Social.Test.Unit
             )).MustHaveHappened();
 
             A.CallTo(() => _fakePublisher.PublishMessage(A<GameCreated>.That.Matches(created =>
-                created.InvitedPlayers.Count == 3    &&
-                created.InvitedPlayers[0]    == 1337 &&
-                created.InvitedPlayers[1]    == 1387 &&
-                created.InvitedPlayers[2]    == 8    &&
+                created.InvitedPlayers.Count == 3             &&
+                created.InvitedPlayers[0]    == 1337          &&
+                created.InvitedPlayers[1]    == 1387          &&
+                created.InvitedPlayers[2]    == 8             &&
+                created.Creator              == "Donald Duck" &&
                 created.PublicGameInfo.Equals(new PublicGameInfo(request.PublicInfo)
                 {
                     Id = id.ToString(),
-                }) 
+                })
             ))).MustHaveHappened();
         }
 
