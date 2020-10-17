@@ -14,6 +14,7 @@ message PushNotification{
     ChatMessageReceived chatMessageReceived = 10;
     FriendRequestReceived friendRequestReceived = 11;
     FriendRequestAccepted friendRequestAccepted = 12;
+    InvitedToGame invitedToGame = 13;
   }
 
   message ChatMessageReceived{
@@ -28,6 +29,13 @@ message PushNotification{
   message FriendRequestAccepted{
     option (descriptors.messageType) = "notification_v1_FriendRequestAccepted";
     string name = 1; // The user that accepted the request name
+  }
+  message InvitedToGame{
+    option (descriptors.messageType) = "notification_v1_InvitedToGame";
+    string name = 1; // User that invited you
+    string place = 2;
+    int64 unix_time = 3;
+    int32 duration_in_minutes = 4;
   }
 }
 

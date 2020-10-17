@@ -11,7 +11,8 @@ package game.v1;
 message GameCreated{
   option (descriptors.messageType) = "game_v1_GameCreated";
   PublicGameInfo publicGameInfo = 1;
-  repeated int32 invited_players = 2;
+  string creator = 2;
+  repeated int32 invited_players = 3;
 }
 
 service Game {
