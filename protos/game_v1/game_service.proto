@@ -8,6 +8,12 @@ import "descriptors/rule.proto";
 
 package game.v1;
 
+message GameCreated{
+  option (descriptors.messageType) = "game_v1_GameCreated";
+  PublicGameInfo publicGameInfo = 1;
+  repeated int32 invited_players = 2;
+}
+
 service Game {
   rpc CreateGame (CreateGameRequest) returns (CreateGameResponse) {
     option (descriptors.authorization) = {

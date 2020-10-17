@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using MongoDB.Bson;
 using Padel.Proto.Game.V1;
+using Padel.Queue;
 using Padel.Social.Exceptions;
 using Padel.Social.Extensions;
 using Padel.Social.Models;
@@ -21,12 +22,14 @@ namespace Padel.Social.Test.Unit
         private readonly CreateGameService  _sut;
         private readonly IGameRepository    _fakeGameRepo;
         private readonly IProfileRepository _fakeProfileRepository;
+        private readonly IPublisher         _fakePublisher;
 
         public CreateGameServiceTest()
         {
+            _fakePublisher = A.Fake<IPublisher>();
             _fakeGameRepo = A.Fake<IGameRepository>();
             _fakeProfileRepository = A.Fake<IProfileRepository>();
-            _sut = TestHelper.ActivateWithFakes<CreateGameService>(_fakeGameRepo, _fakeProfileRepository);
+            _sut = TestHelper.ActivateWithFakes<CreateGameService>(_fakeGameRepo, _fakePublisher, _fakeProfileRepository);
         }
 
         [Fact]
@@ -55,8 +58,12 @@ namespace Padel.Social.Test.Unit
                 {
                     CourtName = "A24",
                     AdditionalInformation = "SomeText"
-                }
+                },
+                PlayersToInvite = {1337, 1387, 8}
             };
+
+            A.CallTo(() => _fakeProfileRepository.FindByUserId(A<int>._))
+                .Returns(new Profile {Friends = request.PlayersToInvite.Select(i => new Friend {UserId = i}).ToList()});
 
             A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Models.Game>._))
                 .Invokes(call => ((Models.Game) call.Arguments[0]).Id = ObjectId.GenerateNewId());
@@ -78,6 +85,17 @@ namespace Padel.Social.Test.Unit
                     game.AdditionalInformation                                      == "SomeText"
                 )
             )).MustHaveHappened();
+
+            A.CallTo(() => _fakePublisher.PublishMessage(A<GameCreated>.That.Matches(created =>
+                created.InvitedPlayers.Count == 3    &&
+                created.InvitedPlayers[0]    == 1337 &&
+                created.InvitedPlayers[1]    == 1387 &&
+                created.InvitedPlayers[2]    == 8    &&
+                created.PublicGameInfo.Equals(new PublicGameInfo(request.PublicInfo)
+                {
+                    Id = id.ToString(),
+                }) 
+            ))).MustHaveHappened();
         }
 
         [Theory]
@@ -118,8 +136,11 @@ namespace Padel.Social.Test.Unit
                 .Returns(new Profile {Friends = myFriends.Select(i => new Friend {UserId = i}).ToList()});
 
             await Assert.ThrowsAsync<NotFriendsException>(() => _sut.CreateGame(userId, request));
+
+            A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Game>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<GameCreated>._)).MustNotHaveHappened();
         }
-        
+
         [Theory]
         [InlineData(8, 9, 5, 2, 1, 1335)]
         [InlineData(8, 9, 5, 2)]
@@ -153,8 +174,11 @@ namespace Padel.Social.Test.Unit
             };
 
             await Assert.ThrowsAsync<ArgumentException>(() => _sut.CreateGame(userId, request));
+
+            A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Game>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<GameCreated>._)).MustNotHaveHappened();
         }
-        
+
         [Theory]
         [InlineData(8, 9, 4)]
         public async Task Should_throw_exception_if_inviting_myself(params int[] friendsToInvite)
@@ -187,6 +211,9 @@ namespace Padel.Social.Test.Unit
             };
 
             await Assert.ThrowsAsync<ArgumentException>(() => _sut.CreateGame(userId, request));
+
+            A.CallTo(() => _fakeGameRepo.InsertOneAsync(A<Game>._)).MustNotHaveHappened();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<GameCreated>._)).MustNotHaveHappened();
         }
     }
 }
