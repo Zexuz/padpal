@@ -19,10 +19,10 @@ protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/
   auth_v1/auth_service.proto
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/social_repository/lib/generated \
-  social_v1/social_service.proto
+  social_v1/social_service.proto common_v1/models.proto
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/game_repository/lib/generated \
-  game_v1/game_service.proto
+  game_v1/game_service.proto common_v1/models.proto
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/notification_repository/lib/generated \
-  notification_v1/notification_service.proto
+  notification_v1/notification_service.proto common_v1/models.proto game_v1/game_service.proto
