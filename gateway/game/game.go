@@ -7,9 +7,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewGameService(conn *grpc.ClientConn) *gamepb.GameService {
+func NewGameService(conn *grpc.ClientConn) *game_v1.GameService {
 	client := &gameService{
-		client: gamepb.NewGameClient(conn),
+		client: game_v1.NewGameClient(conn),
 	}
 
 	err := hc.AddChecker("game", conn)
@@ -17,7 +17,7 @@ func NewGameService(conn *grpc.ClientConn) *gamepb.GameService {
 		panic(err)
 	}
 
-	service := &gamepb.GameService{
+	service := &game_v1.GameService{
 		CreateGame:        client.CreateGame,
 		FindGames:         client.FindGames,
 		RequestToJoinGame: client.RequestToJoinGame,
@@ -27,17 +27,17 @@ func NewGameService(conn *grpc.ClientConn) *gamepb.GameService {
 }
 
 type gameService struct {
-	client gamepb.GameClient
+	client game_v1.GameClient
 }
 
-func (s gameService) CreateGame(ctx context.Context, request *gamepb.CreateGameRequest) (*gamepb.CreateGameResponse, error) {
+func (s gameService) CreateGame(ctx context.Context, request *game_v1.CreateGameRequest) (*game_v1.CreateGameResponse, error) {
 	return s.client.CreateGame(ctx, request)
 }
 
-func (s gameService) FindGames(ctx context.Context, request *gamepb.FindGamesRequest) (*gamepb.FindGamesResponse, error) {
+func (s gameService) FindGames(ctx context.Context, request *game_v1.FindGamesRequest) (*game_v1.FindGamesResponse, error) {
 	return s.client.FindGames(ctx, request)
 }
 
-func (s gameService) RequestToJoinGame(ctx context.Context, request *gamepb.RequestToJoinGameRequest) (*gamepb.RequestToJoinGameResponse, error) {
+func (s gameService) RequestToJoinGame(ctx context.Context, request *game_v1.RequestToJoinGameRequest) (*game_v1.RequestToJoinGameResponse, error) {
 	return s.client.RequestToJoinGame(ctx, request)
 }
