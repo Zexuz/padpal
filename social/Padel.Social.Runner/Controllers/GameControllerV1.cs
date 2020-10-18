@@ -14,12 +14,19 @@ namespace Padel.Social.Runner.Controllers
         private readonly ICreateGameService     _createGameService;
         private readonly IFindGameService       _findGameService;
         private readonly IPublicGameInfoBuilder _publicGameInfoBuilder;
+        private readonly IJoinGameService       _joinGameService;
 
-        public GameControllerV1(ICreateGameService createGameService, IFindGameService findGameService, IPublicGameInfoBuilder publicGameInfoBuilder)
+        public GameControllerV1(
+            ICreateGameService     createGameService,
+            IFindGameService       findGameService,
+            IPublicGameInfoBuilder publicGameInfoBuilder,
+            IJoinGameService       joinGameService
+        )
         {
             _createGameService = createGameService;
             _findGameService = findGameService;
             _publicGameInfoBuilder = publicGameInfoBuilder;
+            _joinGameService = joinGameService;
         }
 
         public override async Task<CreateGameResponse> CreateGame(CreateGameRequest request, ServerCallContext context)
@@ -46,6 +53,15 @@ namespace Padel.Social.Runner.Controllers
                     tasks.Select(task => task.Result)
                 }
             };
+        }
+
+        public override async Task<RequestToJoinGameResponse> RequestToJoinGame(RequestToJoinGameRequest request, ServerCallContext context)
+        {
+            var userId = context.GetUserId();
+
+            await _joinGameService.RequestToJoinGame(userId, request.Id);
+
+            return new RequestToJoinGameResponse();
         }
     }
 }
