@@ -17,6 +17,7 @@ message PushNotification{
     FriendRequestReceived friendRequestReceived = 11;
     FriendRequestAccepted friendRequestAccepted = 12;
     InvitedToGame invitedToGame = 13;
+    RequestedToJoinGame requested_to_join_game= 14;
   }
 
   message ChatMessageReceived{
