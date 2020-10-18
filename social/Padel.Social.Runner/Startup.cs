@@ -69,6 +69,7 @@ namespace Padel.Social.Runner
             publisher.RegisterEvent(FriendRequestAccepted.Descriptor.GetMessageName(), typeof(FriendRequestAccepted)).Wait();
             publisher.RegisterEvent(FriendRequestReceived.Descriptor.GetMessageName(), typeof(FriendRequestReceived)).Wait();
             publisher.RegisterEvent(GameCreated.Descriptor.GetMessageName(), typeof(GameCreated)).Wait();
+            publisher.RegisterEvent(UserRequestedToJoinGame.Descriptor.GetMessageName(), typeof(UserRequestedToJoinGame)).Wait();
 
             var subscriptionService = container.Resolve<ISubscriptionService>();
             var consumerService = container.Resolve<IConsumerService>();
