@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option csharp_namespace = "Padel.Proto.Common.V1";
+
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/commonpb";
+
+package common.v1;
+
+message User{
+  int32 userId = 1;
+  string name = 2;
+  string img_url = 3;
+}

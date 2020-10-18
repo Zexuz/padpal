@@ -7,6 +7,7 @@ using FakeItEasy;
 using Padel.Notification.Extensions;
 using Padel.Notification.MessageProcessors;
 using Padel.Notification.Service;
+using Padel.Proto.Common.V1;
 using Padel.Proto.Game.V1;
 using Padel.Proto.Notification.V1;
 using Padel.Test.Core;
@@ -36,33 +37,33 @@ namespace Padel.Notification.Test.Unit
         [Fact]
         public async Task Should_create_pushNotification()
         {
+            var pubicGameInfo = new PublicGameInfo
+            {
+                Id = "someId",
+                Location = new PadelCenter
+                {
+                    Name = "Best Padel Center"
+                },
+                StartTime = DateTimeOffset.Parse("2020-11-07 00:00 +0000").ToUnixTimeSeconds(),
+                DurationInMinutes = 90,
+                Creator = new User
+                {
+                    Name = "Robin Edbom",
+                    ImgUrl = "img",
+                    UserId = 4
+                },
+            };
             var json = JsonSerializer.Serialize(new GameCreated
             {
-                Creator = "Robin Edbom",
                 InvitedPlayers = {1337, 5},
-                PublicGameInfo = new PublicGameInfo
-                {
-                    Id = "someId",
-                    Location = new PadelCenter
-                    {
-                        Name = "Best Padel Center"
-                    },
-                    StartTime = DateTimeOffset.Parse("2020-11-07 00:00 +0000").ToUnixTimeSeconds(),
-                    DurationInMinutes = 90,
-                },
+                PublicGameInfo = pubicGameInfo,
             }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
 
             await _sut.ProcessAsync(new Message {Body = json});
 
             A.CallTo(() => _fakeNotificationService.AddAndSendNotification(
                 A<IEnumerable<int>>.That.Matches(i => i.Count() == 2 && i.Contains(1337) && i.Contains(5)),
-                A<PushNotification>.That.Matches(push =>
-                    push.InvitedToGame.GameId            == "someId"            &&
-                    push.InvitedToGame.Creator           == "Robin Edbom"       &&
-                    push.InvitedToGame.DurationInMinutes == 90                  &&
-                    push.InvitedToGame.Place             == "Best Padel Center" &&
-                    push.InvitedToGame.UnixTime          == DateTimeOffset.Parse("2020-11-07 00:00 +0000").ToUnixTimeSeconds()
-                )
+                A<PushNotification>.That.Matches(push => push.InvitedToGame.GameInfo.Equals(pubicGameInfo))
             )).MustHaveHappenedOnceExactly();
         }
     }

@@ -35,11 +35,7 @@ namespace Padel.Notification.MessageProcessors
                 UtcTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 InvitedToGame = new PushNotification.Types.InvitedToGame
                 {
-                    GameId = parsed.PublicGameInfo.Id,
-                    Creator = parsed.Creator,
-                    Place = parsed.PublicGameInfo.Location.Name,
-                    UnixTime = parsed.PublicGameInfo.StartTime,
-                    DurationInMinutes = parsed.PublicGameInfo.DurationInMinutes,
+                    GameInfo = parsed.PublicGameInfo,
                 }
             };
 

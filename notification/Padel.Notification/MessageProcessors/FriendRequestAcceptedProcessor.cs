@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Padel.Notification.Extensions;
 using Padel.Notification.Service;
@@ -35,7 +36,7 @@ namespace Padel.Notification.MessageProcessors
                 UtcTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 FriendRequestAccepted = new PushNotification.Types.FriendRequestAccepted
                 {
-                    Name = parsed.UserThatAccepted,
+                    Player = parsed.UserThatAccepted,
                 },
             };
 
