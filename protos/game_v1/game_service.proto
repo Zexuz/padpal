@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.Game.V1";
 
-option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/gamepb";
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/game_v1";
 
 import "descriptors/rule.proto";
 import "common_v1/models.proto";

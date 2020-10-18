@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.Common.V1";
 
-option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/commonpb";
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/common_v1";
 
 package common.v1;
 
