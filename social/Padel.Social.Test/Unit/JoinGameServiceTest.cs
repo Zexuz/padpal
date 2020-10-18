@@ -68,6 +68,18 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
+        public async Task Should_throw_if_trying_to_join_a_game_that_we_already_asked_to_join()
+        {
+            var userId = 4;
+            var gameId = "someId";
+
+            A.CallTo(() => _fakeFindGameService.FindGameById(gameId)).Returns(new Game {Creator = 0, PlayersRequestedToJoin = new List<int> {5, userId, 1335}});
+
+            var ex = await Assert.ThrowsAsync<AlreadyRequestedToJoinedException>(() => _sut.RequestToJoinGame(userId, gameId));
+            Assert.Equal("You already requested to join this game", ex.Message);
+        }
+
+        [Fact]
         public async Task Should_throw_if_trying_to_join_a_game_that_does_not_exists()
         {
             var userId = 4;

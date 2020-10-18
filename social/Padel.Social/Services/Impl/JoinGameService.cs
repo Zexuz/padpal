@@ -55,6 +55,11 @@ namespace Padel.Social.Services.Impl
             {
                 throw new AlreadyJoinedException(userId, gameId, "You are already a player in this game");
             }
+  
+            if (game.PlayersRequestedToJoin.Contains(userId))
+            {
+                throw new AlreadyRequestedToJoinedException(userId, gameId, "You already requested to join this game");
+            }
 
             if (DateTimeOffset.Now > game.StartDateTime)
             {
