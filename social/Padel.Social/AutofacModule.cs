@@ -52,6 +52,7 @@ namespace Padel.Social
             builder.RegisterType<FindGameService>().As<IFindGameService>();
             builder.RegisterType<AwsProfilePictureService>().As<IProfilePictureService>();
             builder.RegisterType<JoinGameService>().As<IJoinGameService>();
+            builder.RegisterType<PublicGameInfoBuilder>().As<IPublicGameInfoBuilder>();
         }
     }
 }

@@ -18,11 +18,12 @@ namespace Padel.Social.Test.Unit
 {
     public class JoinGameServiceTest
     {
-        private readonly JoinGameService    _sut;
-        private readonly IFindGameService   _fakeFindGameService;
-        private readonly IGameRepository    _fakeGameRepo;
-        private readonly IPublisher         _fakePublisher;
-        private readonly IProfileRepository _fakeProfileRepository;
+        private readonly JoinGameService        _sut;
+        private readonly IFindGameService       _fakeFindGameService;
+        private readonly IGameRepository        _fakeGameRepo;
+        private readonly IPublisher             _fakePublisher;
+        private readonly IProfileRepository     _fakeProfileRepository;
+        private readonly IPublicGameInfoBuilder _fakePublicGameInfoBuilder;
 
         public JoinGameServiceTest()
         {
@@ -30,7 +31,15 @@ namespace Padel.Social.Test.Unit
             _fakeGameRepo = A.Fake<IGameRepository>();
             _fakePublisher = A.Fake<IPublisher>();
             _fakeProfileRepository = A.Fake<IProfileRepository>();
-            _sut = TestHelper.ActivateWithFakes<JoinGameService>(_fakeFindGameService, _fakeProfileRepository, _fakeGameRepo, _fakePublisher);
+            _fakePublicGameInfoBuilder = A.Fake<IPublicGameInfoBuilder>();
+            
+            _sut = TestHelper.ActivateWithFakes<JoinGameService>(
+                _fakeFindGameService,
+                _fakePublicGameInfoBuilder,
+                _fakeProfileRepository,
+                _fakeGameRepo,
+                _fakePublisher
+            );
         }
 
 
@@ -110,6 +119,8 @@ namespace Padel.Social.Test.Unit
                 PlayersRequestedToJoin = new List<int> {1337}
             });
 
+            A.CallTo(() => _fakePublicGameInfoBuilder.Build(A<Game>._)).Returns(new PublicGameInfo{Id = "asdasd"});
+            
             await _sut.RequestToJoinGame(userId, gameId);
 
             A.CallTo(() => _fakeGameRepo.ReplaceOneAsync(A<Game>.That.Matches(game =>
@@ -117,7 +128,8 @@ namespace Padel.Social.Test.Unit
                 game.PlayersRequestedToJoin[1]    == 4
             ))).MustHaveHappened();
 
-            A.CallTo(() => _fakePublisher.PublishMessage(A<UserRequestedToJoinGame>.That.Matches(game => game.GameId == gameId))).MustHaveHappened();
+            A.CallTo(() => _fakePublicGameInfoBuilder.Build(A<Game>._)).MustHaveHappened();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<UserRequestedToJoinGame>._)).MustHaveHappened();
         }
     }
 }

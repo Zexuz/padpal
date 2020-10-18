@@ -35,6 +35,11 @@ message PushNotification{
     option (descriptors.messageType) = "notification_v1_InvitedToGame";
     game.v1.PublicGameInfo GameInfo = 1;
   }
+  message RequestedToJoinGame{
+    option (descriptors.messageType) = "notification_v1_RequestedToJoinGame";
+    string gameId = 1;
+    common.v1.User user = 2;
+  }
 }
 
 service Notification {

@@ -17,7 +17,7 @@ message GameCreated{
 
 message UserRequestedToJoinGame{
   option (descriptors.messageType) = "game_v1_UserRequestedToJoinGame";
-  string gameId = 1;
+  PublicGameInfo game = 1;
   common.v1.User user = 2;
 }
 

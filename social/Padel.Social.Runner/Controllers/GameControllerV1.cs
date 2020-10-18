@@ -5,6 +5,7 @@ using Padel.Grpc.Core;
 using Padel.Proto.Game.V1;
 using Padel.Social.Extensions;
 using Padel.Social.Services.Interface;
+using Game = Padel.Proto.Game.V1.Game;
 
 namespace Padel.Social.Runner.Controllers
 {

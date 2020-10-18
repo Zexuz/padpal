@@ -81,6 +81,7 @@ services:
       NOTIFICATION_AWS__Topics__1: "social_v1_FriendRequestAccepted"
       NOTIFICATION_AWS__Topics__2: "social_v1_FriendRequestReceived"
       NOTIFICATION_AWS__Topics__3: "game_v1_GameCreated"
+      NOTIFICATION_AWS__Topics__4: "game_v1_UserRequestedToJoinGame"
       GOOGLE_APPLICATION_CREDENTIALS: "/config/padpal-firebase-adminsdk.json"
 
 volumes:

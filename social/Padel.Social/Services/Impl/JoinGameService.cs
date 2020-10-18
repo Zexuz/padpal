@@ -12,18 +12,25 @@ namespace Padel.Social.Services.Impl
 {
     public class JoinGameService : IJoinGameService
     {
-        private readonly IFindGameService   _findGameService;
-        private readonly IGameRepository    _gameRepository;
-        private readonly IPublisher         _publisher;
-        private readonly IProfileRepository _profileRepository;
+        private readonly IFindGameService       _findGameService;
+        private readonly IGameRepository        _gameRepository;
+        private readonly IPublisher             _publisher;
+        private readonly IProfileRepository     _profileRepository;
+        private readonly IPublicGameInfoBuilder _publicGameInfoBuilder;
 
-        public JoinGameService(IFindGameService findGameService, IGameRepository gameRepository, IPublisher publisher,
-            IProfileRepository                  profileRepository)
+        public JoinGameService(
+            IFindGameService       findGameService,
+            IGameRepository        gameRepository,
+            IPublisher             publisher,
+            IProfileRepository     profileRepository,
+            IPublicGameInfoBuilder publicGameInfoBuilder
+        )
         {
             _findGameService = findGameService;
             _gameRepository = gameRepository;
             _publisher = publisher;
             _profileRepository = profileRepository;
+            _publicGameInfoBuilder = publicGameInfoBuilder;
         }
 
         public async Task RequestToJoinGame(int userId, string gameId)
@@ -60,7 +67,7 @@ namespace Padel.Social.Services.Impl
             var user = _profileRepository.FindByUserId(userId);
             await _publisher.PublishMessage(new UserRequestedToJoinGame
             {
-                GameId = game.Id.ToString(),
+                Game = await _publicGameInfoBuilder.Build(game),
                 User = new User
                 {
                     UserId = user.UserId,
