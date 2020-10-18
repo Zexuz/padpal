@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 using Padel.Proto.Game.V1;
 using Padel.Repository.Core.MongoDb;
@@ -18,6 +19,16 @@ namespace Padel.Social.Models
         public string         CourtName             { get; set; }
         public CourtType      CourtType             { get; set; }
         public string         AdditionalInformation { get; set; }
+        public List<int>      Players               { get; set; } = new List<int>();
+
+        public List<int> PlayersRequestedToJoin { get; set; } = new List<int>();
+        // public ApplicationStatus ApplicationStatus     => DateTimeOffset.Now > StartDateTime ? ApplicationStatus.Closed : ApplicationStatus.Accepting;
+    }
+
+    public enum ApplicationStatus
+    {
+        Accepting,
+        Closed
     }
 
     public class Location

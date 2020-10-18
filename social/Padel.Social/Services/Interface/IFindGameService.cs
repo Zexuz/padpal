@@ -8,5 +8,6 @@ namespace Padel.Social.Services.Interface
     public interface IFindGameService
     {
         Task<IReadOnlyList<Game>> FindGames(GameFilter filter);
+        Task<Game> FindGameById(string id);
     }
 }

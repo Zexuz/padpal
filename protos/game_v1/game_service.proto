@@ -15,6 +15,12 @@ message GameCreated{
   repeated int32 invited_players = 2;
 }
 
+message UserRequestedToJoinGame{
+  option (descriptors.messageType) = "game_v1_UserRequestedToJoinGame";
+  string gameId = 1;
+  common.v1.User user = 2;
+}
+
 service Game {
   rpc CreateGame (CreateGameRequest) returns (CreateGameResponse) {
     option (descriptors.authorization) = {
@@ -27,6 +33,19 @@ service Game {
       shouldValidate:true,
     };
   }
+  rpc RequestToJoinGame (RequestToJoinGameRequest) returns (RequestToJoinGameResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message RequestToJoinGameRequest {
+  string id = 1;
+}
+
+message RequestToJoinGameResponse {
+
 }
 
 message GameFilter{
@@ -56,13 +75,13 @@ message PublicGameInfo{
   int32 price_per_person = 5;
   CourtType court_type = 6;
   common.v1.User creator = 7;
+  repeated common.v1.User playerRequestedToJoin = 8;
 }
 
 // Should not be public to players that are not in this game.
 message PrivateGameInfo{
   string courtName = 1;
   string additional_information = 2;
-  repeated common.v1.User playerRequestedToJoin = 3;
 }
 
 enum CourtType{

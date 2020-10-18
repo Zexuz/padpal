@@ -20,5 +20,10 @@ namespace Padel.Social.Services.Impl
         {
             return await _gameRepository.FindWithFilter(filter);
         }
+
+        public async Task<Game> FindGameById(string id)
+        {
+            return await _gameRepository.FindByIdAsync(id);
+        }
     }
 }
