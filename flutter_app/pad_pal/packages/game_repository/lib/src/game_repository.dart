@@ -3,7 +3,7 @@ import 'package:grpc/grpc.dart';
 import 'package:grpc_helpers/grpc_helpers.dart';
 import 'package:game_repository/generated/game_v1/game_service.pbgrpc.dart';
 
-class GameInfo{
+class GameInfo {
   PublicGameInfo publicInfo;
   PrivateGameInfo privateInfo;
 }
@@ -32,8 +32,18 @@ class GameRepository {
     final callOptions =
         CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
 
-
     final call = _gameClient.createGame(request, options: callOptions);
+
+    await call;
+  }
+
+  Future<void> requestToJoinGame(String gameId) async {
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+
+    final request = RequestToJoinGameRequest()..id = gameId;
+
+    final call = _gameClient.requestToJoinGame(request, options: callOptions);
 
     await call;
   }

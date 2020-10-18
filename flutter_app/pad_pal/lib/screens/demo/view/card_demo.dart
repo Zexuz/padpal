@@ -7,7 +7,7 @@ class CardDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entries = [
-      CustomCard(),
+      GameOverviewCard(),
     ];
 
     return Scaffold(
