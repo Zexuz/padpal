@@ -18,8 +18,9 @@ func NewGameService(conn *grpc.ClientConn) *gamepb.GameService {
 	}
 
 	service := &gamepb.GameService{
-		CreateGame: client.CreateGame,
-		FindGames:  client.FindGames,
+		CreateGame:        client.CreateGame,
+		FindGames:         client.FindGames,
+		RequestToJoinGame: client.RequestToJoinGame,
 	}
 
 	return service
@@ -35,4 +36,8 @@ func (s gameService) CreateGame(ctx context.Context, request *gamepb.CreateGameR
 
 func (s gameService) FindGames(ctx context.Context, request *gamepb.FindGamesRequest) (*gamepb.FindGamesResponse, error) {
 	return s.client.FindGames(ctx, request)
+}
+
+func (s gameService) RequestToJoinGame(ctx context.Context, request *gamepb.RequestToJoinGameRequest) (*gamepb.RequestToJoinGameResponse, error) {
+	return s.client.RequestToJoinGame(ctx, request)
 }
