@@ -55,7 +55,7 @@ namespace Padel.Social.Services.Impl
             {
                 throw new AlreadyJoinedException(userId, gameId, "You are already a player in this game");
             }
-  
+
             if (game.PlayersRequestedToJoin.Contains(userId))
             {
                 throw new AlreadyRequestedToJoinedException(userId, gameId, "You already requested to join this game");
@@ -79,6 +79,40 @@ namespace Padel.Social.Services.Impl
                     Name = user.Name,
                     ImgUrl = user.PictureUrl,
                 },
+            });
+        }
+
+        public async Task AcceptRequestToJoinGame(int creator, int userId, string gameId)
+        {
+            if (string.IsNullOrWhiteSpace(gameId))
+            {
+                throw new ArgumentException("Is null or Empty", nameof(gameId));
+            }
+
+            var game = await _findGameService.FindGameById(gameId);
+            if (game == null)
+            {
+                throw new GameNotFoundException(gameId);
+            }
+
+            if (game.Creator != creator)
+            {
+                throw new NotAllowedException("Only the creator can accept requests to join");
+            }
+
+            if (!game.PlayersRequestedToJoin.Contains(userId))
+            {
+                throw new UserHasNotRequestedToJoinGameException(userId, gameId, "The user has not requested to join the game");
+            }
+            
+            game.Players.Add(userId);
+            game.PlayersRequestedToJoin.Remove(userId);
+            await _gameRepository.ReplaceOneAsync(game);
+
+            await _publisher.PublishMessage(new AcceptedToGame
+            {
+                Game = await _publicGameInfoBuilder.Build(game),
+                User = userId
             });
         }
     }

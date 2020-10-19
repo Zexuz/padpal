@@ -32,7 +32,7 @@ namespace Padel.Social.Test.Unit
             _fakePublisher = A.Fake<IPublisher>();
             _fakeProfileRepository = A.Fake<IProfileRepository>();
             _fakePublicGameInfoBuilder = A.Fake<IPublicGameInfoBuilder>();
-            
+
             _sut = TestHelper.ActivateWithFakes<JoinGameService>(
                 _fakeFindGameService,
                 _fakePublicGameInfoBuilder,
@@ -73,7 +73,8 @@ namespace Padel.Social.Test.Unit
             var userId = 4;
             var gameId = "someId";
 
-            A.CallTo(() => _fakeFindGameService.FindGameById(gameId)).Returns(new Game {Creator = 0, PlayersRequestedToJoin = new List<int> {5, userId, 1335}});
+            A.CallTo(() => _fakeFindGameService.FindGameById(gameId))
+                .Returns(new Game {Creator = 0, PlayersRequestedToJoin = new List<int> {5, userId, 1335}});
 
             var ex = await Assert.ThrowsAsync<AlreadyRequestedToJoinedException>(() => _sut.RequestToJoinGame(userId, gameId));
             Assert.Equal("You already requested to join this game", ex.Message);
@@ -131,8 +132,8 @@ namespace Padel.Social.Test.Unit
                 PlayersRequestedToJoin = new List<int> {1337}
             });
 
-            A.CallTo(() => _fakePublicGameInfoBuilder.Build(A<Game>._)).Returns(new PublicGameInfo{Id = "asdasd"});
-            
+            A.CallTo(() => _fakePublicGameInfoBuilder.Build(A<Game>._)).Returns(new PublicGameInfo {Id = "asdasd"});
+
             await _sut.RequestToJoinGame(userId, gameId);
 
             A.CallTo(() => _fakeGameRepo.ReplaceOneAsync(A<Game>.That.Matches(game =>
@@ -142,6 +143,80 @@ namespace Padel.Social.Test.Unit
 
             A.CallTo(() => _fakePublicGameInfoBuilder.Build(A<Game>._)).MustHaveHappened();
             A.CallTo(() => _fakePublisher.PublishMessage(A<UserRequestedToJoinGame>._)).MustHaveHappened();
+        }
+
+        [Fact]
+        public async Task AcceptRequestToJoinGame_should_throw_if_gameId_is_null()
+        {
+            var userId = 4;
+            var creator = 1337;
+            string gameId = null;
+
+            await Assert.ThrowsAsync<ArgumentException>(() => _sut.AcceptRequestToJoinGame(creator, userId, gameId));
+        }
+
+        [Fact]
+        public async Task AcceptRequestToJoinGame_should_throw_if_gameId_does_not_exists()
+        {
+            var userId = 4;
+            var creator = 1337;
+            var gameId = "someId";
+
+            A.CallTo(() => _fakeFindGameService.FindGameById(gameId)).Returns(Task.FromResult<Game>(null));
+
+            await Assert.ThrowsAsync<GameNotFoundException>(() => _sut.AcceptRequestToJoinGame(creator, userId, gameId));
+        }
+
+        [Fact]
+        public async Task AcceptRequestToJoinGame_should_throw_if_user_is_not_creator()
+        {
+            var userId = 4;
+            var creator = 1337;
+            var gameId = "someId";
+
+            A.CallTo(() => _fakeFindGameService.FindGameById(gameId)).Returns(new Game {Creator = 0});
+
+            var ex = await Assert.ThrowsAsync<NotAllowedException>(() => _sut.AcceptRequestToJoinGame(creator, userId, gameId));
+            Assert.Equal("Only the creator can accept requests to join", ex.Message);
+        }
+
+        [Fact]
+        public async Task AcceptRequestToJoinGame_should_throw_if_userId_has_not_requested_to_join()
+        {
+            var userId = 4;
+            var creator = 1337;
+            var gameId = "someId";
+
+            A.CallTo(() => _fakeFindGameService.FindGameById(gameId)).Returns(new Game {Creator = 1337, PlayersRequestedToJoin = new List<int>()});
+
+            var ex = await Assert.ThrowsAsync<UserHasNotRequestedToJoinGameException>(() => _sut.AcceptRequestToJoinGame(creator, userId, gameId));
+            Assert.Equal("The user has not requested to join the game", ex.Message);
+        }
+
+        [Fact]
+        public async Task AcceptRequestToJoinGame_should_add_player_to_game()
+        {
+            var userId = 4;
+            var creator = 1337;
+            var gameId = "someId";
+
+            A.CallTo(() => _fakeFindGameService.FindGameById(gameId)).Returns(new Game
+            {
+                Creator = creator,
+                PlayersRequestedToJoin = new List<int> {userId}
+            });
+
+            await _sut.AcceptRequestToJoinGame(creator, userId, gameId);
+
+            A.CallTo(() => _fakeGameRepo.ReplaceOneAsync(A<Game>.That.Matches(game =>
+                game.PlayersRequestedToJoin.Count == 0 &&
+                game.Players.Count                == 1 &&
+                game.Players[0]                   == userId
+            ))).MustHaveHappened();
+            A.CallTo(() => _fakePublisher.PublishMessage(A<AcceptedToGame>.That.Matches(game =>
+                game.User == userId
+            ))).MustHaveHappened();
+            A.CallTo(() => _fakePublicGameInfoBuilder.Build(A<Game>._)).MustHaveHappened();
         }
     }
 }
