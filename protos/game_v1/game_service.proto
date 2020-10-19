@@ -21,6 +21,12 @@ message UserRequestedToJoinGame{
   common.v1.User user = 2;
 }
 
+message AcceptedToGame{
+  option (descriptors.messageType) = "game_v1_AcceptedToGame";
+  PublicGameInfo game = 1;
+  int32 user = 2;
+}
+
 service Game {
   rpc CreateGame (CreateGameRequest) returns (CreateGameResponse) {
     option (descriptors.authorization) = {
@@ -38,6 +44,19 @@ service Game {
       shouldValidate:true,
     };
   }
+  rpc AcceptRequestToJoinGame (AcceptRequestToJoinGameRequest) returns (AcceptRequestToJoinGameResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message AcceptRequestToJoinGameRequest {
+  string gameId = 1;
+  int32 userId = 2;
+}
+
+message AcceptRequestToJoinGameResponse {
 }
 
 message RequestToJoinGameRequest {

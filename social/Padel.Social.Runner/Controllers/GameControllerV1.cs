@@ -63,5 +63,18 @@ namespace Padel.Social.Runner.Controllers
 
             return new RequestToJoinGameResponse();
         }
+
+        public override async Task<AcceptRequestToJoinGameResponse> AcceptRequestToJoinGame
+        (
+            AcceptRequestToJoinGameRequest request,
+            ServerCallContext              context
+        )
+        {
+            var meId = context.GetUserId();
+
+            await _joinGameService.AcceptRequestToJoinGame(meId, request.UserId, request.GameId);
+
+            return new AcceptRequestToJoinGameResponse();
+        }
     }
 }
