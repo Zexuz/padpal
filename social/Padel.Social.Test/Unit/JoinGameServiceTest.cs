@@ -44,7 +44,7 @@ namespace Padel.Social.Test.Unit
 
 
         [Fact]
-        public async Task Should_throw_if_trying_to_join_our_own_game()
+        public async Task RequestToJoinGame_Should_throw_if_trying_to_join_our_own_game()
         {
             var userId = 4;
             var gameId = "someId";
@@ -56,7 +56,7 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task Should_throw_if_trying_to_join_a_game_that_we_already_is_in()
+        public async Task RequestToJoinGame_Should_throw_if_trying_to_join_a_game_that_we_already_is_in()
         {
             var userId = 4;
             var gameId = "someId";
@@ -68,7 +68,7 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task Should_throw_if_trying_to_join_a_game_that_we_already_asked_to_join()
+        public async Task RequestToJoinGame_Should_throw_if_trying_to_join_a_game_that_we_already_asked_to_join()
         {
             var userId = 4;
             var gameId = "someId";
@@ -80,7 +80,7 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task Should_throw_if_trying_to_join_a_game_that_does_not_exists()
+        public async Task RequestToJoinGame_Should_throw_if_trying_to_join_a_game_that_does_not_exists()
         {
             var userId = 4;
             var gameId = "someId";
@@ -91,7 +91,7 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task Should_throw_if_trying_to_join_a_game_that_has_already_started()
+        public async Task RequestToJoinGame_Should_throw_if_trying_to_join_a_game_that_has_already_started()
         {
             var userId = 4;
             var gameId = "someId";
@@ -103,7 +103,7 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task Should_throw_if_gameId_is_null()
+        public async Task RequestToJoinGame_Should_throw_if_gameId_is_null()
         {
             var userId = 4;
             string gameId = null;
@@ -112,7 +112,7 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task Should_add_player_requestedToJoin()
+        public async Task RequestToJoinGame_Should_add_player_requestedToJoin()
         {
             var userId = 4;
             string gameId = "5f8c75465e42c8d2da9c3ebe";
