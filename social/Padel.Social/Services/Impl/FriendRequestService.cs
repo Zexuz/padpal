@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Padel.Proto.Common.V1;
 using Padel.Proto.Social.V1;
 using Padel.Queue;
 using Padel.Social.Exceptions;
@@ -60,10 +61,11 @@ namespace Padel.Social.Services.Impl
                 // TODO Add test that we are reverting the insert!
                 await _publisher.PublishMessage(new FriendRequestReceived
                 {
-                    FromUser = new FriendRequestReceived.Types.User
+                    FromUser = new User
                     {
-                        Id = fromUserId,
-                        Name = fromUser.Name
+                        UserId = fromUser.UserId,
+                        Name = fromUser.Name,
+                        ImgUrl = fromUser.PictureUrl,
                     },
                     ToUser = toUserId,
                 });
@@ -107,17 +109,22 @@ namespace Padel.Social.Services.Impl
         private async Task AcceptFriendRequest(Profile toUser, int fromUserId, FriendRequest friendRequest)
         {
             var fromUser = _profileRepository.FindByUserId(fromUserId);
-            fromUser.Friends.Add(new Friend{UserId = toUser.UserId});
+            fromUser.Friends.Add(new Friend {UserId = toUser.UserId});
             await _profileRepository.ReplaceOneAsync(fromUser);
-            
+
             toUser.FriendRequests.Remove(friendRequest);
             toUser.Friends.Add(new Friend {UserId = friendRequest.UserId});
             await _profileRepository.ReplaceOneAsync(toUser);
 
             await _publisher.PublishMessage(new FriendRequestAccepted
             {
+                UserThatAccepted = new User
+                {
+                    UserId = toUser.UserId,
+                    Name = toUser.Name,
+                    ImgUrl = toUser.PictureUrl,
+                },
                 UserThatRequested = friendRequest.UserId,
-                UserThatAccepted = toUser.Name
             });
         }
 

@@ -5,6 +5,8 @@ option csharp_namespace = "Padel.Proto.Notification.V1";
 option go_package = "github.com/mkdir-sweden/padpal/notification/protos/noticitaionpb";
 
 import "descriptors/rule.proto";
+import "game_v1/game_service.proto";
+import "common_v1/models.proto";
 
 package notification.v1;
 
@@ -15,6 +17,7 @@ message PushNotification{
     FriendRequestReceived friendRequestReceived = 11;
     FriendRequestAccepted friendRequestAccepted = 12;
     InvitedToGame invitedToGame = 13;
+    RequestedToJoinGame requested_to_join_game= 14;
   }
 
   message ChatMessageReceived{
@@ -23,20 +26,20 @@ message PushNotification{
   }
   message FriendRequestReceived{
     option (descriptors.messageType) = "notification_v1_FriendRequestReceived";
-    int32 userId = 1;
-    string name = 2;
+    common.v1.User player = 1;
   }
   message FriendRequestAccepted{
     option (descriptors.messageType) = "notification_v1_FriendRequestAccepted";
-    string name = 1; // The user that accepted the request name
+    common.v1.User player = 1;
   }
   message InvitedToGame{
     option (descriptors.messageType) = "notification_v1_InvitedToGame";
+    game.v1.PublicGameInfo GameInfo = 1;
+  }
+  message RequestedToJoinGame{
+    option (descriptors.messageType) = "notification_v1_RequestedToJoinGame";
     string gameId = 1;
-    string creator = 2;
-    string place = 3;
-    int64 unix_time = 4;
-    int32 duration_in_minutes = 5;
+    common.v1.User user = 2;
   }
 }
 

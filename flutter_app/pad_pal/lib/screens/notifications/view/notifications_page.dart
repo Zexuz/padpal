@@ -65,7 +65,7 @@ class NotificationView extends StatelessWidget {
                   final event = pushNotification.friendRequestReceived;
                   return Card(
                     child: Notification(
-                      title: event.name,
+                      title: event.player.name,
                       label: "Wants to be your PadelPal",
                       imgUrl: "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
                       // TODO fetch users image
@@ -73,7 +73,7 @@ class NotificationView extends StatelessWidget {
                         try {
                           await context
                               .repository<SocialRepository>()
-                              .responseToFriendRequest(event.userId, RespondToFriendRequestRequest_Action.ACCEPT);
+                              .responseToFriendRequest(event.player.userId, RespondToFriendRequestRequest_Action.ACCEPT);
                           final snackBar =
                               SnackBarFactory.buildSnackBar('Yay! You are now friends!', SnackBarType.success);
                           Scaffold.of(context).showSnackBar(snackBar);
@@ -88,7 +88,7 @@ class NotificationView extends StatelessWidget {
                         try {
                           await context
                               .repository<SocialRepository>()
-                              .responseToFriendRequest(event.userId, RespondToFriendRequestRequest_Action.DECLINE);
+                              .responseToFriendRequest(event.player.userId, RespondToFriendRequestRequest_Action.DECLINE);
                           final snackBar = SnackBarFactory.buildSnackBar('You have declined the friend request');
                           Scaffold.of(context).showSnackBar(snackBar);
                         } catch (e) {
@@ -104,7 +104,7 @@ class NotificationView extends StatelessWidget {
                   final event = pushNotification.friendRequestAccepted;
                   return Card(
                     child: Notification(
-                      title: event.name,
+                      title: event.player.name,
                       label: "Has accepted your friend request. Say hi!",
                       imgUrl: "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
                       // TODO fetch users image
@@ -116,11 +116,11 @@ class NotificationView extends StatelessWidget {
                   );
                 case PushNotification_Notification.invitedToGame:
                   final event = pushNotification.invitedToGame;
-                  print(event.unixTime.toInt());
                   return Card(
                     child: Notification(
-                      title: event.creator,
-                      label: "Has invited you to play a game on ${DateTime.fromMillisecondsSinceEpoch(event.unixTime.toInt() * 1000)} @ ${event.place} for ${event.durationInMinutes} minutes",
+                      title: event.gameInfo.creator.name,
+                      label:
+                          "Has invited you to play a game on ${DateTime.fromMillisecondsSinceEpoch(event.gameInfo.startTime.toInt() * 1000)} @ ${event.gameInfo.location.name} for ${event.gameInfo.durationInMinutes} minutes",
                       imgUrl: "https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg",
                       // TODO fetch users image
                       onPrimaryPressed: () async {
@@ -129,6 +129,21 @@ class NotificationView extends StatelessWidget {
                       },
                     ),
                   );
+                case PushNotification_Notification.requestedToJoinGame:
+                  final event = pushNotification.requestedToJoinGame;
+                  return Card(
+                    child: Notification(
+                      title: event.user.name,
+                      label:"Has requested to join your game!",
+                      imgUrl: event.user.imgUrl,
+                      // TODO fetch users image
+                      onPrimaryPressed: () async {
+                        final snackBar = SnackBar(content: Text('Todo not implemented'));
+                        Scaffold.of(context).showSnackBar(snackBar);
+                      },
+                    ),
+                  );
+                  break;
                 case PushNotification_Notification.notSet:
                   throw Exception("Notification type not set, notification: ${pushNotification}");
               }

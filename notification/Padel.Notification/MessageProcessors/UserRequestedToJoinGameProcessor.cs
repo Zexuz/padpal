@@ -1,21 +1,21 @@
 using System;
 using System.Threading.Tasks;
+using Amazon.SQS.Model;
 using Padel.Notification.Extensions;
 using Padel.Notification.Service;
 using Padel.Proto.Game.V1;
 using Padel.Proto.Notification.V1;
 using Padel.Queue;
-using Message = Amazon.SQS.Model.Message;
 
 namespace Padel.Notification.MessageProcessors
 {
-    public class GameCreatedProcessor : IMessageProcessor
+    public class UserRequestedToJoinGameProcessor : IMessageProcessor
     {
         private readonly INotificationService _notificationService;
 
-        public string EventName => GameCreated.Descriptor.GetMessageName();
+        public string EventName => UserRequestedToJoinGame.Descriptor.GetMessageName();
 
-        public GameCreatedProcessor(INotificationService notificationService)
+        public UserRequestedToJoinGameProcessor(INotificationService notificationService)
         {
             _notificationService = notificationService;
         }
@@ -27,15 +27,16 @@ namespace Padel.Notification.MessageProcessors
 
         public async Task ProcessAsync(Message message)
         {
-            var parsed = GameCreated.Parser.ParseJson(message.Body);
-            var userIds = parsed.InvitedPlayers;
+            var parsed = UserRequestedToJoinGame.Parser.ParseJson(message.Body);
+            var userIds = new[] {parsed.Game.Creator.UserId};
 
             var pushNotification = new PushNotification
             {
                 UtcTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                InvitedToGame = new PushNotification.Types.InvitedToGame
+                RequestedToJoinGame = new PushNotification.Types.RequestedToJoinGame
                 {
-                    GameInfo = parsed.PublicGameInfo,
+                    User = parsed.User,
+                    GameId = parsed.Game.Id
                 }
             };
 

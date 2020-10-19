@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver.GeoJsonObjectModel;
+using Padel.Proto.Common.V1;
 using Padel.Proto.Game.V1;
 using Padel.Queue;
 using Padel.Social.Exceptions;
@@ -62,25 +63,38 @@ namespace Padel.Social.Services.Impl
                 Created = DateTimeOffset.Now,
                 Location = new Location
                 {
-                    Name = request.PublicInfo.Location.Name,
+                    Name = request.Location.Name,
                     Coordinates = GeoJson.Point(new GeoJson2DCoordinates(
-                        request.PublicInfo.Location.Point.Longitude,
-                        request.PublicInfo.Location.Point.Latitude)
+                        request.Location.Point.Longitude,
+                        request.Location.Point.Latitude)
                     ).ToBsonDocument()
                 },
-                StartDateTime = DateTimeOffset.FromUnixTimeSeconds(request.PublicInfo.StartTime),
-                Duration = TimeSpan.FromMinutes(request.PublicInfo.DurationInMinutes),
-                PricePerPerson = request.PublicInfo.PricePerPerson,
-                CourtName = request.PrivateInfo.CourtName,
-                CourtType = request.PublicInfo.CourtType,
-                AdditionalInformation = request.PrivateInfo.AdditionalInformation
+                StartDateTime = DateTimeOffset.FromUnixTimeSeconds(request.StartTime),
+                Duration = TimeSpan.FromMinutes(request.DurationInMinutes),
+                PricePerPerson = request.PricePerPerson,
+                CourtName = request.CourtName,
+                CourtType = request.CourtType,
+                AdditionalInformation = request.AdditionalInformation
             };
             await _gameRepository.InsertOneAsync(game);
 
             await _publisher.PublishMessage(new GameCreated
             {
-                Creator = profile.Name,
-                PublicGameInfo = new PublicGameInfo(request.PublicInfo) {Id = game.Id.ToString()},
+                PublicGameInfo = new PublicGameInfo()
+                {
+                    Id = game.Id.ToString(),
+                    Creator = new User
+                    {
+                        UserId = profile.UserId,
+                        Name = profile.Name,
+                        ImgUrl = profile.PictureUrl,
+                    },
+                    Location = request.Location,
+                    CourtType = request.CourtType,
+                    StartTime = request.StartTime,
+                    DurationInMinutes = request.DurationInMinutes,
+                    PricePerPerson = request.PricePerPerson,
+                },
                 InvitedPlayers = {request.PlayersToInvite}
             });
 

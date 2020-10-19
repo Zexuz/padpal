@@ -18,10 +18,10 @@ class CreateEventCubit extends Cubit<CreateEventState> {
       : assert(gameRepository != null),
         _gameRepo = gameRepository,
         super(CreateEventState(
-          isNextEnabled: true,
-          currentStep: 0,
-          invitedPlayers: List.empty(),
-        ));
+        isNextEnabled: true,
+        currentStep: 0,
+        invitedPlayers: List.empty(),
+      ));
 
   final GameRepository _gameRepo;
 
@@ -35,7 +35,8 @@ class CreateEventCubit extends Cubit<CreateEventState> {
     if (state.currentStep == 2) {
       try {
         emit(state.copyWith(status: FormzStatus.submissionInProgress));
-        final publicInfo = PublicGameInfo()
+
+        final request = CreateGameRequest()
           ..courtType = state.courtType
           ..startTime = Int64(state.matchStartDate.millisecondsSinceEpoch ~/ 1000)
           ..durationInMinutes = state.matchDuration.inMinutes
@@ -44,15 +45,9 @@ class CreateEventCubit extends Cubit<CreateEventState> {
             ..name = state.locationName
             ..point = (Point()
               ..latitude = state.locationLatLng.latitude
-              ..longitude = state.locationLatLng.longitude));
-
-        final privateInfo = PrivateGameInfo()
+              ..longitude = state.locationLatLng.longitude))
           ..additionalInformation = state.additionalInformation
-          ..courtName = state.courtNumber;
-
-        final request = CreateGameRequest()
-          ..publicInfo = publicInfo
-          ..privateInfo = privateInfo
+          ..courtName = state.courtNumber
           ..playersToInvite.addAll(state.invitedPlayers.map((e) => e.userId));
 
         await _gameRepo.createGame(request);

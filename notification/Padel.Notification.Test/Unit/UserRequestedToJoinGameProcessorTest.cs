@@ -7,6 +7,7 @@ using Padel.Notification.Extensions;
 using Padel.Notification.MessageProcessors;
 using Padel.Notification.Service;
 using Padel.Proto.Common.V1;
+using Padel.Proto.Game.V1;
 using Padel.Proto.Notification.V1;
 using Padel.Proto.Social.V1;
 using Padel.Test.Core;
@@ -15,37 +16,41 @@ using Message = Amazon.SQS.Model.Message;
 
 namespace Padel.Notification.Test.Unit
 {
-    public class FriendRequestReceivedProcessorTest
+    public class UserRequestedToJoinGameProcessorTest
     {
-        private readonly FriendRequestReceivedProcessor _sut;
-        private readonly INotificationService           _fakeNotificationService;
+        private readonly UserRequestedToJoinGameProcessor _sut;
+        private readonly INotificationService             _fakeNotificationService;
 
-        public FriendRequestReceivedProcessorTest()
+        public UserRequestedToJoinGameProcessorTest()
         {
             _fakeNotificationService = A.Fake<INotificationService>();
-            _sut = TestHelper.ActivateWithFakes<FriendRequestReceivedProcessor>(_fakeNotificationService);
+            _sut = TestHelper.ActivateWithFakes<UserRequestedToJoinGameProcessor>(_fakeNotificationService);
         }
 
         [Fact]
         public void Should_return_true()
         {
-            var res = _sut.CanProcess(FriendRequestReceived.Descriptor.GetMessageName());
+            var res = _sut.CanProcess(UserRequestedToJoinGame.Descriptor.GetMessageName());
             Assert.True(res);
         }
 
         [Fact]
         public async Task Should_create_pushNotification()
         {
-            var fromUser = new User
+            var user = new User
             {
                 Name = "Robin Edbom",
                 ImgUrl = "img",
                 UserId = 1337
             };
-            var json = JsonSerializer.Serialize(new FriendRequestReceived
+            var json = JsonSerializer.Serialize(new UserRequestedToJoinGame
             {
-                FromUser = fromUser,
-                ToUser = 1338
+                Game = new PublicGameInfo
+                {
+                    Id = "someGameId",
+                    Creator = user
+                },
+                User = user
             }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
 
             await _sut.ProcessAsync(new Message {Body = json});
@@ -53,8 +58,10 @@ namespace Padel.Notification.Test.Unit
             A.CallTo(() => _fakeNotificationService.AddAndSendNotification(
                 A<IEnumerable<int>>.That.Matches(i => i.Count() == 1),
                 A<PushNotification>.That.Matches(push =>
-                    push.FriendRequestReceived.Player.Name   == "Robin Edbom" &&
-                    push.FriendRequestReceived.Player.UserId == 1337
+                    push.RequestedToJoinGame.GameId      == "someGameId" &&
+                    push.RequestedToJoinGame.User.UserId == 1337         &&
+                    push.RequestedToJoinGame.User.ImgUrl == "img"        &&
+                    push.RequestedToJoinGame.User.Name   == "Robin Edbom"
                 )
             )).MustHaveHappenedOnceExactly();
         }

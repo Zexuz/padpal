@@ -2,17 +2,23 @@ syntax = "proto3";
 
 option csharp_namespace = "Padel.Proto.Game.V1";
 
-option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/gamepb";
+option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/game_v1";
 
 import "descriptors/rule.proto";
+import "common_v1/models.proto";
 
 package game.v1;
 
 message GameCreated{
   option (descriptors.messageType) = "game_v1_GameCreated";
   PublicGameInfo publicGameInfo = 1;
-  string creator = 2;
-  repeated int32 invited_players = 3;
+  repeated int32 invited_players = 2;
+}
+
+message UserRequestedToJoinGame{
+  option (descriptors.messageType) = "game_v1_UserRequestedToJoinGame";
+  PublicGameInfo game = 1;
+  common.v1.User user = 2;
 }
 
 service Game {
@@ -27,6 +33,19 @@ service Game {
       shouldValidate:true,
     };
   }
+  rpc RequestToJoinGame (RequestToJoinGameRequest) returns (RequestToJoinGameResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
+}
+
+message RequestToJoinGameRequest {
+  string id = 1;
+}
+
+message RequestToJoinGameResponse {
+
 }
 
 message GameFilter{
@@ -55,11 +74,14 @@ message PublicGameInfo{
   int32 duration_in_minutes = 4;
   int32 price_per_person = 5;
   CourtType court_type = 6;
+  common.v1.User creator = 7;
+  repeated common.v1.User playerRequestedToJoin = 8;
 }
 
+// Should not be public to players that are not in this game.
 message PrivateGameInfo{
-  string courtName = 1; // Should not be public to players that are not in this game.
-  string additional_information = 2; // Should not be public to players that are not in this game.
+  string courtName = 1;
+  string additional_information = 2;
 }
 
 enum CourtType{
@@ -83,9 +105,15 @@ message PadelCenter{
 }
 
 message CreateGameRequest {
-  PublicGameInfo publicInfo = 1;
-  PrivateGameInfo privateInfo = 2;
-  repeated int32 players_to_invite = 3;
+  PadelCenter location = 1;
+  int64 start_time = 2;
+  int32 duration_in_minutes = 3;
+  int32 price_per_person = 4;
+  CourtType court_type = 5;
+  common.v1.User Creator = 6;
+  string courtName = 7;
+  string additional_information = 8;
+  repeated int32 players_to_invite = 9;
 }
 
 message CreateGameResponse {

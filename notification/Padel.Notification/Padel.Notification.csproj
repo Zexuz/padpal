@@ -21,6 +21,7 @@
         <Protobuf Include="..\..\protos\notification_v1\notification_service.proto" Link="protos\notification_service.proto" ProtoRoot="..\..\protos\" />
         <Protobuf Include="..\..\protos\social_v1\social_service.proto" Link="protos\social_service.proto" ProtoRoot="..\..\protos\" />
         <Protobuf Include="..\..\protos\game_v1\game_service.proto" Link="protos\game_service.proto" ProtoRoot="..\..\protos\" />
+        <Protobuf Include="..\..\protos\common_v1\models.proto" Link="protos\models.proto" ProtoRoot="..\..\protos\" />
         <Protobuf Include="..\..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
     </ItemGroup>
 

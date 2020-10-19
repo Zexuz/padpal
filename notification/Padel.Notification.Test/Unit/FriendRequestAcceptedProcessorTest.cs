@@ -6,6 +6,7 @@ using FakeItEasy;
 using Padel.Notification.Extensions;
 using Padel.Notification.MessageProcessors;
 using Padel.Notification.Service;
+using Padel.Proto.Common.V1;
 using Padel.Proto.Notification.V1;
 using Padel.Proto.Social.V1;
 using Padel.Test.Core;
@@ -35,18 +36,25 @@ namespace Padel.Notification.Test.Unit
         [Fact]
         public async Task Should_create_pushNotification()
         {
+            var userThatAccepted = new User
+            {
+                Name = "Robin Edbom",
+                ImgUrl = "img",
+                UserId = 4
+            };
             var json = JsonSerializer.Serialize(new FriendRequestAccepted
             {
-                UserThatAccepted = "Robin Edbom",
+                UserThatAccepted = userThatAccepted,
                 UserThatRequested = 1337
             }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
 
             await _sut.ProcessAsync(new Message {Body = json});
 
             A.CallTo(() => _fakeNotificationService.AddAndSendNotification(
-                A<IEnumerable<int>>.That.Matches(i => i.Count()                        == 1),
-                A<PushNotification>.That.Matches(push => push.FriendRequestAccepted.Name == "Robin Edbom")
-            )).MustHaveHappenedOnceExactly();
+                A<IEnumerable<int>>.That.Matches(i => i.Count() == 1),
+                A<PushNotification>.That.Matches(push =>
+                    push.FriendRequestAccepted.Player.Equals(userThatAccepted)
+                ))).MustHaveHappenedOnceExactly();
         }
     }
 }

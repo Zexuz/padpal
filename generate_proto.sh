@@ -13,16 +13,16 @@
 protoc -I ./includes/ -I ./protos/ --go_out=gateway/protos --go-grpc_out=gateway/protos \
   --go_opt=paths=source_relative \
   --go-grpc_opt=paths=source_relative \
-  auth_v1/auth_service.proto social_v1/social_service.proto descriptors/rule.proto game_v1/game_service.proto notification_v1/notification_service.proto
+  auth_v1/auth_service.proto social_v1/social_service.proto descriptors/rule.proto game_v1/game_service.proto notification_v1/notification_service.proto common_v1/models.proto
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/authentication_repository/lib/generated \
   auth_v1/auth_service.proto
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/social_repository/lib/generated \
-  social_v1/social_service.proto
+  social_v1/social_service.proto common_v1/models.proto
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/game_repository/lib/generated \
-  game_v1/game_service.proto
+  game_v1/game_service.proto common_v1/models.proto
 
 protoc -I ./includes/ -I ./protos/ --dart_out=grpc:flutter_app/pad_pal/packages/notification_repository/lib/generated \
-  notification_v1/notification_service.proto
+  notification_v1/notification_service.proto common_v1/models.proto game_v1/game_service.proto

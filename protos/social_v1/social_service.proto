@@ -6,6 +6,7 @@ option go_package = "github.com/mkdir-sweden/padpal/gateway/protos/socialpb";
 
 import "google/protobuf/descriptor.proto";
 import "descriptors/rule.proto";
+import "common_v1/models.proto";
 
 package social.v1;
 
@@ -19,17 +20,12 @@ message ChatMessageReceived{
 message FriendRequestReceived{
   option (descriptors.messageType) = "social_v1_FriendRequestReceived";
   int32 toUser = 1;
-  User fromUser = 2;
-
-  message User{
-    int32 id = 1;
-    string name = 2;
-  }
+  common.v1.User fromUser = 2;
 }
 
 message FriendRequestAccepted{
   option (descriptors.messageType) = "social_v1_FriendRequestAccepted";
-  string userThatAccepted = 1;
+  common.v1.User userThatAccepted = 1;
   int32 userThatRequested = 2;
 }
 
