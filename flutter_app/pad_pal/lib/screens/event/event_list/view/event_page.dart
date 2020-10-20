@@ -52,7 +52,6 @@ class _EventView extends StatelessWidget {
     final theme = Theme.of(context);
 
     return BlocBuilder<EventCubit, EventState>(
-      buildWhen: (previous, current) => previous.games.length != current.games.length,
       builder: (context, state) {
         if (state.games.length == 0) {
           return Center(

@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/bloc/bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/button/primary/button_large_primary.dart';
+import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/event/components/components.dart';
 import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
 import 'package:pad_pal/theme.dart';
@@ -42,13 +43,14 @@ class EventDetailsView extends StatelessWidget {
                   EventStepTitle(title: "Information", subtitle: "Message from Anton:"),
                   RichText(
                     text: TextSpan(
-                      text: 'Hi guys! \n\n'
-
-                        'Me and my friend Andries are new to this sport and we are looking for two players bla bla bla...',
-                      style: theme.textTheme.bodyText1
-                    ),
+                        text: 'Hi guys! \n\n'
+                            'Me and my friend Andries are new to this sport and we are looking for two players bla bla bla...',
+                        style: theme.textTheme.bodyText1),
                   ),
-                  ButtonLargePrimary(onPressed: null,text: "Go to group chat",)
+                  ButtonLargePrimary(
+                    onPressed: null,
+                    text: "Go to group chat",
+                  )
                 ],
               ),
             ),
@@ -69,8 +71,6 @@ class Players extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final meCubit = context.bloc<MeCubit>();
-
     const radius = 24.0;
 
     const offset = (radius * 2);
@@ -79,35 +79,105 @@ class Players extends StatelessWidget {
       children: [
         Price(gameInfo: gameInfo),
         EventStepTitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CreatorSpot(
-              profile: meCubit.state.me,
-              radius: radius,
-              offset: offset,
-            ),
-            PendingSpot(
-              profile: meCubit.state.me,
-              radius: radius,
-              offset: offset,
-            ),
-            FreeSpot(
-              radius: radius,
-              offset: offset,
-              onTap: () => print("Tapped Invite"),
-              playerNumber: 3,
-            ),
-            FreeSpot(
-              radius: radius,
-              offset: offset,
-              onTap: () => print("Tapped Invite"),
-              playerNumber: 4,
-              addDivider: false,
-            ),
-          ],
+        BlocBuilder<MeCubit, MeState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return Container();
+            }
+
+            final me = gameInfo.publicInfo.playerRequestedToJoin
+                .firstWhere((e) => e.userId == state.me.userId, orElse: () => null);
+
+            final amICreator = gameInfo.publicInfo.creator.userId == state.me.userId;
+            final iHaveAlreadyApplied = me != null;
+
+            final players = <Widget>[
+              CreatorSpot(
+                user: SpotData.fromUser(gameInfo.publicInfo.creator),
+                radius: radius,
+                offset: offset,
+              ),
+            ];
+
+            for (var value in gameInfo.publicInfo.players) {
+              players.add(AcceptedSpot(
+                user: SpotData.fromUser(value),
+                radius: radius,
+                offset: offset,
+              ));
+            }
+
+            if (me != null)
+              players.add(PendingSpot(
+                user: SpotData.fromUser(me),
+                radius: radius,
+                offset: offset,
+              ));
+
+            for (var i = players.length; i < 4; i++) {
+              players.add(FreeSpot(
+                radius: radius,
+                offset: offset,
+                onTap: () => _onApply(context),
+                actionText: amICreator || iHaveAlreadyApplied ? null : "Apply",
+                useOrWrapper: false,
+                playerNumber: i + 1,
+              ));
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: players,
+            );
+          },
         ),
       ],
+    );
+  }
+
+  Future<void> _onApply(BuildContext context) async {
+    try {
+      await context.repository<GameRepository>().requestToJoinGame(gameInfo.publicInfo.id);
+      Scaffold.of(context).showSnackBar(SnackBarFactory.buildSnackBar("Request sent!"));
+    } catch (e) {
+      print(e);
+      Scaffold.of(context).showSnackBar(SnackBarFactory.buildSnackBar("Request failed", SnackBarType.error));
+    }
+  }
+}
+
+class FreeSpotBuilder extends StatelessWidget {
+  const FreeSpotBuilder({
+    Key key,
+    @required this.gameInfo,
+    @required this.radius,
+    @required this.offset,
+    @required this.playerNumber,
+  }) : super(key: key);
+
+  final GameInfo gameInfo;
+  final double radius;
+  final double offset;
+  final int playerNumber;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MeCubit, MeState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return Container();
+        }
+        final amICreator = gameInfo.publicInfo.creator.userId == state.me.userId;
+
+        return FreeSpot(
+          radius: radius,
+          offset: offset,
+          onTap: () => print("Tapped Invite"),
+          actionText: amICreator ? null : "Apply",
+          useOrWrapper: false,
+          playerNumber: playerNumber,
+        );
+      },
     );
   }
 }

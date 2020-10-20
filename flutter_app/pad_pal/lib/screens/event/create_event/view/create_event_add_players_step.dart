@@ -1,18 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:game_repository/generated/common_v1/models.pb.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:social_repository/social_repository.dart';
+
+class SpotData {
+  const SpotData({
+    @required this.name,
+    @required this.imgUrl,
+  });
+
+  final String name;
+  final String imgUrl;
+
+  factory SpotData.fromProfile(Profile profile) {
+    return SpotData(
+      imgUrl: profile.imageUrl,
+      name: profile.name,
+    );
+  }
+
+  factory SpotData.fromUser(User user) {
+    return SpotData(
+      imgUrl: user.imgUrl,
+      name: user.name,
+    );
+  }
+}
 
 class CreatorSpot extends StatelessWidget {
   const CreatorSpot({
     Key key,
-    @required this.profile,
+    @required this.user,
     @required this.radius,
     @required this.offset,
   }) : super(key: key);
 
   final double radius;
   final double offset;
-  final Profile profile;
+  final SpotData user;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +46,7 @@ class CreatorSpot extends StatelessWidget {
     return Container(
       child: RawSpot(
         avatar: Avatar(
-          url: profile.imageUrl,
+          url: user.imgUrl,
           fallback: "AB",
           radius: radius,
           borderWidth: 3.0,
@@ -29,7 +54,7 @@ class CreatorSpot extends StatelessWidget {
           elevation: 0,
           innerBorderWidth: 2.0,
         ),
-        name: profile.name,
+        name: user.name,
         label: "Beginner",
         offset: offset + 5.0,
         addDivider: true,
@@ -39,10 +64,45 @@ class CreatorSpot extends StatelessWidget {
   }
 }
 
+class AcceptedSpot extends StatelessWidget {
+  const AcceptedSpot({
+    Key key,
+    @required this.user,
+    @required this.radius,
+    @required this.offset,
+  }) : super(key: key);
+
+  final double radius;
+  final double offset;
+  final SpotData user;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return RawSpot(
+      avatar: Avatar(
+        url: user.imgUrl,
+        radius: radius,
+        borderWidth: 0,
+        color: theme.primaryColor,
+        elevation: 0,
+        innerBorderWidth: 0,
+        fallback: "AG",
+      ),
+      name: user.name,
+      label: "Beginner",
+      action: Text("TODO SHOW CHECKMAR"),
+      addDivider: true,
+      offset: offset,
+    );
+  }
+}
+
 class InvitedSpot extends StatelessWidget {
   const InvitedSpot({
     Key key,
-    @required this.profile,
+    @required this.user,
     @required this.radius,
     @required this.offset,
     @required this.onTap,
@@ -50,7 +110,7 @@ class InvitedSpot extends StatelessWidget {
 
   final double radius;
   final double offset;
-  final Profile profile;
+  final SpotData user;
   final VoidCallback onTap;
 
   @override
@@ -59,7 +119,7 @@ class InvitedSpot extends StatelessWidget {
 
     return RawSpot(
       avatar: Avatar(
-        url: profile.imageUrl,
+        url: user.imgUrl,
         radius: radius,
         borderWidth: 0,
         color: theme.primaryColor,
@@ -67,7 +127,7 @@ class InvitedSpot extends StatelessWidget {
         innerBorderWidth: 0,
         fallback: "AG",
       ),
-      name: profile.name,
+      name: user.name,
       label: "Beginner",
       action: OrWrapper(
         child: ButtonSmallSecondary(
@@ -86,14 +146,14 @@ class InvitedSpot extends StatelessWidget {
 class PendingSpot extends StatelessWidget {
   const PendingSpot({
     Key key,
-    @required this.profile,
+    @required this.user,
     @required this.radius,
     @required this.offset,
   }) : super(key: key);
 
   final double radius;
   final double offset;
-  final Profile profile;
+  final SpotData user;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +161,7 @@ class PendingSpot extends StatelessWidget {
 
     return RawSpot(
       avatar: Avatar(
-        url: profile.imageUrl,
+        url: user.imgUrl,
         radius: radius,
         borderWidth: 0,
         color: theme.primaryColor,
@@ -109,7 +169,7 @@ class PendingSpot extends StatelessWidget {
         innerBorderWidth: 0,
         fallback: "AG",
       ),
-      name: profile.name,
+      name: user.name,
       label: "Beginner",
       action: Padding(
         padding: const EdgeInsets.only(right: 16.0),
@@ -129,6 +189,8 @@ class FreeSpot extends StatelessWidget {
     @required this.offset,
     @required this.onTap,
     @required this.playerNumber,
+    this.actionText,
+    this.useOrWrapper = true,
     this.addDivider = true,
   }) : super(key: key);
 
@@ -136,24 +198,31 @@ class FreeSpot extends StatelessWidget {
   final double offset;
   final VoidCallback onTap;
   final int playerNumber;
+  final String actionText;
+  final bool useOrWrapper;
   final bool addDivider;
 
   @override
   Widget build(BuildContext context) {
+    final btn = ButtonSmallPrimary(
+      stretch: false,
+      onPressed: onTap,
+      text: actionText,
+      isDisabled: false,
+    );
     return RawSpot(
       avatar: DottedAvatar(
         radius: radius,
       ),
       name: "Player $playerNumber",
       label: "Free spot",
-      action: OrWrapper(
-        child: ButtonSmallPrimary(
-          stretch: false,
-          onPressed: onTap,
-          text: "Invite friend",
-          isDisabled: false,
-        ),
-      ),
+      action: actionText == null
+          ? null
+          : useOrWrapper
+              ? OrWrapper(
+                  child: btn,
+                )
+              : btn,
       addDivider: addDivider,
       offset: offset,
     );

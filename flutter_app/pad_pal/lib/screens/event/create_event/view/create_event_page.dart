@@ -135,7 +135,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
               );
 
               column.children.add(CreatorSpot(
-                profile: meState.me,
+                user: SpotData.fromProfile(meState.me),
                 radius: radius,
                 offset: offset,
               ));
@@ -143,7 +143,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
               for (var i = 0; i < state.invitedPlayers.length; i++) {
                 final profile = state.invitedPlayers[i];
                 column.children.add(InvitedSpot(
-                  profile: profile,
+                  user: SpotData.fromProfile(profile),
                   radius: radius,
                   offset: offset,
                   onTap: () => context.bloc<CreateEventCubit>().removePlayerToInvite(profile),
@@ -153,6 +153,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                 column.children.add(FreeSpot(
                   radius: radius,
                   offset: offset,
+                  actionText: "Invite",
                   onTap: () => _onInviteFriend(context),
                   playerNumber: i + 1,
                 ));

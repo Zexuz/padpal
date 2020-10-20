@@ -71,9 +71,8 @@ class NotificationView extends StatelessWidget {
                       // TODO fetch users image
                       onPrimaryPressed: () async {
                         try {
-                          await context
-                              .repository<SocialRepository>()
-                              .responseToFriendRequest(event.player.userId, RespondToFriendRequestRequest_Action.ACCEPT);
+                          await context.repository<SocialRepository>().responseToFriendRequest(
+                              event.player.userId, RespondToFriendRequestRequest_Action.ACCEPT);
                           final snackBar =
                               SnackBarFactory.buildSnackBar('Yay! You are now friends!', SnackBarType.success);
                           Scaffold.of(context).showSnackBar(snackBar);
@@ -86,9 +85,8 @@ class NotificationView extends StatelessWidget {
                       },
                       onSecondaryPressed: () async {
                         try {
-                          await context
-                              .repository<SocialRepository>()
-                              .responseToFriendRequest(event.player.userId, RespondToFriendRequestRequest_Action.DECLINE);
+                          await context.repository<SocialRepository>().responseToFriendRequest(
+                              event.player.userId, RespondToFriendRequestRequest_Action.DECLINE);
                           final snackBar = SnackBarFactory.buildSnackBar('You have declined the friend request');
                           Scaffold.of(context).showSnackBar(snackBar);
                         } catch (e) {
@@ -134,7 +132,7 @@ class NotificationView extends StatelessWidget {
                   return Card(
                     child: Notification(
                       title: event.user.name,
-                      label:"Has requested to join your game!",
+                      label: "Has requested to join your game!",
                       imgUrl: event.user.imgUrl,
                       // TODO fetch users image
                       onPrimaryPressed: () async {

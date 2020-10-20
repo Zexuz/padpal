@@ -98,10 +98,11 @@ class GameOverviewCard extends StatelessWidget {
         Expanded(
           flex: 1,
           child: ButtonSmallSecondary(
-              onPressed: () => {
-                    // Todo make card take a onDetailsClick as a ctor param
-                    Navigator.of(context).push(EventDetailsView.route(context, _gameInfo)),
-                  },
+              onPressed: () {
+               print(_gameInfo);
+                // Todo make card take a onDetailsClick as a ctor param
+                Navigator.of(context).push(EventDetailsView.route(context, _gameInfo));
+              },
               text: "Details",
               stretch: true,
               isDisabled: false),
@@ -139,7 +140,6 @@ class _PrimGameCardAction extends StatefulWidget {
   __PrimGameCardActionState createState() => __PrimGameCardActionState();
 }
 
-
 class __PrimGameCardActionState extends State<_PrimGameCardAction> {
   var isLoading = false;
 
@@ -153,7 +153,7 @@ class __PrimGameCardActionState extends State<_PrimGameCardAction> {
     } catch (e) {
       print(e);
       Scaffold.of(context).showSnackBar(SnackBarFactory.buildSnackBar("Request failed", SnackBarType.error));
-    }finally{
+    } finally {
       setState(() {
         isLoading = true;
       });
