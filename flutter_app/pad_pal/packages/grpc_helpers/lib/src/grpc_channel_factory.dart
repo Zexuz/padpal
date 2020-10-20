@@ -10,8 +10,15 @@ class GrpcChannelFactory {
     final host = _configuration.getValue<String>("authServiceGrpcAddress");
     final port = _configuration.getValue<int>("authServiceGrpcPort");
 
-    // TODO DON'T create a new channel if one already exists.
+    // TODO In prod use app version in the useragent
+    final userAgent = _configuration.getValue<String>("userAgent");
 
-    return ClientChannel(host, port: port, options: ChannelOptions(credentials: ChannelCredentials.insecure()));
+    // TODO DON'T create a new channel if one already exists.
+    return ClientChannel(host,
+        port: port,
+        options: ChannelOptions(
+          credentials: ChannelCredentials.insecure(),
+          userAgent: userAgent,
+        ));
   }
 }

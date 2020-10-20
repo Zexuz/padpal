@@ -1,4 +1,5 @@
 {
   "authServiceGrpcAddress": "devdomain.xyz",
-  "authServiceGrpcPort": 50051
+  "authServiceGrpcPort": 50051,
+  "userAgent": "dev"
 }

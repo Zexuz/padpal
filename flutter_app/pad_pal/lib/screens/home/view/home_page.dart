@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  static List<Widget> _p = const <Widget>[
+  static const List<Widget> _pages = <Widget>[
     _BuildEventPage(),
     MessagesPage(),
     NotificationsPage(),
@@ -106,7 +106,8 @@ class _HomePageState extends State<HomePage> {
               create: (_) => EventCubit(gameRepository: context.repository<GameRepository>()),
             )
           ],
-          child: _p[_selectedIndex],
+          //_widgetOptions.elementAt(_selectedIndex)
+          child: _pages.elementAt(_selectedIndex),
         ),
       ),
     );
