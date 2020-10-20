@@ -38,6 +38,7 @@ namespace Padel.Social.Services.Impl
                 PricePerPerson = game.PricePerPerson,
                 Creator = creator.ToUser(),
                 PlayerRequestedToJoin = {game.PlayersRequestedToJoin.Select(userId => _profileRepository.FindByUserId(userId).ToUser())},
+                Players = {game.Players.Select(userId => _profileRepository.FindByUserId(userId).ToUser())}
             });
         }
     }
