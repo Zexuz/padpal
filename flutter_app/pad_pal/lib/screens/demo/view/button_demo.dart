@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/components/button/button.dart';
 
 class ButtonDemo extends StatelessWidget {
   const ButtonDemo();
@@ -23,14 +24,34 @@ class ButtonDemo extends StatelessWidget {
     const String text = 'Wohaao!';
 
     return <Widget>[
-      ButtonLargePrimary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonSmallPrimary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonLargeSecondary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonSmallSecondary(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonLargeLight(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonSmallLight(onPressed: onPress, text: text, stretch: true, isDisabled: false),
-      ButtonLargeLight(onPressed: onPress, text: text, stretch: true, isDisabled: true),
-      ButtonSmallLight(onPressed: onPress, text: text, stretch: true, isDisabled: true),
+      Button(
+        child: Text("Create an event"),
+        type: ButtonType.primary,
+      ),
+      Button(
+        child: Text("Create an event"),
+        type: ButtonType.primary,
+        large: false,
+      ),
+      Button(
+        child: Text("Create an event"),
+        type: ButtonType.secondary,
+      ),
+      Button(
+        child: Text("Create an event"),
+        type: ButtonType.secondary,
+        large: false,
+      ),
+      Button(
+        child: Text("Create an event"),
+        type: ButtonType.light,
+      ),
+      Button(
+        child: Text("Create an event"),
+        type: ButtonType.light,
+        large: false,
+      ),
+      TextButton(onPressed: onPress, child: Text("Text button"))
     ];
   }
 

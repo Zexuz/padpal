@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 // TODO Use theese icons https://pub.dev/packages/cupertino_icons
 // https://medium.com/flutter/announcing-flutter-1-22-44f146009e5f
 
@@ -24,26 +23,32 @@ class AppTheme {
       TextStyle(color: primary, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, fontSize: 21);
 
   static ThemeData Current = ThemeData(
-      // Define the default brightness and colors.
-      brightness: Brightness.light,
-      primaryColor: primary,
-      accentColor: Colors.white,
-      buttonTheme: ButtonThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6.0),
-        ),
-        buttonColor: primary,
-        textTheme: ButtonTextTheme.accent,
-        disabledColor: Color.fromRGBO(246, 247, 249, 1),
+    brightness: Brightness.light,
+    primaryColor: primary,
+    accentColor: Colors.white,
+    buttonTheme: ButtonThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6.0),
       ),
-      // Define the default TextTheme. Use this to specify the default
-      // text styling for headlines, titles, bodies of text, and more.
-      textTheme: GoogleFonts.poppinsTextTheme(),
-      /*textTheme: TextTheme(
-        headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-        headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-        bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
-      )
-       */
-      );
+      buttonColor: primary,
+      textTheme: ButtonTextTheme.accent,
+      disabledColor: Color.fromRGBO(246, 247, 249, 1),
+      height: 36,
+    ),
+    textTheme: TextTheme(
+      headline1: GoogleFonts.poppinsTextTheme().headline1,
+      headline2: GoogleFonts.poppinsTextTheme().headline2,
+      headline3: GoogleFonts.poppinsTextTheme().headline3,
+      headline4: GoogleFonts.poppinsTextTheme().headline4,
+      headline5: GoogleFonts.poppinsTextTheme().headline5,
+      headline6: GoogleFonts.poppinsTextTheme().headline6,
+      subtitle1: GoogleFonts.poppinsTextTheme().subtitle1,
+      subtitle2: GoogleFonts.poppinsTextTheme().subtitle2,
+      bodyText1: GoogleFonts.poppinsTextTheme().bodyText1,
+      bodyText2: GoogleFonts.poppinsTextTheme().bodyText2,
+      caption: GoogleFonts.poppinsTextTheme().caption,
+      button: GoogleFonts.poppinsTextTheme().button.copyWith(fontWeight: FontWeight.w600),
+      overline: GoogleFonts.poppinsTextTheme().overline,
+    ),
+  );
 }
