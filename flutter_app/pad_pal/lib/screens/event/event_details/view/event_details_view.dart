@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
-import 'package:pad_pal/components/button/primary/button_large_primary.dart';
+import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/event/components/components.dart';
 import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
@@ -47,10 +47,10 @@ class EventDetailsView extends StatelessWidget {
                             'Me and my friend Andries are new to this sport and we are looking for two players bla bla bla...',
                         style: theme.textTheme.bodyText1),
                   ),
-                  ButtonLargePrimary(
+                  Button.primary(
+                    child: const Text('Go to group chat'),
                     onPressed: null,
-                    text: "Go to group chat",
-                  )
+                  ),
                 ],
               ),
             ),

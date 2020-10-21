@@ -36,16 +36,14 @@ class _LoginButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : SizedBox(
-          width: double.infinity,
-          child: ButtonLargePrimary(
-            key: const Key('loginForm_continue_raisedButton'),
-            text: 'Sign in',
-            isDisabled: false,
-            stretch: false,
-            onPressed:
-            state.status.isValidated ? () => context.bloc<CredentialCubit>().SignInWithCredentials() : null,
-          ),
-        );
+                width: double.infinity,
+                child: Button.primary(
+                  key: const Key('loginForm_continue_raisedButton'),
+                  child: Text('Sign in'),
+                  onPressed:
+                      state.status.isValidated ? () => context.bloc<CredentialCubit>().SignInWithCredentials() : null,
+                ),
+              );
       },
     );
   }

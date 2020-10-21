@@ -21,35 +21,41 @@ class ButtonDemo extends StatelessWidget {
     final onPress = () => Scaffold.of(context).showSnackBar(const SnackBar(
           content: Text('Clicked!'),
         ));
-    const String text = 'Wohaao!';
+    final text = const Text('Create an event!');
 
     return <Widget>[
       Button(
-        child: Text("Create an event"),
+        child: text,
         type: ButtonType.primary,
+        onPressed: onPress,
       ),
       Button(
-        child: Text("Create an event"),
+        child: text,
         type: ButtonType.primary,
         large: false,
+        onPressed: onPress,
       ),
       Button(
-        child: Text("Create an event"),
+        child: text,
         type: ButtonType.secondary,
+        onPressed: onPress,
       ),
       Button(
-        child: Text("Create an event"),
+        child: text,
         type: ButtonType.secondary,
         large: false,
+        onPressed: onPress,
       ),
       Button(
-        child: Text("Create an event"),
+        child: text,
         type: ButtonType.light,
+        onPressed: onPress,
       ),
       Button(
-        child: Text("Create an event"),
+        child: text,
         type: ButtonType.light,
         large: false,
+        onPressed: onPress,
       ),
       TextButton(onPressed: onPress, child: Text("Text button"))
     ];

@@ -32,7 +32,7 @@ class AppTheme {
       ),
       buttonColor: primary,
       textTheme: ButtonTextTheme.accent,
-      disabledColor: Color.fromRGBO(246, 247, 249, 1),
+      disabledColor: const Color(0XFFF6F7F9),
       height: 36,
     ),
     textTheme: TextTheme(

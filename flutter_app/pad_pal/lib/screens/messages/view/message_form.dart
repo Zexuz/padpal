@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pad_pal/components/button/light/button_small_light.dart';
 import 'package:pad_pal/components/components.dart';
 
 import '../bloc/message_cubit.dart';
@@ -48,15 +47,13 @@ class MessageForm extends StatelessWidget {
                     decoration: InputDecoration(border: InputBorder.none, hintText: 'Enter a message'),
                   ),
                 ),
-                ButtonSmallLight(
-                  stretch: false,
-                  isDisabled: false,
-                  onPressed: () {
-                    messageCubit.sendMessage(_textController.value.text);
-                    _textController.clear();
-                  },
-                  text: "send",
-                )
+                Button.light(
+                    child: Text("Send"),
+                    large: false,
+                    onPressed: () {
+                      messageCubit.sendMessage(_textController.value.text);
+                      _textController.clear();
+                    }),
               ],
             ),
           ],

@@ -87,7 +87,7 @@ class ProfileView extends StatelessWidget {
                     cropStyle: CropStyle.circle,
                     maxHeight: 300,
                     maxWidth: 300,
-                    aspectRatio: CropAspectRatio(ratioX:1,ratioY:1),
+                    aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
                     androidUiSettings: AndroidUiSettings(
                       toolbarTitle: 'Cropper',
                       toolbarColor: Colors.deepOrange,
@@ -193,8 +193,11 @@ class _BuildButtons extends StatelessWidget {
     final row = Row(children: []);
     switch (friendStatus) {
       case _FriendStatus.notFriends:
-        row.children.add(Expanded(
-          child: ButtonSmallPrimary(
+        row.children.add(
+          Expanded(
+            child: Button.primary(
+              child: const Text('Add friend'),
+              large: false,
               onPressed: () async {
                 try {
                   await context.repository<SocialRepository>().sendFriendRequest(userId);
@@ -206,25 +209,36 @@ class _BuildButtons extends StatelessWidget {
                   print(e);
                 }
               },
-              text: "Add friend",
-              stretch: false,
-              isDisabled: false),
-        ));
+            ),
+          ),
+        );
         break;
       case _FriendStatus.pending:
         row.children.add(Expanded(
-          child: ButtonSmallLight(onPressed: null, text: "Pending friend request", stretch: false, isDisabled: false),
+          child: Button.light(
+            onPressed: null,
+            child: Text("Pending friend request"),
+            large: false,
+          ),
         ));
         break;
       case _FriendStatus.friends:
         row.children.add(Expanded(
-          child: ButtonSmallLight(onPressed: () {}, text: "Friends", stretch: false, isDisabled: false),
+          child: Button.light(
+            onPressed: () {},
+            child: Text("Friends"),
+            large: false,
+          ),
         ));
         row.children.add(const SizedBox(
           width: 8,
         ));
         row.children.add(Expanded(
-          child: ButtonSmallPrimary(onPressed: () {}, text: "Chat", stretch: false, isDisabled: false),
+          child: Button.primary(
+            child: const Text('Chat'),
+            large: false,
+            onPressed: () {},
+          ),
         ));
         break;
     }

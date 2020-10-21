@@ -45,12 +45,11 @@ class InviteFriend extends StatelessWidget {
           padding: const EdgeInsets.only(left: orPadding, right: orPadding),
           child: const Text("or"),
         ),
-        ButtonSmallPrimary(
-          stretch: false,
+        Button.primary(
+          child: const Text('Invite friend'),
+          large: false,
           onPressed: onTap,
-          text: "Invite friend",
-          isDisabled: false,
-        ),
+        )
       ],
     );
   }
@@ -224,10 +223,10 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                               const SizedBox(height: 24),
                               _Progress(currentPage: currentStep),
                               const SizedBox(height: 12),
-                              ButtonLargePrimary(
-                                text: "Next",
+                              Button.primary(
+                                child: Text('Next'),
                                 onPressed: state.isNextEnabled ? () => eventCubit.next() : null,
-                              ),
+                              )
                             ],
                           ),
                         ),

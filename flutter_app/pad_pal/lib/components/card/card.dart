@@ -97,15 +97,15 @@ class GameOverviewCard extends StatelessWidget {
         ),
         Expanded(
           flex: 1,
-          child: ButtonSmallSecondary(
-              onPressed: () {
-               print(_gameInfo);
-                // Todo make card take a onDetailsClick as a ctor param
-                Navigator.of(context).push(EventDetailsView.route(context, _gameInfo));
-              },
-              text: "Details",
-              stretch: true,
-              isDisabled: false),
+          child: Button.secondary(
+            large: false,
+            onPressed: () {
+              print(_gameInfo);
+              // Todo make card take a onDetailsClick as a ctor param
+              Navigator.of(context).push(EventDetailsView.route(context, _gameInfo));
+            },
+            child: Text("Details"),
+          ),
         )
       ],
     );
@@ -162,10 +162,10 @@ class __PrimGameCardActionState extends State<_PrimGameCardAction> {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      padding: EdgeInsets.all(8),
+    return Button.primary(
       child: Text("Apply now"),
       onPressed: _onBtnPressed,
+      large: false,
     );
   }
 }

@@ -59,10 +59,8 @@ class _SignUpButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : SizedBox(
                 width: double.infinity,
-                child: ButtonLargePrimary(
-                  text: 'Sign up',
-                  isDisabled: false,
-                  stretch: false,
+                child: Button.primary(
+                  child: Text('Sign up'),
                   onPressed:
                       state.status.isValidated ? () => context.bloc<CredentialCubit>().signUpFormSubmitted() : null,
                 ),

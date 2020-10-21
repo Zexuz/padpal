@@ -9,8 +9,36 @@ class Button extends StatelessWidget {
     Key key,
     @required this.child,
     @required this.type,
+    @required this.onPressed,
     large = true,
   })  : _large = large,
+        super(key: key);
+
+  const Button.primary({
+    Key key,
+    @required this.child,
+    @required this.onPressed,
+    large = true,
+  })  : _large = large,
+        this.type = ButtonType.primary,
+        super(key: key);
+
+  const Button.secondary({
+    Key key,
+    @required this.child,
+    @required this.onPressed,
+    large = true,
+  })  : _large = large,
+        this.type = ButtonType.secondary,
+        super(key: key);
+
+  const Button.light({
+    Key key,
+    @required this.child,
+    @required this.onPressed,
+    large = true,
+  })  : _large = large,
+        this.type = ButtonType.light,
         super(key: key);
 
   // const Button.text({
@@ -25,6 +53,7 @@ class Button extends StatelessWidget {
 
   final Widget child;
   final ButtonType type;
+  final VoidCallback onPressed;
 
   final bool _large;
 
@@ -66,15 +95,30 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPressed = () => {};
     final theme = Theme.of(context);
 
     final color = _getFillColor(type, theme);
     final size = _large ? 48.0 : 36.0;
 
     final textTheme = theme.textTheme.button.copyWith(
-      color: _getTextColor(type, theme),
+      color: onPressed == null ? const Color(0xFFB4BEC9) : _getTextColor(type, theme),
     );
+
+    if (type == ButtonType.secondary) {
+      return Container(
+        height: size,
+        child: OutlineButton(
+          child: DefaultTextStyle(
+            child: this.child,
+            style: textTheme,
+          ),
+          onPressed: onPressed,
+          color: color,
+          disabledTextColor: const Color(0xFFB4BEC9),
+          splashColor: _getSplashColor(type, theme),
+        ),
+      );
+    }
 
     return FlatButton(
       child: DefaultTextStyle(
@@ -84,6 +128,8 @@ class Button extends StatelessWidget {
       onPressed: onPressed,
       height: size,
       color: color,
+      disabledColor: const Color(0xFFF6F7F9),
+      disabledTextColor: const Color(0xFFB4BEC9),
       splashColor: _getSplashColor(type, theme),
     );
   }

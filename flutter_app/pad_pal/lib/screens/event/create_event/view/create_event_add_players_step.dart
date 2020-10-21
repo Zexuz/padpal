@@ -130,11 +130,10 @@ class InvitedSpot extends StatelessWidget {
       name: user.name,
       label: "Beginner",
       action: OrWrapper(
-        child: ButtonSmallSecondary(
-          stretch: false,
+        child: Button.secondary(
+          child: const Text('Remove'),
+          large: false,
           onPressed: onTap,
-          text: "Remove",
-          isDisabled: false,
         ),
       ),
       addDivider: true,
@@ -204,19 +203,20 @@ class FreeSpot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final btn = ButtonSmallPrimary(
-      stretch: false,
-      onPressed: onTap,
-      text: actionText,
-      isDisabled: false,
-    );
+    final btn = actionText == null
+        ? null
+        : Button.primary(
+            child: Text(actionText),
+            large: false,
+            onPressed: onTap,
+          );
     return RawSpot(
       avatar: DottedAvatar(
         radius: radius,
       ),
       name: "Player $playerNumber",
       label: "Free spot",
-      action: actionText == null
+      action: btn == null
           ? null
           : useOrWrapper
               ? OrWrapper(
