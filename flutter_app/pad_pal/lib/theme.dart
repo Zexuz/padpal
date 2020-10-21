@@ -5,19 +5,21 @@ import 'package:google_fonts/google_fonts.dart';
 // https://medium.com/flutter/announcing-flutter-1-22-44f146009e5f
 
 class AppTheme {
-  static Color primary = const Color(0xff0076FF);
-  static Color light = Color.fromRGBO(224, 239, 255, 1.0);
-  static Color disabled = const Color(0xF6F7F9ff);
+  static const Color primary = const Color(0xff0076FF);
+  static const Color light = Color.fromRGBO(224, 239, 255, 1.0);
+  static const Color disabled = const Color(0xF6F7F9ff);
 
-  static Color lightGrayText = const Color(0xFF959DA6);
-  static Color lightGrayBackground = const Color(0xFFF6F7F9);
+  static const Color lightGrayText = const Color(0xFF959DA6);
+  static const Color lightGrayBackground = const Color(0xFFF6F7F9);
 
-  static Color secondaryButtonColor = Colors.white;
-  static Color secondaryButtonTextColor = Colors.black;
+  static const Color secondaryButtonColor = Colors.white;
+  static const Color secondaryButtonTextColor = Colors.black;
 
-  static Color secondaryColorRed = Color.fromRGBO(255, 0, 80, 1);
-  static Color secondaryColorOrange = Color.fromRGBO(255, 158, 0, 1);
-  static Color secondaryColorOrangeWithOpacity = Color.fromRGBO(255, 158, 0, 0.12);
+  static const Color secondaryColorRed = Color.fromRGBO(255, 0, 80, 1);
+  static const Color secondaryColorOrange = Color.fromRGBO(255, 158, 0, 1);
+  static const Color secondaryColorOrangeWithOpacity = Color.fromRGBO(255, 158, 0, 0.12);
+
+  static const Color customBlack = const Color(0xFF172331);
 
   static TextStyle logo =
       TextStyle(color: primary, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, fontSize: 21);
@@ -36,16 +38,32 @@ class AppTheme {
       height: 36,
     ),
     textTheme: TextTheme(
-      headline1: GoogleFonts.poppinsTextTheme().headline1,
-      headline2: GoogleFonts.poppinsTextTheme().headline2,
-      headline3: GoogleFonts.poppinsTextTheme().headline3,
-      headline4: GoogleFonts.poppinsTextTheme().headline4,
+      headline1: GoogleFonts.poppinsTextTheme()
+          .headline1
+          .copyWith(color: customBlack, fontWeight: FontWeight.w600, letterSpacing: 0.22, fontSize: 24),
+      headline2: GoogleFonts.poppinsTextTheme()
+          .headline2
+          .copyWith(color: customBlack, fontWeight: FontWeight.w600, letterSpacing: 0.17, fontSize: 18),
+      headline3: GoogleFonts.poppinsTextTheme()
+          .headline3
+          .copyWith(color: customBlack, fontWeight: FontWeight.w600, letterSpacing: 0.13, fontSize: 14),
+      headline4: GoogleFonts.poppinsTextTheme()
+          .headline4
+          .copyWith(color: customBlack, fontWeight: FontWeight.w600, letterSpacing: 0.11, fontSize: 12),
       headline5: GoogleFonts.poppinsTextTheme().headline5,
       headline6: GoogleFonts.poppinsTextTheme().headline6,
       subtitle1: GoogleFonts.poppinsTextTheme().subtitle1,
       subtitle2: GoogleFonts.poppinsTextTheme().subtitle2,
-      bodyText1: GoogleFonts.poppinsTextTheme().bodyText1,
-      bodyText2: GoogleFonts.poppinsTextTheme().bodyText2,
+      bodyText1: GoogleFonts.poppinsTextTheme().bodyText1.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: customBlack,
+          ),
+      bodyText2: GoogleFonts.poppinsTextTheme().bodyText2.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: lightGrayText,
+          ),
       caption: GoogleFonts.poppinsTextTheme().caption,
       button: GoogleFonts.poppinsTextTheme().button.copyWith(fontWeight: FontWeight.w600),
       overline: GoogleFonts.poppinsTextTheme().overline,

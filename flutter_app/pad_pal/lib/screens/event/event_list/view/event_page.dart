@@ -9,6 +9,7 @@ import 'package:pad_pal/theme.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'event_filter_page.dart';
+import 'no_events_found_view.dart';
 
 class EventPage extends StatelessWidget {
   @override
@@ -53,26 +54,6 @@ class _EventView extends StatelessWidget {
 
     return BlocBuilder<EventCubit, EventState>(
       builder: (context, state) {
-        if (state.games.length == 0) {
-          return Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("no games found!"),
-                Text("Try changing the filter settings!"),
-                TextButton(
-                  child: Text("Refresh"),
-                  onPressed: () {
-                    final filter = context.bloc<EventFilterCubit>().state;
-                    context.bloc<EventCubit>().findGames(filter);
-                  },
-                )
-              ],
-            ),
-          );
-        }
-
         return SmartRefresher(
           enablePullDown: true,
           header: WaterDropHeader(waterDropColor: theme.primaryColor),
@@ -80,12 +61,18 @@ class _EventView extends StatelessWidget {
           onRefresh: () async {
             await _onRefresh(context);
           },
-          child: ListView.builder(
-            itemBuilder: (c, i) {
-              return GameOverviewCard(gameInfo: state.games[i]);
-            },
-            itemCount: state.games.length,
-          ),
+          child: state.games.length == 0
+              ? ListView(
+                  children: [
+                    NoEventFoundView(),
+                  ],
+                )
+              : ListView.builder(
+                  itemBuilder: (c, i) {
+                    return GameOverviewCard(gameInfo: state.games[i]);
+                  },
+                  itemCount: state.games.length,
+                ),
         );
       },
     );

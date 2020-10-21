@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pad_pal/screens/event/event_list/view/no_events_found_view.dart';
 
 import 'avatar_demo.dart';
 import 'button_demo.dart';
@@ -19,6 +20,7 @@ class ComponentsPage extends StatelessWidget {
     CardDemo(),
     FlareDemo(),
     TextDemo(),
+    Scaffold(body: NoEventFoundView()),
   ];
 
   @override

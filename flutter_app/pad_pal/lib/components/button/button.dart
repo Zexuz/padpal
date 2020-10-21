@@ -84,7 +84,7 @@ class Button extends StatelessWidget {
   Color _getSplashColor(ButtonType type, ThemeData theme) {
     switch (type) {
       case ButtonType.primary:
-        return theme.primaryColor;
+        return Colors.black12;
       case ButtonType.secondary:
         return Colors.black12;
       case ButtonType.light:
