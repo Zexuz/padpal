@@ -33,6 +33,7 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
   @override
   void initState() {
     super.initState();
+    _controller.text = widget.initialValue;
   }
 
   @override

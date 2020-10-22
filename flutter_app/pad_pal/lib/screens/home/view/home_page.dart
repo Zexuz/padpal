@@ -4,7 +4,6 @@ import 'package:game_repository/game_repository.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:pad_pal/bloc/authentication/authentication.dart';
 import 'package:pad_pal/bloc/bloc.dart';
-import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/screens/demo/view.dart';
 import 'package:pad_pal/screens/event/event_list/cubit/event_cubit.dart';
 import 'package:pad_pal/screens/event/event_list/view/event_page.dart';
@@ -52,7 +51,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   static const List<Widget> _pages = <Widget>[
-    _BuildEventPage(),
+    EventPage(),
     MessagesPage(),
     NotificationsPage(),
     _BuildProfilePage(),
@@ -97,9 +96,6 @@ class _HomePageState extends State<HomePage> {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (_) => EventFilterCubit(),
-            ),
-            BlocProvider(
               create: (_) => NotificationCubit(context.repository<NotificationRepository>()),
             ),
             BlocProvider(
@@ -111,15 +107,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-}
-
-class _BuildEventPage extends StatelessWidget {
-  const _BuildEventPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return EventPage();
   }
 }
 

@@ -12,30 +12,38 @@ import 'event_filter_page.dart';
 import 'no_events_found_view.dart';
 
 class EventPage extends StatelessWidget {
+  const EventPage();
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: CustomAppBar(
-          title: 'Events nearby',
-          leading: IconButton(
-            icon: Icon(Icons.filter_alt, color: Colors.black),
-            onPressed: () => Navigator.of(context).push(EventFilterPage.route(context)),
+  Widget build(BuildContext _) {
+    return BlocProvider(
+      create: (_) => EventFilterCubit(),
+      child: Builder(
+        builder: (context) => Scaffold(
+          appBar: CustomAppBar(
+            title: 'Events nearby',
+            leading: IconButton(
+              icon: Icon(Icons.filter_alt, color: Colors.black),
+              onPressed: () => Navigator.of(context).push(EventFilterPage.route(context)),
+            ),
+            actions: [
+              FlatButton(
+                onPressed: () => {Navigator.of(context).push<void>(CreateEventPage.route())},
+                child: Text(
+                  'Create',
+                  style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600),
+                ),
+              )
+            ],
           ),
-          actions: [
-            FlatButton(
-              onPressed: () => {Navigator.of(context).push<void>(CreateEventPage.route())},
-              child: Text(
-                'Create',
-                style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600),
-              ),
-            )
-          ],
+          backgroundColor: const Color(0xFFDDE2E9),
+          body: Container(
+            padding: const EdgeInsets.all(12.0),
+            child: _EventView(),
+          ),
         ),
-        backgroundColor: const Color(0xFFDDE2E9),
-        body: Container(
-          padding: const EdgeInsets.all(12.0),
-          child: _EventView(),
-        ));
+      ),
+    );
   }
 }
 
