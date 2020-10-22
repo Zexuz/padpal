@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pad_pal/bloc/event_filter/event_filter_cubit.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
+import 'package:pad_pal/theme.dart';
 
 import '../../components/google_search_input.dart';
 
@@ -50,7 +51,6 @@ class MapSample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.bloc<EventFilterCubit>().state;
     return Scaffold(
       appBar: CustomAppBar(
         title: "Settings",
@@ -64,35 +64,46 @@ class MapSample extends StatelessWidget {
             zoom: 14.0,
           )));
         },
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
-              child: GoogleSearchInput(
-                initialValue: state.location?.description,
-                decoration: InputDecoration.collapsed(hintText: "Search by town/city, area or postcode"),
-                onChanged: (lat, lng, name) => context.bloc<EventFilterCubit>().onLocationChanged(lat, lng, name),
-              ),
-            ),
-            Expanded(
-              child: GoogleMap(
-                zoomControlsEnabled: false,
-                mapType: MapType.normal,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(state.location.lat, state.location.lng),
-                  zoom: 4.0,
+        child: BlocBuilder<EventFilterCubit, EventFilterState>(
+          builder: (context, state) {
+            if (state == null) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
+                  child: GoogleSearchInput(
+                    initialValue: state.location?.description,
+                    decoration: AppTheme.graySearch.copyWith(
+                      hintText: "Search by town/city, area or postcode",
+                    ),
+                    onChanged: (lat, lng, name) => context.bloc<EventFilterCubit>().onLocationChanged(lat, lng, name),
+                  ),
                 ),
-                onMapCreated: (GoogleMapController controller) {
-                  if (!_controller.isCompleted) _controller.complete(controller);
-                  _setCameraToMyLocation();
-                },
-              ),
-            ),
-            _Distance(),
-            _Timespan(),
-          ],
+                Expanded(
+                  child: GoogleMap(
+                    zoomControlsEnabled: false,
+                    mapType: MapType.normal,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(state.location.lat, state.location.lng),
+                      zoom: 13.0,
+                    ),
+                    onMapCreated: (GoogleMapController controller) {
+                      if (!_controller.isCompleted) _controller.complete(controller);
+                      _setCameraToMyLocation();
+                    },
+                  ),
+                ),
+                _Distance(),
+                _Timespan(),
+              ],
+            );
+          },
         ),
       ),
     );

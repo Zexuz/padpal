@@ -24,6 +24,21 @@ class AppTheme {
   static TextStyle logo =
       TextStyle(color: primary, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, fontSize: 21);
 
+  static const InputDecoration graySearch = InputDecoration(
+    filled: true,
+    isDense: true,
+    border: const OutlineInputBorder(
+      borderRadius: const BorderRadius.all(
+        const Radius.circular(10.0),
+      ),
+      borderSide: BorderSide(
+        width: 0,
+        style: BorderStyle.none,
+      ),
+    ),
+    fillColor: lightGrayBackground,
+  );
+
   static ThemeData Current = ThemeData(
     brightness: Brightness.light,
     primaryColor: primary,
@@ -68,5 +83,6 @@ class AppTheme {
       button: GoogleFonts.poppinsTextTheme().button.copyWith(fontWeight: FontWeight.w600),
       overline: GoogleFonts.poppinsTextTheme().overline,
     ),
+    // inputDecorationTheme: InputDecorationTheme(),
   );
 }
