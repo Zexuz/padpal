@@ -154,5 +154,21 @@ namespace Padel.Social.Runner.Controllers
             var url = await _profilePictureService.Update(userId, new MemoryStream(request.ImgData.ToByteArray()));
             return new ChangeProfilePictureResponse {Url = url};
         }
+
+        public override async Task<GetProfileResponse> GetProfile(GetProfileRequest request, ServerCallContext context)
+        {
+            var me = await _profileMongoRepository.FindOneAsync(profile => profile.UserId == request.UserId);
+            return new GetProfileResponse
+            {
+                Profile = new Profile()
+                {
+                    Name = me.Name,
+                    Friends = {me.Friends.Select(friendRequest => friendRequest.UserId)},
+                    ImgUrl = me.PictureUrl,
+                    UserId = me.UserId,
+                    FriendRequests = {me.FriendRequests.Select(friendRequest => friendRequest.UserId)},
+                }
+            };
+        }
     }
 }
