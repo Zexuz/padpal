@@ -33,11 +33,13 @@ class CreatorSpot extends StatelessWidget {
     @required this.user,
     @required this.radius,
     @required this.offset,
+    @required this.onTap,
   }) : super(key: key);
 
   final double radius;
   final double offset;
   final SpotData user;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +55,7 @@ class CreatorSpot extends StatelessWidget {
           color: theme.primaryColor,
           elevation: 0,
           innerBorderWidth: 2.0,
+          onTap: onTap,
         ),
         name: user.name,
         label: "Beginner",
@@ -70,11 +73,13 @@ class AcceptedSpot extends StatelessWidget {
     @required this.user,
     @required this.radius,
     @required this.offset,
+    @required this.onTap,
   }) : super(key: key);
 
   final double radius;
   final double offset;
   final SpotData user;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

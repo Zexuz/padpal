@@ -8,6 +8,7 @@ import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/event/components/components.dart';
 import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
+import 'package:pad_pal/screens/profile/view/profile_from_id_page.dart';
 import 'package:pad_pal/theme.dart';
 
 class EventDetailsView extends StatelessWidget {
@@ -69,6 +70,13 @@ class Players extends StatelessWidget {
 
   final GameInfo gameInfo;
 
+  _goToProfile(BuildContext context, int userId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (context) => ProfileFromId(gameInfo.publicInfo.creator.userId)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const radius = 24.0;
@@ -96,6 +104,7 @@ class Players extends StatelessWidget {
                 user: SpotData.fromUser(gameInfo.publicInfo.creator),
                 radius: radius,
                 offset: offset,
+                onTap: () => _goToProfile(context, gameInfo.publicInfo.creator.userId),
               ),
             ];
 
@@ -104,6 +113,7 @@ class Players extends StatelessWidget {
                 user: SpotData.fromUser(value),
                 radius: radius,
                 offset: offset,
+                onTap: () => _goToProfile(context, value.userId),
               ));
             }
 
