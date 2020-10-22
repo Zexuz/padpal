@@ -24,6 +24,47 @@ class ProfileView extends StatelessWidget {
     return displaySize(context).width;
   }
 
+  Future<ImageSource> _showImageSourceSelector(BuildContext context) async {
+    return await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: const Radius.circular(10.0),
+          topRight: const Radius.circular(10.0),
+        ),
+      ),
+      builder: (_) => const ImageSourceSelector(),
+    );
+  }
+
+  Future<void> _onAvatarTap(BuildContext context) async {
+    final imageSource = await _showImageSourceSelector(context);
+
+    if (imageSource == null) {
+      return;
+    }
+
+    final image = await ImagePicker().getImage(source: imageSource);
+
+    final croppedFile = await ImageCropper.cropImage(
+        sourcePath: image.path,
+        cropStyle: CropStyle.circle,
+        maxHeight: 300,
+        maxWidth: 300,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: Colors.deepOrange,
+          toolbarWidgetColor: Colors.white,
+          lockAspectRatio: false,
+        ),
+        iosUiSettings: IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+
+    context.bloc<MeCubit>().updateProfilePicture(await croppedFile.readAsBytes());
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -39,67 +80,7 @@ class ProfileView extends StatelessWidget {
               borderWidth: displayWidth(context) * 0.015,
               url: this.profile.imageUrl,
               color: Colors.white,
-              onTap: () async {
-                final imageSource = await showModalBottomSheet<ImageSource>(
-                    context: context,
-                    builder: (_) => Container(
-                          height: 200,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(25),
-                                child: Center(child: Text("Where to import a image from?")),
-                              ),
-                              Divider(
-                                height: 0,
-                                thickness: 1,
-                              ),
-                              Expanded(
-                                child: ListView(
-                                  children: [
-                                    ListTile(
-                                      title: Text("Camera"),
-                                      onTap: () {
-                                        Navigator.pop(context, ImageSource.camera);
-                                      },
-                                    ),
-                                    ListTile(
-                                      title: Text("Gallery"),
-                                      onTap: () {
-                                        Navigator.pop(context, ImageSource.gallery);
-                                      },
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ));
-
-                if (imageSource == null) {
-                  return;
-                }
-
-                final image = await ImagePicker().getImage(source: imageSource);
-
-                final croppedFile = await ImageCropper.cropImage(
-                    sourcePath: image.path,
-                    cropStyle: CropStyle.circle,
-                    maxHeight: 300,
-                    maxWidth: 300,
-                    aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-                    androidUiSettings: AndroidUiSettings(
-                      toolbarTitle: 'Cropper',
-                      toolbarColor: Colors.deepOrange,
-                      toolbarWidgetColor: Colors.white,
-                      lockAspectRatio: false,
-                    ),
-                    iosUiSettings: IOSUiSettings(
-                      minimumAspectRatio: 1.0,
-                    ));
-
-                context.bloc<MeCubit>().updateProfilePicture(await croppedFile.readAsBytes());
-              },
+              onTap: () => _onAvatarTap(context),
             ),
           ),
           Padding(
@@ -110,8 +91,10 @@ class ProfileView extends StatelessWidget {
                 color: AppTheme.lightGrayBackground,
                 padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
                 child: Text(this.profile.rank,
-                    style: theme.textTheme.subtitle2
-                        .copyWith(color: AppTheme.lightGrayText, fontWeight: FontWeight.w600, fontSize: 12)),
+                    style: theme.textTheme.headline4.copyWith(
+                      color: AppTheme.lightGrayText,
+                      fontWeight: FontWeight.w600,
+                    )),
               ),
             ),
           ),
@@ -173,6 +156,37 @@ class ProfileView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ImageSourceSelector extends StatelessWidget {
+  const ImageSourceSelector();
+
+  static const double iconSize = 28.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: Text("Capture with camera"),
+          leading: Icon(Icons.camera_alt_rounded, size: iconSize, color: theme.primaryColor),
+          onTap: () {
+            Navigator.pop(context, ImageSource.camera);
+          },
+        ),
+        ListTile(
+          title: Text("Upload file"),
+          leading: Icon(Icons.file_upload, size: iconSize, color: theme.primaryColor),
+          onTap: () {
+            Navigator.pop(context, ImageSource.gallery);
+          },
+        )
+      ],
     );
   }
 }
@@ -257,18 +271,19 @@ class _StatsCountWithLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final width = MediaQuery.of(context).size.width * 0.23;
     return Container(
       width: width,
       child: Column(
         children: [
-          Text(count.toString(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-          Text(label,
-              style: TextStyle(
-                color: AppTheme.lightGrayText,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              )),
+          Text(count.toString(), style: theme.textTheme.headline1),
+          Text(
+            label,
+            style: theme.textTheme.headline4.copyWith(
+              color: AppTheme.lightGrayText,
+            ),
+          ),
         ],
       ),
     );

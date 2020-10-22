@@ -87,7 +87,7 @@ class NoEventFoundViewState extends State<NoEventFoundView> with SingleTickerPro
             padding: const EdgeInsets.only(bottom: 48.0),
             child: Text(
               "Looks like there are no events nearby you at the moment. Please check your preferences or post you own event.",
-              style: theme.textTheme.bodyText2,
+              style: theme.textTheme.bodyText1,
               textAlign: TextAlign.center,
             ),
           ),
