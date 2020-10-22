@@ -18,6 +18,7 @@ class EventPage extends StatelessWidget {
   Widget build(BuildContext _) {
     return BlocProvider(
       create: (_) => EventFilterCubit(),
+      lazy: false,
       child: Builder(
         builder: (context) => Scaffold(
           appBar: CustomAppBar(
@@ -50,8 +51,12 @@ class EventPage extends StatelessWidget {
 class _EventView extends StatelessWidget {
   final _refreshController = RefreshController(initialRefresh: false);
 
-  Future _onRefresh(BuildContext context) async {
+  Future<void> _onRefresh(BuildContext context) async {
     final filter = context.bloc<EventFilterCubit>().state;
+    if (filter != null) {
+      _refreshController.refreshFailed();
+      return;
+    }
     await context.bloc<EventCubit>().findGames(filter);
     _refreshController.refreshCompleted();
   }
