@@ -117,6 +117,26 @@ class SocialRepository {
     );
   }
 
+  Future<Profile> getProfile(int userId) async {
+    final callOptions =
+        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final request = GetProfileRequest()..userId = userId;
+
+    final call = _chatServiceClient.getProfile(request, options: callOptions);
+    var response = await call;
+    return Profile(
+      name: response.profile.name,
+      userId: response.profile.userId,
+      rank: "Beginner + + +",
+      friends: response.profile.friends,
+      friendsRequests: response.profile.friendRequests,
+      location: "Göteborg",
+      imageUrl: response.profile.imgUrl,
+      losses: 25,
+      wins: 75,
+    );
+  }
+
   Future<String> updateProfilePicture(List<int> bytes) async {
     final callOptions =
         CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
