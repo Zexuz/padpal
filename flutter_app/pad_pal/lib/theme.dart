@@ -72,12 +72,12 @@ class AppTheme {
       bodyText1: GoogleFonts.poppinsTextTheme().bodyText1.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: customBlack,
+            color: lightGrayText,
           ),
       bodyText2: GoogleFonts.poppinsTextTheme().bodyText2.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: lightGrayText,
+            color: customBlack,
           ),
       caption: GoogleFonts.poppinsTextTheme().caption,
       button: GoogleFonts.poppinsTextTheme().button.copyWith(fontWeight: FontWeight.w600),
