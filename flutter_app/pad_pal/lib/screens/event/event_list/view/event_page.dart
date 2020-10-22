@@ -53,7 +53,7 @@ class _EventView extends StatelessWidget {
 
   Future<void> _onRefresh(BuildContext context) async {
     final filter = context.bloc<EventFilterCubit>().state;
-    if (filter != null) {
+    if (filter == null) {
       _refreshController.refreshFailed();
       return;
     }
@@ -63,23 +63,17 @@ class _EventView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return BlocBuilder<EventCubit, EventState>(
       builder: (context, state) {
         return SmartRefresher(
           enablePullDown: true,
-          header: WaterDropHeader(waterDropColor: theme.primaryColor),
+          header: MaterialClassicHeader(),
           controller: _refreshController,
           onRefresh: () async {
             await _onRefresh(context);
           },
           child: state.games.length == 0
-              ? ListView(
-                  children: [
-                    NoEventFoundView(),
-                  ],
-                )
+              ? NoEventFoundView()
               : ListView.builder(
                   itemBuilder: (c, i) {
                     return GameOverviewCard(gameInfo: state.games[i]);
