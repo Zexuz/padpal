@@ -58,6 +58,11 @@ service Social {
       shouldValidate:true,
     };
   }
+  rpc GetProfile (GetProfileRequest) returns (GetProfileResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
   rpc SendFriendRequest (SendFriendRequestRequest) returns (SendFriendRequestResponse) {
     option (descriptors.authorization) = {
       shouldValidate:true,
@@ -78,6 +83,14 @@ service Social {
       shouldValidate:true,
     };
   }
+}
+
+message GetProfileRequest {
+  int32 userId = 1;
+}
+
+message GetProfileResponse {
+  Profile profile = 1;
 }
 
 message ChangeProfilePictureRequest {
@@ -122,7 +135,7 @@ message SendFriendRequestResponse {
 message SearchForProfileRequest {
   string searchTerm = 1;
   SearchOptions options = 2;
-  
+
   message SearchOptions{
     bool onlyMyFriends = 1;
   }
