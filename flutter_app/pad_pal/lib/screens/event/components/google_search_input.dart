@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:pad_pal/components/components.dart';
 
 const kGoogleApiKey = "AIzaSyDgALxXX0-oI52s_iCxywB03lhjenKfiXg";
 
@@ -38,12 +39,11 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return CustomTextInput(
       readOnly: true,
       focusNode: widget.focus,
       onTap: () => _handlePressButton(context),
       controller: _controller,
-      decoration: widget.decoration,
     );
   }
 

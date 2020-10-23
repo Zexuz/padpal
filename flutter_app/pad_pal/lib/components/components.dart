@@ -7,3 +7,5 @@ export 'avatar/dotted_avatar.dart';
 
 export 'card/card.dart';
 export 'radio/radio.dart';
+
+export 'input/custom_text_input.dart';
