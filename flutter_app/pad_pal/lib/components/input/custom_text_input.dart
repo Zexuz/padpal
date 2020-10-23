@@ -5,7 +5,7 @@ class CustomTextInput extends StatelessWidget {
   const CustomTextInput({
     Key key,
     this.onChanged,
-    this.readOnly,
+    this.readOnly = false,
     this.focusNode,
     this.onTap,
     this.controller,
@@ -22,6 +22,7 @@ class CustomTextInput extends StatelessWidget {
     final theme = Theme.of(context);
 
     return TextFormField(
+      maxLines: null,
       readOnly: this.readOnly,
       onTap: this.onTap,
       focusNode: this.focusNode,
@@ -32,7 +33,7 @@ class CustomTextInput extends StatelessWidget {
         hintText: "Search",
         focusedBorder: OutlineInputBorder(
           borderRadius: const BorderRadius.all(
-            const Radius.circular(10.0),
+            const Radius.circular(6.0),
           ),
           borderSide: BorderSide(
             width: 1,
