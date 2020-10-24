@@ -155,4 +155,4 @@ app.*.symbols
 appsettings.Development.json
 
 /gateway/protos/**/*
-flutter_app/pad_pal/packages/**/lib/generated
+#flutter_app/pad_pal/packages/**/lib/generated
