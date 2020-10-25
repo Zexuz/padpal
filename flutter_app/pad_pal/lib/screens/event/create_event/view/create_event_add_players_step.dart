@@ -48,8 +48,8 @@ class CreatorSpot extends StatelessWidget {
     return Container(
       child: RawSpot(
         avatar: Avatar(
+          name: user.name,
           url: user.imgUrl,
-          fallback: "AB",
           radius: radius,
           borderWidth: 3.0,
           color: theme.primaryColor,
@@ -87,13 +87,13 @@ class AcceptedSpot extends StatelessWidget {
 
     return RawSpot(
       avatar: Avatar(
+        name: user.name,
         url: user.imgUrl,
         radius: radius,
         borderWidth: 0,
         color: theme.primaryColor,
         elevation: 0,
         innerBorderWidth: 0,
-        fallback: "AG",
       ),
       name: user.name,
       label: "Beginner",
@@ -124,13 +124,13 @@ class InvitedSpot extends StatelessWidget {
 
     return RawSpot(
       avatar: Avatar(
+        name: user.name,
         url: user.imgUrl,
         radius: radius,
         borderWidth: 0,
         color: theme.primaryColor,
         elevation: 0,
         innerBorderWidth: 0,
-        fallback: "AG",
       ),
       name: user.name,
       label: "Beginner",
@@ -165,13 +165,13 @@ class PendingSpot extends StatelessWidget {
 
     return RawSpot(
       avatar: Avatar(
+        name: user.name,
         url: user.imgUrl,
         radius: radius,
         borderWidth: 0,
         color: theme.primaryColor,
         elevation: 0,
         innerBorderWidth: 0,
-        fallback: "AG",
       ),
       name: user.name,
       label: "Beginner",

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:game_repository/generated/common_v1/models.pb.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -57,53 +58,44 @@ class OverlappingAvatar extends StatelessWidget {
   }
 }
 
-class ProfilePictureData {
-  const ProfilePictureData({
-    this.img,
-    this.name,
-  }) : assert(img == null || name == null);
-
-  final String name;
-  final String img;
-}
-
 class MessageListTile extends StatelessWidget {
   const MessageListTile({
     Key key,
     @required this.title,
     @required this.subtitle,
-    @required this.user,
-    this.secondUser = null,
+    @required this.users,
     this.unread = false,
   }) : super(key: key);
 
   final String title;
   final String subtitle;
   final bool unread;
-  final ProfilePictureData user;
-  final ProfilePictureData secondUser;
+  final List<User> users;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.headline4;
 
-    final avatar = secondUser == null
+    final avatar = users.length == 1
         ? Avatar(
-            url: user.img,
+            url: users[0].imgUrl,
+            name: users[0].name,
             radius: 24,
             borderWidth: 0,
             elevation: 0,
           )
         : OverlappingAvatar(
             avatar1: Avatar(
-              url: user.img,
+              url: users[0].imgUrl,
+              name: users[0].name,
               radius: 16,
               borderWidth: 0,
               elevation: 0,
             ),
             avatar2: Avatar(
-              url: secondUser.img,
+              url: users[1].imgUrl,
+              name: users[1].name,
               radius: 16,
               borderWidth: 2,
               elevation: 0,
@@ -159,14 +151,13 @@ class MessageListTileData {
     this.title,
     this.subtitle,
     this.unread,
-    this.images,
-  })  : assert(images.length > 0),
-        assert(images.length < 3);
+    this.users,
+  }) : assert(users.length > 0);
 
   final String title;
   final String subtitle;
   final bool unread;
-  final List<String> images;
+  final List<User> users;
 }
 
 class MessageForm extends StatelessWidget {
@@ -184,85 +175,73 @@ class MessageForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final wimWillems = User()
+      ..name = "Wim Willems"
+      ..imgUrl = "https://randomuser.me/api/portraits/men/21.jpg";
+    final andriesGrootoonk = User()
+      ..name = "Andries Grootoonk"
+      ..imgUrl = "https://randomuser.me/api/portraits/men/74.jpg";
+    final david = User()
+      ..name = "David"
+      ..imgUrl = "https://randomuser.me/api/portraits/women/21.jpg";
+    final robin = User()
+      ..name = "Robin"
+      ..imgUrl = "https://randomuser.me/api/portraits/women/20.jpg";
+
     final items = <MessageListTileData>[
-      MessageListTileData(title: "Wim Willems", subtitle: "Btw this is a really cool app", unread: true, images: [
-        "https://randomuser.me/api/portraits/men/21.jpg",
-      ]),
-      MessageListTileData(title: "Andries Grootoonk", subtitle: "Hahaha that’s great!!", unread: false, images: [
-        "https://randomuser.me/api/portraits/men/74.jpg",
-      ]),
+      MessageListTileData(
+        title: "Wim Willems",
+        subtitle: "Btw this is a really cool app",
+        unread: true,
+        users: [wimWillems],
+      ),
+      MessageListTileData(
+          title: "Andries Grootoonk", subtitle: "Hahaha that’s great!!", unread: false, users: [andriesGrootoonk]),
       MessageListTileData(
           title: "David, Robin, Oliver and Edu",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
       MessageListTileData(
           title: "Wed 23 Sep.12.00-13.00 pm",
           subtitle: "See you on Thursday guys!",
           unread: false,
-          images: [
-            "https://randomuser.me/api/portraits/women/21.jpg",
-            "https://randomuser.me/api/portraits/women/20.jpg",
-          ]),
+          users: [david, robin]),
     ];
 
     return Padding(
@@ -292,8 +271,7 @@ class MessageForm extends StatelessWidget {
                       title: items[i].title,
                       subtitle: items[i].subtitle,
                       unread: items[i].unread,
-                      user: ProfilePictureData(img: items[i].images[0]),
-                      secondUser: items[i].images.length == 2 ? ProfilePictureData(img: items[i].images[1]) : null,
+                      users: items[i].users,
                     ),
                   );
                 },

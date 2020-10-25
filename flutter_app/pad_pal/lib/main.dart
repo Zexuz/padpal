@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:pad_pal/app.dart';
 import 'package:pad_pal/app_push.dart';
+import 'package:pad_pal/service_locator.dart';
 
 import 'simple_bloc_observer.dart';
 
@@ -20,5 +21,8 @@ void main() async {
 
   Bloc.observer = SimpleBlocObserver();
   await GlobalConfiguration().loadFromAsset("app_settings_$env");
+  setupServiceLocator();
   runApp(AppPush(child: App()));
 }
+
+

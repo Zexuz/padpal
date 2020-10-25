@@ -5,6 +5,8 @@ using Grpc.Core;
 using Padel.Grpc.Core;
 using Padel.Proto.Social.V1;
 using Padel.Repository.Core.MongoDb;
+using Padel.Social.Extensions;
+using Padel.Social.Repositories;
 using Padel.Social.Services.Interface;
 using Padel.Social.ValueTypes;
 
@@ -12,21 +14,21 @@ namespace Padel.Social.Runner.Controllers
 {
     public class SocialControllerV1 : Proto.Social.V1.Social.SocialBase
     {
-        private readonly IMessageSenderService            _messageSenderService;
-        private readonly IRoomService                     _roomService;
-        private readonly IProfileSearchService            _profileSearchService;
-        private readonly IFriendRequestService            _friendRequestService;
-        private readonly IMongoRepository<Models.Profile> _profileMongoRepository;
-        private readonly IProfilePictureService           _profilePictureService;
+        private readonly IMessageSenderService  _messageSenderService;
+        private readonly IRoomService           _roomService;
+        private readonly IProfileSearchService  _profileSearchService;
+        private readonly IFriendRequestService  _friendRequestService;
+        private readonly IProfileRepository     _profileMongoRepository;
+        private readonly IProfilePictureService _profilePictureService;
 
         public SocialControllerV1
         (
-            IMessageSenderService            messageSenderService,
-            IRoomService                     roomService,
-            IProfileSearchService            profileSearchService,
-            IFriendRequestService            friendRequestService,
-            IMongoRepository<Models.Profile> profileMongoRepository,
-            IProfilePictureService           profilePictureService
+            IMessageSenderService  messageSenderService,
+            IRoomService           roomService,
+            IProfileSearchService  profileSearchService,
+            IFriendRequestService  friendRequestService,
+            IProfileRepository     profileMongoRepository,
+            IProfilePictureService profilePictureService
         )
         {
             _messageSenderService = messageSenderService;
@@ -76,7 +78,8 @@ namespace Padel.Social.Runner.Controllers
                             }
                         )
                     },
-                    Participants = {room.Participants.Select(id => id.Value)}
+                    Participants = {room.Participants.Select(id => _profileMongoRepository.FindByUserId(id.Value).ToUser())},
+                    GameId = "",
                 }
             };
         }

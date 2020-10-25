@@ -13,27 +13,27 @@ class AvatarDemo extends StatelessWidget {
     final entries = [
       Center(
         child: Avatar(
+          name: "Robin Edbom",
           radius: size,
           borderWidth: padding,
           url: url,
-          fallback: "FB",
         ),
       ),
       Center(
         child: Avatar(
           radius: size,
+          name: "Edu ASd",
           borderWidth: padding,
           url: "",
-          fallback: "FB",
         ),
       ),
       Center(
         child: Avatar(
           radius: size,
           borderWidth: padding,
+          name: "Robin Edbom",
           url: url,
           color: Colors.white,
-          fallback: "FB",
         ),
       ),
       Center(
@@ -41,8 +41,8 @@ class AvatarDemo extends StatelessWidget {
           radius: size,
           borderWidth: padding,
           color: Colors.white,
+          name: "Robin Oliver Edbom",
           url: "",
-          fallback: "FB",
         ),
       ),
       DottedAvatar(radius: size),
