@@ -9,10 +9,14 @@ class ChatTextInput extends StatelessWidget {
     Key key,
     this.onSendTap,
     this.onChanged,
+    this.controller,
+    this.focusNode,
   });
 
   final ValueChanged<String> onChanged;
   final VoidCallback onSendTap;
+  final TextEditingController controller;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +25,8 @@ class ChatTextInput extends StatelessWidget {
       children: [
         CustomTextInput(
           onChanged: onChanged,
+          focusNode: focusNode,
+          controller: controller,
         ),
         Align(
           child: TextButton(
@@ -64,13 +70,15 @@ class MessageListTile extends StatelessWidget {
     @required this.title,
     @required this.subtitle,
     @required this.users,
+    @required this.onTap,
     this.unread = false,
   }) : super(key: key);
 
   final String title;
   final String subtitle;
-  final bool unread;
   final List<User> users;
+  final VoidCallback onTap;
+  final bool unread;
 
   @override
   Widget build(BuildContext context) {
@@ -105,23 +113,32 @@ class MessageListTile extends StatelessWidget {
 
     return InkWell(
       borderRadius: const BorderRadius.all(const Radius.circular(6.0)),
-      onTap: () => {},
+      onTap: this.onTap,
       child: Container(
         child: Row(
           children: [
             avatar,
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: textStyle),
-                  Text(subtitle,
-                      style: this.unread == true ? textStyle : textStyle.copyWith(color: AppTheme.lightGrayText)),
-                ],
+            Expanded(
+              flex: 10,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: textStyle, overflow: TextOverflow.ellipsis),
+                    Text(
+                      subtitle,
+                      overflow: TextOverflow.ellipsis,
+                      style: this.unread == true ? textStyle : textStyle.copyWith(color: AppTheme.lightGrayText),
+                    ),
+                  ],
+                ),
               ),
             ),
-            Expanded(child: Container()),
+            Expanded(
+              child: Container(),
+              flex: 1,
+            ),
             if (unread) Unread(),
           ],
         ),
@@ -152,12 +169,14 @@ class MessageListTileData {
     this.subtitle,
     this.unread,
     this.users,
+    this.roomId,
   }) : assert(users.length > 0);
 
   final String title;
   final String subtitle;
   final bool unread;
   final List<User> users;
+  final String roomId;
 }
 
 class MessageForm extends StatelessWidget {
@@ -272,6 +291,7 @@ class MessageForm extends StatelessWidget {
                       subtitle: items[i].subtitle,
                       unread: items[i].unread,
                       users: items[i].users,
+                      onTap: () => print("Tapped"),
                     ),
                   );
                 },

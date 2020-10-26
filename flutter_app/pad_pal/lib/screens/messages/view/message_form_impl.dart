@@ -5,6 +5,7 @@ import 'package:pad_pal/services/message_list_tile_data_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:social_repository/social_repository.dart';
 
+import 'message_details_page.dart';
 import 'message_form.dart';
 
 class MessageFormReal extends StatefulWidget {
@@ -46,6 +47,13 @@ class _MessageFormRealState extends State<MessageFormReal> {
   //   await socialRepo.createRoom(List.from([5]));
   // }
 
+  void _onMessageTap(MessageListTileData data) {
+    Navigator.push(
+      context,
+      MessageDetailsPage.route(data.title, data.roomId),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -77,6 +85,7 @@ class _MessageFormRealState extends State<MessageFormReal> {
                       subtitle: items[i].subtitle,
                       unread: items[i].unread,
                       users: items[i].users,
+                      onTap: () => _onMessageTap(items[i]),
                     ),
                   );
                 },

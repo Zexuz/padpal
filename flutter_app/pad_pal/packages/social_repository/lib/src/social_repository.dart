@@ -63,8 +63,14 @@ class SocialRepository {
 
   final StreamController<String> streamController = StreamController();
 
-  Future<void> sendMessage(String message) async {
-    final call = _chatServiceClient.sendMessage(SendMessageRequest()..content = message);
+  Future<void> sendMessage(String message, String id) async {
+    final callOptions = await _getCallOptions();
+
+    final request = SendMessageRequest()
+      ..content = message
+      ..roomId = id;
+
+    final call = _chatServiceClient.sendMessage(request, options: callOptions);
     await call;
   }
 

@@ -11,9 +11,9 @@ class MessageCubit extends Cubit<MessageState> {
   final _notificationStream = NotificationManager().notification;
   StreamSubscription _streamSub;
 
-  Future<void> sendMessage(String message) async {
-    await repository.sendMessage(message);
-  }
+  // Future<void> sendMessage(String message) async {
+  //   await repository.sendMessage(message);
+  // }
 
   Future<void> listenForMessages() async {
     if (_streamSub != null) return;

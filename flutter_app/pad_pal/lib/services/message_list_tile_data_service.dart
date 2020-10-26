@@ -9,6 +9,7 @@ class MessageListTileDataService {
       users: _getUsersWithProfilePictures(room),
       unread: false,
       subtitle: _getSubtitle(room),
+      roomId: room.id
     );
   }
 
