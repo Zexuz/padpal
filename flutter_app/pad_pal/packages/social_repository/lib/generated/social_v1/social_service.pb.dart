@@ -831,8 +831,9 @@ class ChatRoom extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('ChatRoom', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
     ..aOS(1, 'id')
     ..a<$core.int>(2, 'admin', $pb.PbFieldType.O3)
-    ..p<$core.int>(3, 'participants', $pb.PbFieldType.P3)
+    ..pc<$1.User>(3, 'participants', $pb.PbFieldType.PM, subBuilder: $1.User.create)
     ..pc<Message>(4, 'messages', $pb.PbFieldType.PM, subBuilder: Message.create)
+    ..aOS(5, 'gameId')
     ..hasRequiredFields = false
   ;
 
@@ -870,10 +871,19 @@ class ChatRoom extends $pb.GeneratedMessage {
   void clearAdmin() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get participants => $_getList(2);
+  $core.List<$1.User> get participants => $_getList(2);
 
   @$pb.TagNumber(4)
   $core.List<Message> get messages => $_getList(3);
+
+  @$pb.TagNumber(5)
+  $core.String get gameId => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set gameId($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasGameId() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearGameId() => clearField(5);
 }
 
 class GetMessagesRequest extends $pb.GeneratedMessage {
