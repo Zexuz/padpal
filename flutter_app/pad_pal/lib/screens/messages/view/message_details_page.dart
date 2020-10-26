@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/avatar/avatar.dart';
+import 'package:pad_pal/screens/messages/bloc/chat_room_cubit.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:social_repository/generated/common_v1/models.pb.dart';
 import 'package:social_repository/generated/social_v1/social_service.pb.dart';
@@ -37,8 +39,14 @@ class MessageDetailsPage extends StatelessWidget {
       appBar: CustomAppBar(
         title: title,
       ),
-      body: MessageDetails(
-        roomId: roomId,
+      body: BlocProvider<ChatRoomCubit>(
+        create: (context) => ChatRoomCubit(
+          socialRepository: RepositoryProvider.of<SocialRepository>(context),
+          chatRoomId: roomId,
+        ),
+        child: MessageDetails(
+          roomId: roomId,
+        ),
       ),
     );
   }
@@ -86,10 +94,6 @@ class _MessageDetailsState extends State<MessageDetails> {
     _loadRoom();
   }
 
-  User _getAuthorForMessage(Message message) {
-    return room.participants.firstWhere((element) => element.userId == message.author);
-  }
-
   Future<void> _onSend() async {
     _textController.clear();
     _focusNode.unfocus();
@@ -100,6 +104,13 @@ class _MessageDetailsState extends State<MessageDetails> {
   void _onInputChanged(String newValue) {
     setState(() {
       inputValue = newValue;
+    });
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 500), curve: Curves.linearToEaseOut);
     });
   }
 
@@ -114,29 +125,30 @@ class _MessageDetailsState extends State<MessageDetails> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: room.messages.length,
-              itemBuilder: (context, index) {
-                final message = room.messages[index];
-                final messageAuthor = _getAuthorForMessage(message);
-                final leading = message.author == myUserId
-                    ? null
-                    : Avatar(
-                        name: messageAuthor.name,
-                        borderWidth: 0,
-                        radius: 18,
-                        url: messageAuthor.imgUrl,
-                        elevation: 0,
-                        innerBorderWidth: 0,
-                      );
+            child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
+              buildWhen: (previous, current) => previous.messages.length != current.messages.length,
+              builder: (context, state) {
+                _scrollToBottom();
+                context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
 
-                return Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: ChatMessage(
-                    text: message.content,
-                    leading: leading,
-                  ),
+                return ListView.builder(
+                  controller: _scrollController,
+                  itemCount: state.messages.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 24),
+                      child: Column(
+                        children: [
+                          ChatMessage(
+                            messages: state.messages,
+                            index: index,
+                            users: room.participants,
+                            myUserId: myUserId,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -156,48 +168,182 @@ class _MessageDetailsState extends State<MessageDetails> {
   }
 }
 
-class ChatMessage extends StatelessWidget {
+class ChatMessage extends StatefulWidget {
   const ChatMessage({
     Key key,
-    @required this.text,
-    this.leading,
+    @required this.users,
+    @required this.messages,
+    @required this.index,
+    @required this.myUserId,
   }) : super(key: key);
 
-  final String text;
-  final Widget leading;
+  final List<User> users;
+  final List<Message> messages;
+  final int index;
+  final myUserId;
+
+  @override
+  _ChatMessageState createState() => _ChatMessageState();
+}
+
+class _ChatMessageState extends State<ChatMessage> {
+  bool showTime = false;
+
+  User _getAuthorForMessage(Message message) {
+    return widget.users.firstWhere((element) => element.userId == message.author);
+  }
+
+  bool _shouldPrintTime(List<Message> messages, int index) {
+    if (index == 0) return true;
+    if (index == messages.length - 1) return true;
+
+    final current = messages[index];
+    final prev = messages[index + 1];
+
+    final diff = prev.utcTimestamp - current.utcTimestamp;
+
+    return diff > 60 * 30;
+  }
+
+  _onMessageTap() {
+    setState(() {
+      showTime = true;
+    });
+  }
 
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final width = MediaQuery.of(context).size.width * 0.60;
-    final isMe = leading == null;
+    final currentMessage = widget.messages[widget.index];
+    final isMe = currentMessage.author == widget.myUserId;
 
     final bgColor = isMe ? theme.primaryColor : AppTheme.lightGrayBackground;
     final fontColor = isMe ? Colors.white : Colors.black;
     final axisAlignment = isMe ? MainAxisAlignment.end : MainAxisAlignment.start;
     final textStyle = theme.textTheme.headline3.copyWith(color: fontColor, fontWeight: FontWeight.w400);
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: axisAlignment,
+    final borderRadius = BorderRadius.circular(18.0);
+
+    final messageAuthor = _getAuthorForMessage(currentMessage);
+    final leading = isMe
+        ? null
+        : Avatar(
+            name: messageAuthor.name,
+            borderWidth: 0,
+            radius: 18,
+            url: messageAuthor.imgUrl,
+            elevation: 0,
+            innerBorderWidth: 0,
+          );
+
+    final aboveText = isMe ? null : messageAuthor.name.split(" ").first;
+
+    return Column(
       children: [
-        if (!isMe) leading,
-        const SizedBox(width: 12),
-        ConstrainedBox(
-          constraints: new BoxConstraints(
-            maxWidth: width,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(18.0),
+        if (showTime || _shouldPrintTime(widget.messages, widget.index))
+          _Time(currentMessage.utcTimestamp.toInt() * 1000),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: axisAlignment,
+          children: [
+            if (!isMe) leading,
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (aboveText != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      aboveText,
+                      style: TextStyle(color: AppTheme.lightGrayText, fontSize: 8),
+                    ),
+                  ),
+                ChatMessageContent(
+                  text: currentMessage.content,
+                  onTap: _onMessageTap,
+                  borderRadius: borderRadius,
+                  bgColor: bgColor,
+                  textStyle: textStyle,
+                ),
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(7.5),
-              child: Text(text, style: textStyle),
-            ),
-          ),
+          ],
         ),
       ],
+    );
+  }
+}
+
+class _Time extends StatelessWidget {
+  _Time(this.timestamp);
+
+  final int timestamp;
+
+  @override
+  Widget build(BuildContext context) {
+    final messageTimestamp = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    final currentTime = DateTime.now();
+
+    final diff = currentTime.difference(messageTimestamp);
+
+    final dateFormat = _getFormat(diff);
+    DateFormat.Hm();
+    return Text(dateFormat.format(DateTime.fromMillisecondsSinceEpoch(timestamp)));
+  }
+
+  DateFormat _getFormat(Duration diff) {
+    if (diff.inDays < 1) {
+      return DateFormat.Hm();
+    }
+
+    if (diff.inDays < 7) {
+      return DateFormat('E @ kk:mm');
+    }
+
+    if (diff.inDays < 365) {
+      return DateFormat('MMM dd @ kk:mm');
+    }
+
+    return DateFormat('y MMM dd @ kk:mm');
+  }
+}
+
+class ChatMessageContent extends StatelessWidget {
+  const ChatMessageContent({
+    Key key,
+    @required this.text,
+    @required this.borderRadius,
+    @required this.bgColor,
+    @required this.textStyle,
+    this.onTap,
+  }) : super(key: key);
+
+  final String text;
+  final BorderRadius borderRadius;
+  final Color bgColor;
+  final TextStyle textStyle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width * 0.60;
+
+    return ConstrainedBox(
+      constraints: new BoxConstraints(
+        maxWidth: width,
+      ),
+      child: Material(
+        borderRadius: borderRadius,
+        color: bgColor,
+        child: InkWell(
+          borderRadius: borderRadius,
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(7.5),
+            child: Text(text, style: textStyle),
+          ),
+        ),
+      ),
     );
   }
 }

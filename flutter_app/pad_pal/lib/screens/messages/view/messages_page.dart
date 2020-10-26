@@ -8,8 +8,7 @@ class MessagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-   return DefaultTabController(
+    return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
@@ -21,26 +20,9 @@ class MessagesPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: [
-            MessageForm(),
-            MessageFormReal()
-          ],
+          children: [MessageForm(), MessageFormReal()],
         ),
       ),
     );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text('Messages'),
-    //   ),
-    //   body: Padding(
-    //     padding: const EdgeInsets.all(8.0),
-    //     child: BlocProvider(
-    //       create: (_) => MessageCubit(
-    //         context.repository<SocialRepository>(),
-    //       ),
-    //       child: MessageForm(),
-    //     ),
-    //   ),
-    // );
   }
 }
