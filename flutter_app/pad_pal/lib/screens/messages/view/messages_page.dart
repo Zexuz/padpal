@@ -1,28 +1,46 @@
-import 'package:social_repository/social_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/message_cubit.dart';
 import 'message_form.dart';
+import 'message_form_impl.dart';
 
 class MessagesPage extends StatelessWidget {
   const MessagesPage();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Messages'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: BlocProvider(
-          create: (_) => MessageCubit(
-            context.repository<SocialRepository>(),
+
+   return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: [
+              Tab(text: "Mock"),
+              Tab(text: "Real"),
+            ],
           ),
-          child: MessageForm(),
+        ),
+        body: TabBarView(
+          children: [
+            MessageForm(),
+            MessageFormReal()
+          ],
         ),
       ),
     );
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: const Text('Messages'),
+    //   ),
+    //   body: Padding(
+    //     padding: const EdgeInsets.all(8.0),
+    //     child: BlocProvider(
+    //       create: (_) => MessageCubit(
+    //         context.repository<SocialRepository>(),
+    //       ),
+    //       child: MessageForm(),
+    //     ),
+    //   ),
+    // );
   }
 }

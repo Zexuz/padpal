@@ -46,6 +46,7 @@ dependencies:
   cached_network_image: ^2.0.0
   searchable_dropdown: ^1.1.3
   shared_preferences: ^0.5.12+2
+  get_it: ^5.0.1
   authentication_repository:
     path: packages/authentication_repository
   game_repository:

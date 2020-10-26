@@ -79,6 +79,7 @@ class ProfileView extends StatelessWidget {
               radius: displayWidth(context) * 0.15,
               borderWidth: displayWidth(context) * 0.015,
               url: this.profile.imageUrl,
+              name: this.profile.name,
               color: Colors.white,
               onTap: () => _onAvatarTap(context),
             ),

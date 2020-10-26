@@ -5,25 +5,41 @@ import 'package:pad_pal/theme.dart';
 class Avatar extends StatelessWidget {
   Avatar({
     @required this.url,
+    @required this.name,
     @required this.radius,
     @required this.borderWidth,
-    this.fallback,
     this.onTap,
     this.innerBorderWidth = 0,
     this.elevation = 4.0,
     this.color,
   })  : assert(url != null),
+        assert(name != null),
         assert(radius != null),
         assert(borderWidth != null);
 
   final double borderWidth;
   final String url;
+  final String name;
   final double radius;
   final Color color;
   final double elevation;
   final double innerBorderWidth;
   final VoidCallback onTap;
-  final String fallback;
+
+  static String _getInitials(String name) {
+    final parts = name.split(" ");
+    final buffer = StringBuffer();
+
+    if (parts[0].length == 3) {
+      return parts[0];
+    }
+
+    for (var i = 0; i < parts.length.clamp(0, 3); i++) {
+      buffer.write(parts[i][0].toUpperCase());
+    }
+
+    return buffer.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +47,8 @@ class Avatar extends StatelessWidget {
     final color = this.color ?? theme.primaryColor;
 
     final imageWidth = (radius * 2) - (innerBorderWidth + borderWidth);
+
+    final fbSize = 40.0;
 
     return Material(
       elevation: elevation,
@@ -58,15 +76,15 @@ class Avatar extends StatelessWidget {
                   width: imageWidth,
                   child: Builder(
                     builder: (context) {
-                      if (url == "" && fallback != "") {
+                      if (url == "") {
                         return FittedBox(
                           child: SizedBox(
-                            height: 100,
-                            width: 100,
+                            height: fbSize,
+                            width: fbSize,
                             child: CustomPaint(
                               painter: _Paint(
                                 context: context,
-                                text: fallback,
+                                text: _getInitials(name),
                               ),
                             ),
                           ),

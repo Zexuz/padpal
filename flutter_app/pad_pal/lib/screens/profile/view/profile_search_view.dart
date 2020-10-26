@@ -46,7 +46,12 @@ class ProfileSearchView extends StatelessWidget {
                       itemCount: state.profiles.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          leading: Avatar(borderWidth: 0, url: state.profiles[index].imageUrl, radius: radius),
+                          leading: Avatar(
+                            borderWidth: 0,
+                            url: state.profiles[index].imageUrl,
+                            name: state.profiles[index].name,
+                            radius: radius,
+                          ),
                           trailing: Icon(Icons.arrow_forward_ios),
                           title: Text(state.profiles[index].name),
                           subtitle: Text('My new post'),

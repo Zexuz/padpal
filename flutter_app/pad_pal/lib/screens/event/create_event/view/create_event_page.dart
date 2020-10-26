@@ -90,7 +90,12 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                           final profile = state.profiles[index];
 
                           return ListTile(
-                            leading: Avatar(borderWidth: 0, url: profile.imageUrl, radius: radius),
+                            leading: Avatar(
+                              borderWidth: 0,
+                              url: profile.imageUrl,
+                              name: profile.name,
+                              radius: radius,
+                            ),
                             trailing: Icon(Icons.add),
                             title: Text(profile.name),
                             subtitle: Text("Beginner"),
@@ -137,6 +142,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                 user: SpotData.fromProfile(meState.me),
                 radius: radius,
                 offset: offset,
+                onTap: () => {print("tapepd")},
               ));
 
               for (var i = 0; i < state.invitedPlayers.length; i++) {

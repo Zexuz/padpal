@@ -44,6 +44,7 @@ class Notification extends StatelessWidget {
       children: [
         Avatar(
           radius: radius,
+          name: "TODO", // TODO FIX NAME
           url: imgUrl,
           borderWidth: 0,
         ),

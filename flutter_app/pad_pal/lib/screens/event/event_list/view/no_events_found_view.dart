@@ -68,6 +68,7 @@ class NoEventFoundViewState extends State<NoEventFoundView> with SingleTickerPro
                 return Center(
                   child: Avatar(
                     elevation: 0,
+                    name: state.me.name,
                     radius: displayWidth(context) * 0.15,
                     borderWidth: displayWidth(context) * 0.015,
                     url: state.me.imageUrl,

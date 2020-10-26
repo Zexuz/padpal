@@ -63,8 +63,14 @@ class SocialRepository {
 
   final StreamController<String> streamController = StreamController();
 
-  Future<void> sendMessage(String message) async {
-    final call = _chatServiceClient.sendMessage(SendMessageRequest()..content = message);
+  Future<void> sendMessage(String message, String id) async {
+    final callOptions = await _getCallOptions();
+
+    final request = SendMessageRequest()
+      ..content = message
+      ..roomId = id;
+
+    final call = _chatServiceClient.sendMessage(request, options: callOptions);
     await call;
   }
 
@@ -74,8 +80,8 @@ class SocialRepository {
       return List.empty();
     }
 
-    final callOptions =
-        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final callOptions = await _getCallOptions();
+
     final request = SearchForProfileRequest()
       ..searchTerm = searchTerm
       ..options = (SearchForProfileRequest_SearchOptions()..onlyMyFriends = onlySearchForFriends);
@@ -98,8 +104,8 @@ class SocialRepository {
   }
 
   Future<Profile> getMyProfile() async {
-    final callOptions =
-        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final callOptions = await _getCallOptions();
+
     final request = MyProfileRequest();
 
     final call = _chatServiceClient.myProfile(request, options: callOptions);
@@ -118,8 +124,8 @@ class SocialRepository {
   }
 
   Future<Profile> getProfile(int userId) async {
-    final callOptions =
-        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final callOptions = await _getCallOptions();
+
     final request = GetProfileRequest()..userId = userId;
 
     final call = _chatServiceClient.getProfile(request, options: callOptions);
@@ -138,8 +144,8 @@ class SocialRepository {
   }
 
   Future<String> updateProfilePicture(List<int> bytes) async {
-    final callOptions =
-        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final callOptions = await _getCallOptions();
+
     final request = ChangeProfilePictureRequest()..imgData = bytes;
 
     final call = _chatServiceClient.changeProfilePicture(request, options: callOptions);
@@ -148,8 +154,8 @@ class SocialRepository {
   }
 
   Future<void> sendFriendRequest(int toUserId) async {
-    final callOptions =
-        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final callOptions = await _getCallOptions();
+
     final request = SendFriendRequestRequest()..userId = toUserId;
 
     final call = _chatServiceClient.sendFriendRequest(request, options: callOptions);
@@ -161,13 +167,59 @@ class SocialRepository {
       throw Exception("Action can't be UNKNOWN");
     }
 
-    final callOptions =
-        CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
+    final callOptions = await _getCallOptions();
+
     final request = RespondToFriendRequestRequest()
       ..userId = fromUserId
       ..action = action;
 
     final call = _chatServiceClient.respondToFriendRequest(request, options: callOptions);
     await call;
+  }
+
+  Future<String> createRoom(List<int> users) async {
+    final callOptions = await _getCallOptions();
+
+    final request = CreateRoomRequest()
+      ..content = "Hello world!"
+      ..participants.addAll(users);
+
+    final call = _chatServiceClient.createRoom(request, options: callOptions);
+    final response = await call;
+
+    return response.roomId;
+  }
+
+  Future<List<ChatRoom>> getMyChatRooms() async {
+    final callOptions = await _getCallOptions();
+
+    final request = GetRoomsWhereUserIsParticipatingRequest();
+
+    final call = _chatServiceClient.getRoomsWhereUserIsParticipating(request, options: callOptions);
+    final response = await call;
+
+    final rooms = List<ChatRoom>();
+
+    for (var value in response.roomIds) {
+      final room = await getChatRoom(value);
+      rooms.add(room);
+    }
+
+    return rooms;
+  }
+
+  Future<ChatRoom> getChatRoom(String id) async {
+    final callOptions = await _getCallOptions();
+
+    final request = GetRoomRequest()..roomId = id;
+
+    final call = _chatServiceClient.getRoom(request, options: callOptions);
+    final response = await call;
+
+    return response.room;
+  }
+
+  Future<CallOptions> _getCallOptions() async {
+    return CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
   }
 }

@@ -69,7 +69,7 @@ class GameOverviewCard extends StatelessWidget {
           radius: radius,
           borderWidth: padding,
           url: _gameInfo.publicInfo.creator.imgUrl,
-          fallback: "P1",
+          name: "P1",
         ),
         const SizedBox(width: 16),
         Avatar(
@@ -77,7 +77,7 @@ class GameOverviewCard extends StatelessWidget {
           borderWidth: 0,
           url: url,
           color: Colors.white,
-          fallback: "P2",
+          name: "P2",
         ),
         const SizedBox(width: 16),
         DottedAvatar(radius: radius),
