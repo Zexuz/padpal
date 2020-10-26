@@ -5,6 +5,8 @@ import (
 	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/protos/social_v1"
 	"google.golang.org/grpc"
+	"io"
+	"log"
 )
 
 func NewSocialService(conn *grpc.ClientConn) *socialpb.SocialService {
@@ -28,6 +30,7 @@ func NewSocialService(conn *grpc.ClientConn) *socialpb.SocialService {
 		MyProfile:                        client.MyProfile,
 		ChangeProfilePicture:             client.ChangeProfilePicture,
 		GetProfile:                       client.GetProfile,
+		SubscribeToRoom:                  client.SubscribeToRoom,
 	}
 
 	return service
@@ -75,4 +78,27 @@ func (s *chatService) ChangeProfilePicture(ctx context.Context, request *socialp
 
 func (s *chatService) GetProfile(ctx context.Context, request *socialpb.GetProfileRequest) (*socialpb.GetProfileResponse, error) {
 	return s.pbClient.GetProfile(ctx, request)
+}
+
+func (s *chatService) SubscribeToRoom(request *socialpb.SubscribeToRoomRequest, server socialpb.Social_SubscribeToRoomServer) error {
+	microServiceStream, err := s.pbClient.SubscribeToRoom(context.Background(), request)
+	if err != nil {
+		log.Printf("Error subscribing to the microservice")
+		return err
+	}
+	for {
+		roomEvent, err := microServiceStream.Recv()
+		if err == io.EOF {
+			log.Printf("The microserice closed the connection")
+			return microServiceStream.CloseSend()
+		}
+		if err != nil {
+			log.Printf("Error receiving from microservice")
+			return err
+		}
+		if err = server.Send(roomEvent); err != nil {
+			log.Printf("error sending message to client")
+			return err
+		}
+	}
 }
