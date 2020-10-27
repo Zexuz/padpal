@@ -114,6 +114,7 @@ func grpcServe(lis net.Listener) error {
 	}
 
 	serverOps = append(serverOps, interceptors.WithJwtValidationUnaryInterceptor(key))
+	serverOps = append(serverOps, interceptors.WithJwtValidationStreamInterceptor(key))
 	s := grpc.NewServer(serverOps...)
 
 	reflection.Register(s)

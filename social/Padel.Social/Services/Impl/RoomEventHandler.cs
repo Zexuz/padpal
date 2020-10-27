@@ -74,6 +74,7 @@ namespace Padel.Social.Services.Impl
                         {
                             if (!subs.Contains(subId)) continue;
 
+                            _logger.LogInformation($"Removing id {subId}");
                             roomCbs.Remove(subId);
                             if (roomCbs.Count != 0) continue;
                             _cbs.Remove(roomId);
@@ -82,7 +83,7 @@ namespace Padel.Social.Services.Impl
                     }
                 }
 
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                _logger.LogDebug("Worker running at: {time}", DateTimeOffset.Now);
                 await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
             }
         }

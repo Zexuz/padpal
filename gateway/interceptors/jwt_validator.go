@@ -30,19 +30,59 @@ var (
 	ErrInvalidClaims                     = errors.New("claims are wrong")
 )
 
+// https://dev.to/techschoolguru/use-grpc-interceptor-for-authorization-with-jwt-1c5h
 func WithJwtValidationUnaryInterceptor(base64Key string) grpc.ServerOption {
 	key := fmt.Sprintf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----", base64Key)
 	m := &myObject{
 		publicKey: []byte(key),
 	}
-	return grpc.UnaryInterceptor(m.jwtValidator)
+	return grpc.UnaryInterceptor(m.unaryJwtValidator)
+}
+
+func WithJwtValidationStreamInterceptor(base64Key string) grpc.ServerOption {
+	key := fmt.Sprintf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----", base64Key)
+	m := &myObject{
+		publicKey: []byte(key),
+	}
+	return grpc.StreamInterceptor(m.streamJwtValidator)
 }
 
 type myObject struct {
 	publicKey []byte
 }
 
-func (o *myObject) jwtValidator(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func (o *myObject) streamJwtValidator(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	ctx := ss.Context()
+	tokenString, err2 := getTokenFromHeader(ctx)
+	if err2 != nil {
+		return err2
+	}
+
+	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, keyFunc(o.publicKey))
+	if err != nil {
+		return err
+	}
+
+	if !token.Valid {
+		return ErrTokenInvalid
+	}
+
+	if standard, ok := token.Claims.(*jwt.StandardClaims); ok {
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return ErrCouldNotParseIncomingMetadata
+		}
+		md.Set("padpal-user-id", standard.Subject)
+		ctx = metadata.NewOutgoingContext(ctx, md)
+	} else {
+		return ErrInvalidClaims
+	}
+
+	return handler(ctx, ss)
+
+}
+
+func (o *myObject) unaryJwtValidator(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 	option, err := o.getAuthorizationOption(req, info.FullMethod)
 	if err != nil {
 		return nil, err
