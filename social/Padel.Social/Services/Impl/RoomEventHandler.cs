@@ -16,7 +16,7 @@ namespace Padel.Social.Services.Impl
     public class RoomEventHandler : BackgroundService, IRoomEventHandler
     {
         private readonly IGuidGeneratorService                         _guidGeneratorService;
-        private readonly IRoomService                                  _roomService;
+        private readonly IVerifyRoomAccessService                      _verifyRoomAccessService;
         private readonly ILogger<RoomEventHandler>                     _logger;
         private readonly IDictionary<string, IDictionary<string, Sub>> _cbs;
         private readonly TimeSpan                                      _maxConnectionTime;
@@ -32,16 +32,17 @@ namespace Padel.Social.Services.Impl
         public RoomEventHandler
         (
             IGuidGeneratorService     guidGeneratorService,
-            IRoomService              roomService,
             IConfiguration            configuration,
+            IVerifyRoomAccessService  verifyRoomAccessService,
             ILogger<RoomEventHandler> logger
         )
         {
             _guidGeneratorService = guidGeneratorService;
-            _roomService = roomService;
+            _verifyRoomAccessService = verifyRoomAccessService;
             _cbs = new Dictionary<string, IDictionary<string, Sub>>();
             _logger = logger;
-            _maxConnectionTime = TimeSpan.FromMinutes(int.TryParse(configuration["ROOM_EVENT_HANDLER:MAX_CONNECTION_TIME"], out var time) ? time : 10);
+            _maxConnectionTime =
+                TimeSpan.FromMinutes(int.TryParse(configuration["ROOM_EVENT_HANDLER:MAX_CONNECTION_TIME"], out var time) ? time : 10);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -88,7 +89,7 @@ namespace Padel.Social.Services.Impl
 
         public async Task<string> SubscribeToRoom(int userId, string roomId, IAsyncStreamWriter<SubscribeToRoomResponse> callback)
         {
-            await _roomService.VerifyUsersAccessToRoom(new UserId(userId), new RoomId(roomId));
+            await _verifyRoomAccessService.VerifyUsersAccessToRoom(new UserId(userId), new RoomId(roomId));
             var id = _guidGeneratorService.GenerateNewId();
 
             lock (_lock)

@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using FluentAssertions;
 using Padel.Repository.Core.MongoDb;
-using Padel.Social.Exceptions;
 using Padel.Social.Factories;
 using Padel.Social.Models;
 using Padel.Social.Repositories;
 using Padel.Social.Services.Impl;
 using Padel.Social.Services.Interface;
 using Padel.Social.ValueTypes;
+using Padel.Test.Core;
 using Xunit;
 
 namespace Padel.Social.Test.Unit
@@ -22,7 +22,7 @@ namespace Padel.Social.Test.Unit
         private readonly IMongoRepository<Conversation> _fakeConversationRepository;
         private readonly IRoomFactory                   _fakeRoomFactory;
         private readonly IRoomRepository                _fakeRoomRepository;
-        private          IMessageSenderService          _fakeMessageSenderService;
+        private readonly IMessageSenderService          _fakeMessageSenderService;
 
         public RoomServiceTest()
         {
@@ -31,7 +31,7 @@ namespace Padel.Social.Test.Unit
             _fakeRoomFactory = A.Fake<IRoomFactory>();
             _fakeMessageSenderService = A.Fake<IMessageSenderService>();
 
-            _sut = new RoomService(
+            _sut = TestHelper.ActivateWithFakes<RoomService>(
                 _fakeConversationRepository,
                 _fakeRoomFactory,
                 _fakeRoomRepository,
@@ -52,7 +52,7 @@ namespace Padel.Social.Test.Unit
                 Admin = myUserId,
                 RoomId = roomId,
                 Messages = new List<Message>(),
-                Participants = new List<UserId>{myUserId}
+                Participants = new List<UserId> {myUserId}
             };
             expectedRoom.Participants.AddRange(participants);
 
@@ -99,7 +99,7 @@ namespace Padel.Social.Test.Unit
                 Admin = myUserId,
                 RoomId = roomId,
                 Messages = new List<Message>(),
-                Participants = new List<UserId>{myUserId}
+                Participants = new List<UserId> {myUserId}
             };
             expectedRoom.Participants.AddRange(participants);
 
@@ -154,43 +154,6 @@ namespace Padel.Social.Test.Unit
             expectedRoom.Should().BeEquivalentTo(actualRoom);
         }
 
-
-        [Fact]
-        public async Task GetRoom_throws_exception_when_not_found()
-        {
-            var userId = new UserId(4);
-
-            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
-
-            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(Task.FromResult<ChatRoom>(null));
-
-            var ex = await Assert.ThrowsAsync<RoomNotFoundException>(() => _sut.GetRoom(userId, roomId));
-            Assert.Equal(roomId, ex.RoomId);
-        }
-
-        [Fact]
-        public async Task GetRoom_throws_exception_is_user_is_not_a_participant()
-        {
-            var userId = new UserId(4);
-            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
-
-            var chatRoom = new ChatRoom
-            {
-                Admin = new UserId(1337),
-                RoomId = roomId,
-                Messages = new List<Message>(),
-                Participants = new List<UserId>
-                {
-                    new UserId(5748)
-                }
-            };
-
-            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(chatRoom);
-
-            var ex = await Assert.ThrowsAsync<UserIsNotARoomParticipantException>(() => _sut.GetRoom(userId, roomId));
-            Assert.Equal(userId, ex.UserId);
-        }
-        
         [Fact]
         public async Task GetRoomsWhereUserIsParticipant_should_return_rooms_where_user_is_a_participant()
         {
@@ -208,28 +171,5 @@ namespace Padel.Social.Test.Unit
             Assert.Equal(3, rooms.Count);
         }
 
-        [Fact]
-        public async Task GetRoom_returns_chatroom()
-        {
-            var userId = new UserId(4);
-            var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
-
-            var chatRoom = new ChatRoom
-            {
-                Admin = new UserId(1337),
-                RoomId = roomId,
-                Messages = new List<Message>(),
-                Participants = new List<UserId>
-                {
-                    new UserId(4)
-                }
-            };
-
-            A.CallTo(() => _fakeRoomRepository.GetRoom(roomId)).Returns(chatRoom);
-
-            var room = await _sut.GetRoom(userId, roomId);
-
-            Assert.Equal(chatRoom, room);
-        }
     }
 }
