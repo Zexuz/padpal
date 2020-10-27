@@ -7,7 +7,8 @@ namespace Padel.Social.Services.Interface
 {
     public interface IRoomEventHandler
     {
-        void SubscribeToRoom(string roomId, IAsyncStreamWriter<SubscribeToRoomResponse> callback);
-        Task EmitMessage(string     roomId, Message                                     message);
+        Task<string> SubscribeToRoom(int userId, string  roomId, IAsyncStreamWriter<SubscribeToRoomResponse> callback);
+        Task         EmitMessage(string  roomId, Message message);
+        bool         IsIdActive(string   subId);
     }
 }

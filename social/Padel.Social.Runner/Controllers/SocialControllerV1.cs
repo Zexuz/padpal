@@ -91,43 +91,19 @@ namespace Padel.Social.Runner.Controllers
         public override async Task SubscribeToRoom(SubscribeToRoomRequest request, IServerStreamWriter<SubscribeToRoomResponse> responseStream,
             ServerCallContext                                             context)
         {
-            // TODO
-            // Check that I am a participant of that chat room
-            // add a callback that get triggered everytime a new message is received
-            _roomEventHandler.SubscribeToRoom(request.RoomId, responseStream);
-            
-            // TODO Autoclose after x time, the client (App) will need to re-subscribe to the room.
+            var userId = context.GetUserId();
 
-            while (context.Status.StatusCode == StatusCode.OK)
+            var mySubId = await _roomEventHandler.SubscribeToRoom(userId, request.RoomId, responseStream);
+
+            while (true)
             {
+                if (!_roomEventHandler.IsIdActive(mySubId))
+                {
+                    break;
+                }
 
-                Console.WriteLine("Connectino is still alive");
-                await Task.Delay(1000);
-                // var messages = _roomEventHandler.CheckForMessages(request.RoomId);
-                //
-                // if (messages.lenght == 0)
-                // {
-                //     await Task.Delay(1000);
-                //     continue;
-                // }
-                //
-                // await responseStream.WriteAsync(new SubscribeToRoomResponse
-                // {
-                //     
-                // });
+                await Task.Delay(1000 * 10);
             }
-
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
-            Console.WriteLine("CONNECTION STOPED");
         }
 
         public override async Task<GetRoomsWhereUserIsParticipatingResponse> GetRoomsWhereUserIsParticipating(

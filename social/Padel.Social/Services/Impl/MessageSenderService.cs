@@ -37,7 +37,7 @@ namespace Padel.Social.Services.Impl
 
             await _roomRepository.ReplaceOneAsync(room);
             
-            await _roomEventHandler.EmitMessage(room.RoomId.Value, message);
+            _roomEventHandler.EmitMessage(room.RoomId.Value, message);
             
             await _publisher.PublishMessage(
                 new ChatMessageReceived()
