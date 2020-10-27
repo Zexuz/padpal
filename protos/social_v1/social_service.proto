@@ -96,7 +96,7 @@ message SubscribeToRoomRequest {
 
 message SubscribeToRoomResponse {
   oneof room_event{
-    Message messages = 1;
+    Message new_message = 1;
   }
 }
 
