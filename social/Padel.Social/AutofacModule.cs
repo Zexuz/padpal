@@ -41,7 +41,7 @@ namespace Padel.Social
             builder.RegisterType<MessageFactory>().As<IMessageFactory>();
             builder.RegisterType<RoomFactory>().As<IRoomFactory>();
             builder.RegisterType<RoomService>().As<IRoomService>();
-            builder.RegisterType<RoomIdGeneratorService>().As<IRoomIdGeneratorService>();
+            builder.RegisterType<GuidGeneratorService>().As<IGuidGeneratorService>();
             builder.RegisterType<RoomRepository>().As<IRoomRepository>();
             builder.RegisterType<MessageSenderService>().As<IMessageSenderService>();
             builder.RegisterType<ProfileSearchService>().As<IProfileSearchService>();

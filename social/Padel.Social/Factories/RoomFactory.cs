@@ -8,11 +8,11 @@ namespace Padel.Social.Factories
 {
     public class RoomFactory : IRoomFactory
     {
-        private readonly IRoomIdGeneratorService _roomIdGeneratorService;
+        private readonly IGuidGeneratorService _guidGeneratorService;
 
-        public RoomFactory(IRoomIdGeneratorService roomIdGeneratorService)
+        public RoomFactory(IGuidGeneratorService guidGeneratorService)
         {
-            _roomIdGeneratorService = roomIdGeneratorService;
+            _guidGeneratorService = guidGeneratorService;
         }
 
         public ChatRoom NewRoom(UserId userId, IReadOnlyList<UserId> participants)
@@ -28,7 +28,7 @@ namespace Padel.Social.Factories
             return new ChatRoom
             {
                 Admin = userId,
-                RoomId = new RoomId(_roomIdGeneratorService.GenerateNewRoomId()),
+                RoomId = new RoomId(_guidGeneratorService.GenerateNewId()),
                 Messages = new List<Message>(),
                 Participants = allParticipants
             };

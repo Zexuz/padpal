@@ -3,9 +3,9 @@ using Padel.Social.Services.Interface;
 
 namespace Padel.Social.Services.Impl
 {
-    public class RoomIdGeneratorService : IRoomIdGeneratorService
+    public class GuidGeneratorService : IGuidGeneratorService
     {
-        public string GenerateNewRoomId()
+        public string GenerateNewId()
         {
             return Guid.NewGuid().ToString("N");
         }
