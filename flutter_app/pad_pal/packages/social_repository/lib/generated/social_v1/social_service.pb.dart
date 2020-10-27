@@ -169,18 +169,18 @@ class SubscribeToRoomRequest extends $pb.GeneratedMessage {
 }
 
 enum SubscribeToRoomResponse_RoomEvent {
-  messages, 
+  newMessage, 
   notSet
 }
 
 class SubscribeToRoomResponse extends $pb.GeneratedMessage {
   static const $core.Map<$core.int, SubscribeToRoomResponse_RoomEvent> _SubscribeToRoomResponse_RoomEventByTag = {
-    1 : SubscribeToRoomResponse_RoomEvent.messages,
+    1 : SubscribeToRoomResponse_RoomEvent.newMessage,
     0 : SubscribeToRoomResponse_RoomEvent.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubscribeToRoomResponse', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
     ..oo(0, [1])
-    ..aOM<Message>(1, 'messages', subBuilder: Message.create)
+    ..aOM<Message>(1, 'newMessage', subBuilder: Message.create)
     ..hasRequiredFields = false
   ;
 
@@ -203,15 +203,15 @@ class SubscribeToRoomResponse extends $pb.GeneratedMessage {
   void clearRoomEvent() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
-  Message get messages => $_getN(0);
+  Message get newMessage => $_getN(0);
   @$pb.TagNumber(1)
-  set messages(Message v) { setField(1, v); }
+  set newMessage(Message v) { setField(1, v); }
   @$pb.TagNumber(1)
-  $core.bool hasMessages() => $_has(0);
+  $core.bool hasNewMessage() => $_has(0);
   @$pb.TagNumber(1)
-  void clearMessages() => clearField(1);
+  void clearNewMessage() => clearField(1);
   @$pb.TagNumber(1)
-  Message ensureMessages() => $_ensure(0);
+  Message ensureNewMessage() => $_ensure(0);
 }
 
 class GetProfileRequest extends $pb.GeneratedMessage {

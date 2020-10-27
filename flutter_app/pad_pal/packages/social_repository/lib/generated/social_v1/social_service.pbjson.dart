@@ -42,7 +42,7 @@ const SubscribeToRoomRequest$json = const {
 const SubscribeToRoomResponse$json = const {
   '1': 'SubscribeToRoomResponse',
   '2': const [
-    const {'1': 'messages', '3': 1, '4': 1, '5': 11, '6': '.social.v1.Message', '9': 0, '10': 'messages'},
+    const {'1': 'new_message', '3': 1, '4': 1, '5': 11, '6': '.social.v1.Message', '9': 0, '10': 'newMessage'},
   ],
   '8': const [
     const {'1': 'room_event'},
