@@ -13,16 +13,15 @@ docker tag $REPO/identity:"$GIT_HASH" $REPO/identity:latest
 docker tag $REPO/notification:"$GIT_HASH" $REPO/notification:latest
 
 docker push $REPO/social:latest
-#docker push $REPO/identity:latest
-#docker push $REPO/notification:latest
+docker push $REPO/identity:latest
+docker push $REPO/notification:latest
 docker push $REPO/social:"$GIT_HASH"
-#docker push $REPO/identity:"$GIT_HASH"
-#docker push $REPO/notification:"$GIT_HASH"
-#
-docker rmi $REPO/social:latest
-#docker rmi $REPO/identity:latest
-#docker rmi $REPO/notification:latest
-docker rmi $REPO/social:"$GIT_HASH"
-#docker rmi $REPO/identity:"$GIT_HASH"
-#docker rmi $REPO/notification:"$GIT_HASH"
+docker push $REPO/identity:"$GIT_HASH"
+docker push $REPO/notification:"$GIT_HASH"
 
+docker rmi $REPO/social:latest
+docker rmi $REPO/identity:latest
+docker rmi $REPO/notification:latest
+docker rmi $REPO/social:"$GIT_HASH"
+docker rmi $REPO/identity:"$GIT_HASH"
+docker rmi $REPO/notification:"$GIT_HASH"
