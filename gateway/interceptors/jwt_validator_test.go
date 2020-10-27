@@ -117,13 +117,13 @@ func Test_myObject_jwtValidator(t *testing.T) {
 			o := &myObject{
 				publicKey: tt.fields.publicKey,
 			}
-			gotResp, err := o.jwtValidator(tt.args.ctx, tt.args.req, tt.args.info, tt.args.handler)
+			gotResp, err := o.unaryJwtValidator(tt.args.ctx, tt.args.req, tt.args.info, tt.args.handler)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("jwtValidator() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("unaryJwtValidator() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(gotResp, tt.wantResp) {
-				t.Errorf("jwtValidator() gotResp = %v, want %v", gotResp, tt.wantResp)
+				t.Errorf("unaryJwtValidator() gotResp = %v, want %v", gotResp, tt.wantResp)
 			}
 		})
 	}

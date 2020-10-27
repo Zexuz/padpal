@@ -18,9 +18,9 @@ namespace Padel.Social.Services.Impl
         private readonly IRoomEventHandler _roomEventHandler;
 
         public MessageSenderService(
-            IRoomRepository roomRepository,
-            IMessageFactory messageFactory,
-            IPublisher      publisher,
+            IRoomRepository   roomRepository,
+            IMessageFactory   messageFactory,
+            IPublisher        publisher,
             IRoomEventHandler roomEventHandler
         )
         {
@@ -36,9 +36,9 @@ namespace Padel.Social.Services.Impl
             room.Messages.Add(message);
 
             await _roomRepository.ReplaceOneAsync(room);
-            
-            _roomEventHandler.EmitMessage(room.RoomId.Value, message);
-            
+
+            await _roomEventHandler.EmitMessage(room.RoomId.Value, message);
+
             await _publisher.PublishMessage(
                 new ChatMessageReceived()
                 {

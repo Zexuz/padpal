@@ -2,9 +2,11 @@ package social
 
 import (
 	"context"
+	"errors"
 	"github.com/mkdir-sweden/padpal/gateway/hc"
 	"github.com/mkdir-sweden/padpal/gateway/protos/social_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"io"
 	"log"
 )
@@ -81,7 +83,16 @@ func (s *chatService) GetProfile(ctx context.Context, request *socialpb.GetProfi
 }
 
 func (s *chatService) SubscribeToRoom(request *socialpb.SubscribeToRoomRequest, server socialpb.Social_SubscribeToRoomServer) error {
-	microServiceStream, err := s.pbClient.SubscribeToRoom(context.Background(), request)
+	ctx := server.Context()
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return errors.New("can't get ctx from incoming")
+	}
+	header := metadata.Pairs("padpal-user-id", md.Get("padpal-user-id")[0])
+	ctx = metadata.NewOutgoingContext(ctx, header)
+
+	microServiceStream, err := s.pbClient.SubscribeToRoom(ctx, request)
+
 	if err != nil {
 		log.Printf("Error subscribing to the microservice")
 		return err

@@ -19,17 +19,17 @@ namespace Padel.Social.Test.Unit
         private readonly RoomEventHandler                            _sut;
         private readonly IAsyncStreamWriter<SubscribeToRoomResponse> _fakeAsyncStreamWriter;
         private readonly IGuidGeneratorService                       _fakeGuidGeneratorService;
-        private readonly IRoomService                                _fakeRoomService;
+        private readonly IVerifyRoomAccessService                    _fakeVerifyRoomAccessService;
 
         public RoomEventHandlerTest()
         {
             _fakeAsyncStreamWriter = A.Fake<IAsyncStreamWriter<SubscribeToRoomResponse>>();
             _fakeGuidGeneratorService = A.Fake<IGuidGeneratorService>();
-            _fakeRoomService = A.Fake<IRoomService>();
+            _fakeVerifyRoomAccessService = A.Fake<IVerifyRoomAccessService>();
 
             var fakeConfig = A.Fake<IConfiguration>();
             A.CallTo(() => fakeConfig["ROOM_EVENT_HANDLER:MAX_CONNECTION_TIME"]).Returns("0");
-            _sut = TestHelper.ActivateWithFakes<RoomEventHandler>(fakeConfig, _fakeGuidGeneratorService, _fakeRoomService);
+            _sut = TestHelper.ActivateWithFakes<RoomEventHandler>(fakeConfig, _fakeGuidGeneratorService, _fakeVerifyRoomAccessService);
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace Padel.Social.Test.Unit
             var userId = 4;
             var roomId = "someRoomId";
 
-            A.CallTo(() => _fakeRoomService.VerifyUsersAccessToRoom(
+            A.CallTo(() => _fakeVerifyRoomAccessService.VerifyUsersAccessToRoom(
                 A<UserId>.That.Matches(id => id.Value == userId),
                 A<RoomId>.That.Matches(id => id.Value == roomId)
             )).Throws(new UserIsNotARoomParticipantException(new UserId(userId)));
@@ -77,7 +77,7 @@ namespace Padel.Social.Test.Unit
 
             A.CallTo(() => _fakeGuidGeneratorService.GenerateNewId()).MustNotHaveHappened();
 
-            A.CallTo(() => _fakeRoomService.VerifyUsersAccessToRoom(A<UserId>._, A<RoomId>._)).MustHaveHappened();
+            A.CallTo(() => _fakeVerifyRoomAccessService.VerifyUsersAccessToRoom(A<UserId>._, A<RoomId>._)).MustHaveHappened();
         }
 
         [Fact]

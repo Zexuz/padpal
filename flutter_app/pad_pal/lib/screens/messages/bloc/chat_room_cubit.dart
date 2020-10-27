@@ -12,11 +12,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     @required this.chatRoomId,
   })  : assert(socialRepository != null),
         super(ChatRoomState(messages: List.empty())) {
-    Stream.periodic(Duration(seconds: 1), (_) => socialRepository.getChatRoom(chatRoomId))
-        .asyncMap((event) async => await event)
-        .listen((event) {
-      emit(state.copyWith(messages: event.messages));
-    });
+    _startListen();
   }
 
   final SocialRepository socialRepository;
@@ -26,8 +22,21 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     // TODO
     // Send a request to the server, telling it that I was last seen now
   }
-//
-// Future<void> getMessagesForChatRoom() async {
-// }
 
+  Future<void> _startListen() async {
+    final room = await socialRepository.getChatRoom(chatRoomId);
+    emit(state.copyWith(messages: room.messages));
+
+    var stream = await socialRepository.subscribeToRoomEvents(chatRoomId);
+
+    stream.listen((event) {
+      switch (event.whichRoomEvent()) {
+        case SubscribeToRoomResponse_RoomEvent.newMessage:
+          emit(state.copyWith(messages: List<Message>.from([...state.messages, event.newMessage])));
+          break;
+        case SubscribeToRoomResponse_RoomEvent.notSet:
+          throw Exception("RoomEvent not set!");
+      }
+    });
+  }
 }

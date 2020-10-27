@@ -38,6 +38,7 @@ namespace Padel.Social
             }).As<IMongoDbSettings>();
             builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>));
 
+
             builder.RegisterType<UserSignUpMessageProcessor>().As<IMessageProcessor>();
             builder.RegisterType<MessageFactory>().As<IMessageFactory>();
             builder.RegisterType<RoomFactory>().As<IRoomFactory>();
@@ -54,6 +55,7 @@ namespace Padel.Social
             builder.RegisterType<AwsProfilePictureService>().As<IProfilePictureService>();
             builder.RegisterType<JoinGameService>().As<IJoinGameService>();
             builder.RegisterType<PublicGameInfoBuilder>().As<IPublicGameInfoBuilder>();
+            builder.RegisterType<VerifyRoomAccessService>().As<IVerifyRoomAccessService>();
             builder.RegisterType<RoomEventHandler>().As<IRoomEventHandler>().As<IHostedService>().SingleInstance();
         }
     }
