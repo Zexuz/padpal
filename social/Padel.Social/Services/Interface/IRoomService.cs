@@ -10,5 +10,6 @@ namespace Padel.Social.Services.Interface
         Task<ChatRoom>                      CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants);
         Task<ChatRoom>                      GetRoom(UserId    userId,      RoomId roomId);
         Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId);
+        Task<ChatRoom> VerifyUsersAccessToRoom(UserId userId, RoomId roomId);
     }
 }

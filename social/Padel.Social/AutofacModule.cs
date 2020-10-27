@@ -3,6 +3,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Padel.Queue;
 using Padel.Repository.Core.MongoDb;
 using Padel.Social.Factories;
@@ -41,7 +42,7 @@ namespace Padel.Social
             builder.RegisterType<MessageFactory>().As<IMessageFactory>();
             builder.RegisterType<RoomFactory>().As<IRoomFactory>();
             builder.RegisterType<RoomService>().As<IRoomService>();
-            builder.RegisterType<RoomIdGeneratorService>().As<IRoomIdGeneratorService>();
+            builder.RegisterType<GuidGeneratorService>().As<IGuidGeneratorService>();
             builder.RegisterType<RoomRepository>().As<IRoomRepository>();
             builder.RegisterType<MessageSenderService>().As<IMessageSenderService>();
             builder.RegisterType<ProfileSearchService>().As<IProfileSearchService>();
@@ -53,6 +54,7 @@ namespace Padel.Social
             builder.RegisterType<AwsProfilePictureService>().As<IProfilePictureService>();
             builder.RegisterType<JoinGameService>().As<IJoinGameService>();
             builder.RegisterType<PublicGameInfoBuilder>().As<IPublicGameInfoBuilder>();
+            builder.RegisterType<RoomEventHandler>().As<IRoomEventHandler>().As<IHostedService>().SingleInstance();
         }
     }
 }

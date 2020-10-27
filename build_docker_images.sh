@@ -25,4 +25,3 @@ docker rmi $REPO/notification:latest
 docker rmi $REPO/social:"$GIT_HASH"
 docker rmi $REPO/identity:"$GIT_HASH"
 docker rmi $REPO/notification:"$GIT_HASH"
-

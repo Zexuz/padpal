@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
@@ -20,6 +21,7 @@ namespace Padel.Social.Runner.Controllers
         private readonly IFriendRequestService  _friendRequestService;
         private readonly IProfileRepository     _profileMongoRepository;
         private readonly IProfilePictureService _profilePictureService;
+        private readonly IRoomEventHandler      _roomEventHandler;
 
         public SocialControllerV1
         (
@@ -28,7 +30,8 @@ namespace Padel.Social.Runner.Controllers
             IProfileSearchService  profileSearchService,
             IFriendRequestService  friendRequestService,
             IProfileRepository     profileMongoRepository,
-            IProfilePictureService profilePictureService
+            IProfilePictureService profilePictureService,
+            IRoomEventHandler      roomEventHandler
         )
         {
             _messageSenderService = messageSenderService;
@@ -37,6 +40,7 @@ namespace Padel.Social.Runner.Controllers
             _friendRequestService = friendRequestService;
             _profileMongoRepository = profileMongoRepository;
             _profilePictureService = profilePictureService;
+            _roomEventHandler = roomEventHandler;
         }
 
         public override async Task<CreateRoomResponse> CreateRoom(CreateRoomRequest request, ServerCallContext context)
@@ -82,6 +86,24 @@ namespace Padel.Social.Runner.Controllers
                     GameId = "",
                 }
             };
+        }
+
+        public override async Task SubscribeToRoom(SubscribeToRoomRequest request, IServerStreamWriter<SubscribeToRoomResponse> responseStream,
+            ServerCallContext                                             context)
+        {
+            var userId = context.GetUserId();
+
+            var mySubId = await _roomEventHandler.SubscribeToRoom(userId, request.RoomId, responseStream);
+
+            while (true)
+            {
+                if (!_roomEventHandler.IsIdActive(mySubId))
+                {
+                    break;
+                }
+
+                await Task.Delay(1000 * 10);
+            }
         }
 
         public override async Task<GetRoomsWhereUserIsParticipatingResponse> GetRoomsWhereUserIsParticipating(

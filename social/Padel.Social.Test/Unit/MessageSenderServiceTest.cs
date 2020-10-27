@@ -8,6 +8,7 @@ using Padel.Social.Factories;
 using Padel.Social.Repositories;
 using Padel.Social.Services.Impl;
 using Padel.Social.ValueTypes;
+using Padel.Test.Core;
 using Xunit;
 using ChatRoom = Padel.Social.Models.ChatRoom;
 using Message = Padel.Social.Models.Message;
@@ -19,7 +20,7 @@ namespace Padel.Social.Test.Unit
         private readonly MessageSenderService _sut;
         private readonly IRoomRepository      _fakeRoomRepository;
         private readonly IMessageFactory      _fakeMessageFactory;
-        private          IPublisher           _fakePublisher;
+        private readonly IPublisher           _fakePublisher;
 
         public MessageSenderServiceTest()
         {
@@ -27,7 +28,7 @@ namespace Padel.Social.Test.Unit
             _fakeMessageFactory = A.Fake<IMessageFactory>();
             _fakePublisher = A.Fake<IPublisher>();
 
-            _sut = new MessageSenderService(_fakeRoomRepository, _fakeMessageFactory, _fakePublisher);
+            _sut = TestHelper.ActivateWithFakes<MessageSenderService>(_fakeRoomRepository, _fakeMessageFactory, _fakePublisher);
         }
 
         [Fact]

@@ -37,6 +37,11 @@ service Social {
       shouldValidate:true,
     };
   }
+  rpc SubscribeToRoom (SubscribeToRoomRequest) returns (stream SubscribeToRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
   rpc CreateRoom (CreateRoomRequest) returns (CreateRoomResponse) {
     option (descriptors.authorization) = {
       shouldValidate:true,
@@ -84,6 +89,17 @@ service Social {
     };
   }
 }
+
+message SubscribeToRoomRequest {
+  string roomId = 1;
+}
+
+message SubscribeToRoomResponse {
+  oneof room_event{
+    Message new_message = 1;
+  }
+}
+
 
 message GetProfileRequest {
   int32 userId = 1;

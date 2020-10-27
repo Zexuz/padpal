@@ -11,13 +11,13 @@ namespace Padel.Social.Test.Unit
     public class RoomFactoryTest
     {
         private readonly RoomFactory      _sut;
-        private readonly IRoomIdGeneratorService _fakeRoomIdGeneratorService;
+        private readonly IGuidGeneratorService _fakeGuidGeneratorService;
 
         public RoomFactoryTest()
         {
-            _fakeRoomIdGeneratorService = A.Fake<IRoomIdGeneratorService>();
+            _fakeGuidGeneratorService = A.Fake<IGuidGeneratorService>();
 
-            _sut = new RoomFactory(_fakeRoomIdGeneratorService);
+            _sut = new RoomFactory(_fakeGuidGeneratorService);
         }
 
 
@@ -27,7 +27,7 @@ namespace Padel.Social.Test.Unit
         [InlineData(78, 2, 5478, 46587)]
         public void NewRoom_should_create_room(params int[] userIds)
         {
-            A.CallTo(() => _fakeRoomIdGeneratorService.GenerateNewRoomId()).Returns("SomeRoomId");
+            A.CallTo(() => _fakeGuidGeneratorService.GenerateNewId()).Returns("SomeRoomId");
             var userId = new UserId(4);
 
             var room = _sut.NewRoom(userId, userIds.Select(i => new UserId(i)).ToList());
@@ -43,7 +43,7 @@ namespace Padel.Social.Test.Unit
         [InlineData(8, 8)]
         public void NewRoom_should_throw_if_adding_same_user_twice(params int[] userIds)
         {
-            A.CallTo(() => _fakeRoomIdGeneratorService.GenerateNewRoomId()).Returns("SomeRoomId");
+            A.CallTo(() => _fakeGuidGeneratorService.GenerateNewId()).Returns("SomeRoomId");
             var userId = new UserId(4);
 
             Assert.Throws<ParticipantAlreadyAddedException>(() => _sut.NewRoom(userId, userIds.Select(i => new UserId(i)).ToList()));

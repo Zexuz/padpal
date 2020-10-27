@@ -66,7 +66,7 @@ namespace Padel.Social.Services.Impl
             return await _roomRepository.GetRoomsWhereUsersIsParticipant(userId);
         }
 
-        private async Task<ChatRoom> VerifyUsersAccessToRoom(UserId userId, RoomId roomId)
+        public async Task<ChatRoom> VerifyUsersAccessToRoom(UserId userId, RoomId roomId)
         {
             var room = await _roomRepository.GetRoom(roomId);
             if (room == null) // ROOM ID is null

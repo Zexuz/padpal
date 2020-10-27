@@ -20,6 +20,12 @@ class SocialClient extends $grpc.Client {
           ($0.SendMessageRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.SendMessageResponse.fromBuffer(value));
+  static final _$subscribeToRoom =
+      $grpc.ClientMethod<$0.SubscribeToRoomRequest, $0.SubscribeToRoomResponse>(
+          '/social.v1.Social/SubscribeToRoom',
+          ($0.SubscribeToRoomRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.SubscribeToRoomResponse.fromBuffer(value));
   static final _$createRoom =
       $grpc.ClientMethod<$0.CreateRoomRequest, $0.CreateRoomResponse>(
           '/social.v1.Social/CreateRoom',
@@ -87,6 +93,15 @@ class SocialClient extends $grpc.Client {
         _$sendMessage, $async.Stream.fromIterable([request]),
         options: options);
     return $grpc.ResponseFuture(call);
+  }
+
+  $grpc.ResponseStream<$0.SubscribeToRoomResponse> subscribeToRoom(
+      $0.SubscribeToRoomRequest request,
+      {$grpc.CallOptions options}) {
+    final call = $createCall(
+        _$subscribeToRoom, $async.Stream.fromIterable([request]),
+        options: options);
+    return $grpc.ResponseStream(call);
   }
 
   $grpc.ResponseFuture<$0.CreateRoomResponse> createRoom(
@@ -182,6 +197,15 @@ abstract class SocialServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $0.SendMessageRequest.fromBuffer(value),
             ($0.SendMessageResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.SubscribeToRoomRequest,
+            $0.SubscribeToRoomResponse>(
+        'SubscribeToRoom',
+        subscribeToRoom_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) =>
+            $0.SubscribeToRoomRequest.fromBuffer(value),
+        ($0.SubscribeToRoomResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.CreateRoomRequest, $0.CreateRoomResponse>(
         'CreateRoom',
         createRoom_Pre,
@@ -263,6 +287,12 @@ abstract class SocialServiceBase extends $grpc.Service {
     return sendMessage(call, await request);
   }
 
+  $async.Stream<$0.SubscribeToRoomResponse> subscribeToRoom_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.SubscribeToRoomRequest> request) async* {
+    yield* subscribeToRoom(call, await request);
+  }
+
   $async.Future<$0.CreateRoomResponse> createRoom_Pre($grpc.ServiceCall call,
       $async.Future<$0.CreateRoomRequest> request) async {
     return createRoom(call, await request);
@@ -317,6 +347,8 @@ abstract class SocialServiceBase extends $grpc.Service {
 
   $async.Future<$0.SendMessageResponse> sendMessage(
       $grpc.ServiceCall call, $0.SendMessageRequest request);
+  $async.Stream<$0.SubscribeToRoomResponse> subscribeToRoom(
+      $grpc.ServiceCall call, $0.SubscribeToRoomRequest request);
   $async.Future<$0.CreateRoomResponse> createRoom(
       $grpc.ServiceCall call, $0.CreateRoomRequest request);
   $async.Future<$0.GetRoomsWhereUserIsParticipatingResponse>

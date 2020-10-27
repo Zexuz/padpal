@@ -137,6 +137,83 @@ class FriendRequestAccepted extends $pb.GeneratedMessage {
   void clearUserThatRequested() => clearField(2);
 }
 
+class SubscribeToRoomRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubscribeToRoomRequest', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
+    ..aOS(1, 'roomId', protoName: 'roomId')
+    ..hasRequiredFields = false
+  ;
+
+  SubscribeToRoomRequest._() : super();
+  factory SubscribeToRoomRequest() => create();
+  factory SubscribeToRoomRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SubscribeToRoomRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  SubscribeToRoomRequest clone() => SubscribeToRoomRequest()..mergeFromMessage(this);
+  SubscribeToRoomRequest copyWith(void Function(SubscribeToRoomRequest) updates) => super.copyWith((message) => updates(message as SubscribeToRoomRequest));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SubscribeToRoomRequest create() => SubscribeToRoomRequest._();
+  SubscribeToRoomRequest createEmptyInstance() => create();
+  static $pb.PbList<SubscribeToRoomRequest> createRepeated() => $pb.PbList<SubscribeToRoomRequest>();
+  @$core.pragma('dart2js:noInline')
+  static SubscribeToRoomRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SubscribeToRoomRequest>(create);
+  static SubscribeToRoomRequest _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get roomId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set roomId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRoomId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRoomId() => clearField(1);
+}
+
+enum SubscribeToRoomResponse_RoomEvent {
+  newMessage, 
+  notSet
+}
+
+class SubscribeToRoomResponse extends $pb.GeneratedMessage {
+  static const $core.Map<$core.int, SubscribeToRoomResponse_RoomEvent> _SubscribeToRoomResponse_RoomEventByTag = {
+    1 : SubscribeToRoomResponse_RoomEvent.newMessage,
+    0 : SubscribeToRoomResponse_RoomEvent.notSet
+  };
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubscribeToRoomResponse', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
+    ..oo(0, [1])
+    ..aOM<Message>(1, 'newMessage', subBuilder: Message.create)
+    ..hasRequiredFields = false
+  ;
+
+  SubscribeToRoomResponse._() : super();
+  factory SubscribeToRoomResponse() => create();
+  factory SubscribeToRoomResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SubscribeToRoomResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  SubscribeToRoomResponse clone() => SubscribeToRoomResponse()..mergeFromMessage(this);
+  SubscribeToRoomResponse copyWith(void Function(SubscribeToRoomResponse) updates) => super.copyWith((message) => updates(message as SubscribeToRoomResponse));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SubscribeToRoomResponse create() => SubscribeToRoomResponse._();
+  SubscribeToRoomResponse createEmptyInstance() => create();
+  static $pb.PbList<SubscribeToRoomResponse> createRepeated() => $pb.PbList<SubscribeToRoomResponse>();
+  @$core.pragma('dart2js:noInline')
+  static SubscribeToRoomResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SubscribeToRoomResponse>(create);
+  static SubscribeToRoomResponse _defaultInstance;
+
+  SubscribeToRoomResponse_RoomEvent whichRoomEvent() => _SubscribeToRoomResponse_RoomEventByTag[$_whichOneof(0)];
+  void clearRoomEvent() => clearField($_whichOneof(0));
+
+  @$pb.TagNumber(1)
+  Message get newMessage => $_getN(0);
+  @$pb.TagNumber(1)
+  set newMessage(Message v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasNewMessage() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearNewMessage() => clearField(1);
+  @$pb.TagNumber(1)
+  Message ensureNewMessage() => $_ensure(0);
+}
+
 class GetProfileRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('GetProfileRequest', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
     ..a<$core.int>(1, 'userId', $pb.PbFieldType.O3, protoName: 'userId')
