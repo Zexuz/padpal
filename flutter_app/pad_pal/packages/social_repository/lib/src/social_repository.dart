@@ -219,6 +219,17 @@ class SocialRepository {
     return response.room;
   }
 
+  Future<Stream<SubscribeToRoomResponse>> subscribeToRoomEvents(String id) async {
+    final callOptions = await _getCallOptions();
+
+    final request = SubscribeToRoomRequest()..roomId = id;
+
+    final call = _chatServiceClient.subscribeToRoom(request, options: callOptions);
+    final response = await call;
+
+    return response;
+  }
+
   Future<CallOptions> _getCallOptions() async {
     return CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
   }
