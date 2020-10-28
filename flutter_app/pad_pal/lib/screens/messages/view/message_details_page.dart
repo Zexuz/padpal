@@ -92,11 +92,19 @@ class _MessageDetailsState extends State<MessageDetails> {
   void initState() {
     super.initState();
     _loadRoom();
+
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        return;
+      }
+      _scrollToBottom();
+    });
   }
 
   Future<void> _onSend() async {
     _textController.clear();
     _focusNode.unfocus();
+    _scrollToBottom();
     final socialRepo = RepositoryProvider.of<SocialRepository>(context);
     await socialRepo.sendMessage(inputValue, room.id);
   }
@@ -108,9 +116,12 @@ class _MessageDetailsState extends State<MessageDetails> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await new Future.delayed(const Duration(milliseconds: 250), () => "1");
+      final bottom = MediaQuery.of(context).viewInsets.bottom;
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent + bottom,
           duration: Duration(milliseconds: 500), curve: Curves.linearToEaseOut);
+      print(bottom);
     });
   }
 
@@ -120,62 +131,72 @@ class _MessageDetailsState extends State<MessageDetails> {
       return Center(child: const Text("Loading..."));
     }
 
-    return Column(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
-              buildWhen: (previous, current) => previous.messages.length != current.messages.length,
-              builder: (context, state) {
-                _scrollToBottom();
-                context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
+                buildWhen: (previous, current) => previous.messages.length != current.messages.length,
+                builder: (context, state) {
+                  _scrollToBottom();
+                  context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  itemCount: state.messages.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 24),
-                      child: Column(
-                        children: [
-                          ChatMessage(
-                            messages: state.messages,
-                            index: index,
-                            users: room.participants,
-                            myUserId: myUserId,
-                          ),
-                          LastSeen(
-                            messages: state.messages,
-                            index: index,
-                            users: room.participants,
-                            myUserId: myUserId,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
+                  return ListView.builder(
+                    controller: _scrollController,
+                    itemCount: state.messages.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 24),
+                        child: Column(
+                          children: [
+                            ChatMessage(
+                              messages: state.messages,
+                              index: index,
+                              users: room.participants,
+                              myUserId: myUserId,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ChatTextInput(
-            controller: _textController,
-            focusNode: _focusNode,
-            onChanged: (value) => _onInputChanged(value),
-            onSendTap: _onSend,
-          ),
-        )
-      ],
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ChatTextInput(
+              controller: _textController,
+              focusNode: _focusNode,
+              onChanged: (value) => _onInputChanged(value),
+              onSendTap: _onSend,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
 
-class LastSeen extends StatefulWidget {
-  LastSeen({
+class LastSeen extends StatelessWidget {
+  const LastSeen({
+    Key key,
+    @required Message message,
+    @required Message nextMessage,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class LastSeenOld extends StatefulWidget {
+  LastSeenOld({
     Key key,
     @required this.users,
     @required this.messages,
@@ -189,10 +210,10 @@ class LastSeen extends StatefulWidget {
   final myUserId;
 
   @override
-  _LastSeenState createState() => _LastSeenState();
+  _LastSeenOldState createState() => _LastSeenOldState();
 }
 
-class _LastSeenState extends State<LastSeen> with SingleTickerProviderStateMixin {
+class _LastSeenOldState extends State<LastSeenOld> with SingleTickerProviderStateMixin {
   Animation<double> animation;
   AnimationController controller;
 
@@ -243,7 +264,7 @@ class _LastSeenState extends State<LastSeen> with SingleTickerProviderStateMixin
       final user = widget.users[i];
       if (user.user.userId == widget.myUserId) continue;
 
-      if (user.lastSeenTimestamp > messageTime && user.lastSeenTimestamp < nextMessageTime) {
+      if (user.lastSeenTimestamp >= messageTime && user.lastSeenTimestamp <= nextMessageTime) {
         avatars.children.add(_buildAvatar(user));
       }
     }
@@ -364,6 +385,16 @@ class _ChatMessageState extends State<ChatMessage> {
               ],
             ),
           ],
+        ),
+        BlocBuilder<ChatRoomCubit, ChatRoomState>(
+          builder: (context, state) {
+            return LastSeenOld(
+              messages: state.messages,
+              index: widget.index,
+              users: state.participants,
+              myUserId: widget.myUserId,
+            );
+          },
         ),
       ],
     );

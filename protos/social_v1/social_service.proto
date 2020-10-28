@@ -108,7 +108,13 @@ message SubscribeToRoomRequest {
 message SubscribeToRoomResponse {
   oneof room_event{
     Message new_message = 1;
+    LastSeen last_seen_updated = 2;
   }
+}
+
+message LastSeen{
+  int32 userId = 1;
+  int64 timestamp = 2;
 }
 
 

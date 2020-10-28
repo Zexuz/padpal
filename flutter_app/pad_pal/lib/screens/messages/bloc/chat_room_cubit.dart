@@ -11,7 +11,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     @required this.socialRepository,
     @required this.chatRoomId,
   })  : assert(socialRepository != null),
-        super(ChatRoomState(messages: List.empty())) {
+        super(ChatRoomState(messages: List.empty(), participants: List.empty())) {
     _startListen();
   }
 
@@ -30,11 +30,29 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
     stream.listen((event) {
       switch (event.whichRoomEvent()) {
+        case SubscribeToRoomResponse_RoomEvent.notSet:
+          throw Exception("RoomEvent not set!");
         case SubscribeToRoomResponse_RoomEvent.newMessage:
           emit(state.copyWith(messages: List<Message>.from([...state.messages, event.newMessage])));
           break;
-        case SubscribeToRoomResponse_RoomEvent.notSet:
-          throw Exception("RoomEvent not set!");
+        case SubscribeToRoomResponse_RoomEvent.lastSeenUpdated:
+          final ev = event.lastSeenUpdated;
+          final participants = List<Participant>();
+
+          for (var i = 0; i < room.participants.length; i++) {
+            final participant = room.participants[i];
+            if (ev.userId == participant.user.userId) {
+              participants.add(Participant()
+                ..user = participant.user
+                ..lastSeenTimestamp = ev.timestamp);
+              continue;
+            }
+
+            participants.add(participant);
+          }
+
+          emit(state.copyWith(participants: participants));
+          break;
       }
     });
   }

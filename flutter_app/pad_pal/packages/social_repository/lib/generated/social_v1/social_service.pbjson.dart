@@ -54,9 +54,18 @@ const SubscribeToRoomResponse$json = const {
   '1': 'SubscribeToRoomResponse',
   '2': const [
     const {'1': 'new_message', '3': 1, '4': 1, '5': 11, '6': '.social.v1.Message', '9': 0, '10': 'newMessage'},
+    const {'1': 'last_seen_updated', '3': 2, '4': 1, '5': 11, '6': '.social.v1.LastSeen', '9': 0, '10': 'lastSeenUpdated'},
   ],
   '8': const [
     const {'1': 'room_event'},
+  ],
+};
+
+const LastSeen$json = const {
+  '1': 'LastSeen',
+  '2': const [
+    const {'1': 'userId', '3': 1, '4': 1, '5': 5, '10': 'userId'},
+    const {'1': 'timestamp', '3': 2, '4': 1, '5': 3, '10': 'timestamp'},
   ],
 };
 

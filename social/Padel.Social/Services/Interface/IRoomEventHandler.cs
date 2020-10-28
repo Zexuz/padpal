@@ -10,5 +10,6 @@ namespace Padel.Social.Services.Interface
         Task<string> SubscribeToRoom(int userId, string  roomId, IAsyncStreamWriter<SubscribeToRoomResponse> callback);
         Task         EmitMessage(string  roomId, Message message);
         bool         IsIdActive(string   subId);
+        Task         EmitNewLastSeen(int userId, string roomId);
     }
 }
