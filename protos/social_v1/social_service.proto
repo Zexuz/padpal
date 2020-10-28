@@ -95,7 +95,9 @@ service Social {
   }
 }
 
-message UpdateLastSeenInRoomRequest {}
+message UpdateLastSeenInRoomRequest {
+  string roomId = 1;
+}
 
 message UpdateLastSeenInRoomResponse {}
 

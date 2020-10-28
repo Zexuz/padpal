@@ -125,6 +125,13 @@ namespace Padel.Social.Runner.Controllers
             return response;
         }
 
+        public override async Task<UpdateLastSeenInRoomResponse> UpdateLastSeenInRoom(UpdateLastSeenInRoomRequest request, ServerCallContext context)
+        {
+            var userId = new UserId(context.GetUserId());
+            await _roomService.UpdateLastSeenInRoom(userId, new RoomId(request.RoomId));
+            return new UpdateLastSeenInRoomResponse();
+        }
+
         public override async Task<SearchForProfileResponse> SearchForProfile(SearchForProfileRequest request, ServerCallContext context)
         {
             var userId = context.GetUserId();
