@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/avatar/avatar.dart';
+import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/screens/messages/bloc/chat_room_cubit.dart';
+import 'package:pad_pal/screens/messages/view/slide_up_and_down_animation.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:social_repository/generated/common_v1/models.pb.dart';
 import 'package:social_repository/generated/social_v1/social_service.pb.dart';
@@ -44,143 +46,222 @@ class MessageDetailsPage extends StatelessWidget {
           socialRepository: RepositoryProvider.of<SocialRepository>(context),
           chatRoomId: roomId,
         ),
-        child: MessageDetailsOld(
-          roomId: roomId,
-        ),
+        child: ChatRoom(),
       ),
     );
   }
 }
 
-class MessageDetailsOld extends StatefulWidget {
-  const MessageDetailsOld({this.roomId});
+class ChatRoom extends StatelessWidget {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
-  final String roomId;
-
-  @override
-  _MessageDetailsOldState createState() => _MessageDetailsOldState();
-}
-
-class _MessageDetailsOldState extends State<MessageDetailsOld> {
-  ScrollController _scrollController = ScrollController();
-  TextEditingController _textController = TextEditingController();
-  FocusNode _focusNode = FocusNode();
-
-  var isLoading = true;
-  ChatRoom room;
-  int myUserId;
-  String inputValue = "";
-
-  Future<void> _loadRoom() async {
-    final socialRepo = RepositoryProvider.of<SocialRepository>(context);
-    final room = await socialRepo.getChatRoom(widget.roomId);
-    final me = await socialRepo.getMyProfile();
-
-    setState(() {
-      this.room = room;
-      myUserId = me.userId;
-      isLoading = false;
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 500), curve: Curves.linearToEaseOut);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadRoom();
-
-    _focusNode.addListener(() {
-      if (!_focusNode.hasFocus) {
-        return;
-      }
-      _scrollToBottom();
-    });
-  }
-
-  Future<void> _onSend() async {
-    _textController.clear();
-    _focusNode.unfocus();
-    _scrollToBottom();
-    final socialRepo = RepositoryProvider.of<SocialRepository>(context);
-    await socialRepo.sendMessage(inputValue, room.id);
-  }
-
-  void _onInputChanged(String newValue) {
-    setState(() {
-      inputValue = newValue;
-    });
-  }
+  // void _onFocus() {}
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await new Future.delayed(const Duration(milliseconds: 250), () => "1");
-      final bottom = MediaQuery.of(context).viewInsets.bottom;
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent + bottom,
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(_scrollController.position.minScrollExtent,
           duration: Duration(milliseconds: 500), curve: Curves.linearToEaseOut);
-      print(bottom);
     });
+  }
+
+  Future<void> _onSend(BuildContext context) async {
+    await context.bloc<ChatRoomCubit>().send(_textController.text);
+    _textController.clear();
+    _scrollToBottom();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return Center(child: const Text("Loading..."));
-    }
-
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
-                buildWhen: (previous, current) => previous.messages.length != current.messages.length,
-                builder: (context, state) {
-                  _scrollToBottom();
-                  context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
-
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: state.messages.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 24),
-                        child: Column(
-                          children: [
-                            ChatMessage(
-                              messages: state.messages,
-                              index: index,
-                              users: room.participants,
-                              myUserId: myUserId,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Expanded(
+          child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
+            buildWhen: (previous, current) => current.stringMessages.length != previous.stringMessages.length,
+            builder: (context, state) => ListView.builder(
+              controller: _scrollController,
+              reverse: true,
+              itemCount: state.stringMessages.length,
+              itemBuilder: (context, index) {
+                return Text(state.stringMessages[index]);
+              },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: ChatTextInput(
-              controller: _textController,
-              focusNode: _focusNode,
-              onChanged: (value) => _onInputChanged(value),
-              onSendTap: _onSend,
+        ),
+        Stack(
+          children: [
+            Container(
+              transform: Matrix4.translationValues(0, -50, 0.0),
+              child: Center(
+                child: SizedBox(
+                  height: 35,
+                  child: FittedBox(
+                    child: SlideUpAndDownAnimiation(
+                      scrollController: _scrollController,
+                      child: FloatingActionButton(
+                        onPressed: () => print("pressed"),
+                        elevation: 3,
+                        child: Icon(
+                          Icons.arrow_downward_rounded,
+                          color: theme.primaryColor,
+                          size: 40,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          )
-        ],
-      ),
+            Container(
+              color: Colors.redAccent,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: ChatTextInput(
+                  controller: _textController,
+                  focusNode: _focusNode,
+                  onChanged: (value) => {},
+                  onSendTap: () => _onSend(context),
+                ),
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 }
+
+// class MessageDetailsOld extends StatefulWidget {
+//   const MessageDetailsOld({this.roomId});
+//
+//   final String roomId;
+//
+//   @override
+//   _MessageDetailsOldState createState() => _MessageDetailsOldState();
+// }
+//
+// class _MessageDetailsOldState extends State<MessageDetailsOld> {
+//   ScrollController _scrollController = ScrollController();
+//   TextEditingController _textController = TextEditingController();
+//   FocusNode _focusNode = FocusNode();
+//
+//   var isLoading = true;
+//   ChatRoom room;
+//   int myUserId;
+//   String inputValue = "";
+//
+//   Future<void> _loadRoom() async {
+//     final socialRepo = RepositoryProvider.of<SocialRepository>(context);
+//     final room = await socialRepo.getChatRoom(widget.roomId);
+//     final me = await socialRepo.getMyProfile();
+//
+//     setState(() {
+//       this.room = room;
+//       myUserId = me.userId;
+//       isLoading = false;
+//     });
+//
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+//           duration: Duration(milliseconds: 500), curve: Curves.linearToEaseOut);
+//     });
+//   }
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadRoom();
+//
+//     _focusNode.addListener(() {
+//       if (!_focusNode.hasFocus) {
+//         return;
+//       }
+//       _scrollToBottom();
+//     });
+//   }
+//
+//   Future<void> _onSend() async {
+//     _textController.clear();
+//     _focusNode.unfocus();
+//     _scrollToBottom();
+//     final socialRepo = RepositoryProvider.of<SocialRepository>(context);
+//     await socialRepo.sendMessage(inputValue, room.id);
+//   }
+//
+//   void _onInputChanged(String newValue) {
+//     setState(() {
+//       inputValue = newValue;
+//     });
+//   }
+//
+//   void _scrollToBottom() {
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       await new Future.delayed(const Duration(milliseconds: 250), () => "1");
+//       final bottom = MediaQuery.of(context).viewInsets.bottom;
+//       _scrollController.animateTo(_scrollController.position.maxScrollExtent + bottom,
+//           duration: Duration(milliseconds: 500), curve: Curves.linearToEaseOut);
+//       print(bottom);
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     if (isLoading) {
+//       return Center(child: const Text("Loading..."));
+//     }
+//
+//     return GestureDetector(
+//       onTap: () => FocusScope.of(context).unfocus(),
+//       child: Column(
+//         children: [
+//           Expanded(
+//             child: Padding(
+//               padding: const EdgeInsets.all(24.0),
+//               child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
+//                 buildWhen: (previous, current) => previous.messages.length != current.messages.length,
+//                 builder: (context, state) {
+//                   _scrollToBottom();
+//                   context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
+//
+//                   return ListView.builder(
+//                     controller: _scrollController,
+//                     itemCount: state.messages.length,
+//                     itemBuilder: (context, index) {
+//                       return Padding(
+//                         padding: const EdgeInsets.only(top: 24),
+//                         child: Column(
+//                           children: [
+//                             ChatMessage(
+//                               messages: state.messages,
+//                               index: index,
+//                               users: room.participants,
+//                               myUserId: myUserId,
+//                             ),
+//                           ],
+//                         ),
+//                       );
+//                     },
+//                   );
+//                 },
+//               ),
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(12.0),
+//             child: ChatTextInput(
+//               controller: _textController,
+//               focusNode: _focusNode,
+//               onChanged: (value) => _onInputChanged(value),
+//               onSendTap: _onSend,
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class LastSeen extends StatelessWidget {
   const LastSeen({

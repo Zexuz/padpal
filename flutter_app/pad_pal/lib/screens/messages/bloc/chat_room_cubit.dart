@@ -11,8 +11,13 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     @required this.socialRepository,
     @required this.chatRoomId,
   })  : assert(socialRepository != null),
-        super(ChatRoomState(messages: List.empty(), participants: List.empty())) {
+        super(ChatRoomState(messages: List.empty(), participants: List.empty(), stringMessages: List.generate(100, (index) => "Message nr $index"))) {
     _startListen();
+  }
+
+  Future<void> send(String message) async {
+    print(message);
+    emit(state.copyWith(stringMessages: [message, ...state.stringMessages]));
   }
 
   final SocialRepository socialRepository;
