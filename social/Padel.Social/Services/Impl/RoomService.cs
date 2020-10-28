@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Padel.Repository.Core.MongoDb;
 using Padel.Social.Factories;
@@ -39,11 +41,11 @@ namespace Padel.Social.Services.Impl
 
             foreach (var participant in room.Participants)
             {
-                var coon = await _conversationRepository.FindOneAsync(conversation => conversation.UserId.Equals(participant));
+                var coon = await _conversationRepository.FindOneAsync(conversation => conversation.UserId.Equals(participant.UserId));
 
                 if (coon == null)
                 {
-                    coon = new Conversation {UserId = participant, MyChatRooms = new List<RoomId> {room.RoomId}};
+                    coon = new Conversation {UserId = participant.UserId, MyChatRooms = new List<RoomId> {room.RoomId}};
                     await _conversationRepository.InsertOneAsync(coon);
                     continue;
                 }
@@ -65,6 +67,16 @@ namespace Padel.Social.Services.Impl
         public async Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId)
         {
             return await _roomRepository.GetRoomsWhereUsersIsParticipant(userId);
+        }
+
+        public async Task UpdateLastSeenInRoom(UserId userId, RoomId roomId)
+        {
+            var room = await _verifyRoomAccessService.VerifyUsersAccessToRoom(userId, roomId);
+
+            var user = room.Participants.First(participant => Equals(participant.UserId, userId));
+            user.LastSeen = DateTimeOffset.UtcNow;
+
+            await _roomRepository.ReplaceOneAsync(room);
         }
     }
 }

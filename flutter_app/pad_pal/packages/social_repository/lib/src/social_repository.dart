@@ -230,6 +230,15 @@ class SocialRepository {
     return response;
   }
 
+  Future<void> updateLastSeen(String id) async {
+    final callOptions = await _getCallOptions();
+
+    final request = UpdateLastSeenInRoomRequest()..roomId = id;
+
+    final call = _chatServiceClient.updateLastSeenInRoom(request, options: callOptions);
+    await call;
+  }
+
   Future<CallOptions> _getCallOptions() async {
     return CallOptions(metadata: {'Authorization': "Bearer ${(await _tokenManager.getAccessToken()).token}"});
   }

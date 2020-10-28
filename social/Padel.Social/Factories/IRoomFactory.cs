@@ -6,6 +6,6 @@ namespace Padel.Social.Factories
 {
     public interface IRoomFactory
     {
-        ChatRoom NewRoom(UserId userId, IReadOnlyList<UserId> participants);
+        ChatRoom NewRoom(UserId admin, IReadOnlyList<UserId> userIds);
     }
 }

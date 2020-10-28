@@ -15,8 +15,17 @@ namespace Padel.Social.Repositories
 
         public async Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUsersIsParticipant(UserId userId)
         {
-            var result = FilterBy(room => room.Participants.Contains(userId));
-            return result.ToList();
+            var rooms = new List<ChatRoom>();
+            var filter = new MongoDB.Driver.FilterDefinitionBuilder<ChatRoom>()
+                .ElemMatch(profile => profile.Participants, p => p.UserId.Value == userId.Value);
+
+            var cursor = (await _collection.FindAsync<ChatRoom>(filter));
+            while (await cursor.MoveNextAsync())
+            {
+                rooms.AddRange(cursor.Current);
+            }
+
+            return rooms.ToList();
         }
 
         public async Task<ChatRoom> GetRoom(RoomId roomId)

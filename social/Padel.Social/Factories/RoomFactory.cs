@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Padel.Social.Exceptions;
 using Padel.Social.Models;
 using Padel.Social.Services.Interface;
@@ -15,10 +17,19 @@ namespace Padel.Social.Factories
             _guidGeneratorService = guidGeneratorService;
         }
 
-        public ChatRoom NewRoom(UserId userId, IReadOnlyList<UserId> participants)
+        public ChatRoom NewRoom(UserId admin, IReadOnlyList<UserId> userIds)
         {
-            var allParticipants = new List<UserId> {userId};
-            allParticipants.AddRange(participants);
+            var allParticipants = new List<Participant> {new Participant
+            {
+                UserId = admin,
+                LastSeen = DateTimeOffset.UtcNow,
+            }};
+            
+            allParticipants.AddRange(userIds.Select(id => new Participant
+            {
+                UserId = id,
+                LastSeen = DateTimeOffset.MinValue,
+            }).ToList());
 
             if (TryGetDuplicate(allParticipants, out var duplicate))
             {
@@ -27,28 +38,27 @@ namespace Padel.Social.Factories
 
             return new ChatRoom
             {
-                Admin = userId,
+                Admin = admin,
                 RoomId = new RoomId(_guidGeneratorService.GenerateNewId()),
                 Messages = new List<Message>(),
                 Participants = allParticipants
             };
         }
 
-        private bool TryGetDuplicate(List<UserId> ids, out UserId duplicate)
+        private bool TryGetDuplicate(List<Participant> participants, out UserId duplicate)
         {
             duplicate = null;
             var hashSet = new HashSet<UserId>();
 
-            for (var i = 0; i < ids.Count; i++)
+            foreach (var userId in participants.Select(t => t.UserId))
             {
-                var item = ids[i];
-                if (hashSet.Contains(item))
+                if (hashSet.Contains(userId))
                 {
-                    duplicate = item;
+                    duplicate = userId;
                     return true;
                 }
 
-                hashSet.Add(item);
+                hashSet.Add(userId);
             }
 
             return false;

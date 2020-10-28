@@ -33,6 +33,7 @@ func NewSocialService(conn *grpc.ClientConn) *socialpb.SocialService {
 		ChangeProfilePicture:             client.ChangeProfilePicture,
 		GetProfile:                       client.GetProfile,
 		SubscribeToRoom:                  client.SubscribeToRoom,
+		UpdateLastSeenInRoom:             client.UpdateLastSeenInRoom,
 	}
 
 	return service
@@ -112,4 +113,8 @@ func (s *chatService) SubscribeToRoom(request *socialpb.SubscribeToRoomRequest, 
 			return err
 		}
 	}
+}
+
+func (s *chatService) UpdateLastSeenInRoom(ctx context.Context, request *socialpb.UpdateLastSeenInRoomRequest) (*socialpb.UpdateLastSeenInRoomResponse, error) {
+	return s.pbClient.UpdateLastSeenInRoom(ctx, request)
 }

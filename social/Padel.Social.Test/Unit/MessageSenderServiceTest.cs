@@ -38,11 +38,24 @@ namespace Padel.Social.Test.Unit
             var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
             var content = "padpal is the best!";
 
-            var roomParticipants = new List<UserId>()
+            var roomParticipants = new List<Models.Participant>()
             {
-                userId,
-                new UserId(789),
-                new UserId(1325)
+                new Models.Participant
+                {
+                    UserId = userId,
+                    LastSeen = DateTimeOffset.Now,
+                },
+                new Models.Participant
+                {
+                    UserId = new UserId(789),
+
+                    LastSeen = DateTimeOffset.Now,
+                },
+                new Models.Participant
+                {
+                    UserId = new UserId(1325),
+                    LastSeen = DateTimeOffset.Now,
+                },
             };
 
             var originalChatRoom = new ChatRoom

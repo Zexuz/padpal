@@ -145,6 +145,12 @@ class _MessageDetailsState extends State<MessageDetails> {
                             users: room.participants,
                             myUserId: myUserId,
                           ),
+                          LastSeen(
+                            messages: state.messages,
+                            index: index,
+                            users: room.participants,
+                            myUserId: myUserId,
+                          ),
                         ],
                       ),
                     );
@@ -168,6 +174,96 @@ class _MessageDetailsState extends State<MessageDetails> {
   }
 }
 
+class LastSeen extends StatefulWidget {
+  LastSeen({
+    Key key,
+    @required this.users,
+    @required this.messages,
+    @required this.index,
+    @required this.myUserId,
+  }) : super(key: key);
+
+  final List<Participant> users;
+  final List<Message> messages;
+  final int index;
+  final myUserId;
+
+  @override
+  _LastSeenState createState() => _LastSeenState();
+}
+
+class _LastSeenState extends State<LastSeen> with SingleTickerProviderStateMixin {
+  Animation<double> animation;
+  AnimationController controller;
+
+  @override
+  void initState() {
+    controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    animation = Tween<double>(begin: 0, end: 1).animate(controller)
+      ..addListener(() {
+        setState(() {
+          // The state that has changed here is the animation object’s value.
+        });
+      });
+    controller.forward();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildAvatar(Participant participant) {
+    return Avatar(
+      name: participant.user.name,
+      borderWidth: 0,
+      radius: 8,
+      url: participant.user.imgUrl,
+      elevation: 0,
+      innerBorderWidth: 0,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentIndex = widget.index;
+    final isLastMessage = currentIndex == widget.messages.length - 1;
+    final currentMessage = widget.messages[widget.index];
+
+    final messageTime = currentMessage.utcTimestamp;
+    final nextMessageTime = isLastMessage ? 9223372036854775 : widget.messages[currentIndex + 1].utcTimestamp;
+
+    final avatars = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [],
+    );
+    for (var i = 0; i < widget.users.length; i++) {
+      final user = widget.users[i];
+      if (user.user.userId == widget.myUserId) continue;
+
+      if (user.lastSeenTimestamp > messageTime && user.lastSeenTimestamp < nextMessageTime) {
+        avatars.children.add(_buildAvatar(user));
+      }
+    }
+
+    return Container(
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, -1),
+          end: Offset(0, 0),
+        ).animate(animation),
+        child: Container(
+          child: avatars,
+          alignment: Alignment.centerRight,
+          transform: Matrix4.translationValues(0, -5, 0.0),
+        ),
+      ),
+    );
+  }
+}
+
 class ChatMessage extends StatefulWidget {
   const ChatMessage({
     Key key,
@@ -177,7 +273,7 @@ class ChatMessage extends StatefulWidget {
     @required this.myUserId,
   }) : super(key: key);
 
-  final List<User> users;
+  final List<Participant> users;
   final List<Message> messages;
   final int index;
   final myUserId;
@@ -190,7 +286,7 @@ class _ChatMessageState extends State<ChatMessage> {
   bool showTime = false;
 
   User _getAuthorForMessage(Message message) {
-    return widget.users.firstWhere((element) => element.userId == message.author);
+    return widget.users.firstWhere((element) => element.user.userId == message.author).user;
   }
 
   bool _shouldPrintTime(List<Message> messages, int index) {

@@ -82,7 +82,14 @@ namespace Padel.Social.Runner.Controllers
                             }
                         )
                     },
-                    Participants = {room.Participants.Select(id => _profileMongoRepository.FindByUserId(id.Value).ToUser())},
+                    Participants =
+                    {
+                        room.Participants.Select(p => new Participant
+                        {
+                            User = _profileMongoRepository.FindByUserId(p.UserId.Value).ToUser(),
+                            LastSeenTimestamp = p.LastSeen.ToUnixTimeSeconds()
+                        })
+                    },
                     GameId = "",
                 }
             };
@@ -116,6 +123,13 @@ namespace Padel.Social.Runner.Controllers
             var response = new GetRoomsWhereUserIsParticipatingResponse();
             response.RoomIds.AddRange(rooms.Select(room => room.RoomId.Value));
             return response;
+        }
+
+        public override async Task<UpdateLastSeenInRoomResponse> UpdateLastSeenInRoom(UpdateLastSeenInRoomRequest request, ServerCallContext context)
+        {
+            var userId = new UserId(context.GetUserId());
+            await _roomService.UpdateLastSeenInRoom(userId, new RoomId(request.RoomId));
+            return new UpdateLastSeenInRoomResponse();
         }
 
         public override async Task<SearchForProfileResponse> SearchForProfile(SearchForProfileRequest request, ServerCallContext context)
