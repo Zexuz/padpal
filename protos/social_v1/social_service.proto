@@ -57,6 +57,11 @@ service Social {
       shouldValidate:true,
     };
   }
+  rpc UpdateLastSeenInRoom (UpdateLastSeenInRoomRequest) returns (UpdateLastSeenInRoomResponse) {
+    option (descriptors.authorization) = {
+      shouldValidate:true,
+    };
+  }
 
   rpc SearchForProfile (SearchForProfileRequest) returns (SearchForProfileResponse) {
     option (descriptors.authorization) = {
@@ -89,6 +94,10 @@ service Social {
     };
   }
 }
+
+message UpdateLastSeenInRoomRequest {}
+
+message UpdateLastSeenInRoomResponse {}
 
 message SubscribeToRoomRequest {
   string roomId = 1;
