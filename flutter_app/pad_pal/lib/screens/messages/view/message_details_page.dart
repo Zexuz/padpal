@@ -44,7 +44,7 @@ class MessageDetailsPage extends StatelessWidget {
           socialRepository: RepositoryProvider.of<SocialRepository>(context),
           chatRoomId: roomId,
         ),
-        child: MessageDetails(
+        child: MessageDetailsOld(
           roomId: roomId,
         ),
       ),
@@ -52,16 +52,16 @@ class MessageDetailsPage extends StatelessWidget {
   }
 }
 
-class MessageDetails extends StatefulWidget {
-  const MessageDetails({this.roomId});
+class MessageDetailsOld extends StatefulWidget {
+  const MessageDetailsOld({this.roomId});
 
   final String roomId;
 
   @override
-  _MessageDetailsState createState() => _MessageDetailsState();
+  _MessageDetailsOldState createState() => _MessageDetailsOldState();
 }
 
-class _MessageDetailsState extends State<MessageDetails> {
+class _MessageDetailsOldState extends State<MessageDetailsOld> {
   ScrollController _scrollController = ScrollController();
   TextEditingController _textController = TextEditingController();
   FocusNode _focusNode = FocusNode();
