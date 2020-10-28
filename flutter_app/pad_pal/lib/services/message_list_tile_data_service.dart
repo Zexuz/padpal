@@ -17,18 +17,18 @@ class MessageListTileDataService {
     final buffer = StringBuffer();
 
     if (room.participants.length == 2) {
-      return room.participants[1].name;
+      return room.participants[1].user.name;
     }
 
     for (var i = 0; i < room.participants.length - 1; i++) {
-      buffer.write(_getFirstName(room.participants[i].name));
+      buffer.write(_getFirstName(room.participants[i].user.name));
 
       if (i == room.participants.length - 2) continue;
 
       buffer.write(", ");
     }
 
-    buffer.write(" and ${_getFirstName(room.participants.last.name)}");
+    buffer.write(" and ${_getFirstName(room.participants.last.user.name)}");
 
     return buffer.toString();
   }
@@ -36,9 +36,9 @@ class MessageListTileDataService {
   List<game.User> _getUsersWithProfilePictures(ChatRoom room) {
     final users = List<game.User>.from(room.participants
         .map((e) => game.User()
-          ..imgUrl = e.imgUrl
-          ..name = e.name
-          ..userId = e.userId)
+          ..imgUrl = e.user.imgUrl
+          ..name = e.user.name
+          ..userId = e.user.userId)
         .where((element) => element.userId != room.admin));
 
     return users.take(2).toList();
@@ -47,7 +47,7 @@ class MessageListTileDataService {
   String _getSubtitle(ChatRoom room) {
     final lastMessage = room.messages.last;
 
-    final firstName = _getFirstName(room.participants.firstWhere((e) => e.userId == lastMessage.author).name);
+    final firstName = _getFirstName(room.participants.firstWhere((e) => e.user.userId == lastMessage.author).user.name);
     return "$firstName: ${lastMessage.content}";
   }
 

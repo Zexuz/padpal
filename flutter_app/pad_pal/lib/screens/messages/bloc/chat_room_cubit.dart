@@ -18,9 +18,8 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   final SocialRepository socialRepository;
   final String chatRoomId;
 
-  Future<void> updateLastSeenInRoom() {
-    // TODO
-    // Send a request to the server, telling it that I was last seen now
+  Future<void> updateLastSeenInRoom() async {
+    await socialRepository.updateLastSeen(chatRoomId);
   }
 
   Future<void> _startListen() async {
