@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MongoDB.Bson;
 using Padel.Repository.Core.MongoDb;
 using Padel.Social.Models;
 using Padel.Social.ValueTypes;
