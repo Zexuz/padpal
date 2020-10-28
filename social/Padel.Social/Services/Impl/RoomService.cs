@@ -39,11 +39,11 @@ namespace Padel.Social.Services.Impl
 
             foreach (var participant in room.Participants)
             {
-                var coon = await _conversationRepository.FindOneAsync(conversation => conversation.UserId.Equals(participant));
+                var coon = await _conversationRepository.FindOneAsync(conversation => conversation.UserId.Equals(participant.UserId));
 
                 if (coon == null)
                 {
-                    coon = new Conversation {UserId = participant, MyChatRooms = new List<RoomId> {room.RoomId}};
+                    coon = new Conversation {UserId = participant.UserId, MyChatRooms = new List<RoomId> {room.RoomId}};
                     await _conversationRepository.InsertOneAsync(coon);
                     continue;
                 }

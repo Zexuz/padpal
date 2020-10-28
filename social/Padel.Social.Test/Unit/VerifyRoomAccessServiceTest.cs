@@ -13,7 +13,6 @@ namespace Padel.Social.Test.Unit
 {
     public class VerifyRoomAccessServiceTest
     {
-
         private readonly IRoomRepository         _fakeRoomRepository;
         private readonly VerifyRoomAccessService _sut;
 
@@ -23,7 +22,7 @@ namespace Padel.Social.Test.Unit
 
             _sut = TestHelper.ActivateWithFakes<VerifyRoomAccessService>(_fakeRoomRepository);
         }
-        
+
         [Fact]
         public async Task GetRoom_throws_exception_when_not_found()
         {
@@ -38,7 +37,7 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task GetRoom_throws_exception_is_user_is_not_a_participant()
+        public async Task GetRoom_throws_exception_if_user_is_not_a_participant()
         {
             var userId = new UserId(4);
             var roomId = new RoomId("00000002-b6ae-472b-8b0b-c06d33558b25");
@@ -48,9 +47,12 @@ namespace Padel.Social.Test.Unit
                 Admin = new UserId(1337),
                 RoomId = roomId,
                 Messages = new List<Message>(),
-                Participants = new List<UserId>
+                Participants = new List<Participant>
                 {
-                    new UserId(5748)
+                    new Participant
+                    {
+                        UserId = new UserId(5748),
+                    }
                 }
             };
 
@@ -71,9 +73,12 @@ namespace Padel.Social.Test.Unit
                 Admin = new UserId(1337),
                 RoomId = roomId,
                 Messages = new List<Message>(),
-                Participants = new List<UserId>
+                Participants = new List<Participant>
                 {
-                    new UserId(4)
+                    new Participant
+                    {
+                        UserId = new UserId(4),
+                    }
                 }
             };
 

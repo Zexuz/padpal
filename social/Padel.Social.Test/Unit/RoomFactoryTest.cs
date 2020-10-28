@@ -1,8 +1,10 @@
+using System;
 using System.Linq;
 using FakeItEasy;
 using Padel.Social.Exceptions;
 using Padel.Social.Factories;
 using Padel.Social.Services.Interface;
+using Padel.Social.Test.Unit.Extensions;
 using Padel.Social.ValueTypes;
 using Xunit;
 
@@ -35,7 +37,8 @@ namespace Padel.Social.Test.Unit
             Assert.Equal("SomeRoomId", room.RoomId.Value);
             Assert.Empty(room.Messages);
             Assert.Equal(userIds.Length + 1 ,room.Participants.Count);
-            Assert.Equal(userId.Value, room.Participants[0].Value);
+            Assert.Equal(userId.Value, room.Participants[0].UserId.Value);
+            AssertExtension.TimeWithinDuration(room.Participants[0].LastSeen, DateTimeOffset.Now, TimeSpan.FromSeconds(10));
         }
 
         [Theory]

@@ -45,7 +45,7 @@ namespace Padel.Social.Services.Impl
                     RoomId = room.RoomId.Value,
                     Participants =
                     {
-                        room.Participants.Select(id => id.Value).ToList()
+                        room.Participants.Select(p => p.UserId.Value).ToList()
                     }
                 }
             );

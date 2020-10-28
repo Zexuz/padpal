@@ -25,7 +25,7 @@ namespace Padel.Social.Services.Impl
                 throw new RoomNotFoundException(roomId);
             }
 
-            if (room.Participants.All(id => id.Value != userId.Value))
+            if (room.Participants.All(p => p.UserId.Value != userId.Value))
             {
                 throw new UserIsNotARoomParticipantException(userId);
             }

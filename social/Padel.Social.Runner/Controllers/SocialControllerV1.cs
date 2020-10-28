@@ -82,7 +82,14 @@ namespace Padel.Social.Runner.Controllers
                             }
                         )
                     },
-                    Participants = {room.Participants.Select(id => _profileMongoRepository.FindByUserId(id.Value).ToUser())},
+                    Participants =
+                    {
+                        room.Participants.Select(p => new Participant
+                        {
+                            User = _profileMongoRepository.FindByUserId(p.UserId.Value).ToUser(),
+                            LastSeenTimestamp = p.LastSeen.ToUnixTimeSeconds()
+                        })
+                    },
                     GameId = "",
                 }
             };

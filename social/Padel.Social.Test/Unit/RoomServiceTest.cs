@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FakeItEasy;
@@ -52,9 +53,20 @@ namespace Padel.Social.Test.Unit
                 Admin = myUserId,
                 RoomId = roomId,
                 Messages = new List<Message>(),
-                Participants = new List<UserId> {myUserId}
+                Participants = new List<Participant>
+                {
+                    new Participant
+                    {
+                        LastSeen = DateTimeOffset.Now,
+                        UserId = myUserId
+                    }
+                }
             };
-            expectedRoom.Participants.AddRange(participants);
+            expectedRoom.Participants.AddRange(participants.Select(id => new Participant
+            {
+                UserId = id,
+                LastSeen = DateTimeOffset.MinValue,
+            }).ToList());
 
             A.CallTo(() => _fakeRoomFactory.NewRoom(A<UserId>._, A<List<UserId>>._)).Returns(expectedRoom);
             A.CallTo(() => _fakeConversationRepository.FindOneAsync(A<Expression<Func<Conversation, bool>>>._))
@@ -99,9 +111,20 @@ namespace Padel.Social.Test.Unit
                 Admin = myUserId,
                 RoomId = roomId,
                 Messages = new List<Message>(),
-                Participants = new List<UserId> {myUserId}
+                Participants = new List<Participant>
+                {
+                    new Participant
+                    {
+                        LastSeen = DateTimeOffset.Now,
+                        UserId = myUserId
+                    }
+                }
             };
-            expectedRoom.Participants.AddRange(participants);
+            expectedRoom.Participants.AddRange(participants.Select(id => new Participant
+            {
+                UserId = id,
+                LastSeen = DateTimeOffset.MinValue,
+            }).ToList());
 
             A.CallTo(() => _fakeRoomFactory.NewRoom(myUserId, A<List<UserId>>._)).Returns(expectedRoom);
 
@@ -170,6 +193,5 @@ namespace Padel.Social.Test.Unit
 
             Assert.Equal(3, rooms.Count);
         }
-
     }
 }
