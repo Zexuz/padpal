@@ -137,6 +137,58 @@ class FriendRequestAccepted extends $pb.GeneratedMessage {
   void clearUserThatRequested() => clearField(2);
 }
 
+class UpdateLastSeenInRoomRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('UpdateLastSeenInRoomRequest', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
+    ..aOS(1, 'roomId', protoName: 'roomId')
+    ..hasRequiredFields = false
+  ;
+
+  UpdateLastSeenInRoomRequest._() : super();
+  factory UpdateLastSeenInRoomRequest() => create();
+  factory UpdateLastSeenInRoomRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpdateLastSeenInRoomRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  UpdateLastSeenInRoomRequest clone() => UpdateLastSeenInRoomRequest()..mergeFromMessage(this);
+  UpdateLastSeenInRoomRequest copyWith(void Function(UpdateLastSeenInRoomRequest) updates) => super.copyWith((message) => updates(message as UpdateLastSeenInRoomRequest));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static UpdateLastSeenInRoomRequest create() => UpdateLastSeenInRoomRequest._();
+  UpdateLastSeenInRoomRequest createEmptyInstance() => create();
+  static $pb.PbList<UpdateLastSeenInRoomRequest> createRepeated() => $pb.PbList<UpdateLastSeenInRoomRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UpdateLastSeenInRoomRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateLastSeenInRoomRequest>(create);
+  static UpdateLastSeenInRoomRequest _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get roomId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set roomId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRoomId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRoomId() => clearField(1);
+}
+
+class UpdateLastSeenInRoomResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('UpdateLastSeenInRoomResponse', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  UpdateLastSeenInRoomResponse._() : super();
+  factory UpdateLastSeenInRoomResponse() => create();
+  factory UpdateLastSeenInRoomResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpdateLastSeenInRoomResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  UpdateLastSeenInRoomResponse clone() => UpdateLastSeenInRoomResponse()..mergeFromMessage(this);
+  UpdateLastSeenInRoomResponse copyWith(void Function(UpdateLastSeenInRoomResponse) updates) => super.copyWith((message) => updates(message as UpdateLastSeenInRoomResponse));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static UpdateLastSeenInRoomResponse create() => UpdateLastSeenInRoomResponse._();
+  UpdateLastSeenInRoomResponse createEmptyInstance() => create();
+  static $pb.PbList<UpdateLastSeenInRoomResponse> createRepeated() => $pb.PbList<UpdateLastSeenInRoomResponse>();
+  @$core.pragma('dart2js:noInline')
+  static UpdateLastSeenInRoomResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateLastSeenInRoomResponse>(create);
+  static UpdateLastSeenInRoomResponse _defaultInstance;
+}
+
 class SubscribeToRoomRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubscribeToRoomRequest', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
     ..aOS(1, 'roomId', protoName: 'roomId')
@@ -908,7 +960,7 @@ class ChatRoom extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('ChatRoom', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
     ..aOS(1, 'id')
     ..a<$core.int>(2, 'admin', $pb.PbFieldType.O3)
-    ..pc<$1.User>(3, 'participants', $pb.PbFieldType.PM, subBuilder: $1.User.create)
+    ..pc<Participant>(3, 'participants', $pb.PbFieldType.PM, subBuilder: Participant.create)
     ..pc<Message>(4, 'messages', $pb.PbFieldType.PM, subBuilder: Message.create)
     ..aOS(5, 'gameId')
     ..hasRequiredFields = false
@@ -948,7 +1000,7 @@ class ChatRoom extends $pb.GeneratedMessage {
   void clearAdmin() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$1.User> get participants => $_getList(2);
+  $core.List<Participant> get participants => $_getList(2);
 
   @$pb.TagNumber(4)
   $core.List<Message> get messages => $_getList(3);
@@ -961,6 +1013,49 @@ class ChatRoom extends $pb.GeneratedMessage {
   $core.bool hasGameId() => $_has(4);
   @$pb.TagNumber(5)
   void clearGameId() => clearField(5);
+}
+
+class Participant extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Participant', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
+    ..aOM<$1.User>(1, 'user', subBuilder: $1.User.create)
+    ..aInt64(2, 'lastSeenTimestamp')
+    ..hasRequiredFields = false
+  ;
+
+  Participant._() : super();
+  factory Participant() => create();
+  factory Participant.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Participant.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  Participant clone() => Participant()..mergeFromMessage(this);
+  Participant copyWith(void Function(Participant) updates) => super.copyWith((message) => updates(message as Participant));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static Participant create() => Participant._();
+  Participant createEmptyInstance() => create();
+  static $pb.PbList<Participant> createRepeated() => $pb.PbList<Participant>();
+  @$core.pragma('dart2js:noInline')
+  static Participant getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Participant>(create);
+  static Participant _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $1.User get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user($1.User v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  $1.User ensureUser() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get lastSeenTimestamp => $_getI64(1);
+  @$pb.TagNumber(2)
+  set lastSeenTimestamp($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasLastSeenTimestamp() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLastSeenTimestamp() => clearField(2);
 }
 
 class GetMessagesRequest extends $pb.GeneratedMessage {

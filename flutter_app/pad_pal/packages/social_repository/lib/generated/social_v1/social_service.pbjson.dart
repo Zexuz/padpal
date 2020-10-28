@@ -32,6 +32,17 @@ const FriendRequestAccepted$json = const {
   '7': const {},
 };
 
+const UpdateLastSeenInRoomRequest$json = const {
+  '1': 'UpdateLastSeenInRoomRequest',
+  '2': const [
+    const {'1': 'roomId', '3': 1, '4': 1, '5': 9, '10': 'roomId'},
+  ],
+};
+
+const UpdateLastSeenInRoomResponse$json = const {
+  '1': 'UpdateLastSeenInRoomResponse',
+};
+
 const SubscribeToRoomRequest$json = const {
   '1': 'SubscribeToRoomRequest',
   '2': const [
@@ -212,9 +223,17 @@ const ChatRoom$json = const {
   '2': const [
     const {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     const {'1': 'admin', '3': 2, '4': 1, '5': 5, '10': 'admin'},
-    const {'1': 'participants', '3': 3, '4': 3, '5': 11, '6': '.common.v1.User', '10': 'participants'},
+    const {'1': 'participants', '3': 3, '4': 3, '5': 11, '6': '.social.v1.Participant', '10': 'participants'},
     const {'1': 'messages', '3': 4, '4': 3, '5': 11, '6': '.social.v1.Message', '10': 'messages'},
     const {'1': 'game_id', '3': 5, '4': 1, '5': 9, '10': 'gameId'},
+  ],
+};
+
+const Participant$json = const {
+  '1': 'Participant',
+  '2': const [
+    const {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.common.v1.User', '10': 'user'},
+    const {'1': 'last_seen_timestamp', '3': 2, '4': 1, '5': 3, '10': 'lastSeenTimestamp'},
   ],
 };
 

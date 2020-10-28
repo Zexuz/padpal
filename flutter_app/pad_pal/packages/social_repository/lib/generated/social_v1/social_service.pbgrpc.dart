@@ -46,6 +46,12 @@ class SocialClient extends $grpc.Client {
           ($0.GetRoomRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.GetRoomResponse.fromBuffer(value));
+  static final _$updateLastSeenInRoom = $grpc.ClientMethod<
+          $0.UpdateLastSeenInRoomRequest, $0.UpdateLastSeenInRoomResponse>(
+      '/social.v1.Social/UpdateLastSeenInRoom',
+      ($0.UpdateLastSeenInRoomRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) =>
+          $0.UpdateLastSeenInRoomResponse.fromBuffer(value));
   static final _$searchForProfile = $grpc.ClientMethod<
           $0.SearchForProfileRequest, $0.SearchForProfileResponse>(
       '/social.v1.Social/SearchForProfile',
@@ -126,6 +132,15 @@ class SocialClient extends $grpc.Client {
   $grpc.ResponseFuture<$0.GetRoomResponse> getRoom($0.GetRoomRequest request,
       {$grpc.CallOptions options}) {
     final call = $createCall(_$getRoom, $async.Stream.fromIterable([request]),
+        options: options);
+    return $grpc.ResponseFuture(call);
+  }
+
+  $grpc.ResponseFuture<$0.UpdateLastSeenInRoomResponse> updateLastSeenInRoom(
+      $0.UpdateLastSeenInRoomRequest request,
+      {$grpc.CallOptions options}) {
+    final call = $createCall(
+        _$updateLastSeenInRoom, $async.Stream.fromIterable([request]),
         options: options);
     return $grpc.ResponseFuture(call);
   }
@@ -230,6 +245,15 @@ abstract class SocialServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.GetRoomRequest.fromBuffer(value),
         ($0.GetRoomResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.UpdateLastSeenInRoomRequest,
+            $0.UpdateLastSeenInRoomResponse>(
+        'UpdateLastSeenInRoom',
+        updateLastSeenInRoom_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.UpdateLastSeenInRoomRequest.fromBuffer(value),
+        ($0.UpdateLastSeenInRoomResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SearchForProfileRequest,
             $0.SearchForProfileResponse>(
         'SearchForProfile',
@@ -311,6 +335,12 @@ abstract class SocialServiceBase extends $grpc.Service {
     return getRoom(call, await request);
   }
 
+  $async.Future<$0.UpdateLastSeenInRoomResponse> updateLastSeenInRoom_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.UpdateLastSeenInRoomRequest> request) async {
+    return updateLastSeenInRoom(call, await request);
+  }
+
   $async.Future<$0.SearchForProfileResponse> searchForProfile_Pre(
       $grpc.ServiceCall call,
       $async.Future<$0.SearchForProfileRequest> request) async {
@@ -356,6 +386,8 @@ abstract class SocialServiceBase extends $grpc.Service {
           $0.GetRoomsWhereUserIsParticipatingRequest request);
   $async.Future<$0.GetRoomResponse> getRoom(
       $grpc.ServiceCall call, $0.GetRoomRequest request);
+  $async.Future<$0.UpdateLastSeenInRoomResponse> updateLastSeenInRoom(
+      $grpc.ServiceCall call, $0.UpdateLastSeenInRoomRequest request);
   $async.Future<$0.SearchForProfileResponse> searchForProfile(
       $grpc.ServiceCall call, $0.SearchForProfileRequest request);
   $async.Future<$0.GetProfileResponse> getProfile(
