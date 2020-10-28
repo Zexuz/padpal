@@ -8,7 +8,8 @@ namespace Padel.Social.Services.Interface
     public interface IRoomService
     {
         Task<ChatRoom>                      CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants);
-        Task<ChatRoom>                      GetRoom(UserId    userId,      RoomId roomId);
+        Task<ChatRoom>                      GetRoom(UserId userId, RoomId roomId);
         Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUserIsParticipant(UserId userId);
+        Task                                UpdateLastSeenInRoom(UserId userId, RoomId roomId);
     }
 }
