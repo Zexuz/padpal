@@ -21,7 +21,6 @@ class _SlideUpAndDownAnimationState extends State<SlideUpAndDownAnimiation> with
   Animation<double> opacity;
 
   bool isActive = false;
-  int opacityTransitionTime = 1;
 
   @override
   void initState() {
@@ -29,9 +28,9 @@ class _SlideUpAndDownAnimationState extends State<SlideUpAndDownAnimiation> with
 
     animationController = AnimationController(vsync: this, duration: Duration(seconds: 1));
 
-    offset = Tween<Offset>(begin: Offset(0.0, 2.0), end: Offset.zero).animate(CurvedAnimation(
+    offset = Tween<Offset>(begin: Offset(0.0, 1.5), end: Offset(0.0, 0.0)).animate(CurvedAnimation(
       parent: animationController,
-      curve: Curves.fastLinearToSlowEaseIn,
+      curve: Curves.easeInOutQuad,
     ));
 
     final _controller = widget.scrollController;

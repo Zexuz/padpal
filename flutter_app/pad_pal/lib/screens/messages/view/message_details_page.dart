@@ -62,7 +62,7 @@ class ChatRoom extends StatelessWidget {
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(_scrollController.position.minScrollExtent,
-          duration: Duration(milliseconds: 500), curve: Curves.linearToEaseOut);
+          duration: Duration(milliseconds: 500), curve: Curves.easeInQuad);
     });
   }
 
@@ -78,30 +78,29 @@ class ChatRoom extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
-            buildWhen: (previous, current) => current.stringMessages.length != previous.stringMessages.length,
-            builder: (context, state) => ListView.builder(
-              controller: _scrollController,
-              reverse: true,
-              itemCount: state.stringMessages.length,
-              itemBuilder: (context, index) {
-                return Text(state.stringMessages[index]);
-              },
-            ),
-          ),
-        ),
-        Stack(
-          children: [
-            Container(
-              transform: Matrix4.translationValues(0, -50, 0.0),
-              child: Center(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              BlocBuilder<ChatRoomCubit, ChatRoomState>(
+                buildWhen: (previous, current) => current.stringMessages.length != previous.stringMessages.length,
+                builder: (context, state) => ListView.builder(
+                  controller: _scrollController,
+                  reverse: true,
+                  itemCount: state.stringMessages.length,
+                  itemBuilder: (context, index) {
+                    return Text(state.stringMessages[index]);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
                   height: 35,
                   child: FittedBox(
                     child: SlideUpAndDownAnimiation(
                       scrollController: _scrollController,
                       child: FloatingActionButton(
-                        onPressed: () => print("pressed"),
+                        onPressed: () => _scrollToBottom(),
                         elevation: 3,
                         child: Icon(
                           Icons.arrow_downward_rounded,
@@ -113,20 +112,20 @@ class ChatRoom extends StatelessWidget {
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
+        Container(
+          color: Colors.redAccent,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ChatTextInput(
+              controller: _textController,
+              focusNode: _focusNode,
+              onChanged: (value) => {},
+              onSendTap: () => _onSend(context),
             ),
-            Container(
-              color: Colors.redAccent,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: ChatTextInput(
-                  controller: _textController,
-                  focusNode: _focusNode,
-                  onChanged: (value) => {},
-                  onSendTap: () => _onSend(context),
-                ),
-              ),
-            ),
-          ],
+          ),
         )
       ],
     );
