@@ -108,6 +108,50 @@ namespace Padel.Social.Services.Impl
 
         public async Task EmitMessage(string roomId, Message message)
         {
+            var messageToWrite = new SubscribeToRoomResponse
+            {
+                NewMessage = new Proto.Social.V1.Message
+                {
+                    Author = message.Author.Value,
+                    Content = message.Content,
+                    UtcTimestamp = message.Timestamp.ToUnixTimeMilliseconds()
+                }
+            };
+
+            await WriteMessage(roomId, messageToWrite);
+        }
+
+        public async Task EmitNewLastSeen(int userId, string roomId)
+        {
+            var messageToWrite = new SubscribeToRoomResponse
+            {
+                LastSeenUpdated = new LastSeen
+                {
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    UserId = userId,
+                }
+            };
+
+            await WriteMessage(roomId, messageToWrite);
+        }
+
+        public bool IsIdActive(string subId)
+        {
+            lock (_lock)
+            {
+                foreach (var writers in _cbs.Values)
+                {
+                    if (writers.ContainsKey(subId))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        private async Task WriteMessage(string roomId, SubscribeToRoomResponse messageToWrite)
+        {
             lock (_lock)
             {
                 if (!_cbs.ContainsKey(roomId)) return;
@@ -124,15 +168,7 @@ namespace Padel.Social.Services.Impl
             {
                 try
                 {
-                    await sub.AsyncStreamWriter.WriteAsync(new SubscribeToRoomResponse
-                    {
-                        NewMessage = new Proto.Social.V1.Message
-                        {
-                            Author = message.Author.Value,
-                            Content = message.Content,
-                            UtcTimestamp = message.Timestamp.ToUnixTimeSeconds()
-                        }
-                    });
+                    await sub.AsyncStreamWriter.WriteAsync(messageToWrite);
                 }
                 catch (Exception)
                 {
@@ -153,20 +189,6 @@ namespace Padel.Social.Services.Impl
                     return;
                 }
             }
-        }
-
-        public bool IsIdActive(string subId)
-        {
-            lock (_lock)
-            {
-                foreach (var writers in _cbs.Values)
-                {
-                    if (writers.ContainsKey(subId))
-                        return true;
-                }
-            }
-
-            return false;
         }
     }
 }

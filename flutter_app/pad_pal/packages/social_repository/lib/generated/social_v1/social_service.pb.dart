@@ -222,17 +222,20 @@ class SubscribeToRoomRequest extends $pb.GeneratedMessage {
 
 enum SubscribeToRoomResponse_RoomEvent {
   newMessage, 
+  lastSeenUpdated, 
   notSet
 }
 
 class SubscribeToRoomResponse extends $pb.GeneratedMessage {
   static const $core.Map<$core.int, SubscribeToRoomResponse_RoomEvent> _SubscribeToRoomResponse_RoomEventByTag = {
     1 : SubscribeToRoomResponse_RoomEvent.newMessage,
+    2 : SubscribeToRoomResponse_RoomEvent.lastSeenUpdated,
     0 : SubscribeToRoomResponse_RoomEvent.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubscribeToRoomResponse', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
-    ..oo(0, [1])
+    ..oo(0, [1, 2])
     ..aOM<Message>(1, 'newMessage', subBuilder: Message.create)
+    ..aOM<LastSeen>(2, 'lastSeenUpdated', subBuilder: LastSeen.create)
     ..hasRequiredFields = false
   ;
 
@@ -264,6 +267,58 @@ class SubscribeToRoomResponse extends $pb.GeneratedMessage {
   void clearNewMessage() => clearField(1);
   @$pb.TagNumber(1)
   Message ensureNewMessage() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  LastSeen get lastSeenUpdated => $_getN(1);
+  @$pb.TagNumber(2)
+  set lastSeenUpdated(LastSeen v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasLastSeenUpdated() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLastSeenUpdated() => clearField(2);
+  @$pb.TagNumber(2)
+  LastSeen ensureLastSeenUpdated() => $_ensure(1);
+}
+
+class LastSeen extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('LastSeen', package: const $pb.PackageName('social.v1'), createEmptyInstance: create)
+    ..a<$core.int>(1, 'userId', $pb.PbFieldType.O3, protoName: 'userId')
+    ..aInt64(2, 'timestamp')
+    ..hasRequiredFields = false
+  ;
+
+  LastSeen._() : super();
+  factory LastSeen() => create();
+  factory LastSeen.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory LastSeen.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  LastSeen clone() => LastSeen()..mergeFromMessage(this);
+  LastSeen copyWith(void Function(LastSeen) updates) => super.copyWith((message) => updates(message as LastSeen));
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static LastSeen create() => LastSeen._();
+  LastSeen createEmptyInstance() => create();
+  static $pb.PbList<LastSeen> createRepeated() => $pb.PbList<LastSeen>();
+  @$core.pragma('dart2js:noInline')
+  static LastSeen getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LastSeen>(create);
+  static LastSeen _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get userId => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set userId($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUserId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get timestamp => $_getI64(1);
+  @$pb.TagNumber(2)
+  set timestamp($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTimestamp() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTimestamp() => clearField(2);
 }
 
 class GetProfileRequest extends $pb.GeneratedMessage {

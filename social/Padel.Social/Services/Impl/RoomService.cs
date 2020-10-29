@@ -18,13 +18,15 @@ namespace Padel.Social.Services.Impl
         private readonly IRoomRepository                _roomRepository;
         private readonly IMessageSenderService          _messageSenderService;
         private readonly IVerifyRoomAccessService       _verifyRoomAccessService;
+        private readonly IRoomEventHandler              _roomEventHandler;
 
         public RoomService(
             IMongoRepository<Conversation> conversationRepository,
             IRoomFactory                   roomFactory,
             IRoomRepository                roomRepository,
             IMessageSenderService          messageSenderService,
-            IVerifyRoomAccessService       verifyRoomAccessService
+            IVerifyRoomAccessService       verifyRoomAccessService,
+            IRoomEventHandler roomEventHandler
         )
         {
             _conversationRepository = conversationRepository;
@@ -32,10 +34,12 @@ namespace Padel.Social.Services.Impl
             _roomRepository = roomRepository;
             _messageSenderService = messageSenderService;
             _verifyRoomAccessService = verifyRoomAccessService;
+            _roomEventHandler = roomEventHandler;
         }
 
         public async Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants)
         {
+            // TODO We don't add the init message to the room?
             var room = _roomFactory.NewRoom(adminUserId, participants);
             await _roomRepository.InsertOneAsync(room);
 
@@ -77,6 +81,8 @@ namespace Padel.Social.Services.Impl
             user.LastSeen = DateTimeOffset.UtcNow;
 
             await _roomRepository.ReplaceOneAsync(room);
+
+            await _roomEventHandler.EmitNewLastSeen(userId.Value, roomId.Value);
         }
     }
 }

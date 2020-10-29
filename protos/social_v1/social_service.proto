@@ -108,7 +108,13 @@ message SubscribeToRoomRequest {
 message SubscribeToRoomResponse {
   oneof room_event{
     Message new_message = 1;
+    LastSeen last_seen_updated = 2;
   }
+}
+
+message LastSeen{
+  int32 userId = 1;
+  int64 timestamp = 2; // UNIX timestamp in milliseconds
 }
 
 
@@ -237,5 +243,5 @@ message GetMessagesResponse {
 message Message{
   string content = 1;
   int32 author = 2;
-  int64 utcTimestamp = 3;
+  int64 utcTimestamp = 3; // UNIX timestamp in milliseconds
 }
