@@ -39,12 +39,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     var stream = await socialRepository.subscribeToRoomEvents(chatRoomId);
 
     stream.listen((event) {
-      print("received event");
+      print("received event of type ${event.whichRoomEvent()}");
       switch (event.whichRoomEvent()) {
         case SubscribeToRoomResponse_RoomEvent.notSet:
           throw Exception("RoomEvent not set!");
         case SubscribeToRoomResponse_RoomEvent.newMessage:
-          print("New meesage revceide");
           final ev = event.newMessage;
           final lastMessageTemp = state.messages.removeLast();
           final lastMessage = lastMessageTemp.copyWith(
@@ -76,6 +75,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             }
             users.add(UserModel.fromProto(participant));
           }
+          emit(state.copyWith(users: users));
           break;
       }
     });

@@ -98,9 +98,11 @@ class ChatRoom extends StatelessWidget {
                     reverse: true,
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
-                      return Message(
-                        model: state.messages[state.messages.length - (index + 1)],
-                        users: state.users,
+                      return BlocBuilder<ChatRoomCubit, ChatRoomState>(
+                        builder: (context, state) => Message(
+                          model: state.messages[state.messages.length - (index + 1)],
+                          users: state.users,
+                        ),
                       );
                     },
                   );
