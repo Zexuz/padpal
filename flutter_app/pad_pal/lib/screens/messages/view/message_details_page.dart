@@ -99,6 +99,7 @@ class ChatRoom extends StatelessWidget {
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
                       return BlocBuilder<ChatRoomCubit, ChatRoomState>(
+                        // TODO How to only rebuild the widgets that needs to be rebuilt? Eg, newer in time, or has a "seen" status on them
                         builder: (context, state) => Message(
                           model: state.messages[state.messages.length - (index + 1)],
                           users: state.users,
@@ -156,15 +157,12 @@ class Message extends StatelessWidget {
   final List<UserModel> users;
 
   bool _isWithinTimestamp(UserModel user) {
-    if (user.lastSeen >= model.range.start && user.lastSeen <= model.range.end) {
-      return true;
-    }
-    return false;
+    return model.range.isWithinRange(user.lastSeen);
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO don't show myown
+    // TODO don't show my own status
     final textWidgets = List<Widget>();
     for (var i = 0; i < users.length; i++) {
       final user = users[i];

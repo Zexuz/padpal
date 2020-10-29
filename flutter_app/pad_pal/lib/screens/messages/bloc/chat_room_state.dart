@@ -32,6 +32,13 @@ class TimestampRange {
 
   final int start;
   final int end;
+
+  bool isWithinRange(int timestamp) {
+    if (timestamp >= this.start && timestamp <= this.end) {
+      return true;
+    }
+    return false;
+  }
 }
 
 class UserModel {
@@ -64,24 +71,29 @@ class ChatRoomState extends Equatable {
   const ChatRoomState({
     @required this.messages,
     @required this.users,
+    @required this.lastSeenChanged,
   });
 
   final List<UserModel> users;
   final List<MessageModel> messages;
+  final int lastSeenChanged;
 
   @override
   List<Object> get props => [
         messages,
         users,
+        lastSeenChanged,
       ];
 
   ChatRoomState copyWith({
     List<UserModel> users,
     List<MessageModel> messages,
+    int lastSeenChanged,
   }) {
     return ChatRoomState(
       users: users ?? this.users,
       messages: messages ?? this.messages,
+      lastSeenChanged: lastSeenChanged ?? this.lastSeenChanged,
     );
   }
 }

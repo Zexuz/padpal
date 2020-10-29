@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:social_repository/generated/social_v1/social_service.pb.dart';
 import 'package:social_repository/social_repository.dart';
@@ -11,7 +12,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     @required this.socialRepository,
     @required this.chatRoomId,
   })  : assert(socialRepository != null),
-        super(ChatRoomState(messages: List.empty(), users: List.empty())) {
+        super(ChatRoomState(messages: List.empty(), users: List.empty(), lastSeenChanged: 0)) {
     _startListen();
     updateLastSeenInRoom();
   }
@@ -27,12 +28,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
   Future<void> updateLastSeenInRoom() async {
     await socialRepository.updateLastSeen(chatRoomId);
-    print("updaing");
   }
 
   Future<void> _startListen() async {
     final room = await socialRepository.getChatRoom(chatRoomId);
-    final messages = _getAndParseMessages(room);
+    final messages = _getAndParseMessages(room); // TODO use compute here to optimize perfomace?
     final users = _getAndParseUsers(room);
     emit(state.copyWith(messages: messages, users: users));
 
@@ -75,7 +75,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             }
             users.add(UserModel.fromProto(participant));
           }
-          emit(state.copyWith(users: users));
+          emit(state.copyWith(users: users, lastSeenChanged: ev.timestamp.toInt()));
           break;
       }
     });
