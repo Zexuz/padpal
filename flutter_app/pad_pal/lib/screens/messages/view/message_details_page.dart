@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/avatar/avatar.dart';
@@ -89,14 +90,21 @@ class ChatRoom extends StatelessWidget {
             children: [
               BlocBuilder<ChatRoomCubit, ChatRoomState>(
                 buildWhen: (previous, current) => current.messages.length != previous.messages.length,
-                builder: (context, state) => ListView.builder(
-                  controller: _scrollController,
-                  reverse: true,
-                  itemCount: state.messages.length,
-                  itemBuilder: (context, index) {
-                    return Text(state.messages[state.messages.length - (index + 1)].content);
-                  },
-                ),
+                builder: (context, state) {
+                  context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
+                    itemCount: state.messages.length,
+                    itemBuilder: (context, index) {
+                      return Message(
+                        model: state.messages[state.messages.length - (index + 1)],
+                        users: state.users,
+                      );
+                    },
+                  );
+                },
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -128,6 +136,54 @@ class ChatRoom extends StatelessWidget {
             focusNode: _focusNode,
             onChanged: (value) => {},
             onSendTap: () => _onSend(context),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class Message extends StatelessWidget {
+  Message({
+    Key key,
+    @required this.model,
+    @required this.users,
+  }) : super(key: key);
+
+  final MessageModel model;
+  final List<UserModel> users;
+
+  bool _isWithinTimestamp(UserModel user) {
+    if (user.lastSeen >= model.range.start && user.lastSeen <= model.range.end) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO don't show myown
+    final textWidgets = List<Widget>();
+    for (var i = 0; i < users.length; i++) {
+      final user = users[i];
+      if (!_isWithinTimestamp(user)) continue;
+      textWidgets.add(Text("${user.name}, ${user.lastSeen}"));
+    }
+
+    return Column(
+      children: [
+        Container(
+          color: Colors.blueAccent,
+          // child: Text("${model.content},  ${model.range.start} - ${model.range.end}"),
+          child: Text(
+            "${model.range.start} - ${model.range.end}",
+            style: GoogleFonts.robotoMonoTextTheme().headline5,
+          ),
+        ),
+        Container(
+          color: Colors.redAccent,
+          child: Row(
+            children: textWidgets,
           ),
         )
       ],

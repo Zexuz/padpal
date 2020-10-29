@@ -11,11 +11,12 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     @required this.socialRepository,
     @required this.chatRoomId,
   })  : assert(socialRepository != null),
-        super(ChatRoomState(messages: List.empty(), users: Map<int, User>())) {
+        super(ChatRoomState(messages: List.empty(), users: List.empty())) {
     _startListen();
+    updateLastSeenInRoom();
   }
 
-  static const int MAX_TIMESTAMP = 1893456000; //2030 01 01 00:00
+  static const int MAX_TIMESTAMP = 1893456000000; //2030 01 01 00:00 in milliseconds
 
   final SocialRepository socialRepository;
   final String chatRoomId;
@@ -26,12 +27,14 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
   Future<void> updateLastSeenInRoom() async {
     await socialRepository.updateLastSeen(chatRoomId);
+    print("updaing");
   }
 
   Future<void> _startListen() async {
     final room = await socialRepository.getChatRoom(chatRoomId);
     final messages = _getAndParseMessages(room);
-    emit(state.copyWith(messages: messages));
+    final users = _getAndParseUsers(room);
+    emit(state.copyWith(messages: messages, users: users));
 
     var stream = await socialRepository.subscribeToRoomEvents(chatRoomId);
 
@@ -41,6 +44,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         case SubscribeToRoomResponse_RoomEvent.notSet:
           throw Exception("RoomEvent not set!");
         case SubscribeToRoomResponse_RoomEvent.newMessage:
+          print("New meesage revceide");
           final ev = event.newMessage;
           final lastMessageTemp = state.messages.removeLast();
           final lastMessage = lastMessageTemp.copyWith(
@@ -62,7 +66,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           break;
         case SubscribeToRoomResponse_RoomEvent.lastSeenUpdated:
           final ev = event.lastSeenUpdated;
-          final users = List<User>();
+          final users = List<UserModel>();
 
           for (var i = 0; i < room.participants.length; i++) {
             final participant = room.participants[i];
@@ -70,7 +74,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             if (ev.userId == participant.user.userId) {
               participant..lastSeenTimestamp = ev.timestamp;
             }
-            users.add(User.fromProto(participant));
+            users.add(UserModel.fromProto(participant));
           }
           break;
       }
@@ -85,9 +89,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       final nextMessage = isLastMessage ? currentMessage : room.messages[i + 1];
 
       TimestampRange range;
-      if (i == 0) {
-        range = TimestampRange(start: 0, end: nextMessage.utcTimestamp.toInt());
-      } else if (isLastMessage) {
+      if (isLastMessage) {
         range = TimestampRange(start: currentMessage.utcTimestamp.toInt(), end: MAX_TIMESTAMP);
       } else {
         range = TimestampRange(start: currentMessage.utcTimestamp.toInt(), end: nextMessage.utcTimestamp.toInt());
@@ -96,5 +98,9 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     }
 
     return messages;
+  }
+
+  List<UserModel> _getAndParseUsers(ChatRoom room) {
+    return room.participants.map((e) => UserModel.fromProto(e)).toList();
   }
 }

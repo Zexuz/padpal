@@ -34,8 +34,8 @@ class TimestampRange {
   final int end;
 }
 
-class User {
-  User({
+class UserModel {
+  UserModel({
     @required this.name,
     @required this.firstName,
     @required this.lastSeen,
@@ -49,8 +49,8 @@ class User {
   final int id;
   final String imgUrl;
 
-  factory User.fromProto(Participant participant) {
-    return User(
+  factory UserModel.fromProto(Participant participant) {
+    return UserModel(
       name: participant.user.name,
       firstName: participant.user.name.split(" ")[0],
       lastSeen: participant.lastSeenTimestamp.toInt(),
@@ -66,7 +66,7 @@ class ChatRoomState extends Equatable {
     @required this.users,
   });
 
-  final Map<int, User> users;
+  final List<UserModel> users;
   final List<MessageModel> messages;
 
   @override
@@ -76,7 +76,7 @@ class ChatRoomState extends Equatable {
       ];
 
   ChatRoomState copyWith({
-    Map<int, User> users,
+    List<UserModel> users,
     List<MessageModel> messages,
   }) {
     return ChatRoomState(
