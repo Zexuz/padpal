@@ -114,7 +114,7 @@ namespace Padel.Social.Services.Impl
                 {
                     Author = message.Author.Value,
                     Content = message.Content,
-                    UtcTimestamp = message.Timestamp.ToUnixTimeSeconds()
+                    UtcTimestamp = message.Timestamp.ToUnixTimeMilliseconds()
                 }
             };
 
@@ -127,7 +127,7 @@ namespace Padel.Social.Services.Impl
             {
                 LastSeenUpdated = new LastSeen
                 {
-                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     UserId = userId,
                 }
             };

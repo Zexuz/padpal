@@ -78,7 +78,7 @@ namespace Padel.Social.Runner.Controllers
                             {
                                 Author = message.Author.Value,
                                 Content = message.Content,
-                                UtcTimestamp = message.Timestamp.ToUnixTimeSeconds()
+                                UtcTimestamp = message.Timestamp.ToUnixTimeMilliseconds()
                             }
                         )
                     },
@@ -87,7 +87,7 @@ namespace Padel.Social.Runner.Controllers
                         room.Participants.Select(p => new Participant
                         {
                             User = _profileMongoRepository.FindByUserId(p.UserId.Value).ToUser(),
-                            LastSeenTimestamp = p.LastSeen.ToUnixTimeSeconds()
+                            LastSeenTimestamp = p.LastSeen.ToUnixTimeMilliseconds()
                         })
                     },
                     GameId = "",

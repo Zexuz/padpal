@@ -114,7 +114,7 @@ message SubscribeToRoomResponse {
 
 message LastSeen{
   int32 userId = 1;
-  int64 timestamp = 2;
+  int64 timestamp = 2; // UNIX timestamp in milliseconds
 }
 
 
@@ -243,5 +243,5 @@ message GetMessagesResponse {
 message Message{
   string content = 1;
   int32 author = 2;
-  int64 utcTimestamp = 3;
+  int64 utcTimestamp = 3; // UNIX timestamp in milliseconds
 }

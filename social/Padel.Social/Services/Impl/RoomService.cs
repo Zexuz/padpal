@@ -39,6 +39,7 @@ namespace Padel.Social.Services.Impl
 
         public async Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants)
         {
+            // TODO We don't add the init message to the room?
             var room = _roomFactory.NewRoom(adminUserId, participants);
             await _roomRepository.InsertOneAsync(room);
 
