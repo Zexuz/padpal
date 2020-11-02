@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" ProtoRoot="..\..\protos\"/>
+        <Protobuf Include="..\..\protos\auth_v1\auth_service.proto" Link="protos\auth_service.proto" ProtoRoot="..\..\protos\" />
         <Protobuf Include="..\..\protos\descriptors\rule.proto" Link="protos\descriptors\rule.proto" />
     </ItemGroup>
 

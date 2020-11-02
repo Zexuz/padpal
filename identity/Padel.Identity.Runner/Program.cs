@@ -2,6 +2,7 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Sentry;
 
 namespace Padel.Identity.Runner
 {
@@ -19,7 +20,11 @@ namespace Padel.Identity.Runner
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(config => config.AddEnvironmentVariables(prefix: "IDENTITY_"))
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseSentry();
+                });
         }
     }
 }

@@ -18,6 +18,10 @@ namespace Padel.Notification.Runner
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(config => config.AddEnvironmentVariables(prefix: "NOTIFICATION_"))
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseSentry();
+                });
     }
 }
