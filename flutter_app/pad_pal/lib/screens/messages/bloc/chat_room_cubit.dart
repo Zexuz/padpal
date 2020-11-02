@@ -31,7 +31,13 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   Future<void> messageTapped(MessageModel model) async {
-    emit(state.copyWith(lastMessagePressed: model.range.start));
+    print("${state.lastMessagePressed}, ${model.range.start} ");
+    if (state.lastMessagePressed == model.range.start) {
+      print("sane");
+      emit(state.copyWith(lastMessagePressed: 0));
+    } else {
+      emit(state.copyWith(lastMessagePressed: model.range.start));
+    }
   }
 
   Future<void> _startListen() async {

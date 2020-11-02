@@ -103,25 +103,28 @@ class ChatRoom extends StatelessWidget {
                 builder: (context, state) {
                   context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
 
-                  return ListView.builder(
-                    controller: _scrollController,
-                    reverse: true,
-                    itemCount: state.messages.length,
-                    itemBuilder: (context, index) {
-                      return BlocBuilder<ChatRoomCubit, ChatRoomState>(
-                        // TODO How to only rebuild the widgets that needs to be rebuilt? Eg, newer in time, or has a "seen" status on them
-                        builder: (context, state) {
-                          final currentIndex = state.messages.length - (index + 1);
-                          final currentMessage = state.messages[currentIndex];
-                          return Message(
-                            model: currentMessage,
-                            users: state.users,
-                            shouldShowTime: _shouldPrintTime(state.messages, currentIndex) ||
-                                state.lastMessagePressed == currentMessage.range.start,
-                          );
-                        },
-                      );
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 24, right: 24),
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      reverse: true,
+                      itemCount: state.messages.length,
+                      itemBuilder: (context, index) {
+                        return BlocBuilder<ChatRoomCubit, ChatRoomState>(
+                          // TODO How to only rebuild the widgets that needs to be rebuilt? Eg, newer in time, or has a "seen" status on them
+                          builder: (context, state) {
+                            final currentIndex = state.messages.length - (index + 1);
+                            final currentMessage = state.messages[currentIndex];
+                            return Message(
+                              model: currentMessage,
+                              users: state.users,
+                              shouldShowTime: _shouldPrintTime(state.messages, currentIndex) ||
+                                  state.lastMessagePressed == currentMessage.range.start,
+                            );
+                          },
+                        );
+                      },
+                    ),
                   );
                 },
               ),
@@ -165,14 +168,12 @@ class ChatRoom extends StatelessWidget {
 class AnimateSizeAndFadeWrapper extends StatefulWidget {
   const AnimateSizeAndFadeWrapper({
     Key key,
-    @required this.showLast,
-    @required this.widget1,
-    @required this.widget2,
+    @required this.show,
+    @required this.child,
   }) : super(key: key);
 
-  final bool showLast;
-  final Widget widget1;
-  final Widget widget2;
+  final bool show;
+  final Widget child;
 
   @override
   _AnimateSizeAndFadeWrapperState createState() => _AnimateSizeAndFadeWrapperState();
@@ -182,14 +183,10 @@ class _AnimateSizeAndFadeWrapperState extends State<AnimateSizeAndFadeWrapper> w
   @override
   Widget build(BuildContext context) {
     //Fade transition does not work, with text, but it does work with color.
-    return AnimatedSizeAndFade(
+    return AnimatedSizeAndFade.showHide(
       vsync: this,
-      child: widget.showLast
-          ? Container(
-              key: Key("AnimatedKey1"),
-              child: widget.widget1,
-            )
-          : Container(),
+      child: widget.child,
+      show: widget.show,
       fadeDuration: Duration(milliseconds: 0),
       sizeDuration: Duration(milliseconds: 250),
     );
@@ -251,7 +248,7 @@ class Message extends StatelessWidget {
 
     return Column(
       children: [
-        Center(child: AnimateSizeAndFadeWrapper(showLast: shouldShowTime, widget1: _Time(model.range.start), widget2: Container())),
+        Center(child: AnimateSizeAndFadeWrapper(show: shouldShowTime, child: _Time(model.range.start))),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: axisAlignment,

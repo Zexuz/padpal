@@ -28,7 +28,7 @@ class _SlideUpAndDownAnimationState extends State<SlideUpAndDownAnimiation> with
 
     animationController = AnimationController(vsync: this, duration: Duration(seconds: 1));
 
-    offset = Tween<Offset>(begin: Offset(0.0, 1.5), end: Offset(0.0, 0.0)).animate(CurvedAnimation(
+    offset = Tween<Offset>(begin: Offset(0.0, 1.675), end: Offset(0.0, 0.0)).animate(CurvedAnimation(
       parent: animationController,
       curve: Curves.easeInOutQuad,
     ));
