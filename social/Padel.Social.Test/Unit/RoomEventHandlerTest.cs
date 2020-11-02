@@ -53,8 +53,6 @@ namespace Padel.Social.Test.Unit
         [Fact]
         public async Task Should_return_id_when_subscribing()
         {
-            int userId = 4;
-
             A.CallTo(() => _fakeGuidGeneratorService.GenerateNewId()).Returns("my new id");
 
             var id = await _sut.SubscribeToRoom(4, "someRoom", _fakeAsyncStreamWriter);
@@ -83,8 +81,6 @@ namespace Padel.Social.Test.Unit
         [Fact]
         public async Task Should_return_true_when_providing_a_active_subscription_id()
         {
-            int userId = 4;
-
             A.CallTo(() => _fakeGuidGeneratorService.GenerateNewId()).Returns("my new id");
 
             var id = await _sut.SubscribeToRoom(4, "someRoom", _fakeAsyncStreamWriter);
@@ -95,17 +91,15 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
-        public async Task Should_return_true_when_providing_a_id_that_does_not_exists()
+        public void Should_return_true_when_providing_a_id_that_does_not_exists()
         {
             var result = _sut.IsIdActive("Some random id");
-
             Assert.False(result);
         }
 
         [Fact]
         public async Task Should_write_to_callback_when_a_new_message_is_sent()
         {
-            int userId = 4;
             await _sut.SubscribeToRoom(4, "someRoom", _fakeAsyncStreamWriter);
 
             await _sut.EmitMessage("someRoom",

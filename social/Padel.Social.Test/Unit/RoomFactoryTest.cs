@@ -12,7 +12,7 @@ namespace Padel.Social.Test.Unit
 {
     public class RoomFactoryTest
     {
-        private readonly RoomFactory      _sut;
+        private readonly RoomFactory           _sut;
         private readonly IGuidGeneratorService _fakeGuidGeneratorService;
 
         public RoomFactoryTest()
@@ -36,7 +36,7 @@ namespace Padel.Social.Test.Unit
 
             Assert.Equal("SomeRoomId", room.RoomId.Value);
             Assert.Empty(room.Messages);
-            Assert.Equal(userIds.Length + 1 ,room.Participants.Count);
+            Assert.Equal(userIds.Length + 1, room.Participants.Count);
             Assert.Equal(userId.Value, room.Participants[0].UserId.Value);
             AssertExtension.TimeWithinDuration(room.Participants[0].LastSeen, DateTimeOffset.Now, TimeSpan.FromSeconds(10));
         }
