@@ -151,8 +151,8 @@ class __PrimGameCardActionState extends State<_PrimGameCardAction> {
       await context.repository<GameRepository>().requestToJoinGame(widget.game);
       Scaffold.of(context).showSnackBar(SnackBarFactory.buildSnackBar("Request sent!"));
     } catch (e) {
-      print(e);
       Scaffold.of(context).showSnackBar(SnackBarFactory.buildSnackBar("Request failed", SnackBarType.error));
+      rethrow;
     } finally {
       setState(() {
         isLoading = true;

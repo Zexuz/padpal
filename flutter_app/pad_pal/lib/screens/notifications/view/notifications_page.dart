@@ -80,7 +80,7 @@ class NotificationView extends StatelessWidget {
                           final snackBar =
                               SnackBarFactory.buildSnackBar('Failed to accept friend request', SnackBarType.error);
                           Scaffold.of(context).showSnackBar(snackBar);
-                          print(e);
+                          rethrow;
                         }
                       },
                       onSecondaryPressed: () async {
@@ -93,7 +93,7 @@ class NotificationView extends StatelessWidget {
                           final snackBar =
                               SnackBarFactory.buildSnackBar('Failed to decline friend request', SnackBarType.error);
                           Scaffold.of(context).showSnackBar(snackBar);
-                          print(e);
+                          rethrow;
                         }
                       },
                     ),

@@ -221,7 +221,7 @@ class _BuildButtons extends StatelessWidget {
                 } catch (e) {
                   final snackBar = SnackBar(content: Text('Failed to send friend request'));
                   Scaffold.of(context).showSnackBar(snackBar);
-                  print(e);
+                  rethrow;
                 }
               },
             ),

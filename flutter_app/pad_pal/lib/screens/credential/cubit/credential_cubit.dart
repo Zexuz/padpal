@@ -59,6 +59,7 @@ class CredentialCubit extends Cubit<CredentialState> {
       await SignInWithCredentials();
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
+      rethrow;
     }
   }
 
@@ -73,6 +74,7 @@ class CredentialCubit extends Cubit<CredentialState> {
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } on Exception {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
+      rethrow;
     }
   }
 }

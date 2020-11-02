@@ -150,8 +150,8 @@ class Players extends StatelessWidget {
       await context.repository<GameRepository>().requestToJoinGame(gameInfo.publicInfo.id);
       Scaffold.of(context).showSnackBar(SnackBarFactory.buildSnackBar("Request sent!"));
     } catch (e) {
-      print(e);
       Scaffold.of(context).showSnackBar(SnackBarFactory.buildSnackBar("Request failed", SnackBarType.error));
+      rethrow;
     }
   }
 }
