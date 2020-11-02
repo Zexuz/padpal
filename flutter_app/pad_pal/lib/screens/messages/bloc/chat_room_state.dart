@@ -39,6 +39,10 @@ class TimestampRange {
     }
     return false;
   }
+
+  Duration getDuration(){
+    return Duration(milliseconds: end-start);
+  }
 }
 
 class UserModel {

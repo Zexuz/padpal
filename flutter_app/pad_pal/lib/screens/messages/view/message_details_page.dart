@@ -80,17 +80,13 @@ class ChatRoom extends StatelessWidget {
     }
   }
 
-  // bool _shouldPrintTime(List<Message> messages, int index) {
-  //   if (index == 0) return true;
-  //   if (index == messages.length - 1) return true;
-  //
-  //   final current = messages[index];
-  //   final prev = messages[index + 1];
-  //
-  //   final diff = prev.model.utcTimestamp - current.utcTimestamp;
-  //
-  //   return diff > 60 * 30;
-  // }
+  bool _shouldPrintTime(List<MessageModel> messages, int index) {
+    if (index == 0) return true;
+
+    final next = messages[index - 1];
+
+    return next.range.getDuration() > Duration(minutes: 30);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,9 +110,12 @@ class ChatRoom extends StatelessWidget {
                       return BlocBuilder<ChatRoomCubit, ChatRoomState>(
                         // TODO How to only rebuild the widgets that needs to be rebuilt? Eg, newer in time, or has a "seen" status on them
                         builder: (context, state) {
+                          final currentIndex = state.messages.length - (index + 1);
+                          final currentMessage = state.messages[currentIndex];
                           return Message(
-                            model: state.messages[state.messages.length - (index + 1)],
+                            model: currentMessage,
                             users: state.users,
+                            shouldShowTime: _shouldPrintTime(state.messages, currentIndex),
                           );
                         },
                       );
@@ -166,10 +165,12 @@ class Message extends StatelessWidget {
     Key key,
     @required this.model,
     @required this.users,
+    @required this.shouldShowTime,
   }) : super(key: key);
 
   final MessageModel model;
   final List<UserModel> users;
+  final bool shouldShowTime;
 
   bool _isWithinTimestamp(UserModel user) {
     return model.range.isWithinRange(user.lastSeen);
@@ -212,6 +213,7 @@ class Message extends StatelessWidget {
 
     return Column(
       children: [
+        if (shouldShowTime) _Time(model.range.start),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: axisAlignment,
@@ -337,7 +339,7 @@ class _Time extends StatelessWidget {
       return DateFormat.Hm();
     }
 
-    if (diff.inDays < 7) {
+    if (diff.inDays < 6) {
       return DateFormat('E @ kk:mm');
     }
 
