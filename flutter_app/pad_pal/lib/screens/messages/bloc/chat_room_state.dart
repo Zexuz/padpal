@@ -40,8 +40,8 @@ class TimestampRange {
     return false;
   }
 
-  Duration getDuration(){
-    return Duration(milliseconds: end-start);
+  Duration getDuration() {
+    return Duration(milliseconds: end - start);
   }
 }
 
@@ -76,28 +76,33 @@ class ChatRoomState extends Equatable {
     @required this.messages,
     @required this.users,
     @required this.lastSeenChanged,
+    @required this.lastMessagePressed,
   });
 
   final List<UserModel> users;
   final List<MessageModel> messages;
   final int lastSeenChanged;
+  final int lastMessagePressed; // This is the millisecond of when the message was sent
 
   @override
   List<Object> get props => [
         messages,
         users,
         lastSeenChanged,
+        lastMessagePressed,
       ];
 
   ChatRoomState copyWith({
     List<UserModel> users,
     List<MessageModel> messages,
     int lastSeenChanged,
+    int lastMessagePressed,
   }) {
     return ChatRoomState(
       users: users ?? this.users,
       messages: messages ?? this.messages,
       lastSeenChanged: lastSeenChanged ?? this.lastSeenChanged,
+      lastMessagePressed: lastMessagePressed ?? this.lastMessagePressed,
     );
   }
 }

@@ -12,7 +12,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     @required this.socialRepository,
     @required this.chatRoomId,
   })  : assert(socialRepository != null),
-        super(ChatRoomState(messages: List.empty(), users: List.empty(), lastSeenChanged: 0)) {
+        super(ChatRoomState(messages: List.empty(), users: List.empty(), lastSeenChanged: 0, lastMessagePressed: 0)) {
     _startListen();
     updateLastSeenInRoom();
   }
@@ -28,6 +28,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
   Future<void> updateLastSeenInRoom() async {
     await socialRepository.updateLastSeen(chatRoomId);
+  }
+
+  Future<void> messageTapped(MessageModel model) async {
+    emit(state.copyWith(lastMessagePressed: model.range.start));
   }
 
   Future<void> _startListen() async {

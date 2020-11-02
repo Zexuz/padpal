@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -115,7 +116,8 @@ class ChatRoom extends StatelessWidget {
                           return Message(
                             model: currentMessage,
                             users: state.users,
-                            shouldShowTime: _shouldPrintTime(state.messages, currentIndex),
+                            shouldShowTime: _shouldPrintTime(state.messages, currentIndex) ||
+                                state.lastMessagePressed == currentMessage.range.start,
                           );
                         },
                       );
@@ -160,6 +162,40 @@ class ChatRoom extends StatelessWidget {
   }
 }
 
+class AnimateSizeAndFadeWrapper extends StatefulWidget {
+  const AnimateSizeAndFadeWrapper({
+    Key key,
+    @required this.showLast,
+    @required this.widget1,
+    @required this.widget2,
+  }) : super(key: key);
+
+  final bool showLast;
+  final Widget widget1;
+  final Widget widget2;
+
+  @override
+  _AnimateSizeAndFadeWrapperState createState() => _AnimateSizeAndFadeWrapperState();
+}
+
+class _AnimateSizeAndFadeWrapperState extends State<AnimateSizeAndFadeWrapper> with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    //Fade transition does not work, with text, but it does work with color.
+    return AnimatedSizeAndFade(
+      vsync: this,
+      child: widget.showLast
+          ? Container(
+              key: Key("AnimatedKey1"),
+              child: widget.widget1,
+            )
+          : Container(),
+      fadeDuration: Duration(milliseconds: 0),
+      sizeDuration: Duration(milliseconds: 250),
+    );
+  }
+}
+
 class Message extends StatelessWidget {
   Message({
     Key key,
@@ -176,7 +212,9 @@ class Message extends StatelessWidget {
     return model.range.isWithinRange(user.lastSeen);
   }
 
-  void _onMessageTap() {}
+  void _onMessageTap(BuildContext context) {
+    context.bloc<ChatRoomCubit>().messageTapped(this.model);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +251,7 @@ class Message extends StatelessWidget {
 
     return Column(
       children: [
-        if (shouldShowTime) _Time(model.range.start),
+        Center(child: AnimateSizeAndFadeWrapper(showLast: shouldShowTime, widget1: _Time(model.range.start), widget2: Container())),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: axisAlignment,
@@ -233,7 +271,7 @@ class Message extends StatelessWidget {
                   ),
                 ChatMessageContent(
                   text: model.content,
-                  onTap: _onMessageTap,
+                  onTap: () => _onMessageTap(context),
                   borderRadius: borderRadius,
                   bgColor: bgColor,
                   textStyle: textStyle,
