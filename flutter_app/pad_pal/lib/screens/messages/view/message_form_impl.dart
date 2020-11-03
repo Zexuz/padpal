@@ -68,13 +68,23 @@ class _MessageFormRealState extends State<MessageFormReal> {
     final socialRepo = RepositoryProvider.of<SocialRepository>(context);
     final profile = await socialRepo.getProfile(result);
 
+    for (var value in items) {
+      if (value.users.length != 1) {
+        continue;
+      }
+
+      if (value.users[0].userId == profile.userId) {
+        _onMessageTap(value);
+        return;
+      }
+    }
 
     final roomId = await Navigator.push(
       context,
       MessageInitRoomPage.route(List.from([profile])),
     );
 
-    if(roomId == null) return;
+    if (roomId == null) return;
 
     Navigator.push(
       context,

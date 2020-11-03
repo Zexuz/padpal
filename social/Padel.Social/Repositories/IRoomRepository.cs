@@ -10,5 +10,6 @@ namespace Padel.Social.Repositories
     {
         Task<IReadOnlyCollection<ChatRoom>> GetRoomsWhereUsersIsParticipant(UserId userId);
         Task<ChatRoom>                      GetRoom(RoomId                         roomId);
+        Task<IReadOnlyCollection<ChatRoom>> GetConversationBetweenUsers(int        userId1, int userId2);
     }
 }

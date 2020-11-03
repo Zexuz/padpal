@@ -91,5 +91,43 @@ namespace Padel.Social.Test.Functional
             Assert.Contains(createRoomResponse.RoomId, res.RoomIds);
             Assert.Contains(createRoomResponse1.RoomId, res.RoomIds);
         }
+
+        [Fact]
+        public async Task When_creating_a_chatroom_with_a_person_that_we_already_have_a_conversation_with_it_should_throw()
+        {
+            await _socialClient.CreateRoomAsync(new CreateRoomRequest
+                {
+                    Content = "When_creating_a_chatroom_with_a_person_that_we_already_have_a_conversation_with_it_should_throw",
+                    Participants = {32}
+                },
+                new Metadata
+                {
+                    {"padpal-user-id", "31"},
+                }
+            );
+
+
+            await Assert.ThrowsAnyAsync<Exception>(async () => await _socialClient.CreateRoomAsync(new CreateRoomRequest
+                {
+                    Content = "When_creating_a_chatroom_with_a_person_that_we_already_have_a_conversation_with_it_should_throw",
+                    Participants = {32}
+                },
+                new Metadata
+                {
+                    {"padpal-user-id", "31"},
+                }
+            ));
+            
+            await Assert.ThrowsAnyAsync<Exception>(async () => await _socialClient.CreateRoomAsync(new CreateRoomRequest
+                {
+                    Content = "When_creating_a_chatroom_with_a_person_that_we_already_have_a_conversation_with_it_should_throw",
+                    Participants = {31}
+                },
+                new Metadata
+                {
+                    {"padpal-user-id", "32"},
+                }
+            ));
+        }
     }
 }

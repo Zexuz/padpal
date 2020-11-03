@@ -121,6 +121,20 @@ namespace Padel.Social.Test.Unit
         }
 
         [Fact]
+        public async Task CreateConversation_should_throw_if_we_already_have_a_conversation_with_this_individual()
+        {
+            var myUserId = new UserId(4);
+            var initMessage = "asd";
+
+            A.CallTo(() => _fakeRoomRepository.GetConversationBetweenUsers(A<int>._, A<int>._))
+                .Returns(new List<ChatRoom>(new[] {new ChatRoom {Participants = new List<Participant> {new Participant { }, new Participant()}}}));
+
+            await Assert.ThrowsAsync<ConversationAlreadyExistsException>(() => _sut.CreateRoom(myUserId, initMessage, new[] {new UserId(5)}));
+
+            A.CallTo(() => _fakeRoomFactory.NewRoom(myUserId, A<List<UserId>>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
         public async Task GetRoomsWhereUserIsParticipant_should_return_rooms_where_user_is_a_participant()
         {
             var userId = new UserId(4);

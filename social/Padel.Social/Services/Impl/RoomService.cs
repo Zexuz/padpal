@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Padel.Repository.Core.MongoDb;
+using Padel.Social.Exceptions;
 using Padel.Social.Factories;
 using Padel.Social.Models;
 using Padel.Social.Repositories;
@@ -36,6 +37,16 @@ namespace Padel.Social.Services.Impl
 
         public async Task<ChatRoom> CreateRoom(UserId adminUserId, string initMessage, IReadOnlyList<UserId> participants)
         {
+            if (participants.Count == 1)
+            {
+                var toUser = participants[0].Value;
+                var conversation = await _roomRepository.GetConversationBetweenUsers(adminUserId.Value, toUser);
+                if (conversation.Any(chatRoom => chatRoom.Participants.Count == 2))
+                {
+                    throw new ConversationAlreadyExistsException(adminUserId.Value, toUser);
+                }
+            }
+
             var room = _roomFactory.NewRoom(adminUserId, participants);
             await _roomRepository.InsertOneAsync(room);
 
