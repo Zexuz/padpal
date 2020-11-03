@@ -5,12 +5,11 @@ import 'package:social_repository/generated/social_v1/social_service.pb.dart';
 class MessageListTileDataService {
   MessageListTileData Build(ChatRoom room) {
     return MessageListTileData(
-      title: _buildTitle(room),
-      users: _getUsersWithProfilePictures(room),
-      unread: false,
-      subtitle: _getSubtitle(room),
-      roomId: room.id
-    );
+        title: _buildTitle(room),
+        users: _getUsersWithProfilePictures(room),
+        unread: _getIsUndread(room),
+        subtitle: _getSubtitle(room),
+        roomId: room.id);
   }
 
   String _buildTitle(ChatRoom room) {
@@ -53,5 +52,17 @@ class MessageListTileDataService {
 
   String _getFirstName(String name) {
     return name.split(" ").first;
+  }
+
+  Map<int, bool> _getIsUndread(ChatRoom room) {
+    final lastMessage = room.messages.last;
+
+    final map = Map<int, bool>();
+
+    for (var user in room.participants) {
+      map[user.user.userId] = user.lastSeenTimestamp < lastMessage.utcTimestamp;
+    }
+
+    return map;
   }
 }

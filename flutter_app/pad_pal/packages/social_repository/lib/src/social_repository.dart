@@ -204,7 +204,19 @@ class SocialRepository {
       final room = await getChatRoom(value);
       rooms.add(room);
     }
+    rooms.sort((a, b) {
+      final aTime = a.messages.last.utcTimestamp;
+      final bTime = b.messages.last.utcTimestamp;
 
+      if (aTime > bTime) {
+        return -1;
+      }
+      if (aTime < bTime) {
+        return 1;
+      }
+
+      return 0;
+    });
     return rooms;
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pad_pal/components/app_bar/app_bar.dart';
 
-import 'message_form.dart';
 import 'message_form_impl.dart';
 
 class MessagesPage extends StatelessWidget {
@@ -11,17 +11,10 @@ class MessagesPage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            tabs: [
-              Tab(text: "Mock"),
-              Tab(text: "Real"),
-            ],
-          ),
+        appBar: CustomAppBar(
+          title: "Messages",
         ),
-        body: TabBarView(
-          children: [MessageForm(), MessageFormReal()],
-        ),
+        body: MessageFormReal(),
       ),
     );
   }
