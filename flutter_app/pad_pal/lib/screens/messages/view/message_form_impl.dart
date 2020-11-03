@@ -17,7 +17,7 @@ class MessageFormReal extends StatefulWidget {
 }
 
 class _MessageFormRealState extends State<MessageFormReal> {
-  var _refreshController = RefreshController(initialRefresh: false);
+  var _refreshController = RefreshController(initialRefresh: true);
 
   List<MessageListTileData> items = <MessageListTileData>[];
 
@@ -34,21 +34,8 @@ class _MessageFormRealState extends State<MessageFormReal> {
     setState(() {
       this.items = items;
     });
-
-    // final filter = context.bloc<EventFilterCubit>().state;
-    // if (filter == null) {
-    //   _refreshController.refreshFailed();
-    //   return;
-    // }
-    // await context.bloc<EventCubit>().findGames(filter);
     _refreshController.refreshCompleted();
   }
-
-  // Future<void> _createNewRoom() async {
-  //   final socialRepo = RepositoryProvider.of<SocialRepository>(context);
-  //
-  //   await socialRepo.createRoom(List.from([5]));
-  // }
 
   void _onMessageTap(MessageListTileData data) {
     Navigator.push(
