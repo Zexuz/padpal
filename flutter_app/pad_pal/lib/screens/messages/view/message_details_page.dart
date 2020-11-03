@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
@@ -13,8 +12,6 @@ import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/messages/bloc/chat_room_cubit.dart';
 import 'package:pad_pal/screens/messages/view/slide_up_and_down_animation.dart';
 import 'package:pad_pal/theme.dart';
-import 'package:social_repository/generated/common_v1/models.pb.dart';
-import 'package:social_repository/generated/social_v1/social_service.pb.dart';
 import 'package:social_repository/social_repository.dart';
 
 import 'message_form.dart';

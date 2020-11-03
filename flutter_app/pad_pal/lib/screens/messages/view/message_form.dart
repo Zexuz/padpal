@@ -11,12 +11,14 @@ class ChatTextInput extends StatelessWidget {
     this.onChanged,
     this.controller,
     this.focusNode,
+    this.readOnly,
   });
 
   final ValueChanged<String> onChanged;
   final VoidCallback onSendTap;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class ChatTextInput extends StatelessWidget {
           onChanged: onChanged,
           focusNode: focusNode,
           controller: controller,
+          readOnly: readOnly,
         ),
         Align(
           child: TextButton(

@@ -23,6 +23,7 @@ class CustomTextInput extends StatelessWidget {
 
     return TextFormField(
       maxLines: null,
+      autofocus: !readOnly,
       readOnly: this.readOnly,
       onTap: this.onTap,
       focusNode: this.focusNode,
