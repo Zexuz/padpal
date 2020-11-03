@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/screens/messages/view/message_details_page.dart';
+import 'package:pad_pal/screens/messages/view/message_form.dart';
+import 'package:pad_pal/screens/messages/view/message_init_room_page.dart';
+import 'package:pad_pal/services/message_list_tile_data_service.dart';
 import 'package:pad_pal/theme.dart';
 import 'package:social_repository/social_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -151,7 +156,7 @@ class ProfileView extends StatelessWidget {
                 if (profile.friendsRequests.contains(state.me.userId)) friendStatus = _FriendStatus.pending;
                 if (profile.friends.contains(state.me.userId)) friendStatus = _FriendStatus.friends;
 
-                return _BuildButtons(friendStatus: friendStatus, userId: profile.userId);
+                return _BuildButtons(friendStatus: friendStatus, profile: profile);
               },
             ),
           ),
@@ -197,14 +202,15 @@ enum _FriendStatus { notFriends, pending, friends }
 class _BuildButtons extends StatelessWidget {
   _BuildButtons({
     @required this.friendStatus,
-    @required this.userId,
+    @required this.profile,
   });
 
   final _FriendStatus friendStatus;
-  final int userId;
+  final Profile profile;
 
   @override
   Widget build(BuildContext context) {
+    final userId = profile.userId;
     final row = Row(children: []);
     switch (friendStatus) {
       case _FriendStatus.notFriends:
@@ -252,7 +258,43 @@ class _BuildButtons extends StatelessWidget {
           child: Button.primary(
             child: const Text('Chat'),
             large: false,
-            onPressed: () {},
+            onPressed: () async {
+              final socialRepo = RepositoryProvider.of<SocialRepository>(context);
+              final service = GetIt.I.get<MessageListTileDataService>();
+
+              final rooms = await socialRepo.getMyChatRooms();
+
+              final items = <MessageListTileData>[];
+              for (var i = 0; i < rooms.length; i++) {
+                items.add(service.Build(rooms[i]));
+              }
+
+              for (var value in items) {
+                if (value.users.length != 1) {
+                  continue;
+                }
+
+                if (value.users[0].userId == profile.userId) {
+                  Navigator.push(
+                    context,
+                    MessageDetailsPage.route(profile.name, value.roomId),
+                  );
+                  return;
+                }
+              }
+
+              final roomId = await Navigator.push(
+                context,
+                MessageInitRoomPage.route(List.from([profile])),
+              );
+
+              if (roomId == null) return;
+
+              Navigator.push(
+                context,
+                MessageDetailsPage.route(profile.name, roomId),
+              );
+            },
           ),
         ));
         break;
