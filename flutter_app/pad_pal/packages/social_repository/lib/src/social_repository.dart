@@ -177,11 +177,11 @@ class SocialRepository {
     await call;
   }
 
-  Future<String> createRoom(List<int> users) async {
+  Future<String> createRoom(List<int> users, String content) async {
     final callOptions = await _getCallOptions();
 
     final request = CreateRoomRequest()
-      ..content = "Hello world!"
+      ..content = content
       ..participants.addAll(users);
 
     final call = _chatServiceClient.createRoom(request, options: callOptions);

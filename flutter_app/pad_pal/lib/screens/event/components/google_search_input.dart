@@ -41,6 +41,7 @@ class _GoogleSearchInputState extends State<GoogleSearchInput> {
   Widget build(BuildContext context) {
     return CustomTextInput(
       readOnly: true,
+      autofocus: false,
       focusNode: widget.focus,
       onTap: () => _handlePressButton(context),
       controller: _controller,

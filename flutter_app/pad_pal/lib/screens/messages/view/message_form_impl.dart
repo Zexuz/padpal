@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/screens/profile/view/profile_search_view.dart';
 import 'package:pad_pal/services/message_list_tile_data_service.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:social_repository/social_repository.dart';
 
 import 'message_details_page.dart';
 import 'message_form.dart';
+import 'message_init_room_page.dart';
 
 class MessageFormReal extends StatefulWidget {
   @override
@@ -54,6 +57,31 @@ class _MessageFormRealState extends State<MessageFormReal> {
     );
   }
 
+  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfileSearchView()),
+    );
+
+    if (result == null) return;
+
+    final socialRepo = RepositoryProvider.of<SocialRepository>(context);
+    final profile = await socialRepo.getProfile(result);
+
+
+    final roomId = await Navigator.push(
+      context,
+      MessageInitRoomPage.route(List.from([profile])),
+    );
+
+    if(roomId == null) return;
+
+    Navigator.push(
+      context,
+      MessageDetailsPage.route(profile.name, roomId),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -62,9 +90,14 @@ class _MessageFormRealState extends State<MessageFormReal> {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 24),
-            child: ChatTextInput(
-              onChanged: (value) => print(value),
-              onSendTap: () {},
+            child: GestureDetector(
+              onTap: () => _navigateAndDisplaySelection(context),
+              child: AbsorbPointer(
+                child: CustomTextInput(
+                  onChanged: (value) => print(value),
+                  readOnly: true,
+                ),
+              ),
             ),
           ),
           // Button.primary(child: Text("Create new chat room"), onPressed: () => _createNewRoom()),

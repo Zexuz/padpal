@@ -6,6 +6,7 @@ class CustomTextInput extends StatelessWidget {
     Key key,
     this.onChanged,
     this.readOnly = false,
+    this.autofocus = false,
     this.focusNode,
     this.onTap,
     this.controller,
@@ -13,6 +14,7 @@ class CustomTextInput extends StatelessWidget {
 
   final ValueChanged<String> onChanged;
   final bool readOnly;
+  final bool autofocus;
   final FocusNode focusNode;
   final VoidCallback onTap;
   final TextEditingController controller;
@@ -23,7 +25,7 @@ class CustomTextInput extends StatelessWidget {
 
     return TextFormField(
       maxLines: null,
-      autofocus: !readOnly,
+      autofocus: this.autofocus,
       readOnly: this.readOnly,
       onTap: this.onTap,
       focusNode: this.focusNode,

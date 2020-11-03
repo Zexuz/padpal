@@ -5,14 +5,14 @@ import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/avatar/avatar.dart';
 import 'package:social_repository/social_repository.dart';
 
-class ProfileSearchView extends StatelessWidget {
+import 'profile_page.dart';
+
+class ProfileSearchViewOld extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return BlocProvider(
       create: (context) => ProfileSearchCubit(
         socialRepository: RepositoryProvider.of<SocialRepository>(context),
-        onlySearchForFriends: true,
       ),
       child: Builder(builder: (context) {
         final nav = Navigator.of(context);
@@ -31,7 +31,7 @@ class ProfileSearchView extends StatelessWidget {
           body: BlocBuilder<ProfileSearchCubit, ProfileSearchState>(
             buildWhen: (prev, cur) => prev.isLoading != cur.isLoading,
             builder: (context, state) {
-              const radius = 18.0;
+              const radius = 24.0;
 
               return Column(
                 children: [
@@ -42,7 +42,7 @@ class ProfileSearchView extends StatelessWidget {
                       ),
                     ),
                   Expanded(
-                    child: ListView.builder(
+                    child: ListView.separated(
                       itemCount: state.profiles.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
@@ -51,14 +51,16 @@ class ProfileSearchView extends StatelessWidget {
                             url: state.profiles[index].imageUrl,
                             name: state.profiles[index].name,
                             radius: radius,
-                            elevation: 0,
                           ),
-                          title: Text(state.profiles[index].name, style: theme.textTheme.headline3),
+                          trailing: Icon(Icons.arrow_forward_ios),
+                          title: Text(state.profiles[index].name),
+                          subtitle: Text('My new post'),
                           onTap: () {
-                            nav.pop<int>(state.profiles[index].userId);
+                            nav.push(ProfilePage.route(context, state.profiles[index]));
                           },
                         );
                       },
+                      separatorBuilder: (BuildContext context, int index) => const Divider(),
                     ),
                   )
                 ],

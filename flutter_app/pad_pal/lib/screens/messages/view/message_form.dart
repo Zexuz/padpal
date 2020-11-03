@@ -11,7 +11,7 @@ class ChatTextInput extends StatelessWidget {
     this.onChanged,
     this.controller,
     this.focusNode,
-    this.readOnly,
+    this.readOnly = false,
   });
 
   final ValueChanged<String> onChanged;

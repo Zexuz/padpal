@@ -4,7 +4,7 @@ import 'package:pad_pal/components/components.dart';
 import 'package:social_repository/social_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'profile_search_view.dart';
+import 'profile_search_view_old.dart';
 import 'profile_view.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -43,7 +43,7 @@ class ProfilePage extends StatelessWidget {
                         PageRouteBuilder(
                           pageBuilder: (_, animation, secondaryAnimation) => BlocProvider.value(
                             value: context.bloc<MeCubit>(),
-                            child: ProfileSearchView(),
+                            child: ProfileSearchViewOld(),
                           ),
                         ),
                       );
