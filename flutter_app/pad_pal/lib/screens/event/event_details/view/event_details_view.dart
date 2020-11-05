@@ -42,7 +42,7 @@ class EventDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  EventStepTitle(title: "Information", subtitle: "Message from Anton:"),
+                  TitleAndSubtitle(title: "Information", subtitle: "Message from Anton:"),
                   RichText(
                     text: TextSpan(
                         text: 'Hi guys! \n\n'
@@ -91,7 +91,7 @@ class Players extends StatelessWidget {
           color: AppTheme.grayBorder,
         ),
         Price(gameInfo: gameInfo),
-        EventStepTitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
+        TitleAndSubtitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
         BlocBuilder<MeCubit, MeState>(
           builder: (context, state) {
             if (state.isLoading) {
@@ -213,7 +213,7 @@ class EventDetailsBulletPoints extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            EventStepTitle(title: "Details", subtitle: "Lorem ipsom dolar sit amet"),
+            TitleAndSubtitle(title: "Details", subtitle: "Lorem ipsom dolar sit amet"),
             ListTile(
               title: Text("Wed 23 Sep, 12.00-13.00 pm"),
               subtitle: Text("Next week"),

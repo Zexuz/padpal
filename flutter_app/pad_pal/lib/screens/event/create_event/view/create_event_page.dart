@@ -222,7 +222,7 @@ class _CreateEventWizardState extends State<CreateEventPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              EventStepTitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
+                              TitleAndSubtitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
                               const SizedBox(height: 38),
                               steps[currentStep],
                               Expanded(child: Container()),
