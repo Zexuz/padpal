@@ -285,6 +285,10 @@ class Price extends StatelessWidget {
 }
 
 class GoToConversation extends StatelessWidget {
+  const GoToConversation({@required this.onTap});
+
+  final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -302,7 +306,7 @@ class GoToConversation extends StatelessWidget {
         CupertinoIcons.chat_bubble_fill,
         size: 28,
       ),
-      onTap: () => {},
+      onTap: onTap,
     );
   }
 }
