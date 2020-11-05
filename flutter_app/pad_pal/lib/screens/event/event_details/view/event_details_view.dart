@@ -9,6 +9,7 @@ import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/event/components/components.dart';
 import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
 import 'package:pad_pal/screens/profile/view/profile_from_id_page.dart';
+import 'package:pad_pal/screens/result/view/result_divide_teams_page.dart';
 import 'package:pad_pal/theme.dart';
 
 class EventDetailsView extends StatelessWidget {
@@ -48,10 +49,6 @@ class EventDetailsView extends StatelessWidget {
                             'Me and my friend Andries are new to this sport and we are looking for two players bla bla bla...',
                         style: theme.textTheme.bodyText1),
                   ),
-                  Button.primary(
-                    child: const Text('Go to group chat'),
-                    onPressed: null,
-                  ),
                 ],
               ),
             ),
@@ -85,6 +82,14 @@ class Players extends StatelessWidget {
 
     return Column(
       children: [
+        GoToAddResult(),
+        SizedBox(height: 12),
+        GoToConversation(),
+        Divider(
+          thickness: 2,
+          height: 24 * 2.0,
+          color: AppTheme.grayBorder,
+        ),
         Price(gameInfo: gameInfo),
         EventStepTitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
         BlocBuilder<MeCubit, MeState>(
@@ -212,27 +217,27 @@ class EventDetailsBulletPoints extends StatelessWidget {
             ListTile(
               title: Text("Wed 23 Sep, 12.00-13.00 pm"),
               subtitle: Text("Next week"),
-              leading: Icon(Icons.calendar_today, color: Color(0xFFB4BEC9)),
+              leading: Icon(Icons.calendar_today),
             ),
             ListTile(
               title: Text("Delsjön Padel Center"),
               subtitle: Text("Göteborg"),
-              leading: Icon(Icons.place, color: Color(0xFFB4BEC9)),
+              leading: Icon(Icons.place),
             ),
             ListTile(
               title: Text("9 (hall C)"),
               subtitle: Text("Court number"),
-              leading: Icon(Icons.directions, color: Color(0xFFB4BEC9)),
+              leading: Icon(Icons.directions),
             ),
             ListTile(
               title: Text(gameInfo.publicInfo.courtType.toString()),
               subtitle: Text("Lorem ipsum"),
-              leading: Icon(Icons.house, color: Color(0xFFB4BEC9)),
+              leading: Icon(Icons.house),
             ),
             ListTile(
               title: Text("${gameInfo.publicInfo.pricePerPerson} kr"),
               subtitle: Text("Price per person"),
-              leading: Icon(Icons.label, color: Color(0xFFB4BEC9)),
+              leading: Icon(Icons.label),
             ),
           ],
         ),
@@ -253,21 +258,129 @@ class Price extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      decoration: BoxDecoration(
+    return InfoTile(
+      title: Text(
+        "${gameInfo.publicInfo.pricePerPerson} kr",
+        style: theme.textTheme.headline3.copyWith(fontWeight: FontWeight.w400),
+      ),
+      subtitle: Text(
+        "Price per person",
+        style: theme.textTheme.headline5.copyWith(color: AppTheme.secondaryColorOrange),
+      ),
+      leading: Icon(
+        CupertinoIcons.tag_fill,
+        color: AppTheme.secondaryColorOrange,
+        size: 28,
+      ),
+      boxDecoration: BoxDecoration(
         color: AppTheme.secondaryColorOrangeWithOpacity,
         border: Border.all(color: AppTheme.secondaryColorOrange, width: 1.5),
         borderRadius: BorderRadius.circular(6.0),
       ),
-      child: ListTile(
-        leading: Icon(
-          Icons.label,
-          color: AppTheme.secondaryColorOrange,
-        ),
-        title: Text("${gameInfo.publicInfo.pricePerPerson} kr", style: theme.textTheme.subtitle1),
-        subtitle: Text(
-          "Price per person",
-          style: theme.textTheme.caption.copyWith(color: AppTheme.secondaryColorOrange),
+    );
+  }
+}
+
+class GoToConversation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InfoTile(
+      title: Text(
+        "Start a conversation",
+        style: theme.textTheme.headline3,
+      ),
+      subtitle: Text(
+        "with Name, Name, and Name",
+        style: theme.textTheme.headline5,
+      ),
+      leading: Icon(
+        CupertinoIcons.chat_bubble_fill,
+        size: 28,
+      ),
+      onTap: () => {},
+    );
+  }
+}
+
+class GoToAddResult extends StatelessWidget {
+  void _onTap(BuildContext context) {
+    Navigator.of(context).push(ResultDivideTeamsPage.route());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InfoTile(
+      title: Text(
+        "Add result",
+        style: theme.textTheme.headline3,
+      ),
+      leading: Icon(
+        CupertinoIcons.stopwatch_fill,
+        size: 28,
+      ),
+      onTap: () => _onTap(context),
+    );
+  }
+}
+
+class InfoTile extends StatelessWidget {
+  const InfoTile({
+    Key key,
+    @required this.leading,
+    @required this.title,
+    this.subtitle,
+    this.trailing,
+    this.boxDecoration,
+    this.onTap,
+  }) : super(key: key);
+
+  final Widget leading;
+  final Widget trailing;
+  final Widget title;
+  final Widget subtitle;
+  final BoxDecoration boxDecoration;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final decoration = boxDecoration ??
+        BoxDecoration(
+          border: Border.all(color: AppTheme.grayBorder, width: 1.5),
+          borderRadius: BorderRadius.circular(6.0),
+        );
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: decoration.borderRadius,
+      child: Container(
+        height: 72,
+        decoration: decoration,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 21, right: 21),
+              child: leading,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                title,
+                if (subtitle != null) subtitle,
+              ],
+            ),
+            if (trailing != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 21, right: 21),
+                child: trailing,
+              ),
+          ],
         ),
       ),
     );

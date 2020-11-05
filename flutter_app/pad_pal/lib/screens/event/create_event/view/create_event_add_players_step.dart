@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:game_repository/generated/common_v1/models.pb.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/theme.dart';
 import 'package:social_repository/social_repository.dart';
 
 class SpotData {
@@ -314,6 +315,7 @@ class RawSpot extends StatelessWidget {
             thickness: 2,
             height: dividerHeight,
             indent: offset + rightPadding,
+            color: AppTheme.grayBorder,
           ),
       ],
     );
