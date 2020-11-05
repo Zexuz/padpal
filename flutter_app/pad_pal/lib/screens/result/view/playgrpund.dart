@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
+import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/theme.dart';
 
 class PlaygroundPage extends StatelessWidget {
@@ -11,6 +12,31 @@ class PlaygroundPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: MyHomePage(),
+    );
+  }
+}
+
+class TeamName extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 24),
+      child: Container(
+        width: 40,
+        height: 105,
+        decoration: BoxDecoration(
+          color: AppTheme.lightGrayBackground,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Center(
+            child: Text(
+          "A",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 24,
+          ),
+        )),
+      ),
     );
   }
 }
@@ -31,11 +57,6 @@ class ItemData {
 
   // Each item in reorderable list needs stable and unique key
   final Key key;
-}
-
-enum DraggingMode {
-  iOS,
-  Android,
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -79,75 +100,46 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint("Reordering finished for ${draggedItem.title}}");
   }
 
-  //
-  // Reordering works by having ReorderableList widget in hierarchy
-  // containing ReorderableItems widgets
-  //
-
-  DraggingMode _draggingMode = DraggingMode.iOS;
-
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ReorderableList(
-        onReorder: this._reorderCallback,
-        onReorderDone: this._reorderDone,
-        child: CustomScrollView(
-          // cacheExtent: 3000,
-          slivers: <Widget>[
-            SliverAppBar(
-              actions: <Widget>[
-                PopupMenuButton<DraggingMode>(
-                  child: Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: Text("Options"),
-                  ),
-                  initialValue: _draggingMode,
-                  onSelected: (DraggingMode mode) {
-                    setState(() {
-                      _draggingMode = mode;
-                    });
-                  },
-                  itemBuilder: (BuildContext context) => <PopupMenuItem<DraggingMode>>[
-                    const PopupMenuItem<DraggingMode>(value: DraggingMode.iOS, child: Text('iOS-like dragging')),
-                    const PopupMenuItem<DraggingMode>(
-                        value: DraggingMode.Android, child: Text('Android-like dragging')),
-                  ],
-                ),
-              ],
-              pinned: true,
-              expandedHeight: 150.0,
-              flexibleSpace: const FlexibleSpaceBar(
-                title: const Text('Demo'),
+      backgroundColor: Colors.blueAccent,
+      appBar: CustomAppBar(title: "asd"),
+      body: Row(
+        children: [
+          Column(
+            children: [
+              TeamName(),
+              const SizedBox(height: 46),
+              TeamName(),
+            ],
+          ),
+          Expanded(
+            child: ReorderableList(
+              onReorder: this._reorderCallback,
+              onReorderDone: this._reorderDone,
+              child: ListView.builder(
+                itemCount: _items.length + 1,
+                itemBuilder: (context, i) {
+                  if (i == 2) {
+                    return Divider(
+                      thickness: 2,
+                      height: 24 * 2.0,
+                      color: AppTheme.grayBorder,
+                    );
+                  }
+                  final index = i > 2 ? i - 1 : i;
+
+                  return Item(
+                    data: _items[index],
+                    // first and last attributes affect border drawn during dragging
+                    isFirst: index == 0,
+                    isLast: index == _items.length - 1,
+                  );
+                },
               ),
             ),
-            SliverPadding(
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int i) {
-                      if (i == 2) {
-                        return Divider(
-                          thickness: 2,
-                          height: 24 * 2.0,
-                          color: AppTheme.grayBorder,
-                        );
-                      }
-                      final index = i > 2 ? i - 1 : i;
-
-                      return Item(
-                        data: _items[index],
-                        // first and last attributes affect border drawn during dragging
-                        isFirst: index == 0,
-                        isLast: index == _items.length - 1,
-                        draggingMode: _draggingMode,
-                      );
-                    },
-                    childCount: _items.length + 1,
-                  ),
-                )),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -158,13 +150,11 @@ class Item extends StatelessWidget {
     this.data,
     this.isFirst,
     this.isLast,
-    this.draggingMode,
   });
 
   final ItemData data;
   final bool isFirst;
   final bool isLast;
-  final DraggingMode draggingMode;
 
   Widget _buildChild(BuildContext context, ReorderableItemState state) {
     BoxDecoration decoration;
@@ -185,59 +175,43 @@ class Item extends StatelessWidget {
           color: placeholder ? null : Colors.white);
     }
 
-    // For iOS dragging mode, there will be drag handle on the right that triggers
-    // reordering; For android mode it will be just an empty container
-    Widget dragHandle = draggingMode == DraggingMode.iOS
-        ? ReorderableListener(
-            child: Container(
-              padding: EdgeInsets.only(right: 18.0, left: 18.0),
-              color: Color(0x08000000),
-              child: Center(
-                child: Icon(Icons.reorder, color: Color(0xFF888888)),
-              ),
-            ),
-          )
-        : Container();
-
-    Widget content = Container(
-      decoration: decoration,
+    return Container(
+      // decoration: decoration,
       child: SafeArea(
-          top: false,
-          bottom: false,
-          child: Opacity(
-            // hide content for placeholder
-            opacity: state == ReorderableItemState.placeholder ? 0.0 : 1.0,
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      child: Padding(
+        top: false,
+        bottom: false,
+        child: Opacity(
+          // hide content for placeholder
+          opacity: state == ReorderableItemState.placeholder ? 0.0 : 1.0,
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
                     child: Text(data.title, style: Theme.of(context).textTheme.subtitle1),
-                  )),
-                  // Triggers the reordering
-                  dragHandle,
-                ],
-              ),
+                  ),
+                ),
+                ReorderableListener(
+                  child: Container(
+                    padding: EdgeInsets.only(right: 18.0, left: 18.0),
+                    color: Color(0x08000000),
+                    child: Center(
+                      child: Icon(Icons.reorder, color: Color(0xFF888888)),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          )),
+          ),
+        ),
+      ),
     );
-
-    // For android dragging mode, wrap the entire content in DelayedReorderableListener
-    if (draggingMode == DraggingMode.Android) {
-      content = DelayedReorderableListener(
-        child: content,
-      );
-    }
-
-    return content;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableItem(
-        key: data.key, //
-        childBuilder: _buildChild);
+    return ReorderableItem(key: data.key, childBuilder: _buildChild);
   }
 }
