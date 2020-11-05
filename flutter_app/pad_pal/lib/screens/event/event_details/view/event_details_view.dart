@@ -8,6 +8,7 @@ import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
 import 'package:pad_pal/screens/profile/view/profile_from_id_page.dart';
+import 'package:pad_pal/screens/result/view/playgrpund.dart';
 import 'package:pad_pal/screens/result/view/result_divide_teams_page.dart';
 import 'package:pad_pal/theme.dart';
 
@@ -87,7 +88,11 @@ class Players extends StatelessWidget {
           },
         ),
         SizedBox(height: 12),
-        GoToConversation(),
+        GoToConversation(
+          onTap: () {
+            Navigator.of(context).push(PlaygroundPage.route());
+          },
+        ),
         Divider(
           thickness: 2,
           height: 24 * 2.0,
