@@ -81,7 +81,11 @@ class Players extends StatelessWidget {
 
     return Column(
       children: [
-        GoToAddResult(),
+        GoToAddResult(
+          onTap: () {
+            Navigator.of(context).push(ResultDivideTeamsPage.route(gameInfo));
+          },
+        ),
         SizedBox(height: 12),
         GoToConversation(),
         Divider(
@@ -304,9 +308,9 @@ class GoToConversation extends StatelessWidget {
 }
 
 class GoToAddResult extends StatelessWidget {
-  void _onTap(BuildContext context) {
-    Navigator.of(context).push(ResultDivideTeamsPage.route());
-  }
+  const GoToAddResult({@required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -321,7 +325,7 @@ class GoToAddResult extends StatelessWidget {
         CupertinoIcons.stopwatch_fill,
         size: 28,
       ),
-      onTap: () => _onTap(context),
+      onTap: onTap,
     );
   }
 }

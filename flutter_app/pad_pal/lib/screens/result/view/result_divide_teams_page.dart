@@ -1,13 +1,24 @@
 import 'package:drag_and_drop_lists_fork_robin/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/screens/result/bloc/result_cubit.dart';
+import 'package:pad_pal/screens/result/models/player.dart';
 import 'package:pad_pal/theme.dart';
 
 class ResultDivideTeamsPage extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => ResultDivideTeamsPage());
+  static Route route(GameInfo gameInfo) {
+    return MaterialPageRoute<void>(builder: (_) => ResultDivideTeamsPage(gameInfo: gameInfo));
   }
+
+  const ResultDivideTeamsPage({
+    Key key,
+    @required this.gameInfo,
+  }) : super(key: key);
+
+  final GameInfo gameInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -18,170 +29,132 @@ class ResultDivideTeamsPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: ResultDivideTeamsView(),
+        child: BlocProvider<ResultCubit>(
+          create: (_) => ResultCubit(gameInfo: gameInfo),
+          child: ResultDivideTeamsView(),
+        ),
       ),
     );
   }
 }
 
-class ResultDivideTeamsView extends StatefulWidget {
+class ResultDivideTeamsView extends StatelessWidget {
   ResultDivideTeamsView({Key key}) : super(key: key);
 
-  @override
-  _ResultDivideTeamsViewState createState() => _ResultDivideTeamsViewState();
-}
-
-class _ResultDivideTeamsViewState extends State<ResultDivideTeamsView> {
-  List<DragAndDropList> _contents;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _contents = List.generate(3, (index) {
-      return DragAndDropList(
-        canDrag: false,
-        children: <DragAndDropItem>[
-          DragAndDropItem(
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: DottedAvatar(radius: 24),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Asd"),
-                      Text("asd"),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+  DragAndDropList _buildList(String teamName, List<Player> players, bool isValid) {
+    return DragAndDropList(
+      leftSide: Padding(
+        padding: const EdgeInsets.only(right: 24),
+        child: Container(
+          width: 40,
+          decoration: BoxDecoration(
+            color: AppTheme.lightGrayBackground,
+            borderRadius: BorderRadius.circular(12.0),
           ),
-          DragAndDropItem(
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  child: Text(
-                    'Sub $index.2',
-                  ),
-                ),
-              ],
+          child: Center(
+              child: Text(
+            teamName,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 24,
             ),
+          )),
+        ),
+      ),
+      canDrag: false,
+      children: <DragAndDropItem>[
+        for (var item in players)
+          DragAndDropItem(
+            child: PlayerListTile(item),
           ),
-        ],
-      );
-    });
-  }
-
-  _onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-    setState(() {
-      var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
-      _contents[newListIndex].children.insert(newItemIndex, movedItem);
-    });
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    _contents = List.generate(2, (index) {
-      return DragAndDropList(
-        leftSide: Padding(
-          padding: const EdgeInsets.only(right: 24),
-          child: Container(
-            width: 40,
-            decoration: BoxDecoration(
-              color: AppTheme.lightGrayBackground,
-              borderRadius: BorderRadius.circular(12.0),
+    return BlocBuilder<ResultCubit, ResultState>(
+      buildWhen: (previous, current) => previous.teamA != current.teamA || previous.teamB != current.teamB,
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TitleAndSubtitle(
+              title: "Divide into teams",
+              subtitle: "Lorem ipsum dolor sit amet",
             ),
-            child: Center(
-                child: Text(
-              "A",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 24,
-              ),
-            )),
-          ),
-        ),
-        canDrag: false,
-        children: <DragAndDropItem>[
-          DragAndDropItem(
-            child: PlayerListTile(),
-          ),
-          DragAndDropItem(
-            child: PlayerListTile(),
-          ),
-        ],
-      );
-    });
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TitleAndSubtitle(
-          title: "Divide into teams",
-          subtitle: "Lorem ipsum dolor sit amet",
-        ),
-        const SizedBox(height: 36),
-        Expanded(
-          child: DragAndDropLists(
-            listDivider: Divider(
-              thickness: 1,
-              height: 25,
-              indent: 100,
-              color: AppTheme.grayBorder,
-            ),
-            itemDivider: SizedBox(height: 25),
-            listDividerOnLastChild: false,
-            children: _contents,
-            onItemReorder: _onItemReorder,
-            lastItemTargetHeight: 8,
-            lastListTargetSize: 40,
-            dragHandle: Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.menu,
-                color: Colors.black26,
+            const SizedBox(height: 36),
+            Expanded(
+              child: DragAndDropLists(
+                listDivider: Divider(
+                  thickness: 1,
+                  height: 25,
+                  indent: 100,
+                  color: AppTheme.grayBorder,
+                ),
+                itemDivider: SizedBox(height: 25),
+                listDividerOnLastChild: false,
+                children: [
+                  _buildList("A", state.teamA, state.isTeamSetupValid),
+                  _buildList("B", state.teamB, state.isTeamSetupValid),
+                ],
+                onItemReorder: context.bloc<ResultCubit>().onItemReorder,
+                lastItemTargetHeight: 0,
+                dragHandle: Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(
+                    Icons.menu,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        Button.primary(child: Text("Next"), onPressed: () => {})
-      ],
+            Button.primary(child: Text("Next"), onPressed: state.isTeamSetupValid ? () => {} : null)
+          ],
+        );
+      },
     );
   }
 }
 
 class PlayerListTile extends StatelessWidget {
-  const PlayerListTile({
+  const PlayerListTile(
+    this.player, {
     Key key,
   }) : super(key: key);
+
+  final Player player;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final radius = 24.0;
+
+    final avatar = player == null
+        ? DottedAvatar(
+            radius: radius,
+          )
+        : Avatar(
+            url: player.url,
+            name: player.name,
+            elevation: 0,
+            borderWidth: 0,
+            radius: radius,
+          );
+
+    final text = player?.name ?? "Empty spot";
 
     return Row(
       children: [
         Padding(
           padding: EdgeInsets.only(right: 10),
-          child: Avatar(
-              url: 'https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg',
-              name: "Alfie Wood",
-              elevation: 0,
-              borderWidth: 0,
-              radius: 24),
+          child: avatar,
         ),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Alfie Wood",
+                text,
                 style: theme.textTheme.headline4,
                 overflow: TextOverflow.ellipsis,
               ),
