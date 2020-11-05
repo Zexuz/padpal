@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:pad_pal/screens/event/components/google_search_input.dart';
+import 'package:pad_pal/components/components.dart';
 
 import '../bloc/create_event_bloc.dart';
 
