@@ -90,7 +90,7 @@ class Players extends StatelessWidget {
         SizedBox(height: 12),
         GoToConversation(
           onTap: () {
-            Navigator.of(context).push(PlaygroundPage.route());
+            Navigator.of(context).push(PlaygroundPage.route(gameInfo));
           },
         ),
         Divider(
