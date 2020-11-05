@@ -5,7 +5,6 @@ import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
-import 'package:pad_pal/screens/event/components/components.dart';
 import 'package:social_repository/social_repository.dart';
 
 import 'create_event_add_players_step.dart';

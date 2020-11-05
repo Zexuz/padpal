@@ -51,6 +51,7 @@ dependencies:
   get_it: ^5.0.1
   intl: ^0.16.1
   cupertino_icons: ^1.0.0
+  drag_and_drop_lists_fork_robin: ^0.2.9
   authentication_repository:
     path: packages/authentication_repository
   game_repository:

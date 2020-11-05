@@ -6,7 +6,6 @@ import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
-import 'package:pad_pal/screens/event/components/components.dart';
 import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
 import 'package:pad_pal/screens/profile/view/profile_from_id_page.dart';
 import 'package:pad_pal/screens/result/view/result_divide_teams_page.dart';
