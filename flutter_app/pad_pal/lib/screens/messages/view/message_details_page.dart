@@ -89,75 +89,78 @@ class ChatRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        Expanded(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              BlocBuilder<ChatRoomCubit, ChatRoomState>(
-                buildWhen: (previous, current) => current.messages.length != previous.messages.length,
-                builder: (context, state) {
-                  context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
+    return FocusRemover(
+      focusNode: _focusNode,
+      child: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                BlocBuilder<ChatRoomCubit, ChatRoomState>(
+                  buildWhen: (previous, current) => current.messages.length != previous.messages.length,
+                  builder: (context, state) {
+                    context.bloc<ChatRoomCubit>().updateLastSeenInRoom();
 
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 24, right: 24),
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      reverse: true,
-                      itemCount: state.messages.length,
-                      itemBuilder: (context, index) {
-                        return BlocBuilder<ChatRoomCubit, ChatRoomState>(
-                          // TODO How to only rebuild the widgets that needs to be rebuilt? Eg, newer in time, or has a "seen" status on them
-                          builder: (context, state) {
-                            final currentIndex = state.messages.length - (index + 1);
-                            final currentMessage = state.messages[currentIndex];
-                            return Message(
-                              model: currentMessage,
-                              users: state.users,
-                              shouldShowTime: _shouldPrintTime(state.messages, currentIndex) ||
-                                  state.lastMessagePressed == currentMessage.range.start,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 35,
-                  child: FittedBox(
-                    child: SlideUpAndDownAnimiation(
-                      scrollController: _scrollController,
-                      child: FloatingActionButton(
-                        onPressed: () => _scrollToBottom(),
-                        elevation: 3,
-                        child: Icon(
-                          Icons.arrow_downward_rounded,
-                          color: theme.primaryColor,
-                          size: 40,
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 24, right: 24),
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        reverse: true,
+                        itemCount: state.messages.length,
+                        itemBuilder: (context, index) {
+                          return BlocBuilder<ChatRoomCubit, ChatRoomState>(
+                            // TODO How to only rebuild the widgets that needs to be rebuilt? Eg, newer in time, or has a "seen" status on them
+                            builder: (context, state) {
+                              final currentIndex = state.messages.length - (index + 1);
+                              final currentMessage = state.messages[currentIndex];
+                              return Message(
+                                model: currentMessage,
+                                users: state.users,
+                                shouldShowTime: _shouldPrintTime(state.messages, currentIndex) ||
+                                    state.lastMessagePressed == currentMessage.range.start,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 35,
+                    child: FittedBox(
+                      child: SlideUpAndDownAnimiation(
+                        scrollController: _scrollController,
+                        child: FloatingActionButton(
+                          onPressed: () => _scrollToBottom(),
+                          elevation: 3,
+                          child: Icon(
+                            Icons.arrow_downward_rounded,
+                            color: theme.primaryColor,
+                            size: 40,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ChatTextInput(
-            controller: _textController,
-            focusNode: _focusNode,
-            onChanged: (value) => {},
-            onSendTap: () => _onSend(context),
-          ),
-        )
-      ],
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ChatTextInput(
+              controller: _textController,
+              focusNode: _focusNode,
+              onChanged: (value) => {},
+              onSendTap: () => _onSend(context),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
