@@ -47,7 +47,16 @@ class ResultCubit extends Cubit<ResultState> {
   }
 
   void remove(Team team) {
-    _updateScore(team, -1);
+    final teamIndex = team == Team.A ? 0 : 1;
+    final otherTeamIndex = team == Team.A ? 1 : 0;
+    final myScore = state.currentSet[teamIndex];
+    final opponentsScore = state.currentSet[otherTeamIndex];
+
+    if (opponentsScore == 7 && myScore == 5) {
+      _updateScore(team, -1, -1);
+    } else {
+      _updateScore(team, -1);
+    }
   }
 
   // Returns index of item with given key
@@ -76,14 +85,14 @@ class ResultCubit extends Cubit<ResultState> {
     return true;
   }
 
-  void _updateScore(Team team, int delta) {
+  void _updateScore(Team team, int deltaMy, [int deltaOpponents = 0]) {
     final sets = List<List<int>>();
 
     for (var set in state.sets) {
       if (team == Team.A) {
-        sets.add([set[0] + delta, set[1]]);
+        sets.add([set[0] + deltaMy, set[1] + deltaOpponents]);
       } else {
-        sets.add([set[0], set[1] + delta]);
+        sets.add([set[0] + deltaOpponents, set[1] + deltaMy]);
       }
     }
 
