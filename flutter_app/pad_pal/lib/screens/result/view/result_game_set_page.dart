@@ -8,10 +8,11 @@ import 'package:pad_pal/theme.dart';
 class ResultGameSetPage extends StatelessWidget {
   static Route route(BuildContext context) {
     return MaterialPageRoute<void>(
-      builder: (_) => BlocProvider.value(
-        value: context.bloc<ResultCubit>(),
-        child: ResultGameSetPage(),
-      ),
+      builder: (_) =>
+          BlocProvider.value(
+            value: context.bloc<ResultCubit>(),
+            child: ResultGameSetPage(),
+          ),
     );
   }
 
@@ -39,15 +40,16 @@ class ResultGameSetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ResultCubit, ResultState>(
       builder: (context, state) {
+        final cubit = context.bloc<ResultCubit>();
         return Column(
           children: [
-            TitleAndSubtitle(title: "Set 1", subtitle: "Lorem ipsom dolar sit amet"),
+            TitleAndSubtitle(title: "Set ${state.currentSetIndex + 1}", subtitle: "Lorem ipsom dolar sit amet"),
             _Team(
               name: "Team A",
               players: state.teamA,
               score: state.currentSet[0],
-              onAdd: state.canAdd(Team.A) ? () => context.bloc<ResultCubit>().add(Team.A) : null,
-              onRemove: state.canRemove(Team.A) ? () => context.bloc<ResultCubit>().remove(Team.A) : null,
+              onAdd: state.canAdd(Team.A) ? () => cubit.add(Team.A) : null,
+              onRemove: state.canRemove(Team.A) ? () => cubit.remove(Team.A) : null,
             ),
             Divider(
               thickness: 1,
@@ -58,10 +60,10 @@ class ResultGameSetView extends StatelessWidget {
               name: "Team B",
               players: state.teamB,
               score: state.currentSet[1],
-              onAdd: state.canAdd(Team.B) ? () => context.bloc<ResultCubit>().add(Team.B) : null,
-              onRemove: state.canRemove(Team.B) ? () => context.bloc<ResultCubit>().remove(Team.B) : null,
+              onAdd: state.canAdd(Team.B) ? () => cubit.add(Team.B) : null,
+              onRemove: state.canRemove(Team.B) ? () => cubit.remove(Team.B) : null,
             ),
-            Button.primary(child: Text("Next"), onPressed: state.isCurrentSetOver() ? () => {} : null),
+            Button.primary(child: Text("Next"), onPressed: state.isCurrentSetOver() ? () => cubit.next() : null),
           ],
         );
       },

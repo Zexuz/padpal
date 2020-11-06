@@ -42,6 +42,10 @@ class ResultCubit extends Cubit<ResultState> {
 
   final GameInfo gameInfo;
 
+  void next() {
+    emit(state.copyWith(currentSet: state.currentSetIndex + 1));
+  }
+
   void add(Team team) {
     _updateScore(team, 1);
   }
@@ -88,7 +92,13 @@ class ResultCubit extends Cubit<ResultState> {
   void _updateScore(Team team, int deltaMy, [int deltaOpponents = 0]) {
     final sets = List<List<int>>();
 
-    for (var set in state.sets) {
+    for (var i = 0; i < state.sets.length; i++) {
+      final set = state.sets[i];
+      if(i != state.currentSetIndex){
+        sets.add(set);
+        continue;
+      }
+
       if (team == Team.A) {
         sets.add([set[0] + deltaMy, set[1] + deltaOpponents]);
       } else {

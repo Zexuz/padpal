@@ -56,7 +56,7 @@ class ResultState extends Equatable {
   }
 
   @override
-  List<Object> get props => [players, sets];
+  List<Object> get props => [players, sets, currentSetIndex];
 
   ResultState copyWith({
     List<Player> players,
