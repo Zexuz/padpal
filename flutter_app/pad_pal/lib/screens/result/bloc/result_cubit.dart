@@ -10,26 +10,6 @@ class ResultCubit extends Cubit<ResultState> {
   ResultCubit({
     @required this.gameInfo,
   }) : super(ResultState(
-          teamA: <Player>[
-            Player(
-              name: "Robin Edbom",
-              url: 'https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg',
-            ),
-            Player(
-              name: "David Joakim Jonsson",
-              url: 'https://i.pravatar.cc/200?img=3',
-            ),
-          ],
-          teamB: <Player>[
-            Player(
-              name: "Eduardo Olabe",
-              url: 'https://i.pravatar.cc/200?img=5',
-            ),
-            Player(
-              name: "Oliver Hernaez",
-              url: 'https://i.pravatar.cc/200?img=6',
-            ),
-          ],
           playersInMatchV1: [
             Player(
               name: "Robin Edbom",

@@ -6,6 +6,7 @@ import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/screens/result/bloc/result_cubit.dart';
 import 'package:pad_pal/screens/result/models/player.dart';
+import 'package:pad_pal/screens/result/view/result_game_set_page.dart';
 import 'package:pad_pal/theme.dart';
 
 class PlaygroundPage extends StatelessWidget {
@@ -122,7 +123,11 @@ class MyHomePageState extends StatelessWidget {
                 ],
               ),
             ),
-            Button.primary(child: Text("Next"), onPressed: state.isTeamSetupValid ? () => {} : null)
+            Button.primary(
+                child: Text("Next"),
+                onPressed: state.isTeamSetupValid
+                    ? () => {Navigator.of(context).push(ResultGameSetPage.route(context))}
+                    : null)
           ],
         );
       },
@@ -191,10 +196,7 @@ class DraggableItem extends StatelessWidget {
     BoxDecoration decoration;
 
     if (state == ReorderableItemState.dragProxy || state == ReorderableItemState.dragProxyFinished) {
-      decoration = BoxDecoration(
-        color: Color(0xD0FFFFFF),
-        border: null
-      );
+      decoration = BoxDecoration(color: Color(0xD0FFFFFF), border: null);
     }
 
     return Container(
