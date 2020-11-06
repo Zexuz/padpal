@@ -12,3 +12,5 @@ export 'input/custom_text_input.dart';
 export 'input/google_search_input.dart';
 
 export 'focus_remover/focus_remover.dart';
+
+export 'title_and_subtitle/title_and_subtitle.dart';
