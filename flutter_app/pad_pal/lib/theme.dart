@@ -20,8 +20,6 @@ class AppTheme {
   static const Color secondaryColorOrangeWithOpacity = Color.fromRGBO(255, 158, 0, 0.12);
 
   static const Color customBlack = const Color(0xFF172331);
-  static const Color grayIconColor = const Color(0xFFB4BEC9);
-  static const Color grayBorder = const Color(0xFFDAE0E7);
 
   static TextStyle logo =
       TextStyle(color: primary, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, fontSize: 21);
@@ -54,9 +52,6 @@ class AppTheme {
       disabledColor: const Color(0XFFF6F7F9),
       height: 36,
     ),
-    iconTheme: IconThemeData(
-      color: grayIconColor,
-    ),
     textTheme: TextTheme(
       headline1: GoogleFonts.poppinsTextTheme()
           .headline1
@@ -70,9 +65,7 @@ class AppTheme {
       headline4: GoogleFonts.poppinsTextTheme()
           .headline4
           .copyWith(color: customBlack, fontWeight: FontWeight.w600, letterSpacing: 0.11, fontSize: 12),
-      headline5: GoogleFonts.poppinsTextTheme()
-          .headline5
-          .copyWith(color: customBlack, fontWeight: FontWeight.w400, letterSpacing: 0.09, fontSize: 10),
+      headline5: GoogleFonts.poppinsTextTheme().headline5,
       headline6: GoogleFonts.poppinsTextTheme().headline6,
       subtitle1: GoogleFonts.poppinsTextTheme().subtitle1,
       subtitle2: GoogleFonts.poppinsTextTheme().subtitle2,
