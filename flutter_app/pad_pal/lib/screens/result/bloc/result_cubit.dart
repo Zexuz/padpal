@@ -46,6 +46,17 @@ class ResultCubit extends Cubit<ResultState> {
     emit(state.copyWith(currentSet: state.currentSetIndex + 1));
   }
 
+  void back() {
+    emit(state.copyWith(currentSet: state.currentSetIndex - 1));
+  }
+
+  void resetSets() {
+    emit(state.copyWith(
+      currentSet: 0,
+      sets: List.generate(3, (index) => List.generate(2, (index) => 3)),
+    ));
+  }
+
   void add(Team team) {
     _updateScore(team, 1);
   }
@@ -94,7 +105,7 @@ class ResultCubit extends Cubit<ResultState> {
 
     for (var i = 0; i < state.sets.length; i++) {
       final set = state.sets[i];
-      if(i != state.currentSetIndex){
+      if (i != state.currentSetIndex) {
         sets.add(set);
         continue;
       }

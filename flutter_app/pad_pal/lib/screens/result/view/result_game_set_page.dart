@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pad_pal/components/components.dart';
+import 'package:pad_pal/factories/snack_bar_factory.dart';
 import 'package:pad_pal/screens/result/bloc/result_cubit.dart';
 import 'package:pad_pal/screens/result/models/player.dart';
 import 'package:pad_pal/theme.dart';
@@ -8,11 +9,10 @@ import 'package:pad_pal/theme.dart';
 class ResultGameSetPage extends StatelessWidget {
   static Route route(BuildContext context) {
     return MaterialPageRoute<void>(
-      builder: (_) =>
-          BlocProvider.value(
-            value: context.bloc<ResultCubit>(),
-            child: ResultGameSetPage(),
-          ),
+      builder: (_) => BlocProvider.value(
+        value: context.bloc<ResultCubit>(),
+        child: ResultGameSetPage(),
+      ),
     );
   }
 
@@ -26,6 +26,18 @@ class ResultGameSetPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         title: "Result",
+        actions: [
+          FlatButton(
+            onPressed: () {
+              context.bloc<ResultCubit>().resetSets();
+              Navigator.of(context).pop<void>();
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -41,30 +53,50 @@ class ResultGameSetView extends StatelessWidget {
     return BlocBuilder<ResultCubit, ResultState>(
       builder: (context, state) {
         final cubit = context.bloc<ResultCubit>();
-        return Column(
-          children: [
-            TitleAndSubtitle(title: "Set ${state.currentSetIndex + 1}", subtitle: "Lorem ipsom dolar sit amet"),
-            _Team(
-              name: "Team A",
-              players: state.teamA,
-              score: state.currentSet[0],
-              onAdd: state.canAdd(Team.A) ? () => cubit.add(Team.A) : null,
-              onRemove: state.canRemove(Team.A) ? () => cubit.remove(Team.A) : null,
-            ),
-            Divider(
-              thickness: 1,
-              height: 24.0 * 2,
-              color: AppTheme.grayBorder,
-            ),
-            _Team(
-              name: "Team B",
-              players: state.teamB,
-              score: state.currentSet[1],
-              onAdd: state.canAdd(Team.B) ? () => cubit.add(Team.B) : null,
-              onRemove: state.canRemove(Team.B) ? () => cubit.remove(Team.B) : null,
-            ),
-            Button.primary(child: Text("Next"), onPressed: state.isCurrentSetOver() ? () => cubit.next() : null),
-          ],
+        final winners = state.winner();
+        return WillPopScope(
+          onWillPop: () {
+            if (state.currentSetIndex != 0) {
+              cubit.back();
+              return Future.value(false);
+            }
+            return Future.value(true);
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TitleAndSubtitle(title: "Set ${state.currentSetIndex + 1}", subtitle: "Lorem ipsom dolar sit amet"),
+              const SizedBox(height: 36),
+              _Team(
+                name: "Team A",
+                players: state.teamA,
+                score: state.currentSet[0],
+                onAdd: state.canAdd(Team.A) ? () => cubit.add(Team.A) : null,
+                onRemove: state.canRemove(Team.A) ? () => cubit.remove(Team.A) : null,
+              ),
+              Divider(
+                thickness: 1,
+                height: 24.0 * 2,
+                color: AppTheme.grayBorder,
+              ),
+              _Team(
+                name: "Team B",
+                players: state.teamB,
+                score: state.currentSet[1],
+                onAdd: state.canAdd(Team.B) ? () => cubit.add(Team.B) : null,
+                onRemove: state.canRemove(Team.B) ? () => cubit.remove(Team.B) : null,
+              ),
+              Expanded(child: Container()),
+              if (winners != null) Text("${winners.map((e) => e.name).join(" & ")} is the winners"),
+              if (winners != null)
+                Button.primary(
+                    child: Text("Submit score"),
+                    onPressed: () => Scaffold.of(context)
+                        .showSnackBar(SnackBarFactory.buildSnackBar("Hurray!!", SnackBarType.success))),
+              if (winners == null)
+                Button.primary(child: Text("Next"), onPressed: state.isCurrentSetOver() ? () => cubit.next() : null),
+            ],
+          ),
         );
       },
     );

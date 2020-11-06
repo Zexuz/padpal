@@ -36,6 +36,31 @@ class ResultState extends Equatable {
     return false;
   }
 
+  List<Player> winner() {
+    int numberOfSetsWonA = 0;
+    int numberOfSetsWonB = 0;
+
+    for (var value in sets) {
+      if (!isCurrentSetOver()) continue;
+
+      if (value[0] > value[1]) {
+        numberOfSetsWonA++;
+      }
+      if (value[0] < value[1]) {
+        numberOfSetsWonB++;
+      }
+    }
+
+    if (numberOfSetsWonA == 2) {
+      return teamA;
+    }
+    if (numberOfSetsWonB == 2) {
+      return teamB;
+    }
+
+    return null;
+  }
+
   bool canAdd(Team team) {
     final teamIndex = team == Team.A ? 0 : 1;
     final otherTeamIndex = team == Team.A ? 1 : 0;
