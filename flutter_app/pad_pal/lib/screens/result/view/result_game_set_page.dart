@@ -42,13 +42,26 @@ class ResultGameSetView extends StatelessWidget {
         return Column(
           children: [
             TitleAndSubtitle(title: "Set 1", subtitle: "Lorem ipsom dolar sit amet"),
-            _Team(name: "Team A", players: state.teamA),
+            _Team(
+              name: "Team A",
+              players: state.teamA,
+              score: state.currentSet[0],
+              onAdd: state.canAdd(Team.A) ? () => context.bloc<ResultCubit>().add(Team.A) : null,
+              onRemove: state.canRemove(Team.A) ? () => context.bloc<ResultCubit>().remove(Team.A) : null,
+            ),
             Divider(
               thickness: 1,
               height: 24.0 * 2,
               color: AppTheme.grayBorder,
             ),
-            _Team(name: "Team B", players: state.teamB),
+            _Team(
+              name: "Team B",
+              players: state.teamB,
+              score: state.currentSet[1],
+              onAdd: state.canAdd(Team.B) ? () => context.bloc<ResultCubit>().add(Team.B) : null,
+              onRemove: state.canRemove(Team.B) ? () => context.bloc<ResultCubit>().remove(Team.B) : null,
+            ),
+            Button.primary(child: Text("Next"), onPressed: state.isCurrentSetOver() ? () => {} : null),
           ],
         );
       },
@@ -57,10 +70,20 @@ class ResultGameSetView extends StatelessWidget {
 }
 
 class _Team extends StatelessWidget {
-  const _Team({Key key, this.players, this.name}) : super(key: key);
+  const _Team({
+    Key key,
+    this.players,
+    this.name,
+    this.onAdd,
+    this.onRemove,
+    this.score,
+  }) : super(key: key);
 
   final List<Player> players;
   final String name;
+  final VoidCallback onAdd;
+  final VoidCallback onRemove;
+  final int score;
 
   Widget _buildTeamAvatars(List<Player> players) {
     final radius = 18.0;
@@ -109,12 +132,12 @@ class _Team extends StatelessWidget {
         Row(
           children: [
             _Button(
-              onTap: () => print("Sub"),
+              onTap: onRemove,
               icon: Icons.remove,
             ),
-            Text("4", style: theme.textTheme.headline1),
+            Text("$score", style: theme.textTheme.headline1),
             _Button(
-              onTap: () => print("Add"),
+              onTap: onAdd,
               icon: Icons.add,
             )
           ],
@@ -132,17 +155,20 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RawMaterialButton(
-      onPressed: onTap,
-      elevation: 0,
-      fillColor: AppTheme.grayBorder,
-      child: Icon(
-        icon,
-        size: 24.0,
-        color: AppTheme.customBlack,
+    return Opacity(
+      opacity: onTap == null ? 0.3 : 1,
+      child: RawMaterialButton(
+        onPressed: onTap,
+        elevation: 0,
+        fillColor: AppTheme.grayBorder,
+        child: Icon(
+          icon,
+          size: 24.0,
+          color: AppTheme.customBlack,
+        ),
+        padding: EdgeInsets.all(14.0),
+        shape: CircleBorder(),
       ),
-      padding: EdgeInsets.all(14.0),
-      shape: CircleBorder(),
     );
   }
 }

@@ -1,22 +1,72 @@
 part of 'result_cubit.dart';
 
+enum SetState {
+  unfinished,
+  finished,
+}
+
 class ResultState extends Equatable {
   const ResultState({
     @required this.players,
+    @required this.sets,
+    @required this.currentSetIndex,
   });
 
   final List<Player> players;
+  final List<List<int>> sets;
+  final int currentSetIndex;
 
   List<Player> get teamA => players.take(2).toList();
 
   List<Player> get teamB => players.skip(2).take(2).toList();
 
-  @override
-  List<Object> get props => [players];
+  List<int> get currentSet => sets[currentSetIndex];
 
-  ResultState copyWith({List<Player> players}) {
+  bool isCurrentSetOver() {
+    final max = math.max(sets[currentSetIndex][0], sets[currentSetIndex][1]);
+    final min = math.min(sets[currentSetIndex][0], sets[currentSetIndex][1]);
+
+    if (max == 7) {
+      return true;
+    }
+    if (max == 6 && min < 5) {
+      return true;
+    }
+
+    return false;
+  }
+
+  bool canAdd(Team team) {
+    final teamIndex = team == Team.A ? 0 : 1;
+    final otherTeamIndex = team == Team.A ? 1 : 0;
+    final myScore = sets[currentSetIndex][teamIndex];
+    final opponentsScore = sets[currentSetIndex][otherTeamIndex];
+
+    if (myScore == 6 && opponentsScore < 5) return false;
+    if (opponentsScore == 7) return false;
+    if (myScore == 7) return false;
+
+    return true;
+  }
+
+  bool canRemove(Team team) {
+    final teamIndex = team == Team.A ? 0 : 1;
+    final myScore = sets[currentSetIndex][teamIndex];
+    return myScore != 0;
+  }
+
+  @override
+  List<Object> get props => [players, sets];
+
+  ResultState copyWith({
+    List<Player> players,
+    List<List<int>> sets,
+    int currentSet,
+  }) {
     return ResultState(
       players: players ?? this.players,
+      sets: sets ?? this.sets,
+      currentSetIndex: currentSet ?? this.currentSetIndex,
     );
   }
 }

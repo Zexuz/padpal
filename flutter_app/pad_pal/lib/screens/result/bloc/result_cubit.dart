@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,6 +7,8 @@ import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/screens/result/models/player.dart';
 
 part 'result_state.dart';
+
+enum Team { A, B }
 
 class ResultCubit extends Cubit<ResultState> {
   ResultCubit({
@@ -32,9 +36,19 @@ class ResultCubit extends Cubit<ResultState> {
               key: ValueKey(3),
             ),
           ],
+          currentSetIndex: 0,
+          sets: List.generate(3, (index) => List.generate(2, (index) => 3)),
         ));
 
   final GameInfo gameInfo;
+
+  void add(Team team) {
+    _updateScore(team, 1);
+  }
+
+  void remove(Team team) {
+    _updateScore(team, -1);
+  }
 
   // Returns index of item with given key
   int _indexOfKey(Key key) {
@@ -60,5 +74,19 @@ class ResultCubit extends Cubit<ResultState> {
 
     emit(state.copyWith(players: newList));
     return true;
+  }
+
+  void _updateScore(Team team, int delta) {
+    final sets = List<List<int>>();
+
+    for (var set in state.sets) {
+      if (team == Team.A) {
+        sets.add([set[0] + delta, set[1]]);
+      } else {
+        sets.add([set[0], set[1] + delta]);
+      }
+    }
+
+    emit(state.copyWith(sets: sets));
   }
 }
