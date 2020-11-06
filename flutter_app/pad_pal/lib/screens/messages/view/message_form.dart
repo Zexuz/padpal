@@ -42,30 +42,6 @@ class ChatTextInput extends StatelessWidget {
   }
 }
 
-class OverlappingAvatar extends StatelessWidget {
-  const OverlappingAvatar({
-    Key key,
-    @required this.avatar1,
-    @required this.avatar2,
-  }) : super(key: key);
-
-  final Avatar avatar1;
-  final Avatar avatar2;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        avatar1,
-        Padding(
-          padding: EdgeInsets.only(left: avatar1.radius, top: avatar1.radius),
-          child: avatar2,
-        ),
-      ],
-    );
-  }
-}
-
 class MessageListTile extends StatelessWidget {
   const MessageListTile({
     Key key,
