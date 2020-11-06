@@ -2,31 +2,21 @@ part of 'result_cubit.dart';
 
 class ResultState extends Equatable {
   const ResultState({
-    @required this.playersInMatchV1,
+    @required this.players,
   });
 
-  final List<Player> playersInMatchV1;
+  final List<Player> players;
 
-  List<Player> get teamA => playersInMatchV1.take(2).toList();
+  List<Player> get teamA => players.take(2).toList();
 
-  List<Player> get teamB => playersInMatchV1.skip(2).take(2).toList();
-
-  bool get isTeamSetupValid => teamA.length == 2 && teamB.length == 2;
+  List<Player> get teamB => players.skip(2).take(2).toList();
 
   @override
-  List<Object> get props => [
-        teamA,
-        teamB,
-        playersInMatchV1,
-      ];
+  List<Object> get props => [players];
 
-  ResultState copyWith({
-    List<Player> teamA,
-    List<Player> teamB,
-    List<Player> playersInMatchV1,
-  }) {
+  ResultState copyWith({List<Player> players}) {
     return ResultState(
-      playersInMatchV1: playersInMatchV1 ?? this.playersInMatchV1,
+      players: players ?? this.players,
     );
   }
 }

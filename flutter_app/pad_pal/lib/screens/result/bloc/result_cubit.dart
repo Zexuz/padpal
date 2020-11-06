@@ -10,7 +10,7 @@ class ResultCubit extends Cubit<ResultState> {
   ResultCubit({
     @required this.gameInfo,
   }) : super(ResultState(
-          playersInMatchV1: [
+          players: [
             Player(
               name: "Robin Edbom",
               url: 'https://www.fakepersongenerator.com/Face/female/female20161025116292694.jpg',
@@ -36,21 +36,13 @@ class ResultCubit extends Cubit<ResultState> {
 
   final GameInfo gameInfo;
 
-  onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-    final teamA = [...state.teamA];
-    final teamB = [...state.teamB];
-    final itemToMove = (oldListIndex == 0 ? teamA : teamB).removeAt(oldItemIndex);
-    (newListIndex == 0 ? teamA : teamB).insert(newItemIndex, itemToMove);
-    emit(state.copyWith(teamA: teamA, teamB: teamB));
-  }
-
   // Returns index of item with given key
   int _indexOfKey(Key key) {
-    return state.playersInMatchV1.indexWhere((d) => d.key == key);
+    return state.players.indexWhere((d) => d.key == key);
   }
 
   void reorderDone(Key item) {
-    final draggedItem = state.playersInMatchV1[_indexOfKey(item)];
+    final draggedItem = state.players[_indexOfKey(item)];
     debugPrint("Reordering finished for ${draggedItem.name}}");
   }
 
@@ -58,7 +50,7 @@ class ResultCubit extends Cubit<ResultState> {
     int draggingIndex = _indexOfKey(item);
     int newPositionIndex = _indexOfKey(newPosition);
 
-    final newList = [...state.playersInMatchV1];
+    final newList = [...state.players];
 
     final draggedItem = newList[draggingIndex];
 
@@ -66,7 +58,7 @@ class ResultCubit extends Cubit<ResultState> {
     newList.removeAt(draggingIndex);
     newList.insert(newPositionIndex, draggedItem);
 
-    emit(state.copyWith(playersInMatchV1: newList));
+    emit(state.copyWith(players: newList));
     return true;
   }
 }

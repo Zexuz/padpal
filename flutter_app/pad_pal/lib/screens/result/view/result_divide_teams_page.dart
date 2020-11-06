@@ -1,11 +1,12 @@
-import 'package:drag_and_drop_lists_fork_robin/drag_and_drop_lists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:game_repository/game_repository.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/screens/result/bloc/result_cubit.dart';
 import 'package:pad_pal/screens/result/models/player.dart';
+import 'package:pad_pal/screens/result/view/result_game_set_page.dart';
 import 'package:pad_pal/theme.dart';
 
 class ResultDivideTeamsPage extends StatelessWidget {
@@ -31,50 +32,45 @@ class ResultDivideTeamsPage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: BlocProvider<ResultCubit>(
           create: (_) => ResultCubit(gameInfo: gameInfo),
-          child: ResultDivideTeamsView(),
+          child: MyHomePageState(),
         ),
       ),
     );
   }
 }
 
-class ResultDivideTeamsView extends StatelessWidget {
-  ResultDivideTeamsView({Key key}) : super(key: key);
+class TeamName extends StatelessWidget {
+  const TeamName(this.name);
 
-  DragAndDropList _buildList(String teamName, List<Player> players, bool isValid) {
-    return DragAndDropList(
-      leftSide: Padding(
-        padding: const EdgeInsets.only(right: 24),
-        child: Container(
-          width: 40,
-          decoration: BoxDecoration(
-            color: AppTheme.lightGrayBackground,
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Center(
-              child: Text(
-            teamName,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 24,
-            ),
-          )),
-        ),
-      ),
-      canDrag: false,
-      children: <DragAndDropItem>[
-        for (var item in players)
-          DragAndDropItem(
-            child: PlayerListTile(item),
-          ),
-      ],
-    );
-  }
+  final String name;
 
   @override
   Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 24),
+      child: Container(
+        width: 40,
+        height: 48 * 2 + 25.0,
+        decoration: BoxDecoration(
+          color: AppTheme.lightGrayBackground,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Center(
+            child: Text(
+          name,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 24,
+          ),
+        )),
+      ),
+    );
+  }
+}
+
+class MyHomePageState extends StatelessWidget {
+  Widget build(BuildContext context) {
     return BlocBuilder<ResultCubit, ResultState>(
-      buildWhen: (previous, current) => previous.teamA != current.teamA || previous.teamB != current.teamB,
       builder: (context, state) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -85,30 +81,54 @@ class ResultDivideTeamsView extends StatelessWidget {
             ),
             const SizedBox(height: 36),
             Expanded(
-              child: DragAndDropLists(
-                listDivider: Divider(
-                  thickness: 1,
-                  height: 25,
-                  indent: 100,
-                  color: AppTheme.grayBorder,
-                ),
-                itemDivider: SizedBox(height: 25),
-                listDividerOnLastChild: false,
+              child: Row(
                 children: [
-                  _buildList("A", state.teamA, state.isTeamSetupValid),
-                  _buildList("B", state.teamB, state.isTeamSetupValid),
-                ],
-                onItemReorder: context.bloc<ResultCubit>().onItemReorder,
-                lastItemTargetHeight: 0,
-                dragHandle: Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.menu,
+                  Column(
+                    children: [
+                      TeamName("A"),
+                      const SizedBox(height: 25),
+                      TeamName("B"),
+                    ],
                   ),
-                ),
+                  Expanded(
+                    child: ReorderableList(
+                      onReorder: context.bloc<ResultCubit>().reorderCallback,
+                      onReorderDone: context.bloc<ResultCubit>().reorderDone,
+                      child: ListView.builder(
+                        itemCount: 5,
+                        itemBuilder: (context, i) {
+                          if (i == 2) {
+                            return Divider(
+                              thickness: 1,
+                              height: 25,
+                              indent: 0,
+                              color: AppTheme.grayBorder,
+                            );
+                          }
+
+                          final index = i > 2 ? i - 1 : i;
+
+                          return Column(
+                            children: [
+                              DraggableItem(
+                                data: state.players[index],
+                              ),
+                              index % 2 == 0 ? const SizedBox(height: 25) : Container(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Button.primary(child: Text("Next"), onPressed: state.isTeamSetupValid ? () => {} : null)
+            Button.primary(
+              child: Text("Next"),
+              onPressed: () => Navigator.of(context).push(
+                ResultGameSetPage.route(context),
+              ),
+            ),
           ],
         );
       },
@@ -162,6 +182,56 @@ class PlayerListTile extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class DraggableItem extends StatelessWidget {
+  DraggableItem({
+    this.data,
+  });
+
+  final Player data;
+
+  Widget _buildChild(BuildContext context, ReorderableItemState state) {
+    BoxDecoration decoration;
+
+    if (state == ReorderableItemState.dragProxy || state == ReorderableItemState.dragProxyFinished) {
+      decoration = BoxDecoration(color: Color(0xD0FFFFFF), border: null);
+    }
+
+    return Container(
+      decoration: decoration,
+      child: SafeArea(
+        top: false,
+        bottom: false,
+        child: Opacity(
+          opacity: state == ReorderableItemState.placeholder ? 0.0 : 1.0,
+          child: IntrinsicHeight(
+            child: Row(
+              children: <Widget>[
+                Expanded(child: PlayerListTile(data)),
+                ReorderableListener(
+                  child: Container(
+                    padding: EdgeInsets.only(right: 18.0, left: 18.0),
+                    child: Center(
+                      child: Icon(Icons.reorder),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableItem(
+      key: data.key,
+      childBuilder: _buildChild,
     );
   }
 }
