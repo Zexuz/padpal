@@ -6,9 +6,9 @@ import 'package:pad_pal/bloc/bloc.dart';
 import 'package:pad_pal/components/app_bar/app_bar.dart';
 import 'package:pad_pal/components/components.dart';
 import 'package:pad_pal/factories/snack_bar_factory.dart';
+import 'package:pad_pal/screens/event/components/components.dart';
 import 'package:pad_pal/screens/event/create_event/view/create_event_add_players_step.dart';
 import 'package:pad_pal/screens/profile/view/profile_from_id_page.dart';
-import 'package:pad_pal/screens/result/view/result_divide_teams_page.dart';
 import 'package:pad_pal/theme.dart';
 
 class EventDetailsView extends StatelessWidget {
@@ -41,12 +41,16 @@ class EventDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TitleAndSubtitle(title: "Information", subtitle: "Message from Anton:"),
+                  EventStepTitle(title: "Information", subtitle: "Message from Anton:"),
                   RichText(
                     text: TextSpan(
                         text: 'Hi guys! \n\n'
                             'Me and my friend Andries are new to this sport and we are looking for two players bla bla bla...',
                         style: theme.textTheme.bodyText1),
+                  ),
+                  Button.primary(
+                    child: const Text('Go to group chat'),
+                    onPressed: null,
                   ),
                 ],
               ),
@@ -81,20 +85,8 @@ class Players extends StatelessWidget {
 
     return Column(
       children: [
-        GoToAddResult(
-          onTap: () {
-            Navigator.of(context).push(ResultDivideTeamsPage.route(gameInfo));
-          },
-        ),
-        SizedBox(height: 12),
-        GoToConversation(),
-        Divider(
-          thickness: 2,
-          height: 24 * 2.0,
-          color: AppTheme.grayBorder,
-        ),
         Price(gameInfo: gameInfo),
-        TitleAndSubtitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
+        EventStepTitle(title: "Players", subtitle: "Lorem ipsom dolar sit amet"),
         BlocBuilder<MeCubit, MeState>(
           builder: (context, state) {
             if (state.isLoading) {
@@ -216,31 +208,31 @@ class EventDetailsBulletPoints extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            TitleAndSubtitle(title: "Details", subtitle: "Lorem ipsom dolar sit amet"),
+            EventStepTitle(title: "Details", subtitle: "Lorem ipsom dolar sit amet"),
             ListTile(
               title: Text("Wed 23 Sep, 12.00-13.00 pm"),
               subtitle: Text("Next week"),
-              leading: Icon(Icons.calendar_today),
+              leading: Icon(Icons.calendar_today, color: Color(0xFFB4BEC9)),
             ),
             ListTile(
               title: Text("Delsjön Padel Center"),
               subtitle: Text("Göteborg"),
-              leading: Icon(Icons.place),
+              leading: Icon(Icons.place, color: Color(0xFFB4BEC9)),
             ),
             ListTile(
               title: Text("9 (hall C)"),
               subtitle: Text("Court number"),
-              leading: Icon(Icons.directions),
+              leading: Icon(Icons.directions, color: Color(0xFFB4BEC9)),
             ),
             ListTile(
               title: Text(gameInfo.publicInfo.courtType.toString()),
               subtitle: Text("Lorem ipsum"),
-              leading: Icon(Icons.house),
+              leading: Icon(Icons.house, color: Color(0xFFB4BEC9)),
             ),
             ListTile(
               title: Text("${gameInfo.publicInfo.pricePerPerson} kr"),
               subtitle: Text("Price per person"),
-              leading: Icon(Icons.label),
+              leading: Icon(Icons.label, color: Color(0xFFB4BEC9)),
             ),
           ],
         ),
@@ -261,129 +253,21 @@ class Price extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return InfoTile(
-      title: Text(
-        "${gameInfo.publicInfo.pricePerPerson} kr",
-        style: theme.textTheme.headline3.copyWith(fontWeight: FontWeight.w400),
-      ),
-      subtitle: Text(
-        "Price per person",
-        style: theme.textTheme.headline5.copyWith(color: AppTheme.secondaryColorOrange),
-      ),
-      leading: Icon(
-        CupertinoIcons.tag_fill,
-        color: AppTheme.secondaryColorOrange,
-        size: 28,
-      ),
-      boxDecoration: BoxDecoration(
+    return Container(
+      decoration: BoxDecoration(
         color: AppTheme.secondaryColorOrangeWithOpacity,
         border: Border.all(color: AppTheme.secondaryColorOrange, width: 1.5),
         borderRadius: BorderRadius.circular(6.0),
       ),
-    );
-  }
-}
-
-class GoToConversation extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return InfoTile(
-      title: Text(
-        "Start a conversation",
-        style: theme.textTheme.headline3,
-      ),
-      subtitle: Text(
-        "with Name, Name, and Name",
-        style: theme.textTheme.headline5,
-      ),
-      leading: Icon(
-        CupertinoIcons.chat_bubble_fill,
-        size: 28,
-      ),
-      onTap: () => {},
-    );
-  }
-}
-
-class GoToAddResult extends StatelessWidget {
-  const GoToAddResult({@required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return InfoTile(
-      title: Text(
-        "Add result",
-        style: theme.textTheme.headline3,
-      ),
-      leading: Icon(
-        CupertinoIcons.stopwatch_fill,
-        size: 28,
-      ),
-      onTap: onTap,
-    );
-  }
-}
-
-class InfoTile extends StatelessWidget {
-  const InfoTile({
-    Key key,
-    @required this.leading,
-    @required this.title,
-    this.subtitle,
-    this.trailing,
-    this.boxDecoration,
-    this.onTap,
-  }) : super(key: key);
-
-  final Widget leading;
-  final Widget trailing;
-  final Widget title;
-  final Widget subtitle;
-  final BoxDecoration boxDecoration;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final decoration = boxDecoration ??
-        BoxDecoration(
-          border: Border.all(color: AppTheme.grayBorder, width: 1.5),
-          borderRadius: BorderRadius.circular(6.0),
-        );
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: decoration.borderRadius,
-      child: Container(
-        height: 72,
-        decoration: decoration,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 21, right: 21),
-              child: leading,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title,
-                if (subtitle != null) subtitle,
-              ],
-            ),
-            if (trailing != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 21, right: 21),
-                child: trailing,
-              ),
-          ],
+      child: ListTile(
+        leading: Icon(
+          Icons.label,
+          color: AppTheme.secondaryColorOrange,
+        ),
+        title: Text("${gameInfo.publicInfo.pricePerPerson} kr", style: theme.textTheme.subtitle1),
+        subtitle: Text(
+          "Price per person",
+          style: theme.textTheme.caption.copyWith(color: AppTheme.secondaryColorOrange),
         ),
       ),
     );

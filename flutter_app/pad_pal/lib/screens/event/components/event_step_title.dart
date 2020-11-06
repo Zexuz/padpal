@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pad_pal/theme.dart';
 
-class TitleAndSubtitle extends StatelessWidget {
-  const TitleAndSubtitle({
+class EventStepTitle extends StatelessWidget {
+  const EventStepTitle({
     Key key,
     @required this.title,
     @required this.subtitle,
@@ -18,7 +18,7 @@ class TitleAndSubtitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(title, style: theme.textTheme.headline1),
+        Text(title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
         Text(subtitle, style: theme.textTheme.bodyText2.copyWith(color: AppTheme.lightGrayText)),
       ],
